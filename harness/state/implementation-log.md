@@ -541,3 +541,19 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   relative time); `side` is "—" (simple schema has no bride/groom split). Stats cards + charts remain
   illustrative demo. RSVP loop now closed: guest submits via ShareBar → DB → host sees it here.
 - Verified: `tsc` + `npm run build` clean; `/rsvp` (no slug) still renders the 9-row demo, no errors.
+
+### 2026-09-05 — Auth slice 1: sign-up/login (Supabase Auth, email/password)
+
+- Scope: Account creation + login. User asked for 회원가입 + managing one's own invitations. Chose
+  email/password (self-contained; Kakao later — needs a Kakao dev app). Two slices: this = auth
+  foundation + UI; next = owner_id + dashboard.
+- Added: `@supabase/ssr`; `supabase-browser.ts` (createBrowserSupabase/authEnabled) for client auth;
+  `supabase-server.ts` (createServerSupabase/getCurrentUser) reads the session from cookies;
+  `src/middleware.ts` refreshes the session cookie; `/login` page (client) — combined login/signup with
+  email confirm handling, errors, mode toggle; `login.css`.
+- Gotcha: adding `middleware.ts` needs a dev-server restart (Next compiles middleware at boot) — 500
+  "Cannot find the middleware module" until restarted.
+- Verified: `tsc` + `npm run build` clean; `/login` renders (WELCOME BACK / 로그인), email+password
+  inputs wired, toggle → 회원가입. (Did NOT create a test account — user will do the real sign-up.)
+- Follow-up: Next 16 deprecates `middleware` → `proxy` file convention (still works; rename later).
+  Slice 2: owner_id migration + RLS, publish sets owner, dashboard lists the user's invitations + logout.

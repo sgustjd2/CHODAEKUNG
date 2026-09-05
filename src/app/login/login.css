@@ -1,0 +1,36 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--paper-2);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(227,139,139,0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(181,202,178,0.06), transparent 40%);
+}
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-lg);
+}
+.auth-logo { display: inline-flex; margin-bottom: 20px; text-decoration: none; color: var(--ink); }
+.auth-logo svg.ck-logo { height: 32px; width: auto; }
+.auth-eb { font-family: var(--font-en); font-size: 11px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--wax-deep); margin-bottom: 6px; }
+.auth-title { font-family: var(--font-serif); font-weight: 500; font-size: 34px; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 6px; }
+.auth-sub { font-size: 13px; color: var(--fg-2); margin-bottom: 22px; line-height: 1.6; }
+.auth-field { display: block; margin-bottom: 14px; }
+.auth-field > span { display: block; font-size: 12px; font-weight: 700; color: var(--fg-2); margin-bottom: 6px; }
+.auth-field input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-sm); font-size: 14px; font-family: var(--font-ko); color: var(--ink); background: var(--paper-2); }
+.auth-field input:focus { outline: none; border-color: var(--wax); background: var(--card); }
+.auth-msg { font-size: 12px; font-weight: 700; color: var(--wax-deep); background: var(--wax-tint); padding: 10px 12px; border-radius: var(--r-sm); margin-bottom: 12px; line-height: 1.5; }
+.auth-msg.ok { color: var(--sage-deep); background: var(--sage-light); }
+.auth-btn { width: 100%; padding: 13px; border: none; border-radius: var(--r-sm); background: var(--wax); color: var(--paper); font-family: var(--font-ko); font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 4px; }
+.auth-btn:hover:not(:disabled) { background: var(--wax-deep); }
+.auth-btn:disabled { opacity: 0.6; cursor: default; }
+.auth-toggle { text-align: center; font-size: 13px; color: var(--fg-2); margin-top: 18px; }
+.auth-toggle button { background: none; border: none; color: var(--wax-deep); font-weight: 700; cursor: pointer; font-family: var(--font-ko); font-size: 13px; }
