@@ -1,9 +1,10 @@
 import { Rich } from "../../rich-text";
+import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
 export function EditorialCover({ content }: { content: CoverContent }) {
   return (
-    <div className="e-cover" style={{ backgroundImage: `url(/assets/photos/${content.image}.jpg)` }}>
+    <div className="e-cover" style={{ backgroundImage: `url('${photoUrl(content.image)}')` }}>
       <div className="e-cover-top">
         {content.headerLeft && <div className="e-issue">{content.headerLeft}</div>}
         {content.headerRightLines && (

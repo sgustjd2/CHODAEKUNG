@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
-import { ContentEditors } from "./content-editors";
+import { ContentEditors, PhotoUpload } from "./content-editors";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import type { Invitation, Section } from "@/lib/invitation/types";
 
@@ -157,6 +157,9 @@ function DesignPanel({ api }: { api: EditorApi }) {
       <div className="m-group">
         <h6>Cover Background</h6>
         <div className="m-thumbs">
+          {cover && /^https?:\/\//.test(cover.content.image) && (
+            <button type="button" className="m-thumb active" style={{ backgroundImage: `url('${cover.content.image}')` }} aria-label="업로드한 커버" />
+          )}
           {COVER_PHOTOS.map((p) => (
             <button
               key={p}
@@ -167,6 +170,9 @@ function DesignPanel({ api }: { api: EditorApi }) {
               onClick={() => cover && patch(cover.id, { image: p })}
             />
           ))}
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <PhotoUpload onUploaded={(url) => cover && patch(cover.id, { image: url })} label="+ 커버 사진 업로드" />
         </div>
         <div className="m-field" style={{ marginTop: 12 }}>
           <div className="m-lbl">

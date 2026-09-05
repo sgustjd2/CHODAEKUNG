@@ -1,10 +1,11 @@
 import { Fragment } from "react";
+import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
 export function CoverSection({ content }: { content: CoverContent }) {
   const { image, brand, seal, eyebrow, names, connector, title, dateLabel } = content;
   return (
-    <div className="iv-cover" style={{ backgroundImage: `url('/assets/photos/${image}.jpg')` }}>
+    <div className="iv-cover" style={{ backgroundImage: `url('${photoUrl(image)}')` }}>
       <div className="iv-cover-top">
         {brand && <div className="iv-brand">{brand}</div>}
         {seal && <div className="iv-mini-seal">{seal}</div>}

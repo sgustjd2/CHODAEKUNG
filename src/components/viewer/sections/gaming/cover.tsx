@@ -1,12 +1,13 @@
 import { Fragment } from "react";
 import { Rich } from "../../rich-text";
+import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
 export function GamingCover({ content }: { content: CoverContent }) {
   return (
     <div className="g-cover">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="g-bg" src={`/assets/photos/${content.image}.jpg`} alt="" style={content.imgFilter ? { filter: content.imgFilter } : undefined} />
+      <img className="g-bg" src={photoUrl(content.image)} alt="" style={content.imgFilter ? { filter: content.imgFilter } : undefined} />
       <div className="g-cover-top">
         {content.headerLeft && <div className="g-tag">{content.headerLeft}</div>}
         {content.headerRightLines && (

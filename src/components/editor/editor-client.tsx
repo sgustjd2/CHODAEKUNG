@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
-import { ContentEditors } from "@/components/editor/content-editors";
+import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
@@ -311,6 +311,10 @@ export function EditorClient() {
                 <div className="insp-group">
                   <h5>Cover Background</h5>
                   <div className="cover-thumbs">
+                    {cover && /^https?:\/\//.test(cover.content.image) && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={cover.content.image} alt="" className="cover-thumb active" />
+                    )}
                     {COVER_PHOTOS.map((p) => (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -321,6 +325,9 @@ export function EditorClient() {
                         onClick={() => cover && patch(cover.id, { image: p })}
                       />
                     ))}
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <PhotoUpload onUploaded={(url) => cover && patch(cover.id, { image: url })} label="+ 커버 사진 업로드" />
                   </div>
                 </div>
               </>

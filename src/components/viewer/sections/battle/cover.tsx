@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import { Rich } from "../../rich-text";
+import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
 export function BattleCover({ content }: { content: CoverContent }) {
   return (
-    <div className="ivb-cover" style={{ backgroundImage: `url('/assets/photos/${content.image}.jpg')` }}>
+    <div className="ivb-cover" style={{ backgroundImage: `url('${photoUrl(content.image)}')` }}>
       <div className="ivb-cover-top">
         {content.headerLeft && <div className="ivb-issue">{content.headerLeft}</div>}
         {content.headerRightLines && (

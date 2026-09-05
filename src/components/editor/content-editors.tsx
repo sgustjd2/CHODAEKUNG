@@ -468,13 +468,13 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
   );
 }
 
-function PhotoUpload({ onUploaded }: { onUploaded: (url: string) => void }) {
+export function PhotoUpload({ onUploaded, label }: { onUploaded: (url: string) => void; label?: string }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   return (
     <div>
       <label className="insp-add" style={{ display: "block", textAlign: "center", cursor: busy ? "default" : "pointer" }}>
-        {busy ? "업로드 중…" : "+ 사진 업로드"}
+        {busy ? "업로드 중…" : (label ?? "+ 사진 업로드")}
         <input
           type="file"
           accept="image/*"
