@@ -166,8 +166,12 @@ export default function TemplateGalleryPage() {
             HOME · <span className="cur">TEMPLATES</span>
           </div>
           <div style={{ display: "flex", gap: 10 }}>
-            <Button variant="ghost" size="sm">로그인</Button>
-            <Button variant="primary" size="sm">무료로 시작하기</Button>
+            <Link href="/login" style={{ textDecoration: "none" }}>
+              <Button variant="ghost" size="sm">로그인</Button>
+            </Link>
+            <Link href="/new" style={{ textDecoration: "none" }}>
+              <Button variant="primary" size="sm">무료로 시작하기</Button>
+            </Link>
           </div>
         </div>
       </nav>
