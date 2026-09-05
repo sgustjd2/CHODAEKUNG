@@ -209,3 +209,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; sidebar + 4 stats (1 featured) + 6 cards + empty card render; status tabs
   filter (Draft → 2) and title search (생신 → 1) work.
 - Follow-up required: yes — list view toggle, real data/counts, per-card ⋯ menu actions.
+
+### 2026-09-05 — RSVP dashboard (screen 09)
+
+- Scope: Implemented `/rsvp` — response stats, charts, and a filterable guest table.
+- PRD reference: §16 (RSVP). Genspark: `design/09_rsvp_dashboard.html`.
+- Decisions:
+  - `RsvpClient` (client): 4 stat cards + progress bars, line-trend + donut charts (inline SVG,
+    static demo), and a response table (9 mock rows) with chip filter (전체/참석/불참/미정/신랑측/
+    신부측), name search, and **working CSV export** (Blob download, UTF-8 BOM for Excel Korean).
+  - Chip counts are the full-dataset demo numbers (table is a page of 247); table filters the 9
+    sample rows. Closes the RSVP loop (viewer accept/rsvp → this dashboard).
+- Verified: `tsc` clean; 4 stats + charts render; 참석 filter → 6 rows (all yes), name search → 1 row.
+- Follow-up required: yes — real response data + pagination; bulk actions on selected rows;
+  per-invitation switching (currently the wedding sample).

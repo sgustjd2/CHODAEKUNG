@@ -23,6 +23,7 @@ classes so fidelity stays with the approved tokens; reuse these before creating 
 | 06 desktop editor | `src/components/editor/editor-client.tsx` | client; 3-col shell, section list (select/hide/duplicate/delete/add/drag-reorder), **live preview via `<InvitationViewer contained>`**, Content(cover/message/location) + Style(theme preset re-theme, accent via `--wax`, cover bg) live; Layout/Animation stubbed | done (first cut) |
 | 08 publish/share | `src/components/editor/publish-dialog.tsx` | client dialog opened from editor; visibility radios, OG/Kakao/QR preview tabs (data-driven from invitation), copy-link + native-share wired (Kakao/QR stubbed); styles in `editor.css` under `.pub-overlay` | done |
 | 04 dashboard | `src/components/dashboard/dashboard-client.tsx` | client; sidebar nav, 4 stat cards, status tabs + title-search filter, invitation card grid (preview → `/i/[slug]`, edit → `/editor`) | done |
+| 09 rsvp dashboard | `src/components/rsvp/rsvp-client.tsx` | client; stats+bars, line/donut charts (inline SVG), response table with chip filter + name search + CSV export (Blob download) | done |
 
 ## Invitation viewer + section renderer (CLAUDE.md §7.3)
 
