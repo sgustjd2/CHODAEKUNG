@@ -106,6 +106,10 @@ export function EditorClient() {
     cover,
     message,
     location,
+    date,
+    gallery,
+    schedule,
+    rsvp,
     openPublish: () => setPubOpen(true),
   };
 

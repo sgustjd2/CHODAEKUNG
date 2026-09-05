@@ -363,3 +363,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   textarea rewrites the preview's options (new options in, 미정 out). Reset viewport after.
 - Follow-up required: yes — mirror these editors in the mobile `ContentPanel` (next increment);
   gallery image upload/reorder; rich-text (em) editing without collapsing.
+
+### 2026-09-05 — Editor content expansion (mobile) — matches desktop
+
+- Scope: Mirrored the desktop Content editors into the mobile bottom-sheet Content panel, so both
+  editors edit the same full section set. Extended `EditorApi` with date/gallery/schedule/rsvp and
+  passed them from `EditorClient` (still one shared state).
+- Decisions: mobile `ContentPanel` now renders message(title+body), location(name+addr),
+  date(eyebrow/title/D-day), schedule(eyebrow/title + per-item time/title/desc with add·remove),
+  gallery(eyebrow/title), rsvp(title/body/options) using `MField` + `.m-subitem`/`.m-add` styling.
+  Desktop and mobile keep separate JSX (different `Field`/`MField` + styling) but share all state
+  and `patch` logic — no duplicated reducer.
+- Verified: `tsc` clean; mobile 내용 sheet shows all 7 groups + 4 schedule item editors + add;
+  editing a schedule item title reflects live in the mobile preview. Reset viewport after.
+- Follow-up required: gallery image upload/reorder; rich-text (em) editing; wire save/publish.

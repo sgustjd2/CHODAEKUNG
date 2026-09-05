@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "./editor-shared";
-import type { CoverContent, Invitation, LocationContent, MessageContent, Section } from "@/lib/invitation/types";
+import type { CoverContent, DateContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section } from "@/lib/invitation/types";
 
 /** Shared editor state/actions, owned by EditorClient and consumed by both layouts. */
 export type EditorApi = {
@@ -27,6 +27,10 @@ export type EditorApi = {
   cover?: Extract<Section, { type: "cover" }>;
   message?: Extract<Section, { type: "message" }>;
   location?: Extract<Section, { type: "location" }>;
+  date?: Extract<Section, { type: "date" }>;
+  gallery?: Extract<Section, { type: "gallery" }>;
+  schedule?: Extract<Section, { type: "schedule" }>;
+  rsvp?: Extract<Section, { type: "rsvp" }>;
   openPublish: () => void;
 };
 
@@ -115,7 +119,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
 }
 
 function ContentPanel({ api }: { api: EditorApi }) {
-  const { cover, message, location, patch } = api;
+  const { cover, message, location, date, schedule, gallery, rsvp, patch } = api;
   const names = cover?.content.names;
   return (
     <>
@@ -136,6 +140,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
       {message && (
         <div className="m-group">
           <h6>Message</h6>
+          <MField label="제목" value={plainTitle(message.content.title)} onChange={(v) => patch(message.id, { title: [[v]] } satisfies Partial<MessageContent>)} />
           <MField textarea label="본문" value={linesToText(message.content.body)} onChange={(v) => patch(message.id, { body: textToLines(v) } satisfies Partial<MessageContent>)} />
         </div>
       )}
@@ -143,6 +148,60 @@ function ContentPanel({ api }: { api: EditorApi }) {
         <div className="m-group">
           <h6>Location</h6>
           <MField label="장소명" value={plainTitle(location.content.title)} onChange={(v) => patch(location.id, { title: [[v]] } satisfies Partial<LocationContent>)} />
+          <MField textarea label="주소 · 설명" value={linesToText(location.content.body)} onChange={(v) => patch(location.id, { body: textToLines(v) })} />
+        </div>
+      )}
+      {date && (
+        <div className="m-group">
+          <h6>Date</h6>
+          <MField label="Eyebrow" value={date.content.eyebrow} onChange={(v) => patch(date.id, { eyebrow: v } satisfies Partial<DateContent>)} />
+          <MField label="제목" value={plainTitle(date.content.title)} onChange={(v) => patch(date.id, { title: [[v]] } satisfies Partial<DateContent>)} />
+          {date.content.countdown && (
+            <MField
+              label="D-day (남은 일수)"
+              value={String(date.content.countdown.days)}
+              onChange={(v) => patch(date.id, { countdown: { ...date.content.countdown!, days: Math.max(0, Number(v) || 0) } })}
+            />
+          )}
+        </div>
+      )}
+      {schedule && (
+        <div className="m-group">
+          <h6>Schedule</h6>
+          <MField label="Eyebrow" value={schedule.content.eyebrow} onChange={(v) => patch(schedule.id, { eyebrow: v } satisfies Partial<ScheduleContent>)} />
+          <MField label="제목" value={plainTitle(schedule.content.title)} onChange={(v) => patch(schedule.id, { title: [[v]] } satisfies Partial<ScheduleContent>)} />
+          {schedule.content.items.map((it, i) => (
+            <div key={i} className="m-subitem">
+              <div className="m-subitem-head">
+                <span>#{i + 1}</span>
+                <button type="button" onClick={() => patch(schedule.id, { items: schedule.content.items.filter((_, j) => j !== i) })}>
+                  삭제
+                </button>
+              </div>
+              <MField label="시간" value={it.time} onChange={(v) => patch(schedule.id, { items: schedule.content.items.map((x, j) => (j === i ? { ...x, time: v } : x)) })} />
+              <MField label="제목" value={it.title} onChange={(v) => patch(schedule.id, { items: schedule.content.items.map((x, j) => (j === i ? { ...x, title: v } : x)) })} />
+              <MField label="설명" value={it.desc} onChange={(v) => patch(schedule.id, { items: schedule.content.items.map((x, j) => (j === i ? { ...x, desc: v } : x)) })} />
+            </div>
+          ))}
+          <button type="button" className="m-add" onClick={() => patch(schedule.id, { items: [...schedule.content.items, { time: "00:00", title: "새 일정", desc: "" }] })}>
+            + 일정 추가
+          </button>
+        </div>
+      )}
+      {gallery && (
+        <div className="m-group">
+          <h6>Gallery</h6>
+          <MField label="Eyebrow" value={gallery.content.eyebrow} onChange={(v) => patch(gallery.id, { eyebrow: v } satisfies Partial<GalleryContent>)} />
+          <MField label="제목" value={plainTitle(gallery.content.title)} onChange={(v) => patch(gallery.id, { title: [[v]] } satisfies Partial<GalleryContent>)} />
+          <p className="m-note">사진 {gallery.content.images.length}장 · 이미지 업로드는 곧 지원돼요.</p>
+        </div>
+      )}
+      {rsvp && (
+        <div className="m-group">
+          <h6>RSVP</h6>
+          <MField label="제목" value={plainTitle(rsvp.content.title)} onChange={(v) => patch(rsvp.id, { title: [[v]] } satisfies Partial<RsvpContent>)} />
+          <MField textarea label="안내 문구" value={linesToText(rsvp.content.body)} onChange={(v) => patch(rsvp.id, { body: textToLines(v) })} />
+          <MField textarea label="응답 옵션 (한 줄에 하나)" value={rsvp.content.options.join("\n")} onChange={(v) => patch(rsvp.id, { options: v.split("\n").filter((o) => o.trim().length > 0) })} />
         </div>
       )}
     </>

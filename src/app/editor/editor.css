@@ -346,3 +346,11 @@
   .insp-add:hover { border-color: var(--wax); color: var(--wax-deep); }
 }
 
+/* === Mobile inspector sub-item editor === */
+.editor-page {
+  .m-subitem { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 8px; background: var(--paper-2); }
+  .m-subitem-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+  .m-subitem-head button { background: none; border: none; color: var(--wax-deep); font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--font-ko); }
+  .m-add { width: 100%; padding: 10px; border: 1px dashed var(--line-strong); border-radius: 10px; background: var(--paper-2); color: var(--fg-2); font-family: var(--font-ko); font-size: 12px; font-weight: 700; cursor: pointer; }
+}
+
