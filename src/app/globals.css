@@ -7,3 +7,16 @@
 
 /* 초대쿵 design tokens — single source of truth (copied from design/assets/tokens.css) */
 @import "./tokens.css";
+
+/* Accessibility: honor the OS "reduce motion" setting app-wide (CLAUDE.md §4.4/§10).
+   Neutralizes mascot bounce, pulse dots, neon pulse, wizard/sheet transitions, etc. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
