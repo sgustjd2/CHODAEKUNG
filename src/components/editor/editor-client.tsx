@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { getInvitation } from "@/lib/invitation/samples";
-import type { AcceptContent, ChecklistContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
+import type { AcceptContent, ChecklistContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, Invitation, LanesContent, LocationContent, MessageContent, NoticeContent, QuoteContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -142,6 +142,9 @@ export function EditorClient() {
   const timeline = find("timeline");
   const checklist = find("checklist");
   const details = find("details");
+  const notice = find("notice");
+  const quote = find("quote");
+  const lanes = find("lanes");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -485,6 +488,49 @@ export function EditorClient() {
                     </button>
                   </div>
                 )}
+                {notice && (
+                  <div className="insp-group">
+                    <h5>Notice · 안내</h5>
+                    <Field label="Eyebrow" value={notice.content.eyebrow} onChange={(v) => patch(notice.id, { eyebrow: v } satisfies Partial<NoticeContent>)} />
+                    <Field label="제목" value={plainTitle(notice.content.title)} onChange={(v) => patch(notice.id, { title: [[v]] } satisfies Partial<NoticeContent>)} />
+                    {notice.content.items.map((it, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patch(notice.id, { items: notice.content.items.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="항목" value={it.t} onChange={(v) => patch(notice.id, { items: notice.content.items.map((x, j) => (j === i ? { ...x, t: v } : x)) })} />
+                        <Field label="설명" value={it.d} onChange={(v) => patch(notice.id, { items: notice.content.items.map((x, j) => (j === i ? { ...x, d: v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(notice.id, { items: [...notice.content.items, { icon: "ic-info", tone: "ink", t: "새 항목", d: "" }] })}>
+                      + 항목 추가
+                    </button>
+                  </div>
+                )}
+                {quote && (
+                  <div className="insp-group">
+                    <h5>Quote · 인용</h5>
+                    <Field label="문구" textarea value={linesToText(quote.content.text)} onChange={(v) => patch(quote.id, { text: textToLines(v) } satisfies Partial<QuoteContent>)} />
+                  </div>
+                )}
+                {lanes && (
+                  <div className="insp-group">
+                    <h5>Lanes · 라인업</h5>
+                    <Field label="Eyebrow" value={lanes.content.eyebrow} onChange={(v) => patch(lanes.id, { eyebrow: v } satisfies Partial<LanesContent>)} />
+                    <Field label="제목" value={plainTitle(lanes.content.title)} onChange={(v) => patch(lanes.id, { title: [[v]] } satisfies Partial<LanesContent>)} />
+                    {lanes.content.players.map((p, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>{p.laneLabel || `#${i + 1}`}</span>
+                        </div>
+                        <Field label="이름" value={p.name} onChange={(v) => patch(lanes.id, { players: lanes.content.players.map((x, j) => (j === i ? { ...x, name: v } : x)) })} />
+                        <Field label="소환사명" value={p.summoner} onChange={(v) => patch(lanes.id, { players: lanes.content.players.map((x, j) => (j === i ? { ...x, summoner: v } : x)) })} />
+                        <Field label="티어" value={p.tier} onChange={(v) => patch(lanes.id, { players: lanes.content.players.map((x, j) => (j === i ? { ...x, tier: v } : x)) })} />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {ending && (
                   <div className="insp-group">
                     <h5>Ending</h5>
@@ -492,7 +538,7 @@ export function EditorClient() {
                     <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && (
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>

@@ -441,3 +441,12 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Follow-up: menu/cost/route/dayPlan (timeline), matchInfo/roster (battle), gInfo/lanes/tierChart/
   champions (gaming), notice (cute), quote (editorial); + mobile parity for all editors added since
   the romantic set.
+
+### 2026-09-05 — Editor: notice/quote/lanes editors (desktop)
+
+- Scope: Desktop editors for notice (cute), quote (editorial), lanes (gaming 라인업). notice items
+  add/remove; lanes edits per-player name/summoner/tier.
+- Verified: `tsc` clean; lol-quick shows Lanes (editing a player name → "김프로" live); cozy-home shows
+  Notice; after-hours shows Quote (+ Details from the prior increment). Cleared test value.
+- Follow-up remaining: menu/cost/route/dayPlan (timeline), matchInfo/roster (battle),
+  gInfo/tierChart/champions (gaming); + mobile parity for all editors beyond the romantic set.
