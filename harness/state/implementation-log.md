@@ -153,3 +153,26 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   cost. beongae: cost split bold. All three `t-timeline`.
 - Follow-up required: yes — remaining viewers (cute/editorial/developer/gaming); real
   submission/persistence; countdown/day computation from dates.
+
+### 2026-09-05 — Desktop editor (screen 06), first cut
+
+- Scope: Implemented `/editor` — the 3-column authoring shell with a live preview.
+- PRD reference: §7.2 (editor/viewer separation), §8.1 (desktop editor). Genspark: `design/06_editor_desktop.html`.
+- Decisions:
+  - **Center preview renders the real `<InvitationViewer contained>`** over the editor's `draft`
+    invitation, instead of porting the mockup's inline preview markup — editing data or theme
+    re-renders through the same section registry (§7.2/§7.3). Added a `contained` prop to the viewer
+    (fills the device box, hides the fixed share pill).
+  - Section list is fully interactive: select (highlight), hide (editor-local Set → filtered from
+    preview), duplicate, delete, add (appends a message section), and HTML5 drag-reorder.
+  - Inspector Content edits cover/message/location (like the mockup's fixed groups) and writes
+    immutably into the draft → live preview. Rich `title` edits fall back to plain text (emphasis
+    lost) for now. Style tab: theme preset (Romantic/Minimal live re-theme — both support the same 8
+    section types; Editorial/Cute disabled), accent color via inline `--wax` override, cover-bg
+    swap. Layout/Animation are faithful stubs.
+  - This closes the create flow: landing → gallery → wizard → **editor** → viewer (wizard's
+    finish → `/editor` no longer 404s). Publish (`/publish`) still pending.
+- Verified: `tsc` clean; `/editor` renders 3 columns + 8 sections; typing Cover eyebrow updates the
+  live preview; switching theme Romantic→Minimal re-renders the same data (`.iv t-minimal`).
+- Follow-up required: yes — per-section-type Content editors bound to selection; real Layout/
+  Animation wiring; mobile editor (07); publish/share (08); persistence + autosave.

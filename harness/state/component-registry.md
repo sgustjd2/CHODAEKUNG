@@ -20,6 +20,7 @@ classes so fidelity stays with the approved tokens; reuse these before creating 
 | 03 gallery — category quick-nav | `src/components/templates/category-nav.tsx` | client; scroll-spy active state + smooth scroll (-80 offset) | done |
 | 03 gallery — custom event | `src/components/templates/custom-event.tsx` | client; banner + modal, name/mood/section inputs, live AI preview, create → `/new?event=` | done |
 | 05 wizard | `src/components/new/new-invitation-wizard.tsx` | client; 4-step stepper, 34-event grid, custom panel (icon/mood/preview), controlled basic-info form, template picker, dynamic summary, `?event=` prefill via `window.location` | done |
+| 06 desktop editor | `src/components/editor/editor-client.tsx` | client; 3-col shell, section list (select/hide/duplicate/delete/add/drag-reorder), **live preview via `<InvitationViewer contained>`**, Content(cover/message/location) + Style(theme preset re-theme, accent via `--wax`, cover bg) live; Layout/Animation stubbed | done (first cut) |
 
 ## Invitation viewer + section renderer (CLAUDE.md §7.3)
 

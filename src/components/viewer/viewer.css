@@ -25,6 +25,11 @@
   .iv-doc { max-width: 100%; box-shadow: none; }
 }
 
+/* Contained (editor preview): fill the host box, share pill sticks to that box */
+.iv.iv-contained { min-height: 100%; padding: 0; background: none; }
+.iv.iv-contained .iv-doc { max-width: 100%; box-shadow: none; }
+.iv.iv-contained .share-pill { display: none; }
+
 /* Sticky share pill (shared across themes) */
 .share-pill {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);

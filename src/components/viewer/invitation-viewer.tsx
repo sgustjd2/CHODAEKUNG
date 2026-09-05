@@ -3,11 +3,20 @@ import type { Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { Icon } from "@/components/ui/icon";
 
-/** Renders a published invitation from its structured data (sections[] + theme). */
-export function InvitationViewer({ invitation }: { invitation: Invitation }) {
+/**
+ * Renders a published invitation from its structured data (sections[] + theme).
+ * `contained` fits it inside a positioned box (editor preview) instead of the viewport.
+ */
+export function InvitationViewer({
+  invitation,
+  contained,
+}: {
+  invitation: Invitation;
+  contained?: boolean;
+}) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   return (
-    <div className={`iv t-${invitation.theme}`}>
+    <div className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}>
       <div className="iv-doc">
         {invitation.sections.map((s, i) => {
           const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }> | undefined;
