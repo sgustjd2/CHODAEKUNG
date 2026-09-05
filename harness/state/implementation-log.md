@@ -312,3 +312,34 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   output + `$` buttons, schedule table, hue-filtered ASCII gallery, `[✓]` RSVP + progress bar, share
   buttons, echo ending + colophon. Reset viewport after.
 - Follow-up required: yes — RSVP/actions are local-only stubs; wire share/copy/cal + RSVP to backend.
+
+### 2026-09-05 — Mobile editor (screen 07) + CSS keyframes bug fix
+
+- Scope: Implemented the mobile editor (bottom-sheet model) at `/editor`, sharing ONE state with the
+  desktop editor (CLAUDE.md §7.4: mobile must use bottom-sheet nav, not a shrunk desktop inspector).
+- PRD reference: §12 (editor), §7.4. Genspark: `design/07_editor_mobile.html`.
+- Decisions:
+  - `/editor` is now responsive: `EditorClient` owns all editing state/actions and renders BOTH
+    `.ed-desktop` (existing 3-col) and `<MobileEditor>` (`.ed-mobile`), toggled by a `@media
+    (max-width: 960px)` breakpoint. State is shared by passing an `EditorApi` bag to MobileEditor —
+    no duplicated reducer logic (§5/§14). Shared constants/helpers extracted to `editor-shared.ts`.
+  - Mobile layout: sticky top bar (back/title+saved/preview/publish) + live `<InvitationViewer
+    contained>` (flex:1 scroll) + 4 bottom tabs → bottom sheet with content/design/sections/anim
+    panels. Real phone frame chrome (notch/statusbar/home-indicator) dropped — in a real mobile
+    browser the app IS the screen.
+  - Verified live editing drives the shared draft: switching theme (Romantic↔Minimal) re-renders the
+    preview (`.iv t-minimal`), accent sets preview `--wax` (#F5D896), cover/sections/mode share the
+    same handlers. Sheet sub-tabs (Cover/Message/… , Theme/Color/…) are decorative jump pills as in
+    the mockup (its JS only toggles active, no filtering).
+- **Latent CSS bug found + fixed**: a `@keyframes` nested INSIDE a style rule makes Lightning CSS
+  drop that rule's *own* declarations (not just the keyframes). This silently dropped
+  `.editor-page { height:100vh; overflow:hidden }` (pulse-dot) — which broke the mobile fixed-height
+  shell — and the direct declarations of `.iv.t-cute`/`.iv.t-gaming`/`.iv.t-timeline` (c-bounce/
+  g-pulse/tl-pulse). Hoisted all these keyframes to top level. Also scoped the desktop editor's
+  tablet fallback `@media` to `(min-width:961px) and (max-width:1024px)` so it no longer fights the
+  mobile shell below 960px. Build now compiles the editor/viewer CSS without keyframes warnings.
+- Verified: `tsc` clean; `next build` succeeds (all routes); desktop editor unchanged (grid
+  `280px 1fr 320px`, overflow hidden); mobile editor renders at 375px with working sheet + live edits.
+- Follow-up required: yes — (1) `wizard.css` still has 2 nested `@keyframes` (wiz-fade-in,
+  cep-slide-in) with the same latent bug — spawned as a separate task. (2) Mobile Layout/Animation
+  timing controls are stubs; overlay slider is visual-only. (3) Save/publish still stubbed.

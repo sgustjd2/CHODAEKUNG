@@ -2,6 +2,11 @@
    Base (.iv / .iv-doc / .share-pill) is theme-agnostic; per-theme look lives under .iv.t-<theme>.
    Section renderers output semantic .iv-* classes; a theme styles them. */
 
+/* Keyframes must be top-level: a nested @keyframes makes Lightning CSS drop the parent rule. */
+@keyframes tl-pulse { 0%, 100% { box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px rgba(227,139,139,0.25); } 50% { box-shadow: 0 0 0 3px var(--paper), 0 0 0 10px rgba(227,139,139,0.1); } }
+@keyframes g-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes c-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
 .iv {
   min-height: 100vh;
   background: var(--paper-2);
@@ -390,9 +395,7 @@
   .tl-item { display: grid; grid-template-columns: 70px 1fr; gap: 14px; padding: 14px 0; position: relative; }
   .tl-item::before { content: ''; position: absolute; left: -20px; top: 22px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 3px solid var(--wax); box-shadow: 0 0 0 3px var(--paper); }
   .tl-item.done::before { background: var(--wax); }
-  .tl-item.now::before { background: var(--wax); border-color: var(--wax); box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px rgba(227,139,139,0.25); animation: tl-pulse 2s infinite; }
-  @keyframes tl-pulse { 0%, 100% { box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px rgba(227,139,139,0.25); } 50% { box-shadow: 0 0 0 3px var(--paper), 0 0 0 10px rgba(227,139,139,0.1); } }
-  .tl-time { font-family: var(--font-en); font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: var(--wax-deep); padding-top: 2px; }
+  .tl-item.now::before { background: var(--wax); border-color: var(--wax); box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px rgba(227,139,139,0.25); animation: tl-pulse 2s infinite; }  .tl-time { font-family: var(--font-en); font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: var(--wax-deep); padding-top: 2px; }
   .tl-time .u { font-size: 10px; letter-spacing: 0.16em; color: var(--muted); display: block; margin-top: 2px; font-weight: 700; }
   .tl-content .t { font-weight: 800; font-size: 15px; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 3px; }
   .tl-content .d { font-size: 13px; color: var(--fg-2); line-height: 1.55; }
@@ -502,9 +505,7 @@
   .g-cover > * { position: relative; z-index: 2; }
   .g-cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .g-tag { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-family: var(--font-en); font-size: 10px; font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; color: var(--paper); }
-  .g-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #E9D9F1; box-shadow: 0 0 8px rgba(233,217,241,0.8); animation: g-pulse 2s infinite; }
-  @keyframes g-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  .g-time-tag { text-align: right; font-family: var(--font-en); font-size: 11px; color: rgba(255,255,255,0.85); letter-spacing: 0.16em; font-weight: 700; }
+  .g-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #E9D9F1; box-shadow: 0 0 8px rgba(233,217,241,0.8); animation: g-pulse 2s infinite; }  .g-time-tag { text-align: right; font-family: var(--font-en); font-size: 11px; color: rgba(255,255,255,0.85); letter-spacing: 0.16em; font-weight: 700; }
   .g-cover-bot { text-align: center; }
   .g-eb { font-family: var(--font-en); font-size: 12px; font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #E9D9F1; margin-bottom: 14px; text-shadow: 0 0 20px rgba(233,217,241,0.6); }
   .g-title { font-weight: 900; font-size: 76px; letter-spacing: -0.04em; line-height: 0.9; color: var(--paper); text-shadow: 0 0 30px rgba(147,178,245,0.4), 0 4px 20px rgba(0,0,0,0.6); margin-bottom: 8px; }
@@ -607,9 +608,7 @@
 
   /* Cover */
   .c-cover { padding: 40px 32px 60px; text-align: center; background: radial-gradient(circle at 50% 30%, rgba(227,139,139,0.08), transparent 60%); position: relative; }
-  .c-momo { width: 180px; height: 220px; margin: 20px auto 24px; display: block; animation: c-bounce 2.5s ease-in-out infinite; }
-  @keyframes c-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-  .c-cover-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose-deep); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
+  .c-momo { width: 180px; height: 220px; margin: 20px auto 24px; display: block; animation: c-bounce 2.5s ease-in-out infinite; }  .c-cover-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose-deep); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
   .c-cover-eb::before, .c-cover-eb::after { content: '·'; opacity: 0.6; }
   .c-title-cute { font-family: var(--font-ko); font-weight: 800; font-size: 40px; letter-spacing: -0.035em; line-height: 1.05; color: var(--ink); margin-bottom: 12px; }
   .c-title-cute em { font-weight: 500; color: var(--rose); }

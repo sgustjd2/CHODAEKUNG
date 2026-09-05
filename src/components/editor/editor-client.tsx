@@ -8,45 +8,12 @@ import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
+import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
+import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import type { CoverContent, Invitation, Line, LocationContent, MessageContent, Section, SectionType, ThemeId } from "@/lib/invitation/types";
-
-const SECTION_META: Partial<Record<SectionType, { label: string; icon: string }>> = {
-  cover: { label: "커버", icon: "ic-cover" },
-  message: { label: "초대 문구", icon: "ic-message" },
-  date: { label: "날짜 · 시간", icon: "ic-clock" },
-  location: { label: "장소", icon: "ic-pin" },
-  gallery: { label: "갤러리", icon: "ic-grid" },
-  schedule: { label: "일정", icon: "ic-clock" },
-  rsvp: { label: "RSVP", icon: "ic-heart" },
-  ending: { label: "엔딩", icon: "ic-flower" },
-  details: { label: "상세", icon: "ic-info" },
-  timeline: { label: "타임라인", icon: "ic-clock" },
-  menu: { label: "메뉴", icon: "ic-food" },
-  checklist: { label: "체크리스트", icon: "ic-check" },
-  cost: { label: "비용", icon: "ic-info" },
-  route: { label: "이동 경로", icon: "ic-pin" },
-  dayPlan: { label: "일별 일정", icon: "ic-clock" },
-  versus: { label: "매치업", icon: "ic-swords" },
-  matchInfo: { label: "경기 정보", icon: "ic-info" },
-  countdown: { label: "카운트다운", icon: "ic-clock" },
-  rules: { label: "규칙", icon: "ic-info" },
-  roster: { label: "명단", icon: "ic-users" },
-  accept: { label: "참석 응답", icon: "ic-heart" },
-};
-const metaFor = (t: SectionType) => SECTION_META[t] ?? { label: t, icon: "ic-info" };
-
-const COVER_PHOTOS = ["romantic_wedding", "wedding_gallery_2", "hero_flatlay", "minimal_birthday"];
-const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "#2A2A3E"];
-const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [
-  { id: "romantic", label: "Romantic", enabled: true },
-  { id: "minimal", label: "Minimal", enabled: true },
-  { id: "editorial", label: "Editorial", enabled: false },
-  { id: "cute", label: "Cute", enabled: false },
-];
+import type { CoverContent, Invitation, LocationContent, MessageContent, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
-type Mode = "scroll" | "story" | "magazine";
 
 export function EditorClient() {
   const [draft, setDraft] = useState<Invitation>(() => structuredClone(romanticSample));
@@ -114,8 +81,31 @@ export function EditorClient() {
   const location = find("location");
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
 
+  const api: EditorApi = {
+    draft,
+    visibleDraft,
+    setDraft,
+    title,
+    selectedId,
+    setSelectedId,
+    mode,
+    setMode,
+    accent,
+    setAccent,
+    previewStyle,
+    patch,
+    addSection,
+    reorder,
+    dragIndex,
+    cover,
+    message,
+    location,
+    openPublish: () => setPubOpen(true),
+  };
+
   return (
     <div className="editor-page">
+      <div className="ed-desktop">
       {/* TOP BAR */}
       <div className="top">
         <div className="top-left">
@@ -334,6 +324,9 @@ export function EditorClient() {
           </div>
         </aside>
       </div>
+      </div>
+
+      <MobileEditor api={api} />
 
       <PublishDialog open={pubOpen} onClose={() => setPubOpen(false)} invitation={draft} title={title} />
     </div>
@@ -359,17 +352,4 @@ function StubPanel({ note }: { note: string }) {
       <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>{note}</p>
     </div>
   );
-}
-
-// --- Line[] <-> plain text helpers (edits lose emphasis; acceptable for the first cut) ---
-function linesToText(lines: Line[]): string {
-  return lines
-    .map((l) => (typeof l === "string" ? l : l.map((r) => (typeof r === "string" ? r : r.text)).join("")))
-    .join("\n");
-}
-function textToLines(text: string): string[] {
-  return text.split("\n");
-}
-function plainTitle(title: Line[]): string {
-  return linesToText(title).replace(/\n/g, " ");
 }
