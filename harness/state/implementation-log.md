@@ -557,3 +557,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   inputs wired, toggle → 회원가입. (Did NOT create a test account — user will do the real sign-up.)
 - Follow-up: Next 16 deprecates `middleware` → `proxy` file convention (still works; rename later).
   Slice 2: owner_id migration + RLS, publish sets owner, dashboard lists the user's invitations + logout.
+
+### 2026-09-05 — Logo spacing fix + remove pricing + wire landing nav
+
+- Logo (`#chodaekung-lockup` sprite): pushed "초대" right (x115→130) for breathing room from the MOMO
+  mascot, and pulled the 쿵 wax seal left (translate 285→272) so 초대쿵 reads as one wordmark; moved
+  the sparkle to follow.
+- Removed the pricing section + `plans` data + `#pricing` nav link (user isn't using pricing);
+  dropped "Pricing" from the footer Product column.
+- Wired landing navigation with next/link: logo→/, 로그인→/login, 무료로 만들기→/new (nav/hero/final),
+  템플릿 구경/전체 템플릿 보기→/templates. (Buttons → styled Links; Button import removed.)
+- Verified: `tsc` + `build` clean; logo renders with corrected spacing.

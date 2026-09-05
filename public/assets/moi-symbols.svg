@@ -322,15 +322,15 @@
     </g>
 
     <!-- "초대" text -->
-    <text x="115" y="92"
+    <text x="130" y="92"
           font-family="'Pretendard Variable', Pretendard, sans-serif"
           font-weight="900"
           font-size="72"
           letter-spacing="-5"
           fill="#1A1A2E">초대</text>
 
-    <!-- Wax seal with "쿵" — sized for impact, tilted -->
-    <g transform="translate(285, 24) rotate(-6 46 46)">
+    <!-- Wax seal with "쿵" — tucked right after 초대 so 초대쿵 reads as one word -->
+    <g transform="translate(272, 24) rotate(-6 46 46)">
       <!-- Irregular wax edge silhouette (like real pressed wax) -->
       <path d="M 46 4
                C 60 4, 72 8, 80 16
@@ -368,7 +368,7 @@
     </g>
 
     <!-- Small sparkle above seal -->
-    <path d="M 380 20 L 383 30 L 393 33 L 383 36 L 380 46 L 377 36 L 367 33 L 377 30 Z"
+    <path d="M 367 20 L 370 30 L 380 33 L 370 36 L 367 46 L 364 36 L 354 33 L 364 30 Z"
           fill="#F5D896" opacity="0.9"/>
   </symbol>
 

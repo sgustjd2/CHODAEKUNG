@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Seal } from "@/components/ui/seal";
 import { Icon } from "@/components/ui/icon";
@@ -49,48 +49,8 @@ const faqs: { q: string; a: string; open?: boolean }[] = [
   { q: "다른 사람이 만든 초대장을 살짝 바꿔서 쓸 수 있나요?", a: "본인이 만든 초대장은 언제든지 대시보드에서 \"복제하기\"로 새 초대장을 시작할 수 있어요. 곧 크리에이터 마켓을 통해 다른 사용자의 템플릿을 구매·활용하는 기능도 열릴 예정입니다." },
 ];
 
-const plans: {
-  name: string;
-  title: string;
-  price: string;
-  desc: string;
-  features: string[];
-  cta: string;
-  variant: "primary" | "wax" | "ghost" | "outline";
-  featured?: boolean;
-}[] = [
-  {
-    name: "Free",
-    title: "무료",
-    price: "₩0",
-    desc: "가볍게 하나 만들어보고 싶은 분에게.",
-    features: ["초대장 1개", "기본 템플릿 40종", "카카오톡 공유", "기본 RSVP", "초대쿵 워터마크"],
-    cta: "무료로 시작하기",
-    variant: "outline",
-  },
-  {
-    name: "Plus · 인기",
-    title: "플러스",
-    price: "₩7,900",
-    desc: "여러 모임을 정성껏 준비하는 분에게.",
-    features: ["초대장 무제한", "프리미엄 템플릿 전체 (80+)", "워터마크 제거", "RSVP 관리 · CSV 내보내기", "프리미엄 애니메이션", "방명록"],
-    cta: "플러스 시작하기",
-    variant: "wax",
-    featured: true,
-  },
-  {
-    name: "Pro · Creator",
-    title: "프로",
-    price: "₩19,900",
-    desc: "브랜드·크리에이터·소상공인을 위해.",
-    features: ["Plus 전체 포함", "커스텀 도메인 (yourname.moi)", "방문 통계 · 응답 분석", "템플릿 판매(마켓 참여)", "API 접근 · 워크스페이스", "우선 지원"],
-    cta: "프로 시작하기",
-    variant: "outline",
-  },
-];
-
 const footerCols: { title: string; links: string[] }[] = [
-  { title: "Product", links: ["템플릿", "에디터", "RSVP", "Pricing"] },
+  { title: "Product", links: ["템플릿", "에디터", "RSVP"] },
   { title: "Company", links: ["회사 소개", "블로그", "채용", "문의하기"] },
   { title: "Support", links: ["도움말", "개인정보 처리방침", "이용약관", "쿠키 정책"] },
 ];
@@ -101,18 +61,17 @@ export default function LandingPage() {
       {/* NAV */}
       <nav className="nav">
         <div className="nav-inner">
-          <a className="nav-logo" href="#">
+          <Link className="nav-logo" href="/">
             <Logo />
-          </a>
+          </Link>
           <div className="nav-links">
             <a href="#templates">템플릿</a>
             <a href="#how">이렇게 만들어요</a>
-            <a href="#pricing">요금제</a>
             <a href="#faq">FAQ</a>
           </div>
           <div className="nav-cta">
-            <Button variant="ghost" size="sm">로그인</Button>
-            <Button variant="primary" size="sm">무료로 만들기</Button>
+            <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
+            <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
           </div>
         </div>
       </nav>
@@ -134,8 +93,8 @@ export default function LandingPage() {
             바로 나누세요.
           </p>
           <div className="hero-actions">
-            <Button variant="primary" size="lg">무료로 만들기</Button>
-            <Button variant="ghost" size="lg">템플릿 구경하기 →</Button>
+            <Link className="btn btn-primary btn-lg" href="/new">무료로 만들기</Link>
+            <Link className="btn btn-ghost btn-lg" href="/templates">템플릿 구경하기 →</Link>
           </div>
           <div className="hero-meta">
             <div>
@@ -207,7 +166,7 @@ export default function LandingPage() {
             ))}
           </div>
           <div style={{ textAlign: "center", marginTop: 40 }}>
-            <Button variant="outline" size="lg">전체 템플릿 보기 →</Button>
+            <Link className="btn btn-outline btn-lg" href="/templates">전체 템플릿 보기 →</Link>
           </div>
         </div>
       </section>
@@ -349,43 +308,6 @@ export default function LandingPage() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing">
-        <div className="section-wrap">
-          <div className="sec-head">
-            <div className="sec-eyebrow">Pricing</div>
-            <h2 className="sec-title">
-              필요한 만큼만, <em>가볍게</em>
-            </h2>
-            <p className="sec-desc">
-              첫 초대장은 무료로 만들어보세요. 언제든 상위 플랜으로 업그레이드할 수
-              있습니다.
-            </p>
-          </div>
-          <div className="pricing-grid">
-            {plans.map((plan) => (
-              <div
-                className={`price-card${plan.featured ? " featured" : ""}`}
-                key={plan.title}
-              >
-                <div className="plan-name">{plan.name}</div>
-                <div className="plan-title">{plan.title}</div>
-                <div className="plan-price">
-                  {plan.price}
-                  <span className="u"> / month</span>
-                </div>
-                <div className="plan-desc">{plan.desc}</div>
-                <ul>
-                  {plan.features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <Button variant={plan.variant}>{plan.cta}</Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FINAL CTA */}
       <section style={{ textAlign: "center", padding: "120px 32px" }}>
         <div className="section-wrap">
@@ -400,7 +322,7 @@ export default function LandingPage() {
             시작하세요.
           </h2>
           <div style={{ marginTop: 40 }}>
-            <Button variant="primary" size="lg">무료로 만들기 →</Button>
+            <Link className="btn btn-primary btn-lg" href="/new">무료로 만들기 →</Link>
           </div>
         </div>
       </section>
