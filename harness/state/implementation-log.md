@@ -175,4 +175,24 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; `/editor` renders 3 columns + 8 sections; typing Cover eyebrow updates the
   live preview; switching theme Romantic→Minimal re-renders the same data (`.iv t-minimal`).
 - Follow-up required: yes — per-section-type Content editors bound to selection; real Layout/
-  Animation wiring; mobile editor (07); publish/share (08); persistence + autosave.
+  Animation wiring; mobile editor (07); persistence + autosave.
+
+### 2026-09-05 — Publish & Share dialog (screen 08)
+
+- Scope: Implemented the publish/share modal, opened from the editor's "발행 · 공유" button.
+- PRD reference: §15 (share), §17 (visibility). Genspark: `design/08_publish_share.html`.
+- Decisions:
+  - Built as a `PublishDialog` client component opened from the editor (the real flow) rather than a
+    standalone route. Styles live in `editor.css` under a `.pub-overlay` scope.
+  - OG / Kakao / QR previews are data-driven from the invitation (cover image, editor title, derived
+    date+location subtitle, slug). Visibility radios (Draft/Unlisted/Public) with state.
+  - Wired copy-link (`navigator.clipboard`) and OS share (`navigator.share` with copy fallback);
+    Kakao (needs SDK) and QR download are stubs for now.
+  - Closes the core loop: create → edit → **publish/share** → view. `/publish` route intentionally
+    not created (dialog is the product surface).
+- Verified: `tsc` clean; dialog opens from editor, renders visibility + OG card (title/desc/url from
+  data) + share grid; platform tabs (OG/Kakao/QR) and visibility select work; screenshot confirms
+  full render. (`getComputedStyle().opacity` reads 0 mid-transition via the tool but the modal is
+  visibly open — measurement artifact, not a bug.)
+- Follow-up required: yes — Kakao JS SDK + real OG route/metadata; QR PNG generation; persist
+  chosen visibility.

@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
+import { PublishDialog } from "@/components/editor/publish-dialog";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import type { CoverContent, Invitation, Line, LocationContent, MessageContent, Section, SectionType, ThemeId } from "@/lib/invitation/types";
 
@@ -56,6 +57,7 @@ export function EditorClient() {
   const [mode, setMode] = useState<Mode>("scroll");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [accent, setAccent] = useState<string | null>(null);
+  const [pubOpen, setPubOpen] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
@@ -143,7 +145,7 @@ export function EditorClient() {
             </button>
           </div>
           <Button variant="ghost" size="sm">미리보기</Button>
-          <Button variant="wax" size="sm">발행 · 공유 →</Button>
+          <Button variant="wax" size="sm" onClick={() => setPubOpen(true)}>발행 · 공유 →</Button>
         </div>
       </div>
 
@@ -332,6 +334,8 @@ export function EditorClient() {
           </div>
         </aside>
       </div>
+
+      <PublishDialog open={pubOpen} onClose={() => setPubOpen(false)} invitation={draft} title={title} />
     </div>
   );
 }
