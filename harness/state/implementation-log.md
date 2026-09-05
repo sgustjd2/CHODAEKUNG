@@ -377,3 +377,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; mobile 내용 sheet shows all 7 groups + 4 schedule item editors + add;
   editing a schedule item title reflects live in the mobile preview. Reset viewport after.
 - Follow-up required: gallery image upload/reorder; rich-text (em) editing; wire save/publish.
+
+### 2026-09-05 — Editor: Ending editing (desktop + mobile) — romantic fully editable
+
+- Scope: Added the Ending section editor (맺음말/서명) to both editors. With this, all 8 sections
+  of the romantic invitation (cover/message/date/location/gallery/schedule/rsvp/ending) are editable.
+- Decisions: `EndingContent` signature/names via `Field`/`MField` + `patch`; `ending` added to
+  `EditorApi` and the fallback "nothing editable" condition. Same shared-state pattern.
+- Verified: `tsc` clean; desktop Content tab shows all 8 groups, editing 맺음말 → "with love & joy,"
+  reflects live in preview; mobile 내용 sheet also lists all 8 groups incl. Ending. Reset viewport.
+- Note: git index had been corrupted by an interrupted commit; rebuilt via `rm .git/index && git reset`
+  (working tree preserved) before committing.
+- Follow-up: gallery image swap/upload; Layout/Animation config (needs viewer support); wire save/publish.

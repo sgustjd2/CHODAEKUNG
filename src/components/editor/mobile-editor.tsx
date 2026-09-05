@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "./editor-shared";
-import type { CoverContent, DateContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section } from "@/lib/invitation/types";
+import type { CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section } from "@/lib/invitation/types";
 
 /** Shared editor state/actions, owned by EditorClient and consumed by both layouts. */
 export type EditorApi = {
@@ -31,6 +31,7 @@ export type EditorApi = {
   gallery?: Extract<Section, { type: "gallery" }>;
   schedule?: Extract<Section, { type: "schedule" }>;
   rsvp?: Extract<Section, { type: "rsvp" }>;
+  ending?: Extract<Section, { type: "ending" }>;
   openPublish: () => void;
 };
 
@@ -119,7 +120,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
 }
 
 function ContentPanel({ api }: { api: EditorApi }) {
-  const { cover, message, location, date, schedule, gallery, rsvp, patch } = api;
+  const { cover, message, location, date, schedule, gallery, rsvp, ending, patch } = api;
   const names = cover?.content.names;
   return (
     <>
@@ -202,6 +203,13 @@ function ContentPanel({ api }: { api: EditorApi }) {
           <MField label="제목" value={plainTitle(rsvp.content.title)} onChange={(v) => patch(rsvp.id, { title: [[v]] } satisfies Partial<RsvpContent>)} />
           <MField textarea label="안내 문구" value={linesToText(rsvp.content.body)} onChange={(v) => patch(rsvp.id, { body: textToLines(v) })} />
           <MField textarea label="응답 옵션 (한 줄에 하나)" value={rsvp.content.options.join("\n")} onChange={(v) => patch(rsvp.id, { options: v.split("\n").filter((o) => o.trim().length > 0) })} />
+        </div>
+      )}
+      {ending && (
+        <div className="m-group">
+          <h6>Ending</h6>
+          <MField label="맺음말" value={ending.content.signature ?? ""} onChange={(v) => patch(ending.id, { signature: v } satisfies Partial<EndingContent>)} />
+          <MField label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
         </div>
       )}
     </>

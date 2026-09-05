@@ -11,7 +11,7 @@ import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import type { CoverContent, DateContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section, SectionType } from "@/lib/invitation/types";
+import type { CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -83,6 +83,7 @@ export function EditorClient() {
   const gallery = find("gallery");
   const schedule = find("schedule");
   const rsvp = find("rsvp");
+  const ending = find("ending");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -110,6 +111,7 @@ export function EditorClient() {
     gallery,
     schedule,
     rsvp,
+    ending,
     openPublish: () => setPubOpen(true),
   };
 
@@ -313,7 +315,14 @@ export function EditorClient() {
                     <Field label="응답 옵션 (한 줄에 하나)" textarea value={rsvp.content.options.join("\n")} onChange={(v) => patch(rsvp.id, { options: v.split("\n").filter((o) => o.trim().length > 0) })} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && (
+                {ending && (
+                  <div className="insp-group">
+                    <h5>Ending</h5>
+                    <Field label="맺음말" value={ending.content.signature ?? ""} onChange={(v) => patch(ending.id, { signature: v } satisfies Partial<EndingContent>)} />
+                    <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
+                  </div>
+                )}
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>
