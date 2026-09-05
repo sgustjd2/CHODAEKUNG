@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { getInvitation } from "@/lib/invitation/samples";
-import type { AcceptContent, ChecklistContent, CostContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, GInfoContent, Invitation, LanesContent, LocationContent, MessageContent, NoticeContent, QuoteContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TierChartContent, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
+import type { AcceptContent, ChecklistContent, CostContent, CountdownContent, CoverContent, DateContent, DayPlanContent, DetailsContent, EndingContent, GalleryContent, GInfoContent, Invitation, LanesContent, LocationContent, MenuContent, MessageContent, NoticeContent, QuoteContent, RosterContent, RouteContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TierChartContent, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -148,6 +148,10 @@ export function EditorClient() {
   const gInfo = find("gInfo");
   const tierChart = find("tierChart");
   const cost = find("cost");
+  const route = find("route");
+  const roster = find("roster");
+  const menu = find("menu");
+  const dayPlan = find("dayPlan");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -577,6 +581,105 @@ export function EditorClient() {
                     <Field label="분담 설명" value={plainTitle([cost.content.split])} onChange={(v) => patch(cost.id, { split: v } satisfies Partial<CostContent>)} />
                   </div>
                 )}
+                {route && (
+                  <div className="insp-group">
+                    <h5>Route · 이동 경로</h5>
+                    <Field label="Eyebrow" value={route.content.eyebrow} onChange={(v) => patch(route.id, { eyebrow: v } satisfies Partial<RouteContent>)} />
+                    <Field label="제목" value={plainTitle(route.content.title)} onChange={(v) => patch(route.id, { title: [[v]] } satisfies Partial<RouteContent>)} />
+                    {route.content.stops.map((s, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patch(route.id, { stops: route.content.stops.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="장소" value={s.title} onChange={(v) => patch(route.id, { stops: route.content.stops.map((x, j) => (j === i ? { ...x, title: v } : x)) })} />
+                        <Field label="설명" value={s.meta} onChange={(v) => patch(route.id, { stops: route.content.stops.map((x, j) => (j === i ? { ...x, meta: v } : x)) })} />
+                        <Field label="시간" value={s.time} onChange={(v) => patch(route.id, { stops: route.content.stops.map((x, j) => (j === i ? { ...x, time: v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(route.id, { stops: [...route.content.stops, { icon: "ic-pin", title: "새 경유지", meta: "", time: "" }] })}>+ 경유지 추가</button>
+                  </div>
+                )}
+                {roster && (
+                  <div className="insp-group">
+                    <h5>Roster · 명단</h5>
+                    {roster.content.groups.map((grp, gi) => (
+                      <div key={gi}>
+                        <Field
+                          label={`그룹 ${gi + 1} 이름`}
+                          value={grp.title}
+                          onChange={(v) => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, title: v } : g)) } satisfies Partial<RosterContent>)}
+                        />
+                        {grp.players.map((p, pi) => (
+                          <div key={pi} className="insp-subitem">
+                            <div className="insp-subitem-head">
+                              <span>#{pi + 1}</span>
+                              <button type="button" onClick={() => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: g.players.filter((_, k) => k !== pi) } : g)) })}>삭제</button>
+                            </div>
+                            <Field label="이름" value={p.name} onChange={(v) => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: g.players.map((x, k) => (k === pi ? { ...x, name: v } : x)) } : g)) })} />
+                            <Field label="역할" value={p.role} onChange={(v) => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: g.players.map((x, k) => (k === pi ? { ...x, role: v } : x)) } : g)) })} />
+                          </div>
+                        ))}
+                        <button type="button" className="insp-add" onClick={() => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: [...g.players, { num: String(g.players.length + 1), name: "새 인원", role: "" }] } : g)) })}>+ 인원 추가</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {menu && (
+                  <div className="insp-group">
+                    <h5>Menu · 메뉴</h5>
+                    <Field label="Eyebrow" value={menu.content.eyebrow} onChange={(v) => patch(menu.id, { eyebrow: v } satisfies Partial<MenuContent>)} />
+                    <Field label="제목" value={plainTitle(menu.content.title)} onChange={(v) => patch(menu.id, { title: [[v]] } satisfies Partial<MenuContent>)} />
+                    {menu.content.cards.map((card, ci) => (
+                      <div key={ci}>
+                        <Field
+                          label={`카드 ${ci + 1} 제목`}
+                          value={card.heading}
+                          onChange={(v) => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, heading: v } : c)) })}
+                        />
+                        {card.items.map((it, ii) => (
+                          <div key={ii} className="insp-subitem">
+                            <div className="insp-subitem-head">
+                              <span>#{ii + 1}</span>
+                              <button type="button" onClick={() => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: c.items.filter((_, k) => k !== ii) } : c)) })}>삭제</button>
+                            </div>
+                            <Field label="메뉴명" value={it.name} onChange={(v) => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: c.items.map((x, k) => (k === ii ? { ...x, name: v } : x)) } : c)) })} />
+                            <Field label="설명" value={it.meta} onChange={(v) => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: c.items.map((x, k) => (k === ii ? { ...x, meta: v } : x)) } : c)) })} />
+                          </div>
+                        ))}
+                        <button type="button" className="insp-add" onClick={() => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: [...c.items, { name: "새 메뉴", meta: "" }] } : c)) })}>+ 메뉴 추가</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {dayPlan && (
+                  <div className="insp-group">
+                    <h5>Day Plan · 일별 일정</h5>
+                    <Field label="Eyebrow" value={dayPlan.content.eyebrow} onChange={(v) => patch(dayPlan.id, { eyebrow: v } satisfies Partial<DayPlanContent>)} />
+                    <Field label="제목" value={plainTitle(dayPlan.content.title)} onChange={(v) => patch(dayPlan.id, { title: [[v]] } satisfies Partial<DayPlanContent>)} />
+                    {dayPlan.content.days.map((day, di) => (
+                      <div key={di}>
+                        <Field
+                          label={`일자 ${di + 1} 라벨`}
+                          value={day.label}
+                          onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, label: v } : d)) })}
+                        />
+                        {day.items.map((it, ii) => (
+                          <div key={ii} className="insp-subitem">
+                            <div className="insp-subitem-head">
+                              <span>#{ii + 1}</span>
+                              <button type="button" onClick={() => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: d.items.filter((_, k) => k !== ii) } : d)) })}>삭제</button>
+                            </div>
+                            <Field label="시간" value={it.time} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: d.items.map((x, k) => (k === ii ? { ...x, time: v } : x)) } : d)) })} />
+                            <Field label="제목" value={it.title} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: d.items.map((x, k) => (k === ii ? { ...x, title: v } : x)) } : d)) })} />
+                            <Field label="설명" value={it.desc} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: d.items.map((x, k) => (k === ii ? { ...x, desc: v } : x)) } : d)) })} />
+                          </div>
+                        ))}
+                        <button type="button" className="insp-add" onClick={() => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: [...d.items, { time: "00:00", title: "새 항목", desc: "" }] } : d)) })}>+ 항목 추가</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {ending && (
                   <div className="insp-group">
                     <h5>Ending</h5>
@@ -584,7 +687,7 @@ export function EditorClient() {
                     <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !cost && (
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !cost && !route && !roster && !menu && !dayPlan && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>

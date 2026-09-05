@@ -459,3 +459,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Remaining desktop editors: menu, route, dayPlan (timeline, nested), roster (battle, nested),
   matchInfo (battle, nested value parts), champions (gaming, emoji) — lower value / nested; + mobile
   parity for all editors beyond the romantic set.
+
+### 2026-09-05 — Editor: route/roster/menu/dayPlan editors (desktop section editing ~complete)
+
+- Scope: Desktop nested-list editors for route (MT 이동경로), roster (battle 명단, groups→players
+  w/ add·remove), menu (집들이 메뉴, cards→items w/ add·remove), dayPlan (MT 일별, days→items w/ add·remove).
+- Verified: `tsc` clean; yangyang-mt shows Route + Day Plan (editing a route stop → "양양 도착!" live);
+  jogi-battle shows Roster; jibdeuli shows Menu. Cleared test value.
+- Status: desktop Content editing now covers **every section type except** matchInfo (battle, nested
+  {k, v:[{t,u?}]} value parts — awkward as plain fields) and champions (gaming, emoji picker — low value).
+- Follow-up: those two remaining types; mobile ContentPanel parity for all editors beyond the romantic set.
