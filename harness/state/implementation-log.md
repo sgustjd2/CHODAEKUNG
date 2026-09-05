@@ -508,3 +508,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Next: publish Server Action + wire editor 발행 (create/edit → DB, store edit_token per slug in
   localStorage, return public URL); then RSVP submit (viewer) + host list (dashboard); then Storage
   (gallery upload); then Kakao auth. Pre-existing non-fatal warning: nested @keyframes in wizard.css.
+
+### 2026-09-05 — Backend: publish flow wired (editor → DB)
+
+- Scope: 발행 now persists. `publishInvitationAction` (server action) → `upsertInvitation`.
+- Decisions: new invitation (no editToken) → server mints a fresh unique slug (`inv-xxxx`) so it never
+  clobbers a sample/other row, inserts, returns {slug, editToken, url}. Editor stores editToken in
+  localStorage (`chodaekung:editor:token:<slug>`), switches its slug to the published one, so
+  re-publish updates the owned row. PublishDialog maps visibility (draft/unlisted/public→published),
+  shows real origin-based URL + status; copy/share use the live URL.
+- Verified: `tsc` + `npm run build` clean; in dev without keys, 발행하기 shows the graceful
+  "백엔드가 아직 설정되지 않았어요" status (no crash). Real persistence activates when keys are set.
+- Next: RSVP submit (viewer) + host list (dashboard).

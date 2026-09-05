@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { publishInvitationAction } from "@/lib/invitation/actions";
 import type { Invitation, Line } from "@/lib/invitation/types";
 
 function lineText(lines: Line[] | undefined): string {
@@ -36,37 +37,61 @@ export function PublishDialog({
   onClose,
   invitation,
   title,
+  editToken,
+  onPublished,
 }: {
   open: boolean;
   onClose: () => void;
   invitation: Invitation;
   title: string;
+  editToken?: string;
+  onPublished?: (r: { slug: string; editToken: string; url: string }) => void;
 }) {
   const [vis, setVis] = useState<"draft" | "unlisted" | "public">("unlisted");
   const [plat, setPlat] = useState<"og" | "kakao" | "qr">("og");
   const [copied, setCopied] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
+    setOrigin(window.location.origin);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const slug = invitation.slug;
+  const slug = publishedSlug ?? invitation.slug;
   const img = `/assets/photos/${coverImage(invitation)}.jpg`;
   const desc = ogDesc(invitation);
-  const fullUrl = `https://chodaekung.com/i/${slug}`;
+  const displayHost = (origin || "https://chodaekung.com").replace(/^https?:\/\//, "");
+  const shareUrl = `${origin || "https://chodaekung.com"}/i/${slug}`;
 
   const copy = () => {
-    navigator.clipboard?.writeText(fullUrl).catch(() => {});
+    navigator.clipboard?.writeText(shareUrl).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);
   };
   const nativeShare = () => {
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title, url: fullUrl }).catch(() => {});
+      navigator.share({ title, url: shareUrl }).catch(() => {});
     } else {
       copy();
+    }
+  };
+  const publish = async () => {
+    setBusy(true);
+    setMsg(null);
+    const visibility = vis === "public" ? "published" : vis === "unlisted" ? "unlisted" : "draft";
+    const res = await publishInvitationAction({ slug: invitation.slug, title, theme: invitation.theme, data: invitation, visibility, editToken });
+    setBusy(false);
+    if (res.ok) {
+      setPublishedSlug(res.slug);
+      setMsg({ ok: true, text: "발행됐어요! 아래 링크를 공유하세요." });
+      onPublished?.({ slug: res.slug, editToken: res.editToken, url: res.url });
+    } else {
+      setMsg({ ok: false, text: res.error });
     }
   };
 
@@ -112,7 +137,7 @@ export function PublishDialog({
                 <div className="og-title">{title}</div>
                 <div className="og-desc">{desc}</div>
                 <div className="og-url">
-                  <Icon name="moi-mark" viewBox="0 0 48 48" /> chodaekung.com/i/{slug}
+                  <Icon name="moi-mark" viewBox="0 0 48 48" /> {displayHost}/i/{slug}
                 </div>
               </div>
             </div>
@@ -150,7 +175,7 @@ export function PublishDialog({
                   </div>
                 </div>
                 <div className="qr-cap">스캔해서 초대장 열기</div>
-                <div className="qr-url">chodaekung.com/i/{slug}</div>
+                <div className="qr-url">{displayHost}/i/{slug}</div>
               </div>
             </div>
           )}
@@ -189,7 +214,7 @@ export function PublishDialog({
             <div className="r-title">초대장 링크</div>
             <div className="url-row">
               <div className="u">
-                chodaekung.com/i/<b>{slug}</b>
+                {displayHost}/i/<b>{slug}</b>
               </div>
               <button className={`btn-copy${copied ? " copied" : ""}`} onClick={copy}>
                 <Icon name="ic-copy" /> {copied ? "복사됨" : "복사"}
@@ -221,9 +246,27 @@ export function PublishDialog({
             </div>
           </div>
 
+          {msg && (
+            <div
+              role="status"
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                padding: "10px 12px",
+                borderRadius: 10,
+                marginBottom: 4,
+                color: msg.ok ? "var(--sage-deep)" : "var(--wax-deep)",
+                background: msg.ok ? "var(--sage-light)" : "var(--wax-tint)",
+              }}
+            >
+              {msg.text}
+            </div>
+          )}
           <div className="pub-foot">
-            <Button variant="ghost" style={{ flex: 1 }} onClick={onClose}>에디터로 돌아가기</Button>
-            <Button variant="wax" style={{ flex: 1.5 }} onClick={onClose}>발행하기 →</Button>
+            <Button variant="ghost" style={{ flex: 1 }} onClick={onClose}>{publishedSlug ? "닫기" : "에디터로 돌아가기"}</Button>
+            <Button variant="wax" style={{ flex: 1.5 }} onClick={publish} disabled={busy}>
+              {busy ? "발행 중…" : publishedSlug ? "다시 발행" : "발행하기 →"}
+            </Button>
           </div>
         </div>
       </div>

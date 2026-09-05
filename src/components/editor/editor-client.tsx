@@ -21,6 +21,7 @@ type Tab = "content" | "style" | "layout" | "anim";
 const STORAGE_KEY = "chodaekung:editor:v1";
 type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; accent?: string | null };
 const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
+const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
 /** A friendly default editor title for an invitation (cover names, else slug). */
 function defaultTitleFor(inv: Invitation): string {
@@ -41,6 +42,7 @@ export function EditorClient() {
   const [accent, setAccent] = useState<string | null>(null);
   const [pubOpen, setPubOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
+  const [editToken, setEditToken] = useState<string | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
@@ -61,6 +63,12 @@ export function EditorClient() {
       }
     } catch {
       /* private mode / corrupt value — fall back to the sample */
+    }
+    try {
+      const t = localStorage.getItem(tokenKeyFor(s));
+      if (t) setEditToken(t);
+    } catch {
+      /* ignore */
     }
     setDraft(d);
     setSelectedId(d.sections[0]?.id ?? "");
@@ -355,7 +363,22 @@ export function EditorClient() {
 
       <MobileEditor api={api} />
 
-      <PublishDialog open={pubOpen} onClose={() => setPubOpen(false)} invitation={draft} title={title} />
+      <PublishDialog
+        open={pubOpen}
+        onClose={() => setPubOpen(false)}
+        invitation={draft}
+        title={title}
+        editToken={editToken}
+        onPublished={(r) => {
+          setSlug(r.slug);
+          setEditToken(r.editToken);
+          try {
+            localStorage.setItem(tokenKeyFor(r.slug), r.editToken);
+          } catch {
+            /* ignore */
+          }
+        }}
+      />
     </div>
   );
 }
