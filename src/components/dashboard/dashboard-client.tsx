@@ -46,7 +46,7 @@ function toCard(inv: MyInvitation): Card {
     date: relDate(inv.updatedAt),
     time: "",
     dday: STATUS_LABEL[status],
-    analytics: [{ v: "—", l: "Views" }, { v: "—", l: "RSVP" }, { v: STATUS_LABEL[status], l: "상태" }],
+    analytics: [{ v: String(inv.views), l: "Views" }, { v: String(inv.rsvpCount), l: "RSVP" }, { v: STATUS_LABEL[status], l: "상태" }],
     actions: status === "draft" ? ["편집 계속", "미리보기", "발행"] : ["편집", "미리보기", "공유 →"],
   };
 }

@@ -600,3 +600,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   "2026. 05. 24 … · 성수 가든", absolute og:image. KakaoTalk link previews show the card.
 - Note: set NEXT_PUBLIC_SITE_URL=https://chodaekung.vercel.app on Vercel so OG image URLs point at the
   stable domain (not the per-deploy VERCEL_URL).
+
+### 2026-09-05 — Dashboard real view/RSVP counts
+
+- Migration 0003: `invitations.views` + `increment_views(slug)` RPC (security definer). `bumpViewAction`
+  (service role) is fired from `<ViewPing>` on the live viewer only (not the editor preview).
+- `listMyInvitations` now returns `views` + `rsvpCount` (rsvp rows counted per slug); resilient — if
+  the `views` column isn't there yet it falls back (views=0), so the dashboard never breaks pre-0003.
+  Dashboard cards show real Views/RSVP instead of "—".
+- Verified: `tsc` + `build` clean; viewer renders with ViewPing (RPC no-ops until 0003). Count display
+  is login-gated (dashboard) — verified by logic; user sees it after login.
+- Requires migration 0003 for view counts to accrue (RSVP counts work already).

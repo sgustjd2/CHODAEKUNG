@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { ShareBar } from "./share-bar";
+import { ViewPing } from "./view-ping";
 
 /** RSVP response options: from the rsvp section, else the accept CTA, else a sensible default. */
 function rsvpOptions(inv: Invitation): string[] {
@@ -35,6 +36,7 @@ export function InvitationViewer({
       </div>
 
       <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} />
+      {!contained && <ViewPing slug={invitation.slug} />}
     </div>
   );
 }

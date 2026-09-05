@@ -1,6 +1,7 @@
 "use server";
 
 import { upsertInvitation, submitRsvp, listRsvps, listMyInvitations, type Visibility } from "./store";
+import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
 
@@ -45,4 +46,14 @@ export async function submitRsvpAction(slug: string, entry: { name: string; resp
 /** Owner-only RSVP list (verifies the invitation's edit token). */
 export async function listRsvpsAction(slug: string, editToken: string) {
   return listRsvps(slug, editToken);
+}
+
+/** Count one view (fire-and-forget from the public viewer). No-op if unconfigured/pre-migration. */
+export async function bumpViewAction(slug: string) {
+  if (!isDbEnabled()) return;
+  try {
+    await getServiceClient().rpc("increment_views", { p_slug: slug });
+  } catch {
+    /* rpc missing (migration not run) — ignore */
+  }
 }

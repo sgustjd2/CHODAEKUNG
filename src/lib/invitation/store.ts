@@ -59,22 +59,44 @@ export async function upsertInvitation(rec: {
   return error || !created ? { ok: false, error: error?.message ?? "생성 실패" } : { ok: true, editToken: created.edit_token };
 }
 
-export type MyInvitation = { slug: string; title: string; theme: string; visibility: Visibility; img: string; updatedAt: string };
+export type MyInvitation = { slug: string; title: string; theme: string; visibility: Visibility; img: string; updatedAt: string; views: number; rsvpCount: number };
 
-/** Invitations owned by a user, newest first (for the dashboard). */
+/** Invitations owned by a user, newest first, with view + RSVP counts (for the dashboard). */
 export async function listMyInvitations(ownerId: string): Promise<MyInvitation[]> {
   if (!isDbEnabled()) return [];
-  const { data, error } = await getServiceClient()
-    .from("invitations")
-    .select("slug, title, theme, visibility, data, updated_at")
-    .eq("owner_id", ownerId)
-    .order("updated_at", { ascending: false });
-  if (error || !data) return [];
-  return data.map((r) => {
+  const db = getServiceClient();
+  type Row = { slug: string; title: string; theme: string; visibility: Visibility; data: Invitation; updated_at: string; views?: number };
+  // Try selecting `views`; fall back if the column isn't there yet (migration 0003 not run).
+  let rows: Row[] | null = null;
+  const a = await db.from("invitations").select("slug, title, theme, visibility, data, updated_at, views").eq("owner_id", ownerId).order("updated_at", { ascending: false });
+  if (!a.error) rows = a.data as unknown as Row[];
+  else {
+    const b = await db.from("invitations").select("slug, title, theme, visibility, data, updated_at").eq("owner_id", ownerId).order("updated_at", { ascending: false });
+    if (!b.error) rows = b.data as unknown as Row[];
+  }
+  if (!rows) return [];
+
+  const slugs = rows.map((r) => r.slug);
+  const rsvpCounts: Record<string, number> = {};
+  if (slugs.length) {
+    const { data: rs } = await db.from("rsvps").select("invitation_slug").in("invitation_slug", slugs);
+    for (const r of rs ?? []) rsvpCounts[r.invitation_slug] = (rsvpCounts[r.invitation_slug] ?? 0) + 1;
+  }
+
+  return rows.map((r) => {
     const inv = r.data as Invitation;
     const cover = inv?.sections?.find((s) => s.type === "cover");
     const img = cover && "image" in cover.content ? (cover.content.image as string) || "hero_flatlay" : "hero_flatlay";
-    return { slug: r.slug, title: r.title, theme: r.theme, visibility: r.visibility, img, updatedAt: r.updated_at };
+    return {
+      slug: r.slug,
+      title: r.title,
+      theme: r.theme,
+      visibility: r.visibility,
+      img,
+      updatedAt: r.updated_at,
+      views: r.views ?? 0,
+      rsvpCount: rsvpCounts[r.slug] ?? 0,
+    };
   });
 }
 
