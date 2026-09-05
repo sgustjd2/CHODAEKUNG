@@ -12,6 +12,20 @@ classes so fidelity stays with the approved tokens; reuse these before creating 
 | Icon (sprite) | moi-symbols.svg | `src/components/ui/icon.tsx` | any `#id` via `name` | `aria-hidden` | done |
 | Inline 쿵 seal | tokens.css `.seal-kung` | (plain `<span class="seal-kung">`) | rest/hover press | decorative | reused as-is |
 
+## Feature components
+
+| Design source | Code component | Notes | Status |
+|---|---|---|---|
+| 03 gallery — template card | `src/components/templates/template-card.tsx` | client; favorite toggle (heart fill/outline), optional img filter, badge free/pro/new | done |
+| 03 gallery — category quick-nav | `src/components/templates/category-nav.tsx` | client; scroll-spy active state + smooth scroll (-80 offset) | done |
+| 03 gallery — custom event | `src/components/templates/custom-event.tsx` | client; banner + modal, name/mood/section inputs, live AI preview, create → `/new?event=` | done |
+
+## Page-CSS scoping convention
+Each screen's ported CSS is wrapped under a unique root class via CSS nesting
+(`.landing { … }`, `.gallery { … }`) so global class names (`.nav`, `.head`, …) never
+collide across routes (Next App Router keeps visited routes' CSS in the document).
+The page's root element carries that class. Shared bits stay in tokens.css / primitives.
+
 ## Reused base classes (from tokens.css, not yet wrapped)
 `.chip`, `.card`, `.input`, `.input-label`, `.divider`, type classes (`.t-h1`…`.eyebrow`) — wrap into
 React primitives when the first screen that needs them is built.

@@ -18,7 +18,7 @@ Handoff notes: `design/README.md`. Bundle archive: `design_handoff_chodaekung.zi
 | Product area | Current approved source | Status |
 |---|---|---|
 | Landing | `design/02_landing.html` | ✅ implemented (`src/app/page.tsx` + `landing.css`) |
-| Template Gallery | `design/03_template_gallery.html` | pending |
+| Template Gallery | `design/03_template_gallery.html` | ✅ implemented (`src/app/templates/`) |
 | Dashboard | `design/04_dashboard.html` | pending |
 | New Invitation Wizard | `design/05_new_invitation_wizard.html` | pending |
 | Desktop Editor | `design/06_editor_desktop.html` | pending |

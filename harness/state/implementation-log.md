@@ -31,3 +31,22 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   pastel tokens, Pretendard, logo lockup, wax seal, float cards.
 - Follow-up required: yes — `next/image` migration; wrap remaining base classes as primitives;
   next screens (gallery/wizard/editor/viewers); decide `design_handoff_chodaekung.zip` tracking.
+
+### 2026-09-05 — Template Gallery (screen 03)
+
+- Scope: Implemented `/templates` — 8 category sections (35 template cards), quick-nav,
+  search/sort, custom-event banner + modal, bottom CTA.
+- PRD reference: §9 (template system / event categories), §1 (scope).
+- Genspark/design reference: `design/03_template_gallery.html`.
+- Decisions:
+  - **Page-CSS scoping**: landing.css and templates.css are each wrapped under a root class
+    (`.landing` / `.gallery`) via CSS nesting to stop global class collisions (`.nav`, `.head`)
+    across routes — Next App Router retains visited routes' global CSS. Verified nesting compiles
+    (Lightning CSS) incl. nested `@media`.
+  - Server/client split: page + cards structure render on the server; only interactive pieces are
+    client components (`TemplateCard` fav toggle, `CategoryNav` scroll-spy, `CustomEvent` modal).
+  - Custom-event "이 이벤트로 시작" and bottom CTA route to `/new?event=…` (wizard, screen 05,
+    not built yet — links 404 until then).
+- Verified: `tsc` clean; 8 sections / 35 cards / 8 nav pills render; head-title 60px/800; icons
+  from sprite; modal opens with reactive mood toggle + live AI preview (opacity→1, ink heading).
+- Follow-up required: yes — build wizard (`/new`) so gallery CTAs resolve.
