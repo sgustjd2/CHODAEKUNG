@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { getInvitation } from "@/lib/invitation/samples";
-import type { CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section, SectionType } from "@/lib/invitation/types";
+import type { AcceptContent, CountdownContent, CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, VersusContent } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -135,6 +135,10 @@ export function EditorClient() {
   const schedule = find("schedule");
   const rsvp = find("rsvp");
   const ending = find("ending");
+  const versus = find("versus");
+  const countdown = find("countdown");
+  const rules = find("rules");
+  const accept = find("accept");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -366,6 +370,57 @@ export function EditorClient() {
                     <Field label="응답 옵션 (한 줄에 하나)" textarea value={rsvp.content.options.join("\n")} onChange={(v) => patch(rsvp.id, { options: v.split("\n").filter((o) => o.trim().length > 0) })} />
                   </div>
                 )}
+                {versus && (
+                  <div className="insp-group">
+                    <h5>Versus · 매치업</h5>
+                    <Field label="홈팀 이름" value={versus.content.home.name} onChange={(v) => patch(versus.id, { home: { ...versus.content.home, name: v } } satisfies Partial<VersusContent>)} />
+                    <Field label="홈팀 설명" value={versus.content.home.meta} onChange={(v) => patch(versus.id, { home: { ...versus.content.home, meta: v } })} />
+                    <Field label="원정팀 이름" value={versus.content.away.name} onChange={(v) => patch(versus.id, { away: { ...versus.content.away, name: v } } satisfies Partial<VersusContent>)} />
+                    <Field label="원정팀 설명" value={versus.content.away.meta} onChange={(v) => patch(versus.id, { away: { ...versus.content.away, meta: v } })} />
+                  </div>
+                )}
+                {countdown && (
+                  <div className="insp-group">
+                    <h5>Countdown</h5>
+                    {countdown.content.cells.map((c, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>{c.l || `#${i + 1}`}</span>
+                        </div>
+                        <Field label="숫자" value={c.n} onChange={(v) => patch(countdown.id, { cells: countdown.content.cells.map((x, j) => (j === i ? { ...x, n: v } : x)) } satisfies Partial<CountdownContent>)} />
+                        <Field label="라벨" value={c.l} onChange={(v) => patch(countdown.id, { cells: countdown.content.cells.map((x, j) => (j === i ? { ...x, l: v } : x)) })} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {rules && (
+                  <div className="insp-group">
+                    <h5>Rules</h5>
+                    <Field label="제목" value={rules.content.title} onChange={(v) => patch(rules.id, { title: v } satisfies Partial<RulesContent>)} />
+                    {rules.content.rules.map((r, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patch(rules.id, { rules: rules.content.rules.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="항목" value={r.t} onChange={(v) => patch(rules.id, { rules: rules.content.rules.map((x, j) => (j === i ? { ...x, t: v } : x)) })} />
+                        <Field label="설명" value={r.d} onChange={(v) => patch(rules.id, { rules: rules.content.rules.map((x, j) => (j === i ? { ...x, d: v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(rules.id, { rules: [...rules.content.rules, { t: "새 규칙", d: "" }] })}>
+                      + 규칙 추가
+                    </button>
+                  </div>
+                )}
+                {accept && (
+                  <div className="insp-group">
+                    <h5>참석 응답 · CTA</h5>
+                    <Field label="제목" value={plainTitle(accept.content.title)} onChange={(v) => patch(accept.id, { title: [[v]] } satisfies Partial<AcceptContent>)} />
+                    <Field label="안내" value={accept.content.sub} onChange={(v) => patch(accept.id, { sub: v })} />
+                    <Field label="수락 버튼" value={accept.content.accept} onChange={(v) => patch(accept.id, { accept: v })} />
+                    <Field label="거절 버튼" value={accept.content.decline} onChange={(v) => patch(accept.id, { decline: v })} />
+                  </div>
+                )}
                 {ending && (
                   <div className="insp-group">
                     <h5>Ending</h5>
@@ -373,7 +428,7 @@ export function EditorClient() {
                     <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && (
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>

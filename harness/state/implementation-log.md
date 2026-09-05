@@ -418,3 +418,16 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; `/editor?slug=jogi-battle` → `iv t-battle`, 9 sections (커버/매치업/경기 정보/
   카운트다운/규칙/…); `/editor` (no slug) → `iv t-romantic`, title "지수 · 민준". Reset viewport.
 - Follow-up: editors for the remaining theme-specific section types; nicer default titles.
+
+### 2026-09-05 — Editor: versus/countdown/rules/accept editors (desktop)
+
+- Scope: Added desktop Content editors for the shared types countdown/rules/accept (help battle,
+  gaming AND timeline) plus battle-specific versus. Battle invitations are now substantially editable
+  (cover/location/versus/countdown/rules/accept/ending).
+- Decisions: same `find`/`patch`/`Field` pattern. versus edits home/away name+meta; countdown per-cell
+  n+l; rules title + per-rule t/d with add/remove; accept title/sub/accept/decline. Fallback condition
+  extended. Reuses `.insp-subitem`/`.insp-add`.
+- Verified: `tsc` clean; `/editor?slug=jogi-battle` Content tab shows Cover/Location/Versus/Countdown/
+  Rules/CTA/Ending; editing versus 홈팀 이름 → "우리동네 FC" live in preview. Cleared test value.
+- Follow-up: mirror these in mobile ContentPanel; matchInfo + roster editors; remaining theme types
+  (gInfo/lanes/tierChart/champions, timeline/menu/checklist/cost/route/dayPlan/details, notice, quote).
