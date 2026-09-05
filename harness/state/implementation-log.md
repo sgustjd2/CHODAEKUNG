@@ -568,3 +568,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Wired landing navigation with next/link: logo→/, 로그인→/login, 무료로 만들기→/new (nav/hero/final),
   템플릿 구경/전체 템플릿 보기→/templates. (Buttons → styled Links; Button import removed.)
 - Verified: `tsc` + `build` clean; logo renders with corrected spacing.
+
+### 2026-09-05 — Auth slice 2b: dashboard manages the user's own invitations
+
+- `/dashboard` is now login-gated (server: getCurrentUser → redirect /login if none) and lists the
+  signed-in user's invitations from DB (listMyInvitations → cards). Stats/tabs/counts derived from
+  real data; sidebar shows the user's name+email with a logout button (signOut → /login). RSVP nav
+  → /rsvp. Empty state for new accounts.
+- Verified: `tsc` + `build` clean (/dashboard now ƒ dynamic); unauthenticated `/dashboard` redirects
+  to `/login`. (Authed data path verified by logic + patterns; user will sign up to see live cards —
+  I don't create accounts.)
+- Note: card analytics show "—" placeholders (view/RSVP counts per card = future queries).
