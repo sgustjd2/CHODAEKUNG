@@ -21,12 +21,15 @@ function rsvpOptions(inv: Invitation): string[] {
 export function InvitationViewer({
   invitation,
   contained,
+  preview,
 }: {
   invitation: Invitation;
   contained?: boolean;
+  /** Full preview (new-tab, pre-publish): animations play, but no view-count ping or real RSVP write. */
+  preview?: boolean;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
-  // Reveal animation plays on the public page only; the editor preview (contained) stays static.
+  // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
   const reveal = invitation.reveal ?? "none";
   const animate = !contained && reveal !== "none";
   return (
@@ -51,8 +54,8 @@ export function InvitationViewer({
         })}
       </div>
 
-      <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} />
-      {!contained && <ViewPing slug={invitation.slug} />}
+      <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} preview={preview} />
+      {!contained && !preview && <ViewPing slug={invitation.slug} />}
     </div>
   );
 }

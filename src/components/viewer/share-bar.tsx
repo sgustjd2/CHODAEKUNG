@@ -8,7 +8,7 @@ import { submitRsvpAction } from "@/lib/invitation/actions";
  * Sticky share pill + a theme-agnostic RSVP form. The primary CTA (invitation.shareCta) opens the
  * form; one submit path works for every theme. Hidden in the editor preview via `.iv-contained`.
  */
-export function ShareBar({ slug, shareCta, options }: { slug: string; shareCta: string; options: string[] }) {
+export function ShareBar({ slug, shareCta, options, preview }: { slug: string; shareCta: string; options: string[]; preview?: boolean }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [resp, setResp] = useState(options[0] ?? "참석");
@@ -27,6 +27,10 @@ export function ShareBar({ slug, shareCta, options }: { slug: string; shareCta: 
     if (!name.trim()) {
       setErr("이름을 입력해주세요.");
       setState("error");
+      return;
+    }
+    if (preview) {
+      setState("done"); // preview only — don't write a real RSVP row
       return;
     }
     setState("sending");

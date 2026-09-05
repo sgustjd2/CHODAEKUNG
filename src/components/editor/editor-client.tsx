@@ -141,6 +141,16 @@ export function EditorClient() {
   const cover = find("cover"); // still needed for the Style tab (cover background + accent)
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
 
+  // Open the full pre-publish preview (new tab) — saves the draft, then reads it back in /preview.
+  const openPreview = () => {
+    try {
+      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+    } catch {
+      /* storage unavailable — preview may show a stale/empty draft */
+    }
+    window.open(`/preview?slug=${encodeURIComponent(slug)}`, "_blank", "noopener");
+  };
+
   const api: EditorApi = {
     draft,
     visibleDraft,
@@ -159,6 +169,7 @@ export function EditorClient() {
     dragIndex,
     cover,
     openPublish: () => setPubOpen(true),
+    openPreview,
   };
 
   return (
@@ -192,7 +203,7 @@ export function EditorClient() {
               Desktop
             </button>
           </div>
-          <Button variant="ghost" size="sm">미리보기</Button>
+          <Button variant="ghost" size="sm" onClick={openPreview}>미리보기</Button>
           <Button variant="wax" size="sm" onClick={() => setPubOpen(true)}>발행 · 공유 →</Button>
         </div>
       </div>

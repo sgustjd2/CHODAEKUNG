@@ -27,6 +27,7 @@ export type EditorApi = {
   dragIndex: { current: number | null };
   cover?: Extract<Section, { type: "cover" }>;
   openPublish: () => void;
+  openPreview: () => void;
 };
 
 type MTab = "content" | "design" | "sections" | "anim";
@@ -61,7 +62,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
             <span className="d" /> Saved
           </div>
         </div>
-        <button className="m-btn" type="button" aria-label="미리보기">
+        <button className="m-btn" type="button" aria-label="미리보기" onClick={api.openPreview}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
@@ -129,7 +130,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
   const [overlay, setOverlay] = useState(65);
   return (
     <>
-      <DecorTabs tabs={["Theme", "Color", "Cover", "Motion"]} />
+      <DecorTabs tabs={["Theme", "Color", "Font", "Cover"]} />
       <div className="m-group">
         <h6>Theme Preset</h6>
         <div className="m-radios">
@@ -181,24 +182,6 @@ function DesignPanel({ api }: { api: EditorApi }) {
           <input type="range" className="m-slider" min={0} max={100} value={overlay} onChange={(e) => setOverlay(+e.target.value)} />
         </div>
       </div>
-      <div className="m-group">
-        <h6>등장 애니메이션</h6>
-        <div className="m-radios">
-          {REVEALS.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              className={`m-radio${(draft.reveal ?? "none") === r.id ? " active" : ""}`}
-              onClick={() => setDraft((d) => ({ ...d, reveal: r.id }))}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
-        <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
-          발행된 초대장에서 스크롤 시 재생돼요. 기기의 &ldquo;동작 최소화&rdquo; 설정은 자동으로 존중해요.
-        </p>
-      </div>
     </>
   );
 }
@@ -244,7 +227,7 @@ function SectionsPanel({ api }: { api: EditorApi }) {
 }
 
 function AnimPanel({ api }: { api: EditorApi }) {
-  const { mode, setMode } = api;
+  const { mode, setMode, draft, setDraft } = api;
   return (
     <>
       <div className="m-group">
@@ -258,20 +241,23 @@ function AnimPanel({ api }: { api: EditorApi }) {
         </div>
       </div>
       <div className="m-group">
-        <h6>Reveal Animation</h6>
-        <StubRadios options={["None", "Fade Up", "Slide", "Zoom", "Blur", "Parallax"]} defaultIndex={1} />
-      </div>
-      <div className="m-group">
-        <div className="m-toggle-row">
-          <span>prefers-reduced-motion 준수</span>
-          <Toggle defaultOn />
+        <h6>등장 애니메이션</h6>
+        <div className="m-radios">
+          {REVEALS.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              className={`m-radio${(draft.reveal ?? "none") === r.id ? " active" : ""}`}
+              onClick={() => setDraft((d) => ({ ...d, reveal: r.id }))}
+            >
+              {r.label}
+            </button>
+          ))}
         </div>
-        <div className="m-toggle-row">
-          <span>배경 음악</span>
-          <Toggle />
-        </div>
+        <p className="m-note" style={{ marginTop: 8 }}>
+          발행된 초대장에서 스크롤 시 재생돼요(편집 미리보기는 정지). 기기의 “동작 최소화” 설정은 자동으로 존중해요.
+        </p>
       </div>
-      <p className="m-note">애니메이션 · 타이밍 세부 설정은 순차적으로 연결됩니다.</p>
     </>
   );
 }
@@ -319,21 +305,4 @@ function DecorTabs({ tabs }: { tabs: string[] }) {
   );
 }
 
-function StubRadios({ options, defaultIndex = 0 }: { options: string[]; defaultIndex?: number }) {
-  const [i, setI] = useState(defaultIndex);
-  return (
-    <div className="m-radios">
-      {options.map((o, idx) => (
-        <button key={o} type="button" className={`m-radio${i === idx ? " active" : ""}`} onClick={() => setI(idx)}>
-          {o}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function Toggle({ defaultOn }: { defaultOn?: boolean }) {
-  const [on, setOn] = useState(!!defaultOn);
-  return <button type="button" className={`m-toggle${on ? " on" : ""}`} role="switch" aria-checked={on} onClick={() => setOn((v) => !v)} />;
-}
 
