@@ -622,3 +622,12 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   appends the uploaded URL to gallery.images. Works in desktop + mobile editors.
 - Verified: `tsc` + `build` clean; gallery editor shows thumbs + upload input. Actual upload needs
   migration 0004 run (bucket). (Cover-photo upload can reuse the same mechanism later.)
+
+### 2026-09-05 — Editor: no auto-filled default values (user preference)
+
+- Per "기본값은 자동으로 넣지말아줘": adding items/sections no longer inserts placeholder text
+  (새 일정/새 규칙/새 항목/새 인원/새 메뉴/새 경유지/New Section). New rows/sections start with empty
+  strings (structural icon defaults like ic-info/ic-pin kept). Applies across schedule/timeline/
+  dayPlan/rules/checklist/details/gInfo/notice/route/roster/menu + addSection.
+- Sample invitations (templates) are left as-is. Open question surfaced to user: whether a brand-new
+  invitation should also start blank (no romantic sample) vs. as a template.

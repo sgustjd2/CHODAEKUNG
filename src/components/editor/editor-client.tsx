@@ -120,7 +120,7 @@ export function EditorClient() {
       const s: Section = {
         id: `message-${Date.now().toString(36)}`,
         type: "message",
-        content: { eyebrow: "New Section", title: [["새 섹션"]], body: ["여기에 내용을 입력하세요."] },
+        content: { eyebrow: "", title: [[""]], body: [""] },
       };
       return { ...d, sections: [...d.sections, s] };
     });

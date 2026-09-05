@@ -127,7 +127,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="설명" value={it.desc} onChange={(v) => patchScheduleItems(schedule.id, schedule.content.items.map((x, j) => (j === i ? { ...x, desc: v } : x)))} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patchScheduleItems(schedule.id, [...schedule.content.items, { time: "00:00", title: "새 일정", desc: "" }])}>
+          <button type="button" className="insp-add" onClick={() => patchScheduleItems(schedule.id, [...schedule.content.items, { time: "", title: "", desc: "" }])}>
             + 일정 추가
           </button>
         </div>
@@ -196,7 +196,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="설명" value={r.d} onChange={(v) => patch(rules.id, { rules: rules.content.rules.map((x, j) => (j === i ? { ...x, d: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(rules.id, { rules: [...rules.content.rules, { t: "새 규칙", d: "" }] })}>+ 규칙 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(rules.id, { rules: [...rules.content.rules, { t: "", d: "" }] })}>+ 규칙 추가</button>
         </div>
       )}
       {accept && (
@@ -224,7 +224,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="설명" value={it.desc} onChange={(v) => patch(timeline.id, { items: timeline.content.items.map((x, j) => (j === i ? { ...x, desc: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(timeline.id, { items: [...timeline.content.items, { time: "00:00", title: "새 항목", desc: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(timeline.id, { items: [...timeline.content.items, { time: "", title: "", desc: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {checklist && (
@@ -242,7 +242,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="담당" value={it.owner} onChange={(v) => patch(checklist.id, { items: checklist.content.items.map((x, j) => (j === i ? { ...x, owner: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(checklist.id, { items: [...checklist.content.items, { text: "새 항목", owner: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(checklist.id, { items: [...checklist.content.items, { text: "", owner: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {details && (
@@ -260,7 +260,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="값" value={kv.v} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(details.id, { info: [...details.content.info, { k: "항목", v: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(details.id, { info: [...details.content.info, { k: "", v: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {notice && (
@@ -278,7 +278,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="설명" value={it.d} onChange={(v) => patch(notice.id, { items: notice.content.items.map((x, j) => (j === i ? { ...x, d: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(notice.id, { items: [...notice.content.items, { icon: "ic-info", tone: "ink", t: "새 항목", d: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(notice.id, { items: [...notice.content.items, { icon: "ic-info", tone: "ink", t: "", d: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {quote && (
@@ -319,7 +319,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="값" value={c.v} onChange={(v) => patch(gInfo.id, { cells: gInfo.content.cells.map((x, j) => (j === i ? { ...x, v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(gInfo.id, { cells: [...gInfo.content.cells, { k: "항목", v: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(gInfo.id, { cells: [...gInfo.content.cells, { k: "", v: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {tierChart && (
@@ -363,7 +363,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               <Field label="시간" value={s.time} onChange={(v) => patch(route.id, { stops: route.content.stops.map((x, j) => (j === i ? { ...x, time: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(route.id, { stops: [...route.content.stops, { icon: "ic-pin", title: "새 경유지", meta: "", time: "" }] })}>+ 경유지 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(route.id, { stops: [...route.content.stops, { icon: "ic-pin", title: "", meta: "", time: "" }] })}>+ 경유지 추가</button>
         </div>
       )}
       {roster && (
@@ -386,7 +386,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
                   <Field label="역할" value={p.role} onChange={(v) => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: g.players.map((x, k) => (k === pi ? { ...x, role: v } : x)) } : g)) })} />
                 </div>
               ))}
-              <button type="button" className="insp-add" onClick={() => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: [...g.players, { num: String(g.players.length + 1), name: "새 인원", role: "" }] } : g)) })}>+ 인원 추가</button>
+              <button type="button" className="insp-add" onClick={() => patch(roster.id, { groups: roster.content.groups.map((g, j) => (j === gi ? { ...g, players: [...g.players, { num: String(g.players.length + 1), name: "", role: "" }] } : g)) })}>+ 인원 추가</button>
             </div>
           ))}
         </div>
@@ -409,7 +409,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
                   <Field label="설명" value={it.meta} onChange={(v) => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: c.items.map((x, k) => (k === ii ? { ...x, meta: v } : x)) } : c)) })} />
                 </div>
               ))}
-              <button type="button" className="insp-add" onClick={() => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: [...c.items, { name: "새 메뉴", meta: "" }] } : c)) })}>+ 메뉴 추가</button>
+              <button type="button" className="insp-add" onClick={() => patch(menu.id, { cards: menu.content.cards.map((c, j) => (j === ci ? { ...c, items: [...c.items, { name: "", meta: "" }] } : c)) })}>+ 메뉴 추가</button>
             </div>
           ))}
         </div>
@@ -433,7 +433,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
                   <Field label="설명" value={it.desc} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: d.items.map((x, k) => (k === ii ? { ...x, desc: v } : x)) } : d)) })} />
                 </div>
               ))}
-              <button type="button" className="insp-add" onClick={() => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: [...d.items, { time: "00:00", title: "새 항목", desc: "" }] } : d)) })}>+ 항목 추가</button>
+              <button type="button" className="insp-add" onClick={() => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, items: [...d.items, { time: "", title: "", desc: "" }] } : d)) })}>+ 항목 추가</button>
             </div>
           ))}
         </div>
