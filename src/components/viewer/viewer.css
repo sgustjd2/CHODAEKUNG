@@ -593,3 +593,87 @@
   .share-pill { background: rgba(20,16,30,0.9); border: 1px solid rgba(233,217,241,0.2); }
   .share-pill button.primary { background: linear-gradient(135deg, #E9D9F1 0%, #93B2F5 100%); color: var(--ink); }
 }
+
+/* ============================================================
+   THEME · CUTE (housewarming / birthday / baby, MOMO mascot)
+   ============================================================ */
+.iv.t-cute {
+  color: #4A4A5E;
+  font-family: var(--font-ko);
+  background: var(--paper-2);
+  background-image: none;
+
+  .iv-doc { background: linear-gradient(180deg, #FFF8EF 0%, #FEF6F4 50%, #FFF8EF 100%); }
+
+  /* Cover */
+  .c-cover { padding: 40px 32px 60px; text-align: center; background: radial-gradient(circle at 50% 30%, rgba(227,139,139,0.08), transparent 60%); position: relative; }
+  .c-momo { width: 180px; height: 220px; margin: 20px auto 24px; display: block; animation: c-bounce 2.5s ease-in-out infinite; }
+  @keyframes c-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .c-cover-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose-deep); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
+  .c-cover-eb::before, .c-cover-eb::after { content: '·'; opacity: 0.6; }
+  .c-title-cute { font-family: var(--font-ko); font-weight: 800; font-size: 40px; letter-spacing: -0.035em; line-height: 1.05; color: var(--ink); margin-bottom: 12px; }
+  .c-title-cute em { font-weight: 500; color: var(--rose); }
+  .c-cover-sub { font-size: 14px; color: var(--fg-2); line-height: 1.65; }
+  .c-cover::before { content: ''; position: absolute; top: 60px; left: 20px; width: 40px; height: 40px; border-radius: 50%; background: var(--butter); opacity: 0.35; }
+  .c-cover::after { content: ''; position: absolute; top: 200px; right: 24px; width: 24px; height: 24px; border-radius: 50%; background: var(--sage); opacity: 0.4; }
+
+  /* Rounded content card */
+  .c-card { background: var(--card); border-radius: 28px; padding: 28px 24px; margin: 8px 20px; box-shadow: 0 4px 20px rgba(42,42,62,0.06); text-align: center; position: relative; }
+  .c-card + .c-card { margin-top: 16px; }
+  .c-card-tint { background: var(--rose-tint); }
+  .c-eb { display: inline-block; padding: 5px 12px; background: rgba(227,139,139,0.12); color: var(--rose-deep); border-radius: 100px; font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 12px; }
+  .c-eb.sage { background: rgba(181,202,178,0.2); color: var(--sage-deep); }
+  .c-eb.lav { background: rgba(110,122,147,0.2); color: var(--lavender-deep); }
+  .c-eb.butter { background: rgba(245,216,150,0.25); color: var(--butter-deep); }
+  .c-title { font-family: var(--font-ko); font-size: 26px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); margin-bottom: 12px; }
+  .c-title em { font-weight: 500; color: var(--rose); }
+  .c-body { font-size: 13px; color: var(--fg-2); line-height: 1.8; }
+
+  /* Date pill + countdown */
+  .c-date-pill { background: var(--ink); color: var(--paper); border-radius: 100px; padding: 10px 20px; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-ko); font-size: 14px; font-weight: 700; margin-top: 8px; }
+  .c-date-pill .en { font-family: var(--font-en); font-weight: 800; }
+  .c-countdown { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+  .c-cd { background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(227,139,139,0.15); padding: 12px 8px; border-radius: 16px; min-width: 54px; }
+  .c-cd .n { font-family: var(--font-ko); font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--rose-deep); }
+  .c-cd .l { font-family: var(--font-en); font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* Photo + address */
+  .c-photo { width: 100%; aspect-ratio: 4/5; border-radius: 20px; object-fit: cover; margin-top: 16px; }
+  .c-addr { background: var(--paper-2); border-radius: 16px; padding: 16px; margin-top: 16px; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .c-addr .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--rose); color: var(--paper); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .c-addr .t { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 2px; color: var(--ink); }
+  .c-addr .a { font-size: 11.5px; color: var(--muted); }
+  .c-loc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .c-loc-btn { padding: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; font-family: var(--font-ko); font-size: 12px; font-weight: 700; white-space: nowrap; color: var(--ink); cursor: pointer; }
+  .c-loc-btn.primary { background: var(--rose); color: var(--paper); border-color: transparent; }
+
+  /* Notice list */
+  .c-notice { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; text-align: left; }
+  .c-notice-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; background: var(--paper-2); border-radius: 14px; }
+  .c-notice-item .emoji { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-xs); }
+  .c-notice-item .emoji.tone-ink { color: var(--ink); }
+  .c-notice-item .emoji.tone-rose { color: var(--rose-deep); }
+  .c-notice-item .emoji.tone-sage { color: var(--sage-deep); }
+  .c-notice-item .emoji.tone-lav { color: var(--lavender-deep); }
+  .c-notice-item .t { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 2px; color: var(--ink); }
+  .c-notice-item .d { font-size: 11.5px; color: var(--fg-3); line-height: 1.5; }
+
+  /* Gallery */
+  .c-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 16px; }
+  .c-gallery img { aspect-ratio: 1; object-fit: cover; border-radius: 12px; width: 100%; }
+
+  /* RSVP */
+  .c-rsvp-btns { display: flex; gap: 8px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+  .c-rsvp-btn { padding: 12px 20px; border: 1.5px solid var(--rose-soft); border-radius: 100px; font-family: var(--font-ko); font-size: 13px; font-weight: 800; color: var(--rose-deep); background: var(--card); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .c-rsvp-btn.selected { background: var(--rose); color: var(--paper); border-color: transparent; box-shadow: var(--shadow-rose); }
+  .c-heart-sm { fill: currentColor; stroke: none; }
+
+  /* Ending */
+  .c-ending { padding: 60px 32px 120px; text-align: center; }
+  .c-ending-momo { width: 100px; height: 120px; margin: 0 auto 16px; display: block; }
+  .c-ending .say { font-weight: 700; font-size: 26px; color: var(--rose); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+  .c-ending .say .c-heart { width: 20px; height: 20px; color: var(--rose); fill: currentColor; stroke: none; }
+  .c-ending .from { font-family: var(--font-ko); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .c-ending .brand-tiny { margin-top: 40px; font-family: var(--font-en); font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .c-ending .brand-tiny svg { width: 16px; height: 16px; }
+}

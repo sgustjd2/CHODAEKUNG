@@ -48,6 +48,8 @@ export type CoverContent = {
   bg?: "hw" | "fl" | "mt";
   /** CSS filter for the cover photo (gaming scenario tints). */
   imgFilter?: string;
+  /** Mascot sprite id shown on the cover (cute: momo-party). */
+  mascot?: string;
 };
 
 export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
@@ -64,6 +66,8 @@ export type DateContent = {
   bigDate?: [string, string];
   /** Editorial key/value grid (minimal); `en` renders in the latin/numeric face. */
   dataGrid?: { k: string; en?: string; v?: string }[];
+  /** Dark date pill (cute), e.g. {en:"D-42", text:"· 남았어요"}. */
+  pill?: { en: string; text: string };
   tint?: boolean;
 };
 
@@ -73,6 +77,10 @@ export type LocationContent = {
   body: Line[];
   flourishIcon?: string;
   mapButtons: { label: string; primary?: boolean }[];
+  /** Cover/detail photo shown above the address (cute). */
+  photo?: string;
+  /** Structured address block (cute): title line + detail line. */
+  address?: { t: string; a: string };
   tint?: boolean;
 };
 
@@ -160,6 +168,13 @@ export type DayPlanContent = {
   days: { label: string; en: string; items: TimelineItem[] }[];
 };
 
+/* ---- Cute (housewarming/birthday/baby) section content ---- */
+export type NoticeContent = {
+  eyebrow: string;
+  title: Line[];
+  items: { icon: string; tone?: "ink" | "rose" | "sage" | "lav"; t: string; d: string }[];
+};
+
 /* ---- Gaming (LoL party) section content ---- */
 export type GInfoContent = { eyebrow: string; title: Line[]; cells: Kv[] };
 export type Lane = "top" | "jgl" | "mid" | "adc" | "sup";
@@ -226,6 +241,7 @@ export type Section =
   | { id: string; type: "lanes"; content: LanesContent }
   | { id: string; type: "tierChart"; content: TierChartContent }
   | { id: string; type: "champions"; content: ChampionsContent }
+  | { id: string; type: "notice"; content: NoticeContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

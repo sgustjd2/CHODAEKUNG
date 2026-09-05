@@ -242,3 +242,26 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   scenario, roster open slots, tier chart 7-col, champion pool picked-glow, gradient CTA). Earlier
   console errors were stale HMR buffer (globals.css imports are at top; tsc confirms TS clean).
 - Follow-up required: yes — join-slot interaction is visual-only in the mockup; wire to RSVP later.
+
+### 2026-09-05 — Cute viewer (screen 12, MOMO 집들이)
+
+- Scope: Implemented the Cute theme at `/i/[slug]` — warm pastel housewarming with the MOMO mascot.
+- PRD reference: §2 (birthday/housewarming/baby everyday-celebration scope). Genspark:
+  `design/12_viewer_cute.html`.
+- Decisions:
+  - New theme `cute` (pastel gradient doc, rounded 20–28px cards, bounce-animated MOMO mascot).
+    Added 1 section type **notice** (icon+title+desc list w/ per-item tone). Reused
+    cover/date/location/gallery/rsvp/ending by extending content: cover `mascot`, date `pill`,
+    location `photo`+`address`.
+  - `CCard` shell (colored eyebrow pill + heading + body). Eyebrow color is theme styling, so it's
+    fixed per cute renderer (date=butter, location/gallery=sage, notice=lav, rsvp=rose) rather than a
+    data field — add a content field only if a sample needs to override.
+  - Mascot is a defining feature (per-invitation), so kept as data (`cover.mascot`, default
+    momo-party); ending mascot momo-card is constant → hardcoded in `CuteEnding`.
+  - Share pill reuses the theme-agnostic base (already dark + `--wax` primary = mockup spec).
+  - 1 sample `sample-cute.ts` (cozy-home) — mockup has a single scenario.
+- Verified: `tsc` clean; `/i/cozy-home` renders cover (mascot/floating shapes/rose-em title/butter
+  pill/D-42), location (photo+address+buttons), notice (4 toned icons), 3-col gallery, tinted RSVP
+  (갈게요 selected+heart, click switches), MOMO ending. Reset viewport after.
+- Follow-up required: yes — more cute samples (birthday/baby/돌잔치) + a birthday mascot variant;
+  RSVP selection is local-only (wire to backend later).

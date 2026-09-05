@@ -38,6 +38,7 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Theme registry | `src/components/viewer/section-registry.ts` | **theme → (type → renderer)**; per-theme renderer sets |
 | Romantic renderers | `src/components/viewer/sections/*.tsx` | cover, message, date(+calendar/countdown), location, gallery, schedule, rsvp (client), ending |
 | Minimal renderers | `src/components/viewer/sections/minimal/*.tsx` | own 8 renderers + numbered `MinimalHead` (structural, not a recolor) |
+| Cute renderers | `src/components/viewer/sections/cute/*.tsx` | warm pastel MOMO-mascot theme; adds type **notice**; reuses cover(mascot)/date(pill)/location(photo+address)/gallery/rsvp/ending; `CCard` shell w/ colored eyebrow pill (rose/sage/lav/butter) |
 | Battle renderers | `src/components/viewer/sections/battle/*.tsx` | dark theme; adds section types **versus, matchInfo, countdown, rules, roster, accept** + battle cover/location/ending |
 | Timeline renderers | `src/components/viewer/sections/timeline/*.tsx` | pastel schedule theme; adds types **details, timeline, menu, checklist, cost, route, dayPlan** (+ cover/location/cta(accept)/ending); checklist + MT day-tab interactivity |
 | Gaming renderers | `src/components/viewer/sections/gaming/*.tsx` | dark + neon-pastel LoL-party theme; adds types **gInfo, lanes, tierChart, champions** + reuses cover(imgFilter tint)/countdown/rules/accept(client CTA)/ending; `GSection` shell |
@@ -45,6 +46,7 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Viewer shell | `src/components/viewer/invitation-viewer.tsx` | picks `themeRegistry[theme]`, passes `index`; themed root + fixed share pill |
 | Theme: romantic | `viewer.css` `.iv.t-romantic` | serif, rose, calendar+countdown |
 | Theme: minimal | `viewer.css` `.iv.t-minimal` | swiss editorial grid, B/W contrast, data grid + block rsvp |
+| Theme: cute | `viewer.css` `.iv.t-cute` | warm pastel gradient, rounded cards, MOMO mascot (bounce), colored eyebrow pills, date pill+countdown, notice list, 3-col gallery, tinted RSVP; sample cozy-home (housewarming) |
 | Theme: battle | `viewer.css` `.iv.t-battle` | dark; VS matchup, match info grid, countdown, rules+prize, roster, accept/decline CTA, stamp ending |
 | Theme: timeline | `viewer.css` `.iv.t-timeline` | pastel; timeline (done/now), menu cards, checklist, cost split, MT route + day tabs; 3 scenario samples 집들이/번개/MT |
 | Theme: gaming | `viewer.css` `.iv.t-gaming` | dark #14101E + neon pastel; hero cover w/ hue-filter tint, lane roster (open slots + tier badges), tier chart, champion pool, gradient CTA; 3 samples 빠대/내전/랭크 (lol-quick/scrim/rank) |
