@@ -10,7 +10,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
@@ -334,7 +334,26 @@ export function EditorClient() {
             )}
 
             {tab === "layout" && <StubPanel note="레이아웃 컨트롤(높이·패딩·정렬·라운드)은 곧 연결됩니다." />}
-            {tab === "anim" && <StubPanel note="애니메이션(Fade Up·Slide·Zoom·Blur·Parallax)은 곧 연결됩니다." />}
+            {tab === "anim" && (
+              <div className="insp-group">
+                <h5>등장 애니메이션</h5>
+                <div className="radio-group">
+                  {REVEALS.map((r) => (
+                    <button
+                      key={r.id}
+                      className={`radio-btn${(draft.reveal ?? "none") === r.id ? " active" : ""}`}
+                      onClick={() => setDraft((d) => ({ ...d, reveal: r.id }))}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+                <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                  스크롤하며 섹션이 나타날 때 재생돼요. 발행된 초대장에서 확인할 수 있어요(편집 미리보기는 정지 상태).
+                  기기에서 &ldquo;동작 최소화&rdquo;를 켜면 자동으로 꺼져요.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="foot">

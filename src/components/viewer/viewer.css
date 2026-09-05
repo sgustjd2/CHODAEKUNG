@@ -30,6 +30,19 @@
   .iv-doc { max-width: 100%; box-shadow: none; }
 }
 
+/* Section reveal-on-scroll (public viewer; set via invitation.reveal) */
+.iv-reveal { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease; }
+.iv-rv-fade { opacity: 0; }
+.iv-rv-fade-up { opacity: 0; transform: translateY(26px); }
+.iv-rv-slide { opacity: 0; transform: translateX(-30px); }
+.iv-rv-zoom { opacity: 0; transform: scale(0.92); }
+.iv-rv-blur { opacity: 0; filter: blur(12px); }
+.iv-rv-scale { opacity: 0; transform: scale(1.06); }
+.iv-reveal.in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) {
+  .iv-reveal { transition: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+}
+
 /* Contained (editor preview): fill the host box, share pill sticks to that box */
 .iv.iv-contained { min-height: 100%; padding: 0; background: none; }
 .iv.iv-contained .iv-doc { max-width: 100%; box-shadow: none; }

@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import type { Invitation, Section } from "@/lib/invitation/types";
 
 /** Shared editor state/actions, owned by EditorClient and consumed by both layouts. */
@@ -129,7 +129,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
   const [overlay, setOverlay] = useState(65);
   return (
     <>
-      <DecorTabs tabs={["Theme", "Color", "Font", "Cover"]} />
+      <DecorTabs tabs={["Theme", "Color", "Cover", "Motion"]} />
       <div className="m-group">
         <h6>Theme Preset</h6>
         <div className="m-radios">
@@ -180,6 +180,24 @@ function DesignPanel({ api }: { api: EditorApi }) {
           </div>
           <input type="range" className="m-slider" min={0} max={100} value={overlay} onChange={(e) => setOverlay(+e.target.value)} />
         </div>
+      </div>
+      <div className="m-group">
+        <h6>등장 애니메이션</h6>
+        <div className="m-radios">
+          {REVEALS.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              className={`m-radio${(draft.reveal ?? "none") === r.id ? " active" : ""}`}
+              onClick={() => setDraft((d) => ({ ...d, reveal: r.id }))}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+        <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+          발행된 초대장에서 스크롤 시 재생돼요. 기기의 &ldquo;동작 최소화&rdquo; 설정은 자동으로 존중해요.
+        </p>
       </div>
     </>
   );

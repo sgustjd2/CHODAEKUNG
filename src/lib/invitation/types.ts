@@ -293,10 +293,15 @@ export type Section =
 
 export type SectionType = Section["type"];
 
+/** Section reveal-on-scroll animation for the public viewer (CLAUDE.md §4.4). */
+export type RevealAnim = "none" | "fade" | "fade-up" | "slide" | "zoom" | "blur" | "scale";
+
 export type Invitation = {
   slug: string;
   theme: ThemeId;
   /** Used for share/OG and the share-pill CTA. */
   shareCta: string;
+  /** Reveal animation played as each section scrolls into view (public page only). */
+  reveal?: RevealAnim;
   sections: Section[];
 };

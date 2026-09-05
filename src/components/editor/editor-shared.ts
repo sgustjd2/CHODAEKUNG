@@ -1,4 +1,4 @@
-import type { Line, SectionType, ThemeId } from "@/lib/invitation/types";
+import type { Line, RevealAnim, SectionType, ThemeId } from "@/lib/invitation/types";
 
 /** Shared editor constants + helpers used by both the desktop and mobile layouts. */
 
@@ -40,6 +40,16 @@ export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] =
   { id: "minimal", label: "Minimal", enabled: true },
   { id: "editorial", label: "Editorial", enabled: false },
   { id: "cute", label: "Cute", enabled: false },
+];
+
+export const REVEALS: { id: RevealAnim; label: string }[] = [
+  { id: "none", label: "없음" },
+  { id: "fade", label: "Fade" },
+  { id: "fade-up", label: "Fade Up" },
+  { id: "slide", label: "Slide" },
+  { id: "zoom", label: "Zoom" },
+  { id: "blur", label: "Blur Reveal" },
+  { id: "scale", label: "Scale Reveal" },
 ];
 
 export type Mode = "scroll" | "story" | "magazine";
