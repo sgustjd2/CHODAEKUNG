@@ -84,7 +84,8 @@ export function PublishDialog({
     setBusy(true);
     setMsg(null);
     const visibility = vis === "public" ? "published" : vis === "unlisted" ? "unlisted" : "draft";
-    const res = await publishInvitationAction({ slug: invitation.slug, title, theme: invitation.theme, data: invitation, visibility, editToken });
+    // Re-publish targets the already-created slug (with its token), never the draft/sample slug.
+    const res = await publishInvitationAction({ slug: publishedSlug ?? invitation.slug, title, theme: invitation.theme, data: invitation, visibility, editToken });
     setBusy(false);
     if (res.ok) {
       setPublishedSlug(res.slug);

@@ -579,3 +579,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   to `/login`. (Authed data path verified by logic + patterns; user will sign up to see live cards —
   I don't create accounts.)
 - Note: card analytics show "—" placeholders (view/RSVP counts per card = future queries).
+
+### 2026-09-05 — Live on Vercel verified + re-publish fix
+
+- Verified https://chodaekung.vercel.app live: landing (logo/nav/no-pricing), anonymous publish →
+  DB row (inv-wzry1x5b), `/i/<slug>` renders from DB, RSVP submit works. Env + DB + migration 0002
+  all live on Vercel; auto-deploy from GitHub push confirmed.
+- Bug fixed: re-publish used the draft/sample slug + a now-set editToken, creating a duplicate row
+  (and a stray `jisoo-minjun` DB row). PublishDialog now re-publishes against `publishedSlug ??
+  invitation.slug`, so re-publish updates the created row. (User can delete the stray test rows
+  inv-*/jisoo-minjun in Supabase Table Editor.)
+- Auth sign-up/dashboard live path is the user's to verify (I don't create accounts/enter passwords).
