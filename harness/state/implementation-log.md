@@ -450,3 +450,12 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   Notice; after-hours shows Quote (+ Details from the prior increment). Cleared test value.
 - Follow-up remaining: menu/cost/route/dayPlan (timeline), matchInfo/roster (battle),
   gInfo/tierChart/champions (gaming); + mobile parity for all editors beyond the romantic set.
+
+### 2026-09-05 — Editor: gInfo/tierChart/cost editors (desktop)
+
+- Scope: Desktop editors for gInfo (gaming 매치 정보, cells add/remove), tierChart (gaming 티어 분포),
+  cost (timeline 비용 — total/split/eyebrow).
+- Verified: `tsc` clean; lol-rank shows 매치 정보 + 티어 분포; yangyang-mt shows Cost · 비용.
+- Remaining desktop editors: menu, route, dayPlan (timeline, nested), roster (battle, nested),
+  matchInfo (battle, nested value parts), champions (gaming, emoji) — lower value / nested; + mobile
+  parity for all editors beyond the romantic set.

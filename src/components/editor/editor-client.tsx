@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { getInvitation } from "@/lib/invitation/samples";
-import type { AcceptContent, ChecklistContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, Invitation, LanesContent, LocationContent, MessageContent, NoticeContent, QuoteContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
+import type { AcceptContent, ChecklistContent, CostContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, GInfoContent, Invitation, LanesContent, LocationContent, MessageContent, NoticeContent, QuoteContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TierChartContent, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -145,6 +145,9 @@ export function EditorClient() {
   const notice = find("notice");
   const quote = find("quote");
   const lanes = find("lanes");
+  const gInfo = find("gInfo");
+  const tierChart = find("tierChart");
+  const cost = find("cost");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -531,6 +534,49 @@ export function EditorClient() {
                     ))}
                   </div>
                 )}
+                {gInfo && (
+                  <div className="insp-group">
+                    <h5>매치 정보</h5>
+                    <Field label="Eyebrow" value={gInfo.content.eyebrow} onChange={(v) => patch(gInfo.id, { eyebrow: v } satisfies Partial<GInfoContent>)} />
+                    <Field label="제목" value={plainTitle(gInfo.content.title)} onChange={(v) => patch(gInfo.id, { title: [[v]] } satisfies Partial<GInfoContent>)} />
+                    {gInfo.content.cells.map((c, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>{c.k || `#${i + 1}`}</span>
+                          <button type="button" onClick={() => patch(gInfo.id, { cells: gInfo.content.cells.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="항목" value={c.k} onChange={(v) => patch(gInfo.id, { cells: gInfo.content.cells.map((x, j) => (j === i ? { ...x, k: v } : x)) })} />
+                        <Field label="값" value={c.v} onChange={(v) => patch(gInfo.id, { cells: gInfo.content.cells.map((x, j) => (j === i ? { ...x, v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(gInfo.id, { cells: [...gInfo.content.cells, { k: "항목", v: "" }] })}>+ 항목 추가</button>
+                  </div>
+                )}
+                {tierChart && (
+                  <div className="insp-group">
+                    <h5>티어 분포</h5>
+                    <Field label="Eyebrow" value={tierChart.content.eyebrow} onChange={(v) => patch(tierChart.id, { eyebrow: v } satisfies Partial<TierChartContent>)} />
+                    <Field label="제목" value={plainTitle(tierChart.content.title)} onChange={(v) => patch(tierChart.id, { title: [[v]] } satisfies Partial<TierChartContent>)} />
+                    {tierChart.content.cols.map((c, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>{c.t}</span>
+                        </div>
+                        <Field label="라벨" value={c.t} onChange={(v) => patch(tierChart.id, { cols: tierChart.content.cols.map((x, j) => (j === i ? { ...x, t: v } : x)) })} />
+                        <Field label="인원" value={c.n} onChange={(v) => patch(tierChart.id, { cols: tierChart.content.cols.map((x, j) => (j === i ? { ...x, n: v } : x)) })} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {cost && (
+                  <div className="insp-group">
+                    <h5>Cost · 비용</h5>
+                    <Field label="Eyebrow" value={cost.content.eyebrow} onChange={(v) => patch(cost.id, { eyebrow: v } satisfies Partial<CostContent>)} />
+                    <Field label="제목" value={plainTitle(cost.content.title)} onChange={(v) => patch(cost.id, { title: [[v]] } satisfies Partial<CostContent>)} />
+                    <Field label="합계" value={cost.content.total} onChange={(v) => patch(cost.id, { total: v } satisfies Partial<CostContent>)} />
+                    <Field label="분담 설명" value={plainTitle([cost.content.split])} onChange={(v) => patch(cost.id, { split: v } satisfies Partial<CostContent>)} />
+                  </div>
+                )}
                 {ending && (
                   <div className="insp-group">
                     <h5>Ending</h5>
@@ -538,7 +584,7 @@ export function EditorClient() {
                     <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && (
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !cost && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>
