@@ -1,4 +1,4 @@
-import type { Invitation } from "./types";
+import type { Invitation, ThemeId } from "./types";
 import { romanticSample } from "./sample-romantic";
 import { minimalSample } from "./sample-minimal";
 import { cuteSample } from "./sample-cute";
@@ -23,4 +23,29 @@ export const sampleInvitations: Record<string, Invitation> = {
 /** Look up by slug; falls back to the romantic sample so any demo link renders. */
 export function getInvitation(slug: string): Invitation {
   return sampleInvitations[slug] ?? romanticSample;
+}
+
+/**
+ * A blank invitation for the "new" flow — the standard section skeleton with
+ * empty text, so a new invitation opens ready to fill (not pre-filled with a
+ * sample). Cover keeps a neutral default photo so the hero isn't broken; RSVP
+ * keeps the standard 참석/미정/불참 choices since those are functional, not text
+ * the user has to delete.
+ */
+export function blankInvitation(theme: ThemeId = "romantic"): Invitation {
+  return {
+    slug: "new",
+    theme,
+    shareCta: "참석 여부 전하기",
+    sections: [
+      { id: "cover", type: "cover", content: { image: "romantic_wedding", eyebrow: "", names: ["", ""], connector: "&", dateLabel: "" } },
+      { id: "message", type: "message", content: { eyebrow: "", title: [[""]], body: [""] } },
+      { id: "date", type: "date", content: { eyebrow: "", title: [[""]] } },
+      { id: "location", type: "location", content: { eyebrow: "", title: [[""]], body: [""], mapButtons: [] } },
+      { id: "gallery", type: "gallery", content: { eyebrow: "", title: [[""]], images: [] } },
+      { id: "schedule", type: "schedule", content: { eyebrow: "", title: [[""]], items: [] } },
+      { id: "rsvp", type: "rsvp", content: { eyebrow: "", title: [[""]], body: [""], options: ["참석", "미정", "불참"], defaultSelected: 0 } },
+      { id: "ending", type: "ending", content: { signature: "", names: "" } },
+    ],
+  };
 }

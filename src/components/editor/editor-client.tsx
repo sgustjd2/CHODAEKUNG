@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ContentEditors } from "@/components/editor/content-editors";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import { getInvitation } from "@/lib/invitation/samples";
+import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
@@ -26,7 +26,7 @@ const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 /** A friendly default editor title for an invitation (cover names, else slug). */
 function defaultTitleFor(inv: Invitation): string {
   const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
-  const names = cover?.content.names;
+  const names = cover?.content.names?.filter((n) => n.trim());
   if (names && names.length) return names.join(" · ");
   return inv.slug;
 }
@@ -49,8 +49,10 @@ export function EditorClient() {
   // On mount: resolve ?slug= (which invitation to edit), then load its saved draft or the sample.
   // (SSR renders the romantic sample; this client effect swaps in the right invitation — no mismatch.)
   useEffect(() => {
-    const s = new URLSearchParams(window.location.search).get("slug")?.trim() || romanticSample.slug;
-    let d = getInvitation(s);
+    const slugParam = new URLSearchParams(window.location.search).get("slug")?.trim();
+    const s = slugParam || "new";
+    // No ?slug= means a brand-new invitation → start blank, not a filled sample.
+    let d = slugParam ? getInvitation(slugParam) : blankInvitation();
     let loadedTitle: string | null = null;
     try {
       const raw = localStorage.getItem(keyFor(s));
@@ -72,7 +74,7 @@ export function EditorClient() {
     }
     setDraft(d);
     setSelectedId(d.sections[0]?.id ?? "");
-    setTitle(loadedTitle ?? defaultTitleFor(d));
+    setTitle(loadedTitle ?? (slugParam ? defaultTitleFor(d) : ""));
     setSlug(s);
     setHydrated(true);
   }, []);
@@ -333,10 +335,10 @@ export function EditorClient() {
               variant="ghost"
               size="sm"
               onClick={() => {
-                const base = getInvitation(slug);
+                const base = slug === "new" ? blankInvitation() : getInvitation(slug);
                 setDraft(structuredClone(base));
                 setSelectedId(base.sections[0]?.id ?? "");
-                setTitle(defaultTitleFor(base));
+                setTitle(slug === "new" ? "" : defaultTitleFor(base));
                 setHidden(new Set());
                 setAccent(null);
               }}
