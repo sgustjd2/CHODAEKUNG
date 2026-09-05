@@ -265,3 +265,27 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   (갈게요 selected+heart, click switches), MOMO ending. Reset viewport after.
 - Follow-up required: yes — more cute samples (birthday/baby/돌잔치) + a birthday mascot variant;
   RSVP selection is local-only (wire to backend later).
+
+### 2026-09-05 — Editorial viewer (screen 13, 매거진 파티)
+
+- Scope: Implemented the Editorial theme at `/i/[slug]` — magazine/film party invite.
+- PRD reference: §2 (party/celebration scope, distinct visual direction). Genspark:
+  `design/13_viewer_editorial.html`.
+- Decisions:
+  - New theme `editorial` (film-grain cover overlay, serif Fraunces + italic, big Manrope section
+    numbers, magazine grid). Added 1 section type **quote**; everything else reuses shared types via
+    small optional additions: cover `coverSub`; message `num`/`dropCap`/`twoCol` (→ `EditorialArticle`);
+    details/location/gallery/rsvp `num` (+ location `photoCap`, gallery `caption`, rsvp `innerTitle`);
+    ending `colophon`. This is the superset model (§7.1) at its clearest — a `message`/`location`/
+    `gallery`/`rsvp` section is renderable by any theme; editorial just reads a few more fields.
+  - `ESection` shell (section number + label + serif headline). Drop-cap = first paragraph's first
+    char split into data (`dropCap`) so the paragraph text flows around it. Mag gallery span layout
+    (p1–p5) is applied by index in the renderer (CSS), no per-image layout data.
+  - Location action buttons reuse the global `.btn`/`.btn-outline`/`.btn-primary` tokens.
+  - Share pill reuses the theme-agnostic base (dark + `--wax` = mockup spec).
+  - 1 sample `sample-editorial.ts` (after-hours).
+- Verified: `tsc` clean; `/i/after-hours` renders all 8 section types — grain cover w/ issue no. +
+  split footer, drop-cap article, bordered details table, full-bleed location photo+caption+buttons,
+  rose serif-italic pull quote (decorative quote marks), magazine grid gallery, dark RSVP box (YES
+  selected, click switches), oversized SEE YOU/after hours ending + colophon. Reset viewport after.
+- Follow-up required: yes — RSVP selection local-only; Story/Magazine reading modes still pending.

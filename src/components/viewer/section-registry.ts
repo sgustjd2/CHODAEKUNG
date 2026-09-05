@@ -54,6 +54,16 @@ import { CuteGallery } from "./sections/cute/gallery";
 import { CuteRsvp } from "./sections/cute/rsvp";
 import { CuteEnding } from "./sections/cute/ending";
 
+// Editorial renderers
+import { EditorialCover } from "./sections/editorial/cover";
+import { EditorialArticle } from "./sections/editorial/article";
+import { EditorialDetails } from "./sections/editorial/details";
+import { EditorialLocation } from "./sections/editorial/location";
+import { EditorialQuote } from "./sections/editorial/quote";
+import { EditorialGallery } from "./sections/editorial/gallery";
+import { EditorialRsvp } from "./sections/editorial/rsvp";
+import { EditorialEnding } from "./sections/editorial/ending";
+
 // Gaming renderers
 import { GamingCover } from "./sections/gaming/cover";
 import { GamingInfo } from "./sections/gaming/info";
@@ -134,6 +144,17 @@ const cute: ThemeSet = {
   ending: CuteEnding,
 };
 
+const editorial: ThemeSet = {
+  cover: EditorialCover,
+  message: EditorialArticle,
+  details: EditorialDetails,
+  location: EditorialLocation,
+  quote: EditorialQuote,
+  gallery: EditorialGallery,
+  rsvp: EditorialRsvp,
+  ending: EditorialEnding,
+};
+
 const gaming: ThemeSet = {
   cover: GamingCover,
   gInfo: GamingInfo,
@@ -146,4 +167,4 @@ const gaming: ThemeSet = {
   ending: GamingEnding,
 };
 
-export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, cute, battle, timeline, gaming };
+export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, cute, editorial, battle, timeline, gaming };

@@ -50,9 +50,22 @@ export type CoverContent = {
   imgFilter?: string;
   /** Mascot sprite id shown on the cover (cute: momo-party). */
   mascot?: string;
+  /** Split cover footer (editorial): left serif label + right latin meta. */
+  coverSub?: { l: string; r: string };
 };
 
-export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
+export type MessageContent = {
+  eyebrow: string;
+  flourish?: string;
+  title: Line[];
+  body: Line[];
+  /** Magazine section number, e.g. "01" (editorial). */
+  num?: string;
+  /** Drop-cap first character (editorial). */
+  dropCap?: string;
+  /** Render body as two columns (editorial). */
+  twoCol?: boolean;
+};
 
 export type CalendarDay = { n: number; dim?: boolean; today?: boolean };
 export type CalendarData = { monthLabel: Line; weekdays: string[]; days: CalendarDay[] };
@@ -81,10 +94,22 @@ export type LocationContent = {
   photo?: string;
   /** Structured address block (cute): title line + detail line. */
   address?: { t: string; a: string };
+  /** Magazine section number (editorial). */
+  num?: string;
+  /** Photo caption strip (editorial): left + right. */
+  photoCap?: { l: string; r: string };
   tint?: boolean;
 };
 
-export type GalleryContent = { eyebrow: string; title: Line[]; images: { src: string; tall?: boolean }[] };
+export type GalleryContent = {
+  eyebrow: string;
+  title: Line[];
+  images: { src: string; tall?: boolean }[];
+  /** Magazine section number (editorial). */
+  num?: string;
+  /** Gallery caption strip (editorial): left + right. */
+  caption?: { l: string; r: string };
+};
 
 export type ScheduleContent = {
   eyebrow: string;
@@ -100,6 +125,10 @@ export type RsvpContent = {
   /** Parallel sub-labels for each option (minimal: Attend/Maybe/Decline). */
   optionSubs?: string[];
   defaultSelected?: number;
+  /** Magazine section number (editorial). */
+  num?: string;
+  /** Title inside the dark RSVP box, e.g. "Will you join us?" (editorial). */
+  innerTitle?: Line[];
   tint?: boolean;
 };
 
@@ -114,6 +143,8 @@ export type EndingContent = {
   stamp?: string;
   /** Signature with emphasis (timeline: accent word). */
   signatureLines?: Line[];
+  /** Magazine colophon lines under the oversized closing (editorial). */
+  colophon?: Line[];
 };
 
 /* ---- Timeline / schedule-sharing section content ---- */
@@ -130,6 +161,8 @@ export type DetailsContent = {
   eyebrow: string;
   title: Line[];
   tint?: boolean;
+  /** Magazine section number (editorial). */
+  num?: string;
   info: Kv[];
   party?: { avatars: { label: string; tone?: number }[]; more?: string; countLabel: string; countSub: string };
 };
@@ -167,6 +200,9 @@ export type DayPlanContent = {
   tint?: boolean;
   days: { label: string; en: string; items: TimelineItem[] }[];
 };
+
+/* ---- Editorial (magazine party) section content ---- */
+export type QuoteContent = { text: Line[] };
 
 /* ---- Cute (housewarming/birthday/baby) section content ---- */
 export type NoticeContent = {
@@ -242,6 +278,7 @@ export type Section =
   | { id: string; type: "tierChart"; content: TierChartContent }
   | { id: string; type: "champions"; content: ChampionsContent }
   | { id: string; type: "notice"; content: NoticeContent }
+  | { id: string; type: "quote"; content: QuoteContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

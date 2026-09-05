@@ -677,3 +677,89 @@
   .c-ending .brand-tiny { margin-top: 40px; font-family: var(--font-en); font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .c-ending .brand-tiny svg { width: 16px; height: 16px; }
 }
+
+/* ============================================================
+   THEME · EDITORIAL (magazine party, film grain)
+   ============================================================ */
+.iv.t-editorial {
+  color: #2A2A3E;
+  font-family: var(--font-ko);
+  background: var(--paper-2);
+  background-image: none;
+
+  .iv-doc { background: #F2EFE9; }
+
+  /* Cover — full-bleed film photo */
+  .e-cover { height: 720px; background-size: cover; background-position: center; position: relative; color: var(--paper); padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; }
+  .e-cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 30%, transparent 55%, rgba(0,0,0,0.7) 100%); }
+  .e-cover::after { content: ''; position: absolute; inset: 0; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>'); opacity: 0.6; mix-blend-mode: overlay; pointer-events: none; }
+  .e-cover > * { position: relative; z-index: 2; }
+  .e-cover-top { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 8px; }
+  .e-issue { font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 5px 10px; border-radius: 4px; }
+  .e-date-strip { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: var(--font-en); font-size: 9px; letter-spacing: 0.24em; font-weight: 700; text-transform: uppercase; opacity: 0.9; }
+  .e-cover-bot { max-width: 100%; }
+  .e-cover-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--butter); margin-bottom: 12px; display: inline-block; border-top: 1px solid var(--butter); border-bottom: 1px solid var(--butter); padding: 6px 0; }
+  .e-cover-title { font-family: var(--font-serif); font-size: 68px; font-weight: 400; letter-spacing: -0.04em; line-height: 0.92; margin-bottom: 8px; }
+  .e-cover-title em { font-family: var(--font-serif-italic); font-style: italic; color: var(--butter); }
+  .e-cover-sub { display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.4); margin-top: 20px; }
+  .e-cover-sub .l { font-family: var(--font-serif); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+  .e-cover-sub .r { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; }
+
+  /* Magazine section */
+  .e-section { padding: 60px 24px; border-bottom: 1px solid rgba(42,42,62,0.15); }
+  .e-section-card { background: var(--card); }
+  .e-sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+  .e-sec-num { font-family: var(--font-en); font-size: 84px; font-weight: 800; letter-spacing: -0.05em; line-height: 0.85; color: var(--ink); }
+  .e-sec-lbl { font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose-deep); text-align: right; max-width: 120px; }
+  .e-headline { font-family: var(--font-serif); font-size: 32px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 20px; }
+  .e-headline em { font-family: var(--font-serif-italic); font-style: italic; color: var(--rose); }
+  .e-body { font-family: var(--font-serif); font-weight: 400; font-size: 15px; line-height: 1.75; color: var(--fg-2); }
+  .e-body.two-col { columns: 2; column-gap: 20px; font-size: 13px; line-height: 1.65; }
+  .e-body p { margin: 0 0 12px; break-inside: avoid; }
+  .e-body .drop { float: left; font-family: var(--font-serif); font-weight: 500; font-size: 52px; line-height: 0.85; padding: 4px 8px 0 0; color: var(--rose); }
+  .e-rsvp-note { font-size: 13px; }
+
+  /* Photo caption block */
+  .e-photo-wrap { margin: 20px -24px; position: relative; }
+  .e-photo-wrap img { width: 100%; display: block; }
+  .e-photo-cap { padding: 8px 24px 0; display: flex; justify-content: space-between; font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+  .e-gallery-cap { padding-top: 8px; }
+
+  /* Location buttons */
+  .e-loc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+
+  /* Details table */
+  .e-details { margin-top: 20px; display: flex; flex-direction: column; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  .e-detail-row { display: grid; grid-template-columns: 80px 1fr; padding: 12px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .e-detail-row:first-child { border-top: none; }
+  .e-detail-row .k { font-family: var(--font-en); font-size: 10px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: var(--rose-deep); }
+  .e-detail-row .v { font-family: var(--font-serif); font-size: 17px; font-weight: 500; letter-spacing: -0.015em; }
+
+  /* Magazine gallery grid */
+  .e-mag-gallery { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: 60px; gap: 4px; margin-top: 20px; }
+  .e-mag-gallery img { width: 100%; height: 100%; object-fit: cover; }
+  .e-mag-gallery .p1 { grid-column: 1 / 5; grid-row: 1 / 4; }
+  .e-mag-gallery .p2 { grid-column: 5 / 7; grid-row: 1 / 3; }
+  .e-mag-gallery .p3 { grid-column: 5 / 7; grid-row: 3 / 4; }
+  .e-mag-gallery .p4 { grid-column: 1 / 3; grid-row: 4 / 6; }
+  .e-mag-gallery .p5 { grid-column: 3 / 7; grid-row: 4 / 6; }
+
+  /* Pull quote */
+  .e-quote { padding: 40px 12px; text-align: center; font-family: var(--font-serif-italic); font-style: italic; font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; color: var(--rose); font-weight: 400; }
+  .e-quote::before, .e-quote::after { content: '"'; font-size: 40px; line-height: 0; display: block; color: var(--rose-deep); opacity: 0.6; margin: 0 auto 12px; max-width: 20px; }
+  .e-quote::after { margin: 12px auto 0; transform: rotate(180deg); }
+
+  /* RSVP editorial */
+  .e-rsvp-editorial { margin-top: 24px; padding: 24px; background: var(--ink); color: var(--paper); text-align: center; }
+  .e-rsvp-editorial .t { font-family: var(--font-serif); font-size: 24px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .e-rsvp-editorial .t em { font-family: var(--font-serif-italic); font-style: italic; color: var(--butter); }
+  .e-rsvp-buttons { display: flex; gap: 8px; }
+  .e-rsvp-btn { flex: 1; padding: 14px; background: transparent; border: 1px solid var(--paper); color: var(--paper); font-family: var(--font-en); font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+  .e-rsvp-btn.selected { background: var(--butter); color: var(--ink); border-color: transparent; }
+
+  /* Ending */
+  .e-ending { padding: 100px 24px 140px; text-align: center; background: var(--ink); color: var(--paper); }
+  .e-ending .brand-huge { font-family: var(--font-en); font-size: 76px; font-weight: 800; letter-spacing: -0.05em; line-height: 0.88; color: var(--paper); }
+  .e-ending .brand-huge em { font-family: var(--font-serif-italic); font-style: italic; color: var(--butter); font-weight: 400; display: block; margin-top: 8px; letter-spacing: -0.02em; }
+  .e-ending .colophon { font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(251,247,241,0.5); margin-top: 40px; line-height: 1.8; }
+}
