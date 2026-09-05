@@ -3,23 +3,58 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
+import { ensureKakao } from "@/lib/kakao";
+
+export type ShareMeta = { title: string; description: string; image: string };
 
 /**
  * Sticky share pill + a theme-agnostic RSVP form. The primary CTA (invitation.shareCta) opens the
  * form; one submit path works for every theme. Hidden in the editor preview via `.iv-contained`.
  */
-export function ShareBar({ slug, shareCta, options, preview }: { slug: string; shareCta: string; options: string[]; preview?: boolean }) {
+export function ShareBar({
+  slug,
+  shareCta,
+  options,
+  preview,
+  share,
+}: {
+  slug: string;
+  shareCta: string;
+  options: string[];
+  preview?: boolean;
+  share?: ShareMeta;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [resp, setResp] = useState(options[0] ?? "참석");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
     try {
       navigator.clipboard?.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
     } catch {
       /* ignore */
+    }
+  };
+
+  // KakaoTalk share when configured; otherwise copy the link (which still shows the OG card in chat).
+  const shareKakao = async () => {
+    const K = await ensureKakao();
+    if (!K || !share) return copyLink();
+    const url = window.location.href;
+    const imageUrl = /^https?:\/\//.test(share.image) ? share.image : window.location.origin + share.image;
+    try {
+      K.Share.sendDefault({
+        objectType: "feed",
+        content: { title: share.title, description: share.description, imageUrl, link: { mobileWebUrl: url, webUrl: url } },
+        buttons: [{ title: "초대장 보기", link: { mobileWebUrl: url, webUrl: url } }],
+      });
+    } catch {
+      copyLink();
     }
   };
 
@@ -46,11 +81,11 @@ export function ShareBar({ slug, shareCta, options, preview }: { slug: string; s
   return (
     <>
       <div className="share-pill">
-        <button type="button" onClick={copyLink}>
+        <button type="button" onClick={shareKakao}>
           <Icon name="ic-chat" /> 카톡
         </button>
         <button type="button" onClick={copyLink}>
-          <Icon name="ic-link" /> 링크
+          <Icon name="ic-link" /> {copied ? "복사됨!" : "링크"}
         </button>
         <button type="button" className="primary" onClick={() => { setState("idle"); setOpen(true); }}>
           {shareCta}

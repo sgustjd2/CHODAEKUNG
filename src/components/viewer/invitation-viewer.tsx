@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import type { Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
+import { invitationMeta } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
@@ -54,7 +55,7 @@ export function InvitationViewer({
         })}
       </div>
 
-      <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} preview={preview} />
+      <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} preview={preview} share={invitationMeta(invitation)} />
       {!contained && !preview && <ViewPing slug={invitation.slug} />}
     </div>
   );
