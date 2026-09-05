@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -99,6 +100,7 @@ const STEP_NAMES = ["Event Type", "Basic Info", "Template", "Ready"];
 const TOTAL = 4;
 
 export function NewInvitationWizard() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [event, setEvent] = useState("wedding");
   const [quick, setQuick] = useState(true);
@@ -140,6 +142,20 @@ export function NewInvitationWizard() {
   const go = (next: number) => {
     setStep(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Open the editor: seed the chosen theme's template (or blank for "처음부터"/custom),
+  // and hand the typed basics to the editor via sessionStorage.
+  const startEditor = () => {
+    const eventName = event === "custom" ? customName : selectedEvent?.name ?? "";
+    try {
+      sessionStorage.setItem("chodaekung:wizard", JSON.stringify({ title, subtitle, date, time, location, eventName }));
+    } catch {
+      /* ignore */
+    }
+    const blank = template === "6" || event === "custom";
+    const sample = blank ? "" : EVENT_SAMPLE[event] ?? "";
+    router.push(sample ? `/editor?template=${sample}` : "/editor");
   };
   const toggleMood = (id: string) =>
     setCustomMoods((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
@@ -451,9 +467,9 @@ export function NewInvitationWizard() {
             <Button variant="primary" onClick={() => go(step + 1)}>다음 →</Button>
           )}
           {step === TOTAL && (
-            <Link href={event !== "custom" && EVENT_SAMPLE[event] ? `/editor?template=${EVENT_SAMPLE[event]}` : "/editor"} className="btn btn-wax">
+            <button type="button" onClick={startEditor} className="btn btn-wax">
               에디터로 이동 →
-            </Link>
+            </button>
           )}
         </div>
       </div>

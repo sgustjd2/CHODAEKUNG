@@ -24,6 +24,33 @@ type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; acce
 const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
+/** Basics handed over from the /new wizard (one-shot, via sessionStorage). */
+type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string };
+function readWizardSeed(): WizardSeed | null {
+  try {
+    const raw = sessionStorage.getItem("chodaekung:wizard");
+    if (!raw) return null;
+    sessionStorage.removeItem("chodaekung:wizard"); // consume once
+    return JSON.parse(raw) as WizardSeed;
+  } catch {
+    return null;
+  }
+}
+/** Apply the wizard title to the cover heading, whichever field the theme's cover uses. */
+function applyWizardSeed(inv: Invitation, w: WizardSeed) {
+  const t = w.title?.trim();
+  if (!t) return;
+  const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
+  if (!cover) return;
+  const c = cover.content;
+  if (Array.isArray(c.names) && c.names.length) c.names = [t];
+  else if (c.titleLines) c.titleLines = [[t]];
+  else c.title = t;
+  // Cover date label, where the theme's cover carries one (plain text — safe across themes).
+  const dl = [w.date, w.time].filter((x) => x?.trim()).join(" · ");
+  if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
+}
+
 /** A friendly default editor title (cover names/title across themes, else a neutral default). */
 function defaultTitleFor(inv: Invitation): string {
   const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
@@ -59,15 +86,17 @@ export function EditorClient() {
     const params = new URLSearchParams(window.location.search);
     const templateParam = params.get("template")?.trim();
     const slugParam = params.get("slug")?.trim();
+    const wiz = readWizardSeed(); // basics handed over from the /new wizard (one-shot)
 
     // ?template=<sampleSlug> → start a NEW invitation seeded from that template (fresh copy).
     // Drop the param so a refresh keeps the user's edits (autosaved under "new") instead of re-seeding.
     if (templateParam && !slugParam) {
       const base = structuredClone(getInvitation(templateParam));
       base.slug = "new";
+      if (wiz) applyWizardSeed(base, wiz);
       setDraft(base);
       setSelectedId(base.sections[0]?.id ?? "");
-      setTitle(defaultTitleFor(base));
+      setTitle(wiz?.title?.trim() || defaultTitleFor(base));
       setSlug("new");
       try {
         const t = localStorage.getItem(tokenKeyFor("new"));
@@ -83,18 +112,23 @@ export function EditorClient() {
     const s = slugParam || "new";
     // No ?slug= means a brand-new invitation → start blank, not a filled sample.
     let d = slugParam ? getInvitation(slugParam) : blankInvitation();
+    // Wizard "처음부터" (blank) start: seed the typed title fresh; don't restore a prior "new" draft.
+    const freshFromWizard = !slugParam && !!wiz;
+    if (freshFromWizard) applyWizardSeed(d, wiz!);
     let loadedTitle: string | null = null;
-    try {
-      const raw = localStorage.getItem(keyFor(s));
-      if (raw) {
-        const saved = JSON.parse(raw) as SavedEditor;
-        if (saved.draft) d = saved.draft;
-        if (typeof saved.title === "string") loadedTitle = saved.title;
-        if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
-        if (saved.accent !== undefined) setAccent(saved.accent);
+    if (!freshFromWizard) {
+      try {
+        const raw = localStorage.getItem(keyFor(s));
+        if (raw) {
+          const saved = JSON.parse(raw) as SavedEditor;
+          if (saved.draft) d = saved.draft;
+          if (typeof saved.title === "string") loadedTitle = saved.title;
+          if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
+          if (saved.accent !== undefined) setAccent(saved.accent);
+        }
+      } catch {
+        /* private mode / corrupt value — fall back to the sample */
       }
-    } catch {
-      /* private mode / corrupt value — fall back to the sample */
     }
     try {
       const t = localStorage.getItem(tokenKeyFor(s));
@@ -104,7 +138,7 @@ export function EditorClient() {
     }
     setDraft(d);
     setSelectedId(d.sections[0]?.id ?? "");
-    setTitle(loadedTitle ?? (slugParam ? defaultTitleFor(d) : ""));
+    setTitle(loadedTitle ?? wiz?.title?.trim() ?? (slugParam ? defaultTitleFor(d) : ""));
     setSlug(s);
     setHydrated(true);
   }, []);
