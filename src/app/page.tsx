@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Seal } from "@/components/ui/seal";
 import { Icon } from "@/components/ui/icon";
+import { MobileNav } from "@/components/landing/mobile-nav";
 import "./landing.css";
 
 const templates: { img: string; cat: string; name: ReactNode }[] = [
@@ -67,12 +68,14 @@ export default function LandingPage() {
           <div className="nav-links">
             <a href="#templates">템플릿</a>
             <a href="#how">이렇게 만들어요</a>
-            <a href="#faq">FAQ</a>
+            <a href="#kakao">카카오톡 공유</a>
+            <a href="#faq">자주 묻는 질문</a>
           </div>
           <div className="nav-cta">
             <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
             <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
           </div>
+          <MobileNav />
         </div>
       </nav>
 
@@ -197,7 +200,7 @@ export default function LandingPage() {
       </section>
 
       {/* KAKAO FEATURE */}
-      <section>
+      <section id="kakao">
         <div className="section-wrap">
           <div className="feature-row">
             <div>

@@ -34,6 +34,33 @@
   .nav-links a:hover { color: var(--ink); }
   .nav-cta { display: flex; gap: 10px; }
 
+  /* Mobile menu (shown ≤900px, where the inline links hide) */
+  .mobile-nav { display: none; position: relative; }
+  .mnav-toggle {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 42px; height: 42px; padding: 0 10px;
+    background: none; border: 1px solid var(--line); border-radius: 11px; cursor: pointer;
+  }
+  .mnav-toggle span { display: block; height: 2px; border-radius: 2px; background: var(--ink); transition: transform .22s ease, opacity .18s ease; }
+  .mnav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .mnav-toggle.open span:nth-child(2) { opacity: 0; }
+  .mnav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mnav-backdrop { position: fixed; inset: 0; z-index: 30; }
+  .mnav-panel {
+    position: absolute; top: calc(100% + 12px); right: 0; z-index: 40;
+    min-width: 224px; display: flex; flex-direction: column; gap: 2px;
+    padding: 10px; border-radius: 18px;
+    background: #fff; border: 1px solid var(--line);
+    box-shadow: 0 16px 40px rgba(26,26,46,0.16);
+  }
+  .mnav-panel a {
+    text-decoration: none; color: var(--ink);
+    font-size: 15px; font-weight: 600; padding: 12px 12px; border-radius: 11px;
+  }
+  .mnav-panel a:hover { background: var(--paper-2); }
+  .mnav-panel .btn { margin-top: 6px; justify-content: center; }
+  .mnav-div { height: 1px; background: var(--line); margin: 6px 4px; }
+
   /* ------------ HERO ------------ */
   .hero {
     padding: 80px 32px 100px;
@@ -514,6 +541,7 @@
     .sec-head { margin-bottom: 40px; }
     .nav-inner { padding: 12px 20px; }
     .nav-links { display: none; }
+    .mobile-nav { display: block; }
     .float-card { padding: 10px 12px; }
     .float-card.top-left { top: 14px; left: 14px; }
     .float-card.bottom-right { bottom: 14px; right: 14px; max-width: 200px; }
