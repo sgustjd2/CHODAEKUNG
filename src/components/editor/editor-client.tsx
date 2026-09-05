@@ -12,7 +12,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { getInvitation } from "@/lib/invitation/samples";
-import type { AcceptContent, CountdownContent, CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, VersusContent } from "@/lib/invitation/types";
+import type { AcceptContent, ChecklistContent, CountdownContent, CoverContent, DateContent, DetailsContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, RulesContent, ScheduleContent, Section, SectionType, TimelineSectionContent, VersusContent } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -139,6 +139,9 @@ export function EditorClient() {
   const countdown = find("countdown");
   const rules = find("rules");
   const accept = find("accept");
+  const timeline = find("timeline");
+  const checklist = find("checklist");
+  const details = find("details");
   /** Update one item in a section whose content has an `items` array. */
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
@@ -421,6 +424,67 @@ export function EditorClient() {
                     <Field label="거절 버튼" value={accept.content.decline} onChange={(v) => patch(accept.id, { decline: v })} />
                   </div>
                 )}
+                {timeline && (
+                  <div className="insp-group">
+                    <h5>Timeline · 진행 순서</h5>
+                    <Field label="Eyebrow" value={timeline.content.eyebrow} onChange={(v) => patch(timeline.id, { eyebrow: v } satisfies Partial<TimelineSectionContent>)} />
+                    <Field label="제목" value={plainTitle(timeline.content.title)} onChange={(v) => patch(timeline.id, { title: [[v]] } satisfies Partial<TimelineSectionContent>)} />
+                    {timeline.content.items.map((it, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patch(timeline.id, { items: timeline.content.items.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="시간" value={it.time} onChange={(v) => patch(timeline.id, { items: timeline.content.items.map((x, j) => (j === i ? { ...x, time: v } : x)) })} />
+                        <Field label="제목" value={it.title} onChange={(v) => patch(timeline.id, { items: timeline.content.items.map((x, j) => (j === i ? { ...x, title: v } : x)) })} />
+                        <Field label="설명" value={it.desc} onChange={(v) => patch(timeline.id, { items: timeline.content.items.map((x, j) => (j === i ? { ...x, desc: v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(timeline.id, { items: [...timeline.content.items, { time: "00:00", title: "새 항목", desc: "" }] })}>
+                      + 항목 추가
+                    </button>
+                  </div>
+                )}
+                {checklist && (
+                  <div className="insp-group">
+                    <h5>Checklist · 준비물</h5>
+                    <Field label="Eyebrow" value={checklist.content.eyebrow} onChange={(v) => patch(checklist.id, { eyebrow: v } satisfies Partial<ChecklistContent>)} />
+                    <Field label="제목" value={plainTitle(checklist.content.title)} onChange={(v) => patch(checklist.id, { title: [[v]] } satisfies Partial<ChecklistContent>)} />
+                    {checklist.content.items.map((it, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patch(checklist.id, { items: checklist.content.items.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="항목" value={it.text} onChange={(v) => patch(checklist.id, { items: checklist.content.items.map((x, j) => (j === i ? { ...x, text: v } : x)) })} />
+                        <Field label="담당" value={it.owner} onChange={(v) => patch(checklist.id, { items: checklist.content.items.map((x, j) => (j === i ? { ...x, owner: v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(checklist.id, { items: [...checklist.content.items, { text: "새 항목", owner: "" }] })}>
+                      + 항목 추가
+                    </button>
+                  </div>
+                )}
+                {details && (
+                  <div className="insp-group">
+                    <h5>Details · 정보</h5>
+                    <Field label="Eyebrow" value={details.content.eyebrow} onChange={(v) => patch(details.id, { eyebrow: v } satisfies Partial<DetailsContent>)} />
+                    <Field label="제목" value={plainTitle(details.content.title)} onChange={(v) => patch(details.id, { title: [[v]] } satisfies Partial<DetailsContent>)} />
+                    {details.content.info.map((kv, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>{kv.k || `#${i + 1}`}</span>
+                          <button type="button" onClick={() => patch(details.id, { info: details.content.info.filter((_, j) => j !== i) })}>삭제</button>
+                        </div>
+                        <Field label="항목" value={kv.k} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, k: v } : x)) })} />
+                        <Field label="값" value={kv.v} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, v } : x)) })} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patch(details.id, { info: [...details.content.info, { k: "항목", v: "" }] })}>
+                      + 항목 추가
+                    </button>
+                  </div>
+                )}
                 {ending && (
                   <div className="insp-group">
                     <h5>Ending</h5>
@@ -428,7 +492,7 @@ export function EditorClient() {
                     <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
                   </div>
                 )}
-                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && (
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && (
                   <div className="insp-group">
                     <h5>Content</h5>
                     <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>

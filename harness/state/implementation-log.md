@@ -431,3 +431,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   Rules/CTA/Ending; editing versus 홈팀 이름 → "우리동네 FC" live in preview. Cleared test value.
 - Follow-up: mirror these in mobile ContentPanel; matchInfo + roster editors; remaining theme types
   (gInfo/lanes/tierChart/champions, timeline/menu/checklist/cost/route/dayPlan/details, notice, quote).
+
+### 2026-09-05 — Editor: timeline/checklist/details editors (desktop)
+
+- Scope: Desktop Content editors for timeline (진행 순서), checklist (준비물), details (정보) — the core
+  집들이/번개/MT content. Each supports item add/remove.
+- Verified: `tsc` clean; `/editor?slug=jibdeuli` → `iv t-timeline`, Content shows Cover/Location/CTA/
+  Timeline/Checklist/Details/Ending; editing a timeline item title → "집들이 시작!" live in preview.
+- Follow-up: menu/cost/route/dayPlan (timeline), matchInfo/roster (battle), gInfo/lanes/tierChart/
+  champions (gaming), notice (cute), quote (editorial); + mobile parity for all editors added since
+  the romantic set.
