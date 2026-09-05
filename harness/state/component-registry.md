@@ -21,6 +21,25 @@ classes so fidelity stays with the approved tokens; reuse these before creating 
 | 03 gallery — custom event | `src/components/templates/custom-event.tsx` | client; banner + modal, name/mood/section inputs, live AI preview, create → `/new?event=` | done |
 | 05 wizard | `src/components/new/new-invitation-wizard.tsx` | client; 4-step stepper, 34-event grid, custom panel (icon/mood/preview), controlled basic-info form, template picker, dynamic summary, `?event=` prefill via `window.location` | done |
 
+## Invitation viewer + section renderer (CLAUDE.md §7.3)
+
+Structured-data model in `src/lib/invitation/types.ts` (`Invitation` = `sections[]` + `theme`;
+rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
+`src/components/viewer/section-registry.ts`. `<InvitationViewer>` renders the themed root
+(`iv t-<theme>`) + share pill; real published route is `/i/[slug]`.
+
+| Piece | Code | Notes |
+|---|---|---|
+| Model + types | `src/lib/invitation/types.ts` | Invitation/Section union/Theme/Line |
+| Section registry | `src/components/viewer/section-registry.ts` | type → renderer (typed map) |
+| Renderers | `src/components/viewer/sections/*.tsx` | cover, message, date(+calendar/countdown), location, gallery, schedule, rsvp (client), ending |
+| Rich text | `src/components/viewer/rich-text.tsx` | renders `Line[]`; `em` → weight+accent |
+| Viewer shell | `src/components/viewer/invitation-viewer.tsx` | themed root + fixed share pill |
+| Theme: romantic | `viewer.css` `.iv.t-romantic` | first of 8 themes; others add `.iv.t-<id>` |
+
+Sample data: `src/lib/invitation/sample-romantic.ts` + `samples.ts` (placeholder store until a
+data layer exists). Modes: Scroll implemented; Story/Magazine pending (PRD §10).
+
 ## Page-CSS scoping convention
 Each screen's ported CSS is wrapped under a unique root class via CSS nesting
 (`.landing { … }`, `.gallery { … }`) so global class names (`.nav`, `.head`, …) never

@@ -1,0 +1,165 @@
+/* Invitation viewer — real published/shared experience (mobile-first, centered on desktop).
+   Base (.iv / .iv-doc / .share-pill) is theme-agnostic; per-theme look lives under .iv.t-<theme>.
+   Section renderers output semantic .iv-* classes; a theme styles them. */
+
+.iv {
+  min-height: 100vh;
+  background: var(--paper-2);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(227,139,139,0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(181,202,178,0.06), transparent 40%);
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+.iv-doc {
+  width: 100%;
+  max-width: 430px;
+  background: #fff;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  position: relative;
+}
+@media (max-width: 460px) {
+  .iv { padding: 0; }
+  .iv-doc { max-width: 100%; box-shadow: none; }
+}
+
+/* Sticky share pill (shared across themes) */
+.share-pill {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px;
+  background: rgba(42,42,62,0.9);
+  backdrop-filter: blur(12px);
+  border-radius: var(--r-pill);
+  z-index: 60;
+  box-shadow: var(--shadow-lg);
+  max-width: calc(100% - 32px);
+}
+.share-pill button {
+  background: transparent; border: none;
+  padding: 8px 12px; border-radius: var(--r-pill);
+  font-family: var(--font-ko); font-size: 12px; font-weight: 700;
+  color: var(--paper); cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; line-height: 1;
+}
+.share-pill button.primary { background: var(--wax); padding: 8px 14px; }
+.share-pill button:hover { background: rgba(255,255,255,0.1); }
+.share-pill button.primary:hover { background: var(--wax-deep); }
+.share-pill svg { width: 12px; height: 12px; }
+
+/* ============================================================
+   THEME · ROMANTIC WEDDING
+   ============================================================ */
+.iv.t-romantic {
+  color: #2A2A3E;
+
+  .iv-cover {
+    height: 700px;
+    background-size: cover; background-position: center;
+    position: relative;
+    padding: 36px 32px 40px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--paper);
+  }
+  .iv-cover::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(42,42,62,0.35) 0%, transparent 25%, transparent 55%, rgba(42,42,62,0.7) 100%);
+  }
+  .iv-cover > * { position: relative; z-index: 2; }
+  .iv-cover-top { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 8px; }
+  .iv-brand { font-family: var(--font-en); font-size: 9px; letter-spacing: 0.4em; opacity: 0.9; font-weight: 700; }
+  .iv-mini-seal {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--wax) 0%, var(--wax-deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper); font-weight: 700; font-size: 13px;
+    box-shadow: 0 2px 6px rgba(201,106,106,0.5), inset 0 -1px 2px rgba(0,0,0,0.2);
+  }
+  .iv-cover-bot { text-align: center; }
+  .iv-cover-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.4em; text-transform: uppercase; opacity: 0.9; margin-bottom: 16px;
+  }
+  .iv-cover-eb::before, .iv-cover-eb::after { content: '·'; margin: 0 8px; }
+  .iv-cover-couple {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: 54px; letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px;
+  }
+  .iv-cover-couple .and { display: block; font-size: 32px; font-weight: 400; color: rgba(255,249,242,0.9); margin: 4px 0; }
+  .iv-cover-date {
+    font-family: var(--font-en); font-size: 12px; font-weight: 700; letter-spacing: 0.32em;
+    margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .iv-section { padding: 72px 32px; text-align: center; position: relative; }
+  .iv-section.iv-tint { background: rgba(227,139,139,0.04); }
+  .iv-flourish { font-size: 32px; color: var(--wax); margin-bottom: 16px; opacity: 0.6; font-weight: 400; line-height: 1; }
+  .iv-flourish svg { width: 32px; height: 32px; color: var(--wax); opacity: 0.6; }
+  .iv-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.32em; text-transform: uppercase; color: var(--wax-deep);
+    margin-bottom: 14px; display: inline-flex; align-items: center; gap: 12px;
+  }
+  .iv-eb::before, .iv-eb::after { content: ''; width: 20px; height: 1px; background: var(--wax); }
+  .iv-title { font-family: var(--font-serif); font-weight: 500; font-size: 30px; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 20px; }
+  .iv-title em { font-weight: 700; color: var(--wax); }
+  .iv-body { font-family: var(--font-serif); font-weight: 400; font-size: 15px; line-height: 1.9; color: rgba(42,42,62,0.75); max-width: 280px; margin: 0 auto; }
+
+  .iv-calendar {
+    background: var(--card); border-radius: 16px; padding: 20px; max-width: 300px; margin: 24px auto 0;
+    box-shadow: 0 4px 20px rgba(42,42,62,0.06); border: 1px solid var(--line);
+  }
+  .iv-cal-head { font-family: var(--font-serif); font-size: 18px; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .iv-cal-head em { font-weight: 700; color: var(--wax); }
+  .iv-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .iv-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-en); font-size: 11px; font-weight: 600; color: rgba(42,42,62,0.7); }
+  .iv-cal-day.head { color: var(--wax-deep); font-weight: 700; font-size: 9px; letter-spacing: 0.1em; }
+  .iv-cal-day.dim { color: rgba(42,42,62,0.25); }
+  .iv-cal-day.today { background: var(--wax); color: var(--paper); border-radius: 50%; font-weight: 800; box-shadow: 0 2px 6px rgba(227,139,139,0.4); }
+
+  .iv-countdown { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
+  .iv-cd { padding: 12px 14px; min-width: 56px; border-left: 1px solid var(--line); }
+  .iv-cd:first-child { border-left: none; }
+  .iv-cd .n { font-family: var(--font-serif); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
+  .iv-cd .l { font-family: var(--font-en); font-size: 8px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+
+  .iv-loc-card { padding: 0; }
+  .iv-map {
+    aspect-ratio: 4/3; background: #EFEEF1; background-size: cover; margin-top: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23EFEEF1'/><path d='M0 150 L400 150 M200 0 L200 300 M50 100 L350 100 M50 200 L350 200 M100 50 L100 250 M300 50 L300 250' stroke='%23DDDCE0' stroke-width='1'/><circle cx='200' cy='150' r='7' fill='%23E86A6A'/><circle cx='200' cy='150' r='18' fill='%23E86A6A' opacity='0.25'/></svg>");
+  }
+  .iv-loc-actions { display: flex; gap: 8px; padding: 20px 32px 0; }
+  .iv-loc-btn {
+    flex: 1; padding: 12px; border: 1px solid var(--line); background: var(--card); border-radius: 10px;
+    font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--ink);
+    display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; cursor: pointer;
+  }
+  .iv-loc-btn.primary { background: var(--ink); color: var(--paper); border-color: transparent; }
+
+  .iv-gallery { padding: 40px 24px 0; }
+  .iv-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .iv-gallery-grid img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 6px; }
+  .iv-gallery-grid img.tall { grid-row: span 2; aspect-ratio: 3/8; }
+
+  .iv-schedule { max-width: 320px; margin: 24px auto 0; text-align: left; padding: 0 8px; }
+  .iv-sch-item { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px dashed var(--line); }
+  .iv-sch-time { font-family: var(--font-en); font-size: 12px; font-weight: 700; color: var(--wax-deep); letter-spacing: 0.06em; flex-shrink: 0; padding-top: 2px; }
+  .iv-sch-content .t { font-family: var(--font-serif); font-weight: 500; font-size: 15px; letter-spacing: -0.01em; margin-bottom: 2px; }
+  .iv-sch-content .d { font-size: 11.5px; color: var(--muted); font-family: var(--font-serif); }
+
+  .iv-rsvp-buttons { display: flex; gap: 8px; max-width: 300px; margin: 24px auto 0; }
+  .iv-rsvp-btn { flex: 1; padding: 14px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .iv-rsvp-btn.selected { background: var(--wax); color: var(--paper); border-color: transparent; box-shadow: var(--shadow-wax); }
+
+  .iv-ending { padding: 80px 32px 120px; text-align: center; background: linear-gradient(180deg, transparent, rgba(227,139,139,0.06)); }
+  .iv-signature { font-family: var(--font-serif); font-size: 40px; color: var(--wax); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
+  .iv-names { font-family: var(--font-serif); font-size: 20px; letter-spacing: -0.01em; color: var(--ink); }
+  .iv-brand-tiny { margin-top: 60px; font-family: var(--font-en); font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .iv-brand-tiny svg { width: 16px; height: 16px; }
+
+  .magazine .iv-title { font-size: 40px; }
+  .magazine .iv-cover-couple { font-size: 68px; }
+  .magazine .iv-section { padding: 100px 32px; }
+}

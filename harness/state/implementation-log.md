@@ -70,3 +70,28 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; 34 cards, stepper done/active states correct, step nav + scroll,
   custom panel icon/mood/preview reactive, summary dynamic.
 - Follow-up required: yes — build editor (`/editor`, screen 06) and dashboard (`/dashboard`, 04).
+
+### 2026-09-05 — Invitation viewer + section renderer (screen 10, Romantic)
+
+- Scope: Established the structured invitation model + section-renderer registry, and implemented
+  the Romantic Wedding viewer at `/i/[slug]`.
+- PRD reference: §7 (section system), §7.2/§7.3 (viewer separation + registry), §10 (page modes), §11.3.
+- Genspark/design reference: `design/10_viewer_romantic.html`.
+- Decisions:
+  - The mockup's phone frame + info panel + theme-tokens table are **design presentation** ("not
+    shown to end users"); the product is the invitation itself. Built the real full-screen,
+    mobile-first viewer (centered mobile column on desktop, ambient bg), dropping the fake status bar
+    and its scroll-color logic.
+  - Architecture (CLAUDE.md §7.3): `Invitation = sections[] + theme` (structured data, rich text as
+    `Line`/`Run`, never HTML) → `sectionRegistry[type]` → renderer → themed via CSS under
+    `.iv.t-<theme>`. 8 renderers (cover/message/date/location/gallery/schedule/rsvp/ending); only
+    `rsvp` is a client island (selection). Viewer + sections are otherwise server components.
+  - Theme look lives entirely under `.iv.t-romantic`; adding a viewer theme = new `.iv.t-<id>` block
+    reusing the same renderers (structurally-different themes like battle/gaming may add section types later).
+  - Countdown/calendar are static demo values (target date is in the past vs. today) — wire real
+    computation with the data layer.
+- Verified: `tsc` clean; `/i/jisoo-minjun` renders 8 sections in order from data; computed styles
+  correct (cover 700px+photo, calendar today=wax, tint sections, schedule/signature accents,
+  rsvp default-selected); share pill 3 buttons.
+- Follow-up required: yes — Story/Magazine modes; remaining 7 viewer themes; real data layer +
+  countdown; Kakao/link share wiring on the pill.
