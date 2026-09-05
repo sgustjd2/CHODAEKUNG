@@ -13,6 +13,7 @@ import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors
 import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
+import { invitationMeta } from "@/lib/invitation/meta";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
@@ -23,12 +24,14 @@ type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; acce
 const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
-/** A friendly default editor title for an invitation (cover names, else slug). */
+/** A friendly default editor title (cover names/title across themes, else a neutral default). */
 function defaultTitleFor(inv: Invitation): string {
   const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
   const names = cover?.content.names?.filter((n) => n.trim());
   if (names && names.length) return names.join(" · ");
-  return inv.slug;
+  const t = invitationMeta(inv).title;
+  if (t && t !== "초대장") return t;
+  return inv.slug === "new" ? "새 초대장" : inv.slug;
 }
 
 export function EditorClient() {
@@ -45,11 +48,38 @@ export function EditorClient() {
   const [editToken, setEditToken] = useState<string | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
   const dragIndex = useRef<number | null>(null);
+  const didInit = useRef(false);
 
-  // On mount: resolve ?slug= (which invitation to edit), then load its saved draft or the sample.
-  // (SSR renders the romantic sample; this client effect swaps in the right invitation — no mismatch.)
+  // On mount: resolve ?slug=/?template= then load the saved draft, sample, or blank.
+  // Runs exactly once — the ?template= branch rewrites the URL, so a StrictMode re-invoke
+  // (or any remount) must not re-read the now-stripped query and fall through to blank.
   useEffect(() => {
-    const slugParam = new URLSearchParams(window.location.search).get("slug")?.trim();
+    if (didInit.current) return;
+    didInit.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const templateParam = params.get("template")?.trim();
+    const slugParam = params.get("slug")?.trim();
+
+    // ?template=<sampleSlug> → start a NEW invitation seeded from that template (fresh copy).
+    // Drop the param so a refresh keeps the user's edits (autosaved under "new") instead of re-seeding.
+    if (templateParam && !slugParam) {
+      const base = structuredClone(getInvitation(templateParam));
+      base.slug = "new";
+      setDraft(base);
+      setSelectedId(base.sections[0]?.id ?? "");
+      setTitle(defaultTitleFor(base));
+      setSlug("new");
+      try {
+        const t = localStorage.getItem(tokenKeyFor("new"));
+        if (t) localStorage.removeItem(tokenKeyFor("new")); // a fresh template start owns no prior token
+      } catch {
+        /* ignore */
+      }
+      window.history.replaceState(null, "", "/editor");
+      setHydrated(true);
+      return;
+    }
+
     const s = slugParam || "new";
     // No ?slug= means a brand-new invitation → start blank, not a filled sample.
     let d = slugParam ? getInvitation(slugParam) : blankInvitation();

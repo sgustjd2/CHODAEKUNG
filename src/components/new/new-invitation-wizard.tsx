@@ -45,6 +45,18 @@ const EVENTS: EventDef[] = [
   { id: "tournament", icon: "ic-trophy", name: "토너먼트", hint: "championship" },
 ];
 
+// Chosen event → the built theme sample the editor starts from (theme-appropriate content).
+const EVENT_SAMPLE: Record<string, string> = {
+  wedding: "jisoo-minjun", birthday: "appa-60", dol: "cozy-home", housewarming: "cozy-home",
+  bridal: "after-hours", baby: "cozy-home", yearend: "after-hours", party: "after-hours",
+  seminar: "after-hours", club: "beongae", corporate: "after-hours", "sports-battle": "jogi-battle",
+  running: "beongae", badminton: "jogi-battle", hiking: "yangyang-mt", baseball: "jogi-battle",
+  basketball: "jogi-battle", tennis: "jogi-battle", golf: "jogi-battle", cycling: "beongae",
+  swim: "beongae", yoga: "beongae", study: "beongae", camping: "yangyang-mt", picnic: "beongae",
+  travel: "yangyang-mt", cafe: "beongae", foodie: "beongae", music: "after-hours", photo: "after-hours",
+  pet: "cozy-home", "game-battle": "lol-quick", tournament: "lol-rank",
+};
+
 const CUSTOM_SUGGESTIONS: { name: string; label: string }[] = [
   { name: "캠핑장 봄맞이 모임", label: "🏕 캠핑장 모임" },
   { name: "반려동물 생일 파티", label: "🐕 반려동물 생일" },
@@ -439,7 +451,9 @@ export function NewInvitationWizard() {
             <Button variant="primary" onClick={() => go(step + 1)}>다음 →</Button>
           )}
           {step === TOTAL && (
-            <Link href="/editor" className="btn btn-wax">에디터로 이동 →</Link>
+            <Link href={event !== "custom" && EVENT_SAMPLE[event] ? `/editor?template=${EVENT_SAMPLE[event]}` : "/editor"} className="btn btn-wax">
+              에디터로 이동 →
+            </Link>
           )}
         </div>
       </div>
