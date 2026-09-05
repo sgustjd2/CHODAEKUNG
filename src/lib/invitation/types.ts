@@ -1,10 +1,13 @@
 /**
  * Structured invitation model (CLAUDE.md §7.1/§7.3).
  * An invitation is data — `sections[]` + theme — never authored HTML.
- * A section's `type` maps to one renderer via the section registry.
+ * A section's `type` maps to one renderer per theme via the theme registry.
+ *
+ * Content carries semantic facts as a superset; each theme's renderer reads the
+ * subset it presents (§7.1: same data, multiple views). Themes differ structurally
+ * (romantic uses a calendar; minimal uses a data grid), so renderers are per-theme.
  */
 
-/** A run of text; `em` marks emphasis (theme renders it as weight+accent, never italic). */
 export type Run = { text: string; em?: boolean };
 /** One line of rich text: a plain string, or a sequence of strings/runs. */
 export type Line = string | (string | Run)[];
@@ -22,17 +25,22 @@ export type ThemeId =
 export type CoverContent = {
   image: string;
   eyebrow: string;
-  /** Two-or-more stacked names (e.g. couple); rendered with `connector` between. */
+  /** Couple/stacked names, rendered with `connector` between (romantic). */
   names?: string[];
   connector?: string;
-  /** Single-title alternative to `names`. */
+  /** Single title, or stacked title lines (minimal). */
   title?: string;
-  dateLabel: string;
+  titleLines?: Line[];
+  subtitle?: string;
+  dateLabel?: string;
   seal?: string;
   brand?: string;
+  /** Swiss-grid header corners (minimal). */
+  headerLeft?: string;
+  headerRight?: string;
 };
 
-export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: string[] };
+export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
 
 export type CalendarDay = { n: number; dim?: boolean; today?: boolean };
 export type CalendarData = { monthLabel: Line; weekdays: string[]; days: CalendarDay[] };
@@ -42,13 +50,17 @@ export type DateContent = {
   title: Line[];
   calendar?: CalendarData;
   countdown?: Countdown;
+  /** Big two-part date, e.g. ["06","15"] → 06.15 (minimal). */
+  bigDate?: [string, string];
+  /** Editorial key/value grid (minimal); `en` renders in the latin/numeric face. */
+  dataGrid?: { k: string; en?: string; v?: string }[];
   tint?: boolean;
 };
 
 export type LocationContent = {
   eyebrow: string;
   title: Line[];
-  body: string[];
+  body: Line[];
   flourishIcon?: string;
   mapButtons: { label: string; primary?: boolean }[];
 };
@@ -58,19 +70,28 @@ export type GalleryContent = { eyebrow: string; title: Line[]; images: { src: st
 export type ScheduleContent = {
   eyebrow: string;
   title: Line[];
-  items: { time: string; title: string; desc: string }[];
+  items: { time: string; title: string; desc: string; duration?: string }[];
 };
 
 export type RsvpContent = {
   eyebrow: string;
   title: Line[];
-  body: string[];
+  body: Line[];
   options: string[];
+  /** Parallel sub-labels for each option (minimal: Attend/Maybe/Decline). */
+  optionSubs?: string[];
   defaultSelected?: number;
   tint?: boolean;
 };
 
-export type EndingContent = { flourish?: string; signature: string; names: string };
+export type EndingContent = {
+  flourish?: string;
+  signature?: string;
+  names?: string;
+  /** Oversized closing word(s), e.g. THANK YOU. (minimal). */
+  huge?: Line[];
+  below?: string;
+};
 
 export type Section =
   | { id: string; type: "cover"; content: CoverContent }

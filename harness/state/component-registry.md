@@ -31,11 +31,17 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Piece | Code | Notes |
 |---|---|---|
 | Model + types | `src/lib/invitation/types.ts` | Invitation/Section union/Theme/Line |
-| Section registry | `src/components/viewer/section-registry.ts` | type → renderer (typed map) |
-| Renderers | `src/components/viewer/sections/*.tsx` | cover, message, date(+calendar/countdown), location, gallery, schedule, rsvp (client), ending |
+| Theme registry | `src/components/viewer/section-registry.ts` | **theme → (type → renderer)**; per-theme renderer sets |
+| Romantic renderers | `src/components/viewer/sections/*.tsx` | cover, message, date(+calendar/countdown), location, gallery, schedule, rsvp (client), ending |
+| Minimal renderers | `src/components/viewer/sections/minimal/*.tsx` | own 8 renderers + numbered `MinimalHead` (structural, not a recolor) |
 | Rich text | `src/components/viewer/rich-text.tsx` | renders `Line[]`; `em` → weight+accent |
-| Viewer shell | `src/components/viewer/invitation-viewer.tsx` | themed root + fixed share pill |
-| Theme: romantic | `viewer.css` `.iv.t-romantic` | first of 8 themes; others add `.iv.t-<id>` |
+| Viewer shell | `src/components/viewer/invitation-viewer.tsx` | picks `themeRegistry[theme]`, passes `index`; themed root + fixed share pill |
+| Theme: romantic | `viewer.css` `.iv.t-romantic` | serif, rose, calendar+countdown |
+| Theme: minimal | `viewer.css` `.iv.t-minimal` | swiss editorial grid, B/W contrast, data grid + block rsvp |
+
+**Finding:** the 8 viewer themes are structurally different (different cover, section headers,
+date presentation, rsvp, ending), not token recolors — so each theme ships its own renderer set.
+Content stays a semantic superset (`types.ts`) so the same data can feed any theme (§7.1).
 
 Sample data: `src/lib/invitation/sample-romantic.ts` + `samples.ts` (placeholder store until a
 data layer exists). Modes: Scroll implemented; Story/Magazine pending (PRD §10).

@@ -95,3 +95,22 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   rsvp default-selected); share pill 3 buttons.
 - Follow-up required: yes — Story/Magazine modes; remaining 7 viewer themes; real data layer +
   countdown; Kakao/link share wiring on the pill.
+
+### 2026-09-05 — Minimal viewer (screen 11) + theme-registry refactor
+
+- Scope: Implemented the Minimal Birthday viewer at `/i/appa-60` and generalized the viewer to
+  support multiple structurally-different themes.
+- PRD reference: §7.3 (registry), §9/§11.3. Genspark: `design/11_viewer_minimal.html`.
+- **Finding / decision:** viewers are NOT token recolors — minimal has a different cover (swiss grid),
+  numbered section headers, a data grid instead of calendar/countdown, a 3-col schedule, asymmetric
+  gallery, block RSVP, and a "THANK YOU." ending. So the registry moved from `type → renderer` to
+  `theme → (type → renderer)`; each theme ships its own renderer set under `sections/<theme>/*` and
+  its own `.iv.t-<theme>` CSS. Section content stays a semantic superset (added cover header/title
+  lines/subtitle, date bigDate/dataGrid, schedule duration, rsvp optionSubs, ending huge/below) so
+  one invitation's data can feed any theme (§7.1). `InvitationViewer` now passes section `index`
+  (minimal uses it for 01–06 numbering).
+- Verified: `tsc` clean; `/i/appa-60` renders t-minimal (swiss cover, 06.15 big date, 4-cell grid,
+  01–06 numbered sections, block RSVP default-selected, THANK YOU.); `/i/jisoo-minjun` romantic
+  unchanged (regression pass: couple, 49 calendar cells, 8 sections).
+- Follow-up required: yes — 6 remaining themes (cute/editorial/developer/battle/timeline/gaming);
+  battle/timeline/gaming add new section types (versus matchup, roster, schedule tabs).

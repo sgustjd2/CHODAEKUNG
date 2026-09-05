@@ -1,16 +1,17 @@
 import type { ComponentType } from "react";
 import type { Invitation } from "@/lib/invitation/types";
-import { sectionRegistry } from "./section-registry";
+import { themeRegistry } from "./section-registry";
 import { Icon } from "@/components/ui/icon";
 
 /** Renders a published invitation from its structured data (sections[] + theme). */
 export function InvitationViewer({ invitation }: { invitation: Invitation }) {
+  const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   return (
     <div className={`iv t-${invitation.theme}`}>
       <div className="iv-doc">
-        {invitation.sections.map((s) => {
-          const Renderer = sectionRegistry[s.type] as ComponentType<{ content: unknown }>;
-          return <Renderer key={s.id} content={s.content} />;
+        {invitation.sections.map((s, i) => {
+          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }>;
+          return <Renderer key={s.id} content={s.content} index={i} />;
         })}
       </div>
 

@@ -26,7 +26,7 @@ Handoff notes: `design/README.md`. Bundle archive: `design_handoff_chodaekung.zi
 | Publish/Share | `design/08_publish_share.html` | pending |
 | RSVP Dashboard | `design/09_rsvp_dashboard.html` | pending |
 | Viewer — Romantic | `design/10_viewer_romantic.html` | ✅ implemented (`/i/[slug]` + section registry) |
-| Viewer — Minimal | `design/11_viewer_minimal.html` | pending |
+| Viewer — Minimal | `design/11_viewer_minimal.html` | ✅ implemented (`/i/appa-60`) |
 | Viewer — Cute | `design/12_viewer_cute.html` | pending |
 | Viewer — Editorial | `design/13_viewer_editorial.html` | pending |
 | Viewer — Developer/Terminal | `design/14_viewer_developer.html` | pending |
