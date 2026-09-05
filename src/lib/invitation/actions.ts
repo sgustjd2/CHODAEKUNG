@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, type Visibility } from "./store";
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
@@ -36,6 +36,33 @@ export async function listMyInvitationsAction() {
   const user = await getCurrentUser();
   if (!user) return { ok: false as const, error: "로그인이 필요해요" };
   return { ok: true as const, invitations: await listMyInvitations(user.id) };
+}
+
+/** Load one of the signed-in user's invitations for editing (data + title). */
+export async function getInvitationForEditAction(slug: string) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const };
+  const inv = await getOwnedInvitation(slug, user.id);
+  return inv ? { ok: true as const, data: inv.data, title: inv.title } : { ok: false as const };
+}
+
+/** Duplicate one of the signed-in user's invitations into a fresh draft copy. */
+export async function duplicateInvitationAction(sourceSlug: string) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  const src = await getOwnedInvitation(sourceSlug, user.id);
+  if (!src) return { ok: false as const, error: "복제할 초대장을 찾을 수 없어요" };
+  const slug = randomSlug();
+  const data: Invitation = { ...src.data, slug };
+  const res = await upsertInvitation({ slug, title: `${src.title} (사본)`, theme: src.theme, visibility: "draft", data, ownerId: user.id });
+  return res.ok ? { ok: true as const, slug } : { ok: false as const, error: res.error };
+}
+
+/** Delete one of the signed-in user's invitations (and its RSVPs). */
+export async function deleteInvitationAction(slug: string) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  return deleteInvitation(slug, user.id);
 }
 
 /** Guest RSVP submission from a published invitation. */

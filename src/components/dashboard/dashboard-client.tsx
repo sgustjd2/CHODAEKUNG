@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { createBrowserSupabase } from "@/lib/db/supabase-browser";
+import { duplicateInvitationAction, deleteInvitationAction } from "@/lib/invitation/actions";
 import type { MyInvitation } from "@/lib/invitation/store";
 
 type Status = "published" | "unlisted" | "draft" | "past";
@@ -84,6 +86,32 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
     }
     router.push("/login");
     router.refresh();
+  };
+
+  const [menuSlug, setMenuSlug] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const onDuplicate = async (slug: string) => {
+    setMenuSlug(null);
+    setBusy(true);
+    const res = await duplicateInvitationAction(slug);
+    setBusy(false);
+    if (res.ok) router.refresh(); // the copy appears as a new draft card
+    else alert(res.error || "복제에 실패했어요.");
+  };
+  const onDelete = async (slug: string, title: string) => {
+    setMenuSlug(null);
+    if (!window.confirm(`"${title}" 초대장을 삭제할까요?\n응답(RSVP)도 함께 삭제되며 되돌릴 수 없어요.`)) return;
+    setBusy(true);
+    const res = await deleteInvitationAction(slug);
+    setBusy(false);
+    if (res.ok) router.refresh();
+    else alert(res.error || "삭제에 실패했어요.");
+  };
+  const menuItem: CSSProperties = {
+    textAlign: "left", background: "none", border: "none", cursor: "pointer",
+    font: "inherit", fontSize: 13, fontWeight: 600, color: "var(--ink)",
+    padding: "9px 10px", borderRadius: 8, textDecoration: "none", display: "block",
   };
 
   const counts = useMemo(() => {
@@ -236,7 +264,21 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
                   <div className={`inv-status ${c.status}`}>
                     {c.status === "published" ? "● Published" : c.status === "unlisted" ? "Unlisted" : c.status === "draft" ? "Draft" : "Past"}
                   </div>
-                  <button className="inv-menu" aria-label="더보기">⋯</button>
+                  {c.slug && (
+                    <>
+                      <button className="inv-menu" aria-label="더보기" disabled={busy} onClick={() => setMenuSlug(menuSlug === c.slug ? null : c.slug!)}>⋯</button>
+                      {menuSlug === c.slug && (
+                        <>
+                          <div onClick={() => setMenuSlug(null)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
+                          <div style={{ position: "absolute", top: 40, right: 10, zIndex: 41, minWidth: 136, display: "flex", flexDirection: "column", gap: 1, padding: 6, background: "#fff", border: "1px solid var(--line)", borderRadius: 12, boxShadow: "0 12px 32px rgba(26,26,46,0.16)" }}>
+                            <button style={menuItem} onClick={() => onDuplicate(c.slug!)}>복제</button>
+                            <Link style={menuItem} href={`/rsvp?slug=${c.slug}`}>응답 보기</Link>
+                            <button style={{ ...menuItem, color: "var(--wax-deep)" }} onClick={() => onDelete(c.slug!, c.title)}>삭제</button>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
                 </div>
                 <div className="inv-info">
                   <div className="inv-cat">{c.cat}</div>

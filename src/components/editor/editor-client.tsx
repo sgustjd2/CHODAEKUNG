@@ -14,6 +14,7 @@ import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } fro
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
+import { getInvitationForEditAction } from "@/lib/invitation/actions";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
@@ -83,6 +84,7 @@ export function EditorClient() {
   useEffect(() => {
     if (didInit.current) return;
     didInit.current = true;
+    void (async () => {
     const params = new URLSearchParams(window.location.search);
     const templateParam = params.get("template")?.trim();
     const slugParam = params.get("slug")?.trim();
@@ -116,12 +118,13 @@ export function EditorClient() {
     const freshFromWizard = !slugParam && !!wiz;
     if (freshFromWizard) applyWizardSeed(d, wiz!);
     let loadedTitle: string | null = null;
+    let hadLocalDraft = false;
     if (!freshFromWizard) {
       try {
         const raw = localStorage.getItem(keyFor(s));
         if (raw) {
           const saved = JSON.parse(raw) as SavedEditor;
-          if (saved.draft) d = saved.draft;
+          if (saved.draft) { d = saved.draft; hadLocalDraft = true; }
           if (typeof saved.title === "string") loadedTitle = saved.title;
           if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
           if (saved.accent !== undefined) setAccent(saved.accent);
@@ -136,11 +139,25 @@ export function EditorClient() {
     } catch {
       /* ignore */
     }
+    // Editing an existing invitation with no local draft (another device, or a duplicate)?
+    // Load its real content from the DB (owner-checked). A local WIP draft takes precedence.
+    if (slugParam && !hadLocalDraft) {
+      try {
+        const res = await getInvitationForEditAction(slugParam);
+        if (res.ok) {
+          d = res.data;
+          loadedTitle = res.title;
+        }
+      } catch {
+        /* offline / not owned — keep the sample fallback */
+      }
+    }
     setDraft(d);
     setSelectedId(d.sections[0]?.id ?? "");
     setTitle(loadedTitle ?? wiz?.title?.trim() ?? (slugParam ? defaultTitleFor(d) : ""));
     setSlug(s);
     setHydrated(true);
+    })();
   }, []);
 
   // Autosave (per invitation) after hydration so edits survive a refresh.

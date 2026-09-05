@@ -59,6 +59,29 @@ export async function upsertInvitation(rec: {
   return error || !created ? { ok: false, error: error?.message ?? "생성 실패" } : { ok: true, editToken: created.edit_token };
 }
 
+/** Read an invitation the given account owns (for duplicate/manage); null if not found or not owned. */
+export async function getOwnedInvitation(
+  slug: string,
+  ownerId: string,
+): Promise<{ title: string; theme: ThemeId; visibility: Visibility; data: Invitation } | null> {
+  if (!isDbEnabled()) return null;
+  const { data } = await getServiceClient().from("invitations").select("title, theme, visibility, data, owner_id").eq("slug", slug).maybeSingle();
+  if (!data || data.owner_id !== ownerId) return null;
+  return { title: data.title, theme: data.theme as ThemeId, visibility: data.visibility as Visibility, data: data.data as Invitation };
+}
+
+/** Delete an invitation and its RSVP rows (owner-only). */
+export async function deleteInvitation(slug: string, ownerId: string): Promise<{ ok: boolean; error?: string }> {
+  if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
+  const db = getServiceClient();
+  const { data: inv } = await db.from("invitations").select("owner_id").eq("slug", slug).maybeSingle();
+  if (!inv) return { ok: false, error: "초대장을 찾을 수 없어요" };
+  if (inv.owner_id !== ownerId) return { ok: false, error: "권한이 없어요" };
+  await db.from("rsvps").delete().eq("invitation_slug", slug);
+  const { error } = await db.from("invitations").delete().eq("slug", slug);
+  return error ? { ok: false, error: error.message } : { ok: true };
+}
+
 export type MyInvitation = { slug: string; title: string; theme: string; visibility: Visibility; img: string; updatedAt: string; views: number; rsvpCount: number };
 
 /** Invitations owned by a user, newest first, with view + RSVP counts (for the dashboard). */
