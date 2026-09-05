@@ -114,3 +114,23 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   unchanged (regression pass: couple, 49 calendar cells, 8 sections).
 - Follow-up required: yes — 6 remaining themes (cute/editorial/developer/battle/timeline/gaming);
   battle/timeline/gaming add new section types (versus matchup, roster, schedule tabs).
+
+### 2026-09-05 — Battle viewer (screen 15) + section-type expansion
+
+- Scope: Implemented the Battle / 도전장 viewer at `/i/jogi-battle` (dark, dramatic, competitive).
+- PRD reference: §7.3; product's differentiated "versus battle" invites. Genspark: `design/15_viewer_battle.html`.
+- Decisions:
+  - Battle needed 6 **new section types** — `versus` (home/away matchup with W/D/L), `matchInfo`
+    (editorial 2×2 info grid), `countdown` (dark cells), `rules` (numbered + prize box), `roster`
+    (home/away player groups), `accept` (accept/decline CTA = battle's RSVP) — plus battle-specific
+    cover/location/ending. Added to the `Section` union + content types.
+  - `ThemeSet` is now `Partial<{ [type]: Renderer }>` — a theme renders only the section types it
+    supports; `InvitationViewer` skips a type with no renderer for the active theme. This is the
+    clean way to let themes diverge structurally while sharing the model + registry.
+  - Battle renderers in `sections/battle/*` output `ivb-*` classes styled under `.iv.t-battle`
+    (dark `.iv-doc`, dark ambient); reuses the shared fixed share pill (dark override).
+- Verified: `tsc` clean; `/i/jogi-battle` renders 9 sections (VS 2 teams, 4 info cells, 4 countdown,
+  4 rules, 7 roster players, accept/decline, stamp ending); dark doc, home flag + title accent = wax.
+  Regression: romantic (8 sections, calendar) and minimal unaffected by the Partial/guard change.
+- Follow-up required: yes — cute/editorial/developer viewers; timeline/gaming (scenario tabs) add
+  more section types; real RSVP/accept submission + countdown; Kakao/link share.

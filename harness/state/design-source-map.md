@@ -30,6 +30,6 @@ Handoff notes: `design/README.md`. Bundle archive: `design_handoff_chodaekung.zi
 | Viewer — Cute | `design/12_viewer_cute.html` | pending |
 | Viewer — Editorial | `design/13_viewer_editorial.html` | pending |
 | Viewer — Developer/Terminal | `design/14_viewer_developer.html` | pending |
-| Viewer — Sports Battle | `design/15_viewer_battle.html` | pending |
+| Viewer — Sports Battle | `design/15_viewer_battle.html` | ✅ implemented (`/i/jogi-battle`) |
 | Viewer — Timeline (집들이/번개/MT) | `design/16_viewer_timeline.html` | pending |
 | Viewer — Gaming (롤 파티) | `design/17_viewer_gaming.html` | pending |

@@ -34,13 +34,17 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Theme registry | `src/components/viewer/section-registry.ts` | **theme → (type → renderer)**; per-theme renderer sets |
 | Romantic renderers | `src/components/viewer/sections/*.tsx` | cover, message, date(+calendar/countdown), location, gallery, schedule, rsvp (client), ending |
 | Minimal renderers | `src/components/viewer/sections/minimal/*.tsx` | own 8 renderers + numbered `MinimalHead` (structural, not a recolor) |
+| Battle renderers | `src/components/viewer/sections/battle/*.tsx` | dark theme; adds section types **versus, matchInfo, countdown, rules, roster, accept** + battle cover/location/ending |
 | Rich text | `src/components/viewer/rich-text.tsx` | renders `Line[]`; `em` → weight+accent |
 | Viewer shell | `src/components/viewer/invitation-viewer.tsx` | picks `themeRegistry[theme]`, passes `index`; themed root + fixed share pill |
 | Theme: romantic | `viewer.css` `.iv.t-romantic` | serif, rose, calendar+countdown |
 | Theme: minimal | `viewer.css` `.iv.t-minimal` | swiss editorial grid, B/W contrast, data grid + block rsvp |
+| Theme: battle | `viewer.css` `.iv.t-battle` | dark; VS matchup, match info grid, countdown, rules+prize, roster, accept/decline CTA, stamp ending |
 
 **Finding:** the 8 viewer themes are structurally different (different cover, section headers,
 date presentation, rsvp, ending), not token recolors — so each theme ships its own renderer set.
+A theme renders a **subset** of section types (`ThemeSet` is `Partial`; the viewer skips types a
+theme doesn't provide). Battle added 6 new types (versus/matchInfo/countdown/rules/roster/accept).
 Content stays a semantic superset (`types.ts`) so the same data can feed any theme (§7.1).
 
 Sample data: `src/lib/invitation/sample-romantic.ts` + `samples.ts` (placeholder store until a

@@ -38,6 +38,8 @@ export type CoverContent = {
   /** Swiss-grid header corners (minimal). */
   headerLeft?: string;
   headerRight?: string;
+  /** Multi-line header corner, e.g. battle date tag. */
+  headerRightLines?: string[];
 };
 
 export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
@@ -91,7 +93,30 @@ export type EndingContent = {
   /** Oversized closing word(s), e.g. THANK YOU. (minimal). */
   huge?: Line[];
   below?: string;
+  /** Rotated stamp label, e.g. "Challenge Sealed" (battle). */
+  stamp?: string;
 };
+
+/* ---- Battle / competitive section content ---- */
+export type Team = {
+  flag: string;
+  name: string;
+  meta: string;
+  record?: { w: string; d: string; l: string };
+};
+export type VersusContent = { eyebrow: string; title: Line[]; home: Team; away: Team; vsWord?: string };
+/** Editorial 2×2 match info; each value is unitized parts (`u` = small suffix face). */
+export type MatchInfoContent = { title: string; cells: { k: string; v: { t: string; u?: boolean }[] }[] };
+export type CountdownContent = { label: string; cells: { n: string; l: string; warn?: boolean }[] };
+export type RulesContent = {
+  title: string;
+  rules: { t: string; d: string }[];
+  prize?: { eb: string; name: string; sub: string };
+};
+export type RosterContent = {
+  groups: { title: string; players: { num: string; name: string; role: string; badge?: string }[] }[];
+};
+export type AcceptContent = { title: Line[]; sub: string; accept: string; decline: string };
 
 export type Section =
   | { id: string; type: "cover"; content: CoverContent }
@@ -101,6 +126,12 @@ export type Section =
   | { id: string; type: "gallery"; content: GalleryContent }
   | { id: string; type: "schedule"; content: ScheduleContent }
   | { id: string; type: "rsvp"; content: RsvpContent }
+  | { id: string; type: "versus"; content: VersusContent }
+  | { id: string; type: "matchInfo"; content: MatchInfoContent }
+  | { id: string; type: "countdown"; content: CountdownContent }
+  | { id: string; type: "rules"; content: RulesContent }
+  | { id: string; type: "roster"; content: RosterContent }
+  | { id: string; type: "accept"; content: AcceptContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

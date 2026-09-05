@@ -10,7 +10,8 @@ export function InvitationViewer({ invitation }: { invitation: Invitation }) {
     <div className={`iv t-${invitation.theme}`}>
       <div className="iv-doc">
         {invitation.sections.map((s, i) => {
-          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }>;
+          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }> | undefined;
+          if (!Renderer) return null;
           return <Renderer key={s.id} content={s.content} index={i} />;
         })}
       </div>
