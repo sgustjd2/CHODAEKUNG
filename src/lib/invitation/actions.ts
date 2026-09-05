@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, listMyInvitations, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, type Visibility } from "./store";
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
@@ -46,6 +46,13 @@ export async function submitRsvpAction(slug: string, entry: { name: string; resp
 /** Owner-only RSVP list (verifies the invitation's edit token). */
 export async function listRsvpsAction(slug: string, editToken: string) {
   return listRsvps(slug, editToken);
+}
+
+/** Owner-only RSVP list for the signed-in account (dashboard → /rsvp?slug=…). */
+export async function listMyRsvpsAction(slug: string) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  return listRsvpsByOwner(slug, user.id);
 }
 
 /** Count one view (fire-and-forget from the public viewer). No-op if unconfigured/pre-migration. */

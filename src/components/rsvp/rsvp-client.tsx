@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
-import { listRsvpsAction } from "@/lib/invitation/actions";
+import { listMyRsvpsAction, listRsvpsAction } from "@/lib/invitation/actions";
 import type { RsvpRow } from "@/lib/invitation/store";
 
 type Resp = "yes" | "no" | "maybe";
@@ -46,8 +47,9 @@ const CHIPS: { key: string; label: string; count: number }[] = [
 ];
 const RESP_LABEL: Record<Resp, string> = { yes: "참석", no: "불참", maybe: "미정" };
 
-const STATS = [
-  { dark: true, lbl: "Total Responses", val: "247", u: "/280", sub: <>응답률 <b>88%</b></>, barW: "88%", barC: "var(--gold)", valC: undefined as string | undefined },
+type Stat = { dark: boolean; lbl: string; val: string; u: string; sub: ReactNode; barW: string; barC: string; valC?: string };
+const DEMO_STATS: Stat[] = [
+  { dark: true, lbl: "Total Responses", val: "247", u: "/280", sub: <>응답률 <b>88%</b></>, barW: "88%", barC: "var(--gold)", valC: undefined },
   { dark: false, lbl: "참석 · Attend", val: "168", u: "", sub: <>동반 포함 <b>+42명</b></>, barW: "68%", barC: "var(--sage)", valC: "var(--sage-deep)" },
   { dark: false, lbl: "불참 · Decline", val: "27", u: "", sub: <>11% of total</>, barW: "11%", barC: "var(--wax)", valC: "var(--wax-deep)" },
   { dark: false, lbl: "미정 · Pending", val: "52", u: "", sub: <>21% of total</>, barW: "21%", barC: "var(--lilac)", valC: "var(--lilac-deep)" },
@@ -56,27 +58,48 @@ const STATS = [
 export function RsvpClient() {
   const [chip, setChip] = useState("all");
   const [q, setQ] = useState("");
+  const [slug, setSlug] = useState("");
   const [liveRows, setLiveRows] = useState<Row[] | null>(null);
+  const [access, setAccess] = useState<"demo" | "loading" | "live" | "denied">("demo");
+  const [hydrated, setHydrated] = useState(false); // gate first paint so a slug URL never flashes the demo
 
-  // If opened as /rsvp?slug=… and we hold that invitation's owner token, load real responses.
+  // /rsvp?slug=… → real responses: signed-in owner first (works on any device), else the link edit-token.
   useEffect(() => {
-    const slug = new URLSearchParams(window.location.search).get("slug")?.trim();
-    if (!slug) return;
+    setHydrated(true);
+    const s = new URLSearchParams(window.location.search).get("slug")?.trim();
+    if (!s) return; // no slug → marketing/demo showcase
+    setSlug(s);
+    setAccess("loading");
     let token = "";
     try {
-      token = localStorage.getItem(`chodaekung:editor:token:${slug}`) || "";
+      token = localStorage.getItem(`chodaekung:editor:token:${s}`) || "";
     } catch {
       /* ignore */
     }
-    if (!token) return;
-    listRsvpsAction(slug, token).then((res) => {
-      if (res.ok) setLiveRows(res.rows.map(toRow));
-    });
+    (async () => {
+      let res = await listMyRsvpsAction(s);
+      if (!res.ok && token) res = await listRsvpsAction(s, token);
+      if (res.ok) {
+        setLiveRows(res.rows.map(toRow));
+        setAccess("live");
+      } else {
+        setAccess("denied");
+      }
+    })();
   }, []);
 
-  const rows = liveRows ?? ROWS;
+  const isLive = access === "live";
+  const rows = isLive ? liveRows ?? [] : access === "demo" ? ROWS : [];
+  const total = rows.length;
+  const nYes = rows.filter((r) => r.response === "yes").length;
+  const nNo = rows.filter((r) => r.response === "no").length;
+  const nMaybe = rows.filter((r) => r.response === "maybe").length;
+  const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+
   const countFor = (key: string) =>
     key === "all" ? rows.length : key === "groom" ? rows.filter((r) => r.side === "신랑측").length : key === "bride" ? rows.filter((r) => r.side === "신부측").length : rows.filter((r) => r.response === key).length;
+
+  const chips = isLive ? CHIPS.filter((c) => ["all", "yes", "no", "maybe"].includes(c.key)) : CHIPS;
 
   const filtered = rows.filter((r) => {
     const chipOk =
@@ -87,9 +110,22 @@ export function RsvpClient() {
     return chipOk && (q.trim() === "" || r.name.includes(q.trim()));
   });
 
+  const stats: Stat[] = isLive
+    ? [
+        { dark: true, lbl: "Total Responses", val: String(total), u: "", sub: <>실시간 집계</>, barW: "100%", barC: "var(--gold)" },
+        { dark: false, lbl: "참석 · Attend", val: String(nYes), u: "", sub: <>{pct(nYes)}% of total</>, barW: `${pct(nYes)}%`, barC: "var(--sage)", valC: "var(--sage-deep)" },
+        { dark: false, lbl: "불참 · Decline", val: String(nNo), u: "", sub: <>{pct(nNo)}% of total</>, barW: `${pct(nNo)}%`, barC: "var(--wax)", valC: "var(--wax-deep)" },
+        { dark: false, lbl: "미정 · Pending", val: String(nMaybe), u: "", sub: <>{pct(nMaybe)}% of total</>, barW: `${pct(nMaybe)}%`, barC: "var(--lilac)", valC: "var(--lilac-deep)" },
+      ]
+    : DEMO_STATS;
+
+  // Donut segment lengths (live); circle circumference ≈ 345.
+  const C = 345;
+  const seg = (n: number) => (total ? (n / total) * C : 0);
+
   const exportCsv = () => {
-    const header = ["이름", "응답", "동반", "측", "메시지", "응답시간"];
-    const body = filtered.map((r) => [r.name, RESP_LABEL[r.response], r.plus, r.side, r.msg, r.time]);
+    const header = isLive ? ["이름", "응답", "동반", "메시지", "응답시간"] : ["이름", "응답", "동반", "측", "메시지", "응답시간"];
+    const body = filtered.map((r) => (isLive ? [r.name, RESP_LABEL[r.response], r.plus, r.msg, r.time] : [r.name, RESP_LABEL[r.response], r.plus, r.side, r.msg, r.time]));
     const csv = [header, ...body]
       .map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
       .join("\n");
@@ -97,10 +133,39 @@ export function RsvpClient() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "rsvp.csv";
+    a.download = `rsvp${isLive && slug ? "-" + slug : ""}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  // First paint / loading a slug's data / no access → chrome + a centered message (never the demo).
+  if (!hydrated || access === "loading" || access === "denied") {
+    return (
+      <div className="rsvp">
+        <div className="top">
+          <Link className="top-logo" href="/dashboard">
+            <Logo />
+          </Link>
+          <div className="top-crumb">DASHBOARD · <b>RSVP</b></div>
+          <Link href="/dashboard" style={{ textDecoration: "none" }}>
+            <Button variant="ghost" size="sm">← 대시보드</Button>
+          </Link>
+        </div>
+        <div className="wrap">
+          <div style={{ textAlign: "center", padding: "80px 24px", color: "var(--muted)" }}>
+            {access === "denied" ? (
+              <>
+                <h2 style={{ marginBottom: 8, color: "var(--ink)" }}>응답을 볼 수 없어요</h2>
+                <p>이 초대장의 응답은 소유자만 볼 수 있어요. 로그인 상태를 확인하거나, 초대장을 발행한 기기에서 다시 시도해주세요.</p>
+              </>
+            ) : (
+              <p>불러오는 중…</p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rsvp">
@@ -124,18 +189,28 @@ export function RsvpClient() {
             <h1 className="head-title">응답 <em>대시보드</em></h1>
             <div className="head-sub">실시간으로 참석자 응답을 확인하세요. 개인정보는 안전하게 보관됩니다.</div>
           </div>
-          <div className="inv-mini">
-            <div className="thumb" style={{ backgroundImage: "url('/assets/photos/romantic_wedding.jpg')" }} />
-            <div className="info">
-              <div className="t">지수 · 민준의 결혼식</div>
-              <div className="m">2026.05.24 · SAT · 12:00 <span className="badge">Published</span></div>
+          {isLive ? (
+            <div className="inv-mini">
+              <div className="thumb" style={{ background: "var(--paper-2)" }} />
+              <div className="info">
+                <div className="t">{slug}</div>
+                <div className="m">응답 {total}건 <span className="badge">LIVE</span></div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="inv-mini">
+              <div className="thumb" style={{ backgroundImage: "url('/assets/photos/romantic_wedding.jpg')" }} />
+              <div className="info">
+                <div className="t">지수 · 민준의 결혼식</div>
+                <div className="m">2026.05.24 · SAT · 12:00 <span className="badge">Published</span></div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* STATS */}
         <div className="stats">
-          {STATS.map((s) => (
+          {stats.map((s) => (
             <div className={`stat${s.dark ? " dark" : ""}`} key={s.lbl}>
               <div className="stat-lbl">{s.lbl}</div>
               <div className="stat-val" style={s.valC ? { color: s.valC } : undefined}>
@@ -149,30 +224,32 @@ export function RsvpClient() {
         </div>
 
         {/* CHARTS */}
-        <div className="chart-row">
-          <div className="chart-card">
-            <div className="chart-head">
-              <div>
-                <div className="chart-t">응답 추이 · 최근 30일</div>
-                <div className="chart-s" style={{ marginTop: 4 }}>DAILY RESPONSES</div>
+        <div className="chart-row" style={isLive ? { gridTemplateColumns: "1fr" } : undefined}>
+          {!isLive && (
+            <div className="chart-card">
+              <div className="chart-head">
+                <div>
+                  <div className="chart-t">응답 추이 · 최근 30일</div>
+                  <div className="chart-s" style={{ marginTop: 4 }}>DAILY RESPONSES</div>
+                </div>
+              </div>
+              <div className="chart">
+                <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <line x1="0" y1="50" x2="600" y2="50" stroke="var(--line)" strokeDasharray="4" />
+                  <line x1="0" y1="100" x2="600" y2="100" stroke="var(--line)" strokeDasharray="4" />
+                  <line x1="0" y1="150" x2="600" y2="150" stroke="var(--line)" strokeDasharray="4" />
+                  <path d="M 0 180 L 60 170 L 120 155 L 180 140 L 240 128 L 300 118 L 360 105 L 420 90 L 480 75 L 540 60 L 600 45 L 600 200 L 0 200 Z" fill="rgba(181,202,178,0.25)" />
+                  <path d="M 0 180 L 60 170 L 120 155 L 180 140 L 240 128 L 300 118 L 360 105 L 420 90 L 480 75 L 540 60 L 600 45" fill="none" stroke="var(--sage-deep)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M 0 175 L 60 160 L 120 140 L 180 120 L 240 105 L 300 88 L 360 75 L 420 60 L 480 45 L 540 32 L 600 22" fill="none" stroke="var(--wax)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="600" cy="22" r="5" fill="var(--wax)" />
+                  <circle cx="600" cy="22" r="10" fill="rgba(227,139,139,0.2)" />
+                </svg>
+              </div>
+              <div className="chart-x">
+                <span>2/28</span><span>3/2</span><span>3/4</span><span>3/6</span><span>3/8</span><span>3/10</span><span>3/12</span><span>오늘</span>
               </div>
             </div>
-            <div className="chart">
-              <svg viewBox="0 0 600 200" preserveAspectRatio="none">
-                <line x1="0" y1="50" x2="600" y2="50" stroke="var(--line)" strokeDasharray="4" />
-                <line x1="0" y1="100" x2="600" y2="100" stroke="var(--line)" strokeDasharray="4" />
-                <line x1="0" y1="150" x2="600" y2="150" stroke="var(--line)" strokeDasharray="4" />
-                <path d="M 0 180 L 60 170 L 120 155 L 180 140 L 240 128 L 300 118 L 360 105 L 420 90 L 480 75 L 540 60 L 600 45 L 600 200 L 0 200 Z" fill="rgba(181,202,178,0.25)" />
-                <path d="M 0 180 L 60 170 L 120 155 L 180 140 L 240 128 L 300 118 L 360 105 L 420 90 L 480 75 L 540 60 L 600 45" fill="none" stroke="var(--sage-deep)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 0 175 L 60 160 L 120 140 L 180 120 L 240 105 L 300 88 L 360 75 L 420 60 L 480 45 L 540 32 L 600 22" fill="none" stroke="var(--wax)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="600" cy="22" r="5" fill="var(--wax)" />
-                <circle cx="600" cy="22" r="10" fill="rgba(227,139,139,0.2)" />
-              </svg>
-            </div>
-            <div className="chart-x">
-              <span>2/28</span><span>3/2</span><span>3/4</span><span>3/6</span><span>3/8</span><span>3/10</span><span>3/12</span><span>오늘</span>
-            </div>
-          </div>
+          )}
 
           <div className="chart-card">
             <div className="chart-head">
@@ -185,19 +262,29 @@ export function RsvpClient() {
               <div className="donut">
                 <svg width="140" height="140" viewBox="0 0 140 140">
                   <circle cx="70" cy="70" r="55" fill="none" stroke="var(--paper-2)" strokeWidth="16" />
-                  <circle cx="70" cy="70" r="55" fill="none" stroke="var(--sage-deep)" strokeWidth="16" strokeDasharray="235 345" strokeLinecap="round" />
-                  <circle cx="70" cy="70" r="55" fill="none" stroke="var(--wax)" strokeWidth="16" strokeDasharray="38 345" strokeDashoffset="-236" strokeLinecap="round" />
-                  <circle cx="70" cy="70" r="55" fill="none" stroke="var(--lilac-deep)" strokeWidth="16" strokeDasharray="72 345" strokeDashoffset="-278" strokeLinecap="round" />
+                  {isLive ? (
+                    <>
+                      {nYes > 0 && <circle cx="70" cy="70" r="55" fill="none" stroke="var(--sage-deep)" strokeWidth="16" strokeDasharray={`${seg(nYes)} ${C}`} />}
+                      {nNo > 0 && <circle cx="70" cy="70" r="55" fill="none" stroke="var(--wax)" strokeWidth="16" strokeDasharray={`${seg(nNo)} ${C}`} strokeDashoffset={-seg(nYes)} />}
+                      {nMaybe > 0 && <circle cx="70" cy="70" r="55" fill="none" stroke="var(--lilac-deep)" strokeWidth="16" strokeDasharray={`${seg(nMaybe)} ${C}`} strokeDashoffset={-(seg(nYes) + seg(nNo))} />}
+                    </>
+                  ) : (
+                    <>
+                      <circle cx="70" cy="70" r="55" fill="none" stroke="var(--sage-deep)" strokeWidth="16" strokeDasharray="235 345" strokeLinecap="round" />
+                      <circle cx="70" cy="70" r="55" fill="none" stroke="var(--wax)" strokeWidth="16" strokeDasharray="38 345" strokeDashoffset="-236" strokeLinecap="round" />
+                      <circle cx="70" cy="70" r="55" fill="none" stroke="var(--lilac-deep)" strokeWidth="16" strokeDasharray="72 345" strokeDashoffset="-278" strokeLinecap="round" />
+                    </>
+                  )}
                 </svg>
                 <div className="donut-center">
-                  <div className="n">247</div>
+                  <div className="n">{isLive ? total : 247}</div>
                   <div className="l">Total</div>
                 </div>
               </div>
               <div className="legend">
-                <div className="lg-item"><div className="sw" style={{ background: "var(--sage-deep)" }} /><span className="k">참석</span><span className="v">168</span><span className="p">68%</span></div>
-                <div className="lg-item"><div className="sw" style={{ background: "var(--wax)" }} /><span className="k">불참</span><span className="v">27</span><span className="p">11%</span></div>
-                <div className="lg-item"><div className="sw" style={{ background: "var(--lilac-deep)" }} /><span className="k">미정</span><span className="v">52</span><span className="p">21%</span></div>
+                <div className="lg-item"><div className="sw" style={{ background: "var(--sage-deep)" }} /><span className="k">참석</span><span className="v">{isLive ? nYes : 168}</span><span className="p">{isLive ? pct(nYes) : 68}%</span></div>
+                <div className="lg-item"><div className="sw" style={{ background: "var(--wax)" }} /><span className="k">불참</span><span className="v">{isLive ? nNo : 27}</span><span className="p">{isLive ? pct(nNo) : 11}%</span></div>
+                <div className="lg-item"><div className="sw" style={{ background: "var(--lilac-deep)" }} /><span className="k">미정</span><span className="v">{isLive ? nMaybe : 52}</span><span className="p">{isLive ? pct(nMaybe) : 21}%</span></div>
               </div>
             </div>
           </div>
@@ -208,7 +295,7 @@ export function RsvpClient() {
           <div className="table-head">
             <div>
               <div className="chart-t">참석자 명단</div>
-              <div className="chart-s" style={{ marginTop: 4 }}>{liveRows ? `${rows.length} RESPONSES · LIVE` : "247 RESPONSES · LAST UPDATED 방금 전"}</div>
+              <div className="chart-s" style={{ marginTop: 4 }}>{isLive ? `${rows.length} RESPONSES · LIVE` : "247 RESPONSES · LAST UPDATED 방금 전"}</div>
             </div>
             <div className="table-actions">
               <div className="search-mini">
@@ -221,9 +308,9 @@ export function RsvpClient() {
             </div>
           </div>
           <div className="filter-chips">
-            {CHIPS.map((c) => (
+            {chips.map((c) => (
               <button key={c.key} className={`fc${chip === c.key ? " active" : ""}`} onClick={() => setChip(c.key)}>
-                {c.label} <span className="c">{liveRows ? countFor(c.key) : c.count}</span>
+                {c.label} <span className="c">{isLive ? countFor(c.key) : c.count}</span>
               </button>
             ))}
           </div>
@@ -253,13 +340,13 @@ export function RsvpClient() {
                   </tr>
                 ))}
                 {filtered.length === 0 && (
-                  <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--fg-3)", padding: "32px" }}>검색 결과가 없어요.</td></tr>
+                  <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--fg-3)", padding: "32px" }}>{isLive && total === 0 ? "아직 응답이 없어요." : "검색 결과가 없어요."}</td></tr>
                 )}
               </tbody>
             </table>
           </div>
           <div className="table-foot">
-            <div>SHOWING {filtered.length} OF {liveRows ? rows.length : 247}</div>
+            <div>SHOWING {filtered.length} OF {isLive ? rows.length : 247}</div>
             <div style={{ display: "flex", gap: 4 }}>
               <Button variant="ghost" size="sm">← 이전</Button>
               <Button variant="ghost" size="sm">다음 →</Button>

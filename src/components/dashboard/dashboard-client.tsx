@@ -247,12 +247,19 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
                     {c.status === "past" ? <span style={{ color: "var(--muted)" }}>완료</span> : <span className="dday">{c.dday}</span>}
                   </div>
                   <div className="inv-analytics">
-                    {c.analytics.map((a, i) => (
-                      <div className="a" key={i}>
-                        <div className="av">{a.v}</div>
-                        <div className="al">{a.l}</div>
-                      </div>
-                    ))}
+                    {c.analytics.map((a, i) =>
+                      a.l === "RSVP" && c.slug ? (
+                        <Link className="a" key={i} href={`/rsvp?slug=${c.slug}`} title="응답 보기" style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}>
+                          <div className="av">{a.v}</div>
+                          <div className="al">RSVP →</div>
+                        </Link>
+                      ) : (
+                        <div className="a" key={i}>
+                          <div className="av">{a.v}</div>
+                          <div className="al">{a.l}</div>
+                        </div>
+                      )
+                    )}
                   </div>
                   <div className="inv-actions">
                     <Link className="ia" href={editHref}>{c.actions[0]}</Link>

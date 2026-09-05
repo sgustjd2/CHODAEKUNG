@@ -113,14 +113,9 @@ export async function submitRsvp(slug: string, entry: { name: string; response: 
   return error ? { ok: false, error: error.message } : { ok: true };
 }
 
-/** Owner-only RSVP list — requires the invitation's editToken. */
-export async function listRsvps(slug: string, editToken: string): Promise<{ ok: true; rows: RsvpRow[] } | { ok: false; error: string }> {
-  if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
-  const db = getServiceClient();
-  const { data: inv } = await db.from("invitations").select("edit_token").eq("slug", slug).maybeSingle();
-  if (!inv) return { ok: false, error: "초대장을 찾을 수 없어요" };
-  if (inv.edit_token !== editToken) return { ok: false, error: "권한이 없어요" };
-  const { data, error } = await db
+/** Fetch an invitation's RSVP rows (call only after an ownership check). */
+async function fetchRsvpRows(slug: string): Promise<{ ok: true; rows: RsvpRow[] } | { ok: false; error: string }> {
+  const { data, error } = await getServiceClient()
     .from("rsvps")
     .select("id, name, response, guests, message, created_at")
     .eq("invitation_slug", slug)
@@ -130,4 +125,22 @@ export async function listRsvps(slug: string, editToken: string): Promise<{ ok: 
     ok: true,
     rows: (data ?? []).map((r) => ({ id: r.id, name: r.name, response: r.response, guests: r.guests, message: r.message, createdAt: r.created_at })),
   };
+}
+
+/** Owner-only RSVP list via the invitation's editToken (link-based ownership). */
+export async function listRsvps(slug: string, editToken: string): Promise<{ ok: true; rows: RsvpRow[] } | { ok: false; error: string }> {
+  if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
+  const { data: inv } = await getServiceClient().from("invitations").select("edit_token").eq("slug", slug).maybeSingle();
+  if (!inv) return { ok: false, error: "초대장을 찾을 수 없어요" };
+  if (inv.edit_token !== editToken) return { ok: false, error: "권한이 없어요" };
+  return fetchRsvpRows(slug);
+}
+
+/** Owner-only RSVP list via the signed-in account (works on any device, no local token needed). */
+export async function listRsvpsByOwner(slug: string, ownerId: string): Promise<{ ok: true; rows: RsvpRow[] } | { ok: false; error: string }> {
+  if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
+  const { data: inv } = await getServiceClient().from("invitations").select("owner_id").eq("slug", slug).maybeSingle();
+  if (!inv) return { ok: false, error: "초대장을 찾을 수 없어요" };
+  if (inv.owner_id !== ownerId) return { ok: false, error: "권한이 없어요" };
+  return fetchRsvpRows(slug);
 }
