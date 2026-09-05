@@ -196,3 +196,16 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   visibly open — measurement artifact, not a bug.)
 - Follow-up required: yes — Kakao JS SDK + real OG route/metadata; QR PNG generation; persist
   chosen visibility.
+
+### 2026-09-05 — Dashboard (screen 04)
+
+- Scope: Implemented `/dashboard` — sidebar + management home (stats, filters, invitation cards).
+- PRD reference: §18 (dashboard). Genspark: `design/04_dashboard.html`.
+- Decisions:
+  - `DashboardClient` (client) holds tab + search state. Cards are a mock array; preview links to
+    `/i/[slug]` where a real sample viewer exists (jisoo-minjun/appa-60/jibdeuli/jogi-battle), edit
+    to `/editor`. Stat totals are static demo aggregates; tab counts are computed from the cards.
+  - Sidebar nav: 템플릿 → `/templates`, 새 초대장 → `/new`, rest are stubs; scoped CSS under `.dash`.
+- Verified: `tsc` clean; sidebar + 4 stats (1 featured) + 6 cards + empty card render; status tabs
+  filter (Draft → 2) and title search (생신 → 1) work.
+- Follow-up required: yes — list view toggle, real data/counts, per-card ⋯ menu actions.
