@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getInvitation } from "@/lib/invitation/samples";
+import { getPublishedInvitation } from "@/lib/invitation/store";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import "@/components/viewer/viewer.css";
 
@@ -13,6 +13,7 @@ export default async function InvitationPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const invitation = getInvitation(slug);
+  // Reads the published invitation from Supabase when configured; falls back to a bundled sample.
+  const invitation = await getPublishedInvitation(slug);
   return <InvitationViewer invitation={invitation} />;
 }

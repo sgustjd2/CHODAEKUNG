@@ -27,6 +27,19 @@ classes so fidelity stays with the approved tokens; reuse these before creating 
 | 04 dashboard | `src/components/dashboard/dashboard-client.tsx` | client; sidebar nav, 4 stat cards, status tabs + title-search filter, invitation card grid (preview → `/i/[slug]`, edit → `/editor?slug=[slug]`) | done |
 | 09 rsvp dashboard | `src/components/rsvp/rsvp-client.tsx` | client; stats+bars, line/donut charts (inline SVG), response table with chip filter + name search + CSV export (Blob download) | done |
 
+## Backend / data layer (Supabase — anonymous/link MVP)
+
+Server-only, service-role access; app falls back to bundled samples when unconfigured.
+
+| Piece | Code | Notes |
+|---|---|---|
+| Schema | `supabase/migrations/0001_init.sql` | `invitations` (slug PK, data jsonb, visibility, secret `edit_token`) + `rsvps`; RLS on with public-read-live + anon-rsvp-insert policies; writes are server-only |
+| Server client | `src/lib/db/client.ts` | `isDbEnabled()` / `getServiceClient()` (service role, bypasses RLS). Never import client-side |
+| Data store | `src/lib/invitation/store.ts` | `getPublishedInvitation` (DB→sample fallback), `upsertInvitation` (edit_token owner check), `submitRsvp`, `listRsvps` |
+| Env | `.env.example` | `NEXT_PUBLIC_SUPABASE_URL` / `_ANON_KEY` + server-only `SUPABASE_SERVICE_ROLE_KEY` |
+
+Viewer route `/i/[slug]` now `await getPublishedInvitation(slug)` (dynamic, server-rendered).
+
 ## Invitation viewer + section renderer (CLAUDE.md §7.3)
 
 Structured-data model in `src/lib/invitation/types.ts` (`Invitation` = `sections[]` + `theme`;

@@ -486,3 +486,25 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   mobile `/editor?slug=jogi-battle` content sheet shows Cover/Location/Versus/Countdown/Rules/CTA/
   Roster/Ending and versus edit flows ("모바일FC"). Cleared test values.
 - Remaining: matchInfo + champions editors (low value); gallery image upload; Layout/Animation config.
+
+### 2026-09-05 — Backend foundation: Supabase (anonymous/link MVP), code-first
+
+- Scope: Data layer for the backend lane. User chose Supabase + anonymous/link ownership + start
+  code-first (activates when keys are added). This slice = schema + server client + store + wire the
+  public viewer read; editor publish + RSVP UI wiring come next.
+- Decisions:
+  - Ownership without login: each invitation has a secret `edit_token` (link-based). All writes go
+    through Next server code using the **service role** (bypasses RLS) and verifies the token; the
+    service key has no NEXT_PUBLIC_ prefix so Next keeps it off the client. RLS is ON with two anon
+    policies (read live invitations, insert RSVP to live) — proper auth (Kakao) + owner column can
+    layer on later.
+  - Graceful fallback: `isDbEnabled()` false (no keys) → the store returns bundled samples, so the
+    app runs unchanged today and "turns on" when `.env.local` is filled. `getPublishedInvitation`
+    only returns published/unlisted rows.
+  - `@supabase/supabase-js` added (needed now + for Auth/Storage later). `.env.example` added;
+    `.gitignore` keeps real `.env*` out but un-ignores `.env.example`.
+- Verified: `tsc` clean; `npm run build` passes (`/i/[slug]` now ƒ dynamic); `/i/jisoo-minjun` still
+  renders the romantic sample via fallback (no keys), no errors.
+- Next: publish Server Action + wire editor 발행 (create/edit → DB, store edit_token per slug in
+  localStorage, return public URL); then RSVP submit (viewer) + host list (dashboard); then Storage
+  (gallery upload); then Kakao auth. Pre-existing non-fatal warning: nested @keyframes in wizard.css.
