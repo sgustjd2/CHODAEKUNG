@@ -590,3 +590,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   invitation.slug`, so re-publish updates the created row. (User can delete the stray test rows
   inv-*/jisoo-minjun in Supabase Table Editor.)
 - Auth sign-up/dashboard live path is the user's to verify (I don't create accounts/enter passwords).
+
+### 2026-09-05 — OG/Kakao share cards for /i/[slug]
+
+- `generateMetadata` on the invitation route builds og:title (cover names/title), og:description
+  (date · location), og:image (cover photo), + twitter summary_large_image. `metadataBase` in the
+  root layout (NEXT_PUBLIC_SITE_URL → VERCEL_URL → localhost) makes image URLs absolute.
+- Verified locally: /i/inv-h0buf4qe head has og:title "지수 · 민준", og:description
+  "2026. 05. 24 … · 성수 가든", absolute og:image. KakaoTalk link previews show the card.
+- Note: set NEXT_PUBLIC_SITE_URL=https://chodaekung.vercel.app on Vercel so OG image URLs point at the
+  stable domain (not the per-deploy VERCEL_URL).
