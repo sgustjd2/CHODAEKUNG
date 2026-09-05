@@ -389,3 +389,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Note: git index had been corrupted by an interrupted commit; rebuilt via `rm .git/index && git reset`
   (working tree preserved) before committing.
 - Follow-up: gallery image swap/upload; Layout/Animation config (needs viewer support); wire save/publish.
+
+### 2026-09-05 — Editor draft persistence (localStorage autosave)
+
+- Scope: Editor edits now survive a page refresh; the "Saved" badge is backed by real writes.
+- Decisions: `EditorClient` loads `{draft,title,hidden,accent}` from `localStorage` on mount
+  (SSR renders the sample, a client effect swaps in the saved draft — no hydration mismatch) and
+  autosaves on every change once hydrated. 저장 button flushes explicitly; 되돌리기 resets to the
+  sample (autosave then persists that). All reads/writes wrapped in try/catch (private mode / quota).
+  Marked `// ponytail: localStorage draft store — swap for a real backend when multi-device/sharing lands`.
+  Both editors share the state, so mobile persists too.
+- Verified: `tsc` clean; at 1280px edited cover 이름1 → "지수TEST", it persisted to localStorage,
+  and after a full reload the input + live preview both showed "지수TEST". Cleared the test value.
+- Ceiling: per-browser only — a shared invitation URL opened by a guest won't see the creator's
+  draft. Real cross-device persistence + sharing needs the backend lane.
