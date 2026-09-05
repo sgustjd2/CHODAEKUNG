@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/logo";
+import { AddressSearch } from "@/components/ui/address-search";
 
 type EventDef = { id: string; icon: string; name: string; hint: string };
 
@@ -378,7 +379,10 @@ export function NewInvitationWizard() {
             </div>
             <div className="full">
               <label className="input-label">장소</label>
-              <input className="input" placeholder="장소명 · 주소" value={location} onChange={(e) => setLocation(e.target.value)} />
+              <div style={{ display: "flex", gap: 8 }}>
+                <input className="input" style={{ flex: 1 }} placeholder="장소명 · 주소" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <AddressSearch className="btn btn-outline" label="주소 찾기" onSelect={(a) => setLocation((p) => (p.trim() ? `${p.trim()} · ${a}` : a))} />
+              </div>
             </div>
             <div className="full">
               <label className="input-label">대표 사진 (선택 · 나중에 업로드 가능)</label>

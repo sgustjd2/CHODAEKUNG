@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { linesToText, plainTitle, textToLines } from "./editor-shared";
+import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
 import type {
@@ -95,6 +96,11 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
           <h5>Location</h5>
           <Field label="장소명" value={plainTitle(location.content.title)} onChange={(v) => patch(location.id, { title: [[v]] } satisfies Partial<LocationContent>)} />
           <Field label="주소 · 설명" textarea value={linesToText(location.content.body)} onChange={(v) => patch(location.id, { body: textToLines(v) })} />
+          <AddressSearch
+            className="insp-add"
+            label="+ 주소 찾기"
+            onSelect={(a) => patch(location.id, { body: textToLines([linesToText(location.content.body).trim(), a].filter(Boolean).join("\n")) })}
+          />
           {(draft.theme === "cute" || draft.theme === "editorial") && (
             <>
               {location.content.photo && (
