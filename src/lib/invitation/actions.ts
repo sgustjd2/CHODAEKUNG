@@ -1,6 +1,7 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listMyInvitations, type Visibility } from "./store";
+import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
 
 function randomSlug(): string {
@@ -21,11 +22,19 @@ export async function publishInvitationAction(input: {
   visibility: Visibility;
   editToken?: string;
 }): Promise<{ ok: true; slug: string; editToken: string; url: string } | { ok: false; error: string }> {
+  const user = await getCurrentUser();
   const slug = input.editToken ? input.slug : randomSlug();
   const data: Invitation = { ...input.data, slug };
-  const res = await upsertInvitation({ slug, title: input.title, theme: input.theme, data, visibility: input.visibility, editToken: input.editToken });
+  const res = await upsertInvitation({ slug, title: input.title, theme: input.theme, data, visibility: input.visibility, editToken: input.editToken, ownerId: user?.id });
   if (!res.ok) return res;
   return { ok: true, slug, editToken: res.editToken, url: `/i/${slug}` };
+}
+
+/** Invitations owned by the signed-in user (dashboard). */
+export async function listMyInvitationsAction() {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  return { ok: true as const, invitations: await listMyInvitations(user.id) };
 }
 
 /** Guest RSVP submission from a published invitation. */

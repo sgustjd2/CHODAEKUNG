@@ -35,26 +35,47 @@ export async function upsertInvitation(rec: {
   visibility: Visibility;
   data: Invitation;
   editToken?: string;
+  ownerId?: string;
 }): Promise<{ ok: true; editToken: string } | { ok: false; error: string }> {
   if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요 (.env.local의 Supabase 키 필요)" };
   const db = getServiceClient();
 
-  const { data: existing } = await db.from("invitations").select("edit_token").eq("slug", rec.slug).maybeSingle();
+  const { data: existing } = await db.from("invitations").select("edit_token, owner_id").eq("slug", rec.slug).maybeSingle();
   if (existing) {
-    if (!rec.editToken || rec.editToken !== existing.edit_token) return { ok: false, error: "이 초대장을 편집할 권한이 없어요" };
-    const { error } = await db
-      .from("invitations")
-      .update({ title: rec.title, theme: rec.theme, visibility: rec.visibility, data: rec.data, updated_at: new Date().toISOString() })
-      .eq("slug", rec.slug);
-    return error ? { ok: false, error: error.message } : { ok: true, editToken: rec.editToken };
+    const isOwner = rec.ownerId != null && rec.ownerId === existing.owner_id;
+    const hasToken = rec.editToken != null && rec.editToken === existing.edit_token;
+    if (!isOwner && !hasToken) return { ok: false, error: "이 초대장을 편집할 권한이 없어요" };
+    const patch: Record<string, unknown> = { title: rec.title, theme: rec.theme, visibility: rec.visibility, data: rec.data, updated_at: new Date().toISOString() };
+    if (rec.ownerId && !existing.owner_id) patch.owner_id = rec.ownerId; // claim ownership on first authed publish
+    const { error } = await db.from("invitations").update(patch).eq("slug", rec.slug);
+    return error ? { ok: false, error: error.message } : { ok: true, editToken: rec.editToken ?? "" };
   }
 
   const { data: created, error } = await db
     .from("invitations")
-    .insert({ slug: rec.slug, title: rec.title, theme: rec.theme, visibility: rec.visibility, data: rec.data })
+    .insert({ slug: rec.slug, title: rec.title, theme: rec.theme, visibility: rec.visibility, data: rec.data, owner_id: rec.ownerId ?? null })
     .select("edit_token")
     .single();
   return error || !created ? { ok: false, error: error?.message ?? "생성 실패" } : { ok: true, editToken: created.edit_token };
+}
+
+export type MyInvitation = { slug: string; title: string; theme: string; visibility: Visibility; img: string; updatedAt: string };
+
+/** Invitations owned by a user, newest first (for the dashboard). */
+export async function listMyInvitations(ownerId: string): Promise<MyInvitation[]> {
+  if (!isDbEnabled()) return [];
+  const { data, error } = await getServiceClient()
+    .from("invitations")
+    .select("slug, title, theme, visibility, data, updated_at")
+    .eq("owner_id", ownerId)
+    .order("updated_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map((r) => {
+    const inv = r.data as Invitation;
+    const cover = inv?.sections?.find((s) => s.type === "cover");
+    const img = cover && "image" in cover.content ? (cover.content.image as string) || "hero_flatlay" : "hero_flatlay";
+    return { slug: r.slug, title: r.title, theme: r.theme, visibility: r.visibility, img, updatedAt: r.updated_at };
+  });
 }
 
 /** Guest RSVP submission (anonymous). The invitation must be live. */
