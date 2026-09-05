@@ -1,5 +1,6 @@
 import { CCard } from "./c-card";
 import { Icon } from "@/components/ui/icon";
+import { photoUrl } from "@/lib/photo";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function CuteLocation({ content }: { content: LocationContent }) {
@@ -7,7 +8,7 @@ export function CuteLocation({ content }: { content: LocationContent }) {
     <CCard eb={content.eyebrow} ebVariant="sage" title={content.title}>
       {content.photo && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className="c-photo" src={`/assets/photos/${content.photo}.jpg`} alt="" />
+        <img className="c-photo" src={photoUrl(content.photo)} alt="" />
       )}
       {content.address && (
         <div className="c-addr">

@@ -1,5 +1,6 @@
 import { ESection } from "./e-section";
 import { Rich } from "../../rich-text";
+import { photoUrl } from "@/lib/photo";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function EditorialLocation({ content }: { content: LocationContent }) {
@@ -8,7 +9,7 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
       {content.photo && (
         <div className="e-photo-wrap">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/assets/photos/${content.photo}.jpg`} alt="" />
+          <img src={photoUrl(content.photo)} alt="" />
           {content.photoCap && (
             <div className="e-photo-cap">
               <span>{content.photoCap.l}</span>

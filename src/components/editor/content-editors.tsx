@@ -95,6 +95,22 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
           <h5>Location</h5>
           <Field label="장소명" value={plainTitle(location.content.title)} onChange={(v) => patch(location.id, { title: [[v]] } satisfies Partial<LocationContent>)} />
           <Field label="주소 · 설명" textarea value={linesToText(location.content.body)} onChange={(v) => patch(location.id, { body: textToLines(v) })} />
+          {(draft.theme === "cute" || draft.theme === "editorial") && (
+            <>
+              {location.content.photo && (
+                <div className="insp-photos">
+                  <div className="insp-photo">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photoUrl(location.content.photo)} alt="" />
+                    <button type="button" aria-label="장소 사진 삭제" onClick={() => patch(location.id, { photo: undefined } satisfies Partial<LocationContent>)}>
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+              <PhotoUpload onUploaded={(url) => patch(location.id, { photo: url } satisfies Partial<LocationContent>)} label={location.content.photo ? "+ 장소 사진 변경" : "+ 장소 사진 업로드"} />
+            </>
+          )}
         </div>
       )}
       {date && (
