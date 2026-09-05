@@ -858,3 +858,26 @@
 
   .share-pill button svg { color: #7ED77E; }
 }
+
+/* ============================================================
+   RSVP modal — theme-agnostic, opened by the share pill primary CTA
+   ============================================================ */
+.rsvp-modal-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; background: rgba(20,16,30,0.5); backdrop-filter: blur(4px); }
+@media (min-width: 480px) { .rsvp-modal-overlay { align-items: center; padding: 20px; } }
+.rsvp-modal { position: relative; width: 100%; max-width: 400px; background: var(--card); color: var(--ink); border-radius: 24px 24px 0 0; padding: 28px 24px 32px; box-shadow: 0 -8px 40px rgba(0,0,0,0.25); font-family: var(--font-ko); }
+@media (min-width: 480px) { .rsvp-modal { border-radius: 20px; } }
+.rsvp-modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--paper-2); color: var(--fg-2); font-size: 18px; line-height: 1; cursor: pointer; }
+.rsvp-modal-t { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px; }
+.rsvp-field { display: block; margin-bottom: 16px; }
+.rsvp-field > span { display: block; font-size: 12px; font-weight: 700; color: var(--fg-2); margin-bottom: 6px; }
+.rsvp-field input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; font-family: var(--font-ko); color: var(--ink); background: var(--paper-2); }
+.rsvp-field input:focus { outline: none; border-color: var(--wax); background: var(--card); }
+.rsvp-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.rsvp-opt { flex: 1; min-width: 80px; padding: 12px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--fg-2); font-family: var(--font-ko); font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.rsvp-opt.on { background: var(--wax); color: var(--paper); border-color: transparent; }
+.rsvp-err { font-size: 12px; color: var(--wax-deep); font-weight: 700; margin-bottom: 10px; }
+.rsvp-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--ink); color: var(--paper); font-family: var(--font-ko); font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 4px; }
+.rsvp-btn:disabled { opacity: 0.6; cursor: default; }
+.rsvp-done { text-align: center; padding: 12px 0; }
+.rsvp-done-t { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.rsvp-done-s { font-size: 14px; color: var(--fg-2); margin-bottom: 20px; }

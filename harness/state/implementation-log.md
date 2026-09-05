@@ -520,3 +520,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` + `npm run build` clean; in dev without keys, 발행하기 shows the graceful
   "백엔드가 아직 설정되지 않았어요" status (no crash). Real persistence activates when keys are set.
 - Next: RSVP submit (viewer) + host list (dashboard).
+
+### 2026-09-05 — Backend: RSVP guest submit (viewer)
+
+- Scope: Guests can now RSVP. Replaced the static share pill with `<ShareBar>` (client): 카톡/링크 copy
+  + primary CTA opens a theme-agnostic RSVP form (name + options) → `submitRsvpAction` → DB.
+- Decisions: one submit path for all themes (avoids wiring every theme's RSVP renderer). Options come
+  from the invitation's rsvp section (else accept CTA, else 참석/미정/불참). Modal CSS is base-level
+  (theme-agnostic) in viewer.css; hidden in editor preview via existing `.iv-contained .share-pill`.
+- Verified: `tsc` clean; `/i/jisoo-minjun` → primary CTA opens modal with 참석/미정/불참; submit without
+  keys shows graceful "백엔드가 아직 설정되지 않았어요". Inserts for real when keys + a published row exist.
+- Next: host RSVP list — wire `/rsvp` dashboard to `listRsvps(slug, editToken)`.
