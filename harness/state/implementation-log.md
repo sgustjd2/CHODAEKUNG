@@ -289,3 +289,26 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   rose serif-italic pull quote (decorative quote marks), magazine grid gallery, dark RSVP box (YES
   selected, click switches), oversized SEE YOU/after hours ending + colophon. Reset viewport after.
 - Follow-up required: yes — RSVP selection local-only; Story/Magazine reading modes still pending.
+
+### 2026-09-05 — Developer viewer (screen 14, 터미널) — viewer set COMPLETE
+
+- Scope: Implemented the Developer/Terminal theme at `/i/[slug]`. This completes all 8 viewer themes
+  (romantic, minimal, cute, editorial, developer, battle, timeline, gaming).
+- PRD reference: §2 (dev meetup / study-group meetup scope). Genspark: `design/14_viewer_developer.html`.
+- Decisions:
+  - New theme `developer` (dark #0D0F0A, DM Mono, ANSI palette, CRT scanlines on `.iv-doc::before`).
+    **Added zero new section types** — the strongest proof of the superset model (§7.1): the standard
+    cover/date/location/schedule/gallery/rsvp/ending sections re-render as a terminal session.
+  - Small optional field additions only: cover `from`+`json` (syntax-highlighted payload), date
+    `subLabel` (bigDate/countdown/dataGrid already existed), location `rows` (Kv output lines),
+    rsvp `progress` (ASCII bar). Section badges (D-32, "4 items") are derived from data or constant
+    per section; titlebar + ASCII banner + colophon are theme chrome hardcoded in cover/ending.
+  - `DSection` shell ("# name" + optional badge). RSVP options are `[✓]`/`[ ]` div-buttons with
+    keyboard handlers; progress bar built with ▓/░ from `progress.filled/total`.
+  - Share pill reuses base (dark + `--wax`), with green icon tint for flavor.
+  - 1 sample `sample-developer.ts` (dev-meetup).
+- Verified: `tsc` clean; `/i/dev-meetup` renders titlebar, colored command lines, MOI LETTER ASCII
+  banner, JSON block (gold keys / green str+date+bool / blue num), datetime ASCII + table, location
+  output + `$` buttons, schedule table, hue-filtered ASCII gallery, `[✓]` RSVP + progress bar, share
+  buttons, echo ending + colophon. Reset viewport after.
+- Follow-up required: yes — RSVP/actions are local-only stubs; wire share/copy/cal + RSVP to backend.

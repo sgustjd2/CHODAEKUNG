@@ -40,6 +40,7 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Minimal renderers | `src/components/viewer/sections/minimal/*.tsx` | own 8 renderers + numbered `MinimalHead` (structural, not a recolor) |
 | Cute renderers | `src/components/viewer/sections/cute/*.tsx` | warm pastel MOMO-mascot theme; adds type **notice**; reuses cover(mascot)/date(pill)/location(photo+address)/gallery/rsvp/ending; `CCard` shell w/ colored eyebrow pill (rose/sage/lav/butter) |
 | Editorial renderers | `src/components/viewer/sections/editorial/*.tsx` | magazine/film theme; adds type **quote**; reuses cover(coverSub)/message(num+dropCap+twoCol → article)/details(num)/location(num+photoCap)/gallery(num+mag grid)/rsvp(num+innerTitle)/ending(colophon); `ESection` shell (num + label + serif headline) |
+| Developer renderers | `src/components/viewer/sections/developer/*.tsx` | terminal/monospace theme; no new types — reuses cover(from+json)/date(bigDate+subLabel+dataGrid)/location(rows)/schedule/gallery/rsvp(progress)/ending; `DSection` shell ("# name" + badge, badges derived/constant); titlebar+ASCII banner+scanlines are chrome |
 | Battle renderers | `src/components/viewer/sections/battle/*.tsx` | dark theme; adds section types **versus, matchInfo, countdown, rules, roster, accept** + battle cover/location/ending |
 | Timeline renderers | `src/components/viewer/sections/timeline/*.tsx` | pastel schedule theme; adds types **details, timeline, menu, checklist, cost, route, dayPlan** (+ cover/location/cta(accept)/ending); checklist + MT day-tab interactivity |
 | Gaming renderers | `src/components/viewer/sections/gaming/*.tsx` | dark + neon-pastel LoL-party theme; adds types **gInfo, lanes, tierChart, champions** + reuses cover(imgFilter tint)/countdown/rules/accept(client CTA)/ending; `GSection` shell |
@@ -49,20 +50,23 @@ rich text as `Line`/`Run`, never HTML). `section.type` → one renderer via
 | Theme: minimal | `viewer.css` `.iv.t-minimal` | swiss editorial grid, B/W contrast, data grid + block rsvp |
 | Theme: cute | `viewer.css` `.iv.t-cute` | warm pastel gradient, rounded cards, MOMO mascot (bounce), colored eyebrow pills, date pill+countdown, notice list, 3-col gallery, tinted RSVP; sample cozy-home (housewarming) |
 | Theme: editorial | `viewer.css` `.iv.t-editorial` | magazine/film; grain+gradient cover, issue no., serif italics, big section numbers, drop cap, k/v details table, full-bleed photo caption, magazine grid gallery, pull quote, dark RSVP+ending; sample after-hours |
+| Theme: developer | `viewer.css` `.iv.t-developer` | dark terminal, monospace, ANSI colors, CRT scanlines; titlebar, ASCII banner, syntax-highlighted JSON, ASCII date, ANSI tables, hue-filtered gallery, `[✓]` RSVP + progress bar, `$`-command buttons; sample dev-meetup |
 | Theme: battle | `viewer.css` `.iv.t-battle` | dark; VS matchup, match info grid, countdown, rules+prize, roster, accept/decline CTA, stamp ending |
 | Theme: timeline | `viewer.css` `.iv.t-timeline` | pastel; timeline (done/now), menu cards, checklist, cost split, MT route + day tabs; 3 scenario samples 집들이/번개/MT |
 | Theme: gaming | `viewer.css` `.iv.t-gaming` | dark #14101E + neon pastel; hero cover w/ hue-filter tint, lane roster (open slots + tier badges), tier chart, champion pool, gradient CTA; 3 samples 빠대/내전/랭크 (lol-quick/scrim/rank) |
 
-**Finding:** the 8 viewer themes are structurally different (different cover, section headers,
-date presentation, rsvp, ending), not token recolors — so each theme ships its own renderer set.
+**Finding:** all 8 viewer themes are now implemented (romantic, minimal, cute, editorial,
+developer, battle, timeline, gaming). They are structurally different (different cover, section
+headers, date presentation, rsvp, ending), not token recolors — so each theme ships its own set.
 A theme renders a **subset** of section types (`ThemeSet` is `Partial`; the viewer skips types a
 theme doesn't provide). Battle added 6 new types (versus/matchInfo/countdown/rules/roster/accept);
 timeline added 7 (details/timeline/menu/checklist/cost/route/dayPlan); gaming added 4
 (gInfo/lanes/tierChart/champions) and reuses cover/countdown/rules/accept/ending by extending their
 content (e.g. cover `imgFilter`, countdown/rules optional section headers); cute added 1 (notice);
-editorial added 1 (quote). Editorial also shows the superset pattern at its clearest — its `message`
-renderer is an article, its `details`/`location`/`gallery`/`rsvp` reuse shared types with only a few
-optional fields (num/dropCap/photoCap/innerTitle/coverSub/colophon) added.
+editorial added 1 (quote). Editorial and developer show the superset pattern at its clearest —
+developer added **zero** new types: it re-renders the standard cover/date/location/schedule/gallery/
+rsvp/ending as a terminal session, reading a few extra optional fields (cover from/json, date
+subLabel, location rows, rsvp progress). Same data, radically different view (§7.1).
 Content stays a semantic superset (`types.ts`) so the same data can feed any theme (§7.1).
 
 Sample data: `src/lib/invitation/sample-romantic.ts` + `samples.ts` (placeholder store until a

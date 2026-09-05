@@ -52,6 +52,10 @@ export type CoverContent = {
   mascot?: string;
   /** Split cover footer (editorial): left serif label + right latin meta. */
   coverSub?: { l: string; r: string };
+  /** Command author for `$ moi --invite --from=X` (developer). */
+  from?: string;
+  /** JSON summary rows (developer); `t` colors the value. */
+  json?: { k: string; v: string; t?: "str" | "num" | "bool" | "date" }[];
 };
 
 export type MessageContent = {
@@ -81,6 +85,8 @@ export type DateContent = {
   dataGrid?: { k: string; en?: string; v?: string }[];
   /** Dark date pill (cute), e.g. {en:"D-42", text:"· 남았어요"}. */
   pill?: { en: string; text: string };
+  /** Sub-label under the big date (developer: "SUN · 19:00 KST"). */
+  subLabel?: string;
   tint?: boolean;
 };
 
@@ -98,6 +104,8 @@ export type LocationContent = {
   num?: string;
   /** Photo caption strip (editorial): left + right. */
   photoCap?: { l: string; r: string };
+  /** Key/value output rows (developer): venue/addr/floor/lat/lng. */
+  rows?: Kv[];
   tint?: boolean;
 };
 
@@ -129,6 +137,8 @@ export type RsvpContent = {
   num?: string;
   /** Title inside the dark RSVP box, e.g. "Will you join us?" (editorial). */
   innerTitle?: Line[];
+  /** Seats progress bar (developer): filled of total. */
+  progress?: { filled: number; total: number };
   tint?: boolean;
 };
 
