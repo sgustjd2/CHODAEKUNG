@@ -31,5 +31,5 @@ Handoff notes: `design/README.md`. Bundle archive: `design_handoff_chodaekung.zi
 | Viewer — Editorial | `design/13_viewer_editorial.html` | pending |
 | Viewer — Developer/Terminal | `design/14_viewer_developer.html` | pending |
 | Viewer — Sports Battle | `design/15_viewer_battle.html` | ✅ implemented (`/i/jogi-battle`) |
-| Viewer — Timeline (집들이/번개/MT) | `design/16_viewer_timeline.html` | pending |
+| Viewer — Timeline (집들이/번개/MT) | `design/16_viewer_timeline.html` | ✅ implemented (`/i/jibdeuli`, `/i/beongae`, `/i/yangyang-mt`) |
 | Viewer — Gaming (롤 파티) | `design/17_viewer_gaming.html` | pending |

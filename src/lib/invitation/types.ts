@@ -40,6 +40,12 @@ export type CoverContent = {
   headerRight?: string;
   /** Multi-line header corner, e.g. battle date tag. */
   headerRightLines?: string[];
+  /** Multi-line subtitle (timeline). */
+  subtitleLines?: string[];
+  /** Pill badges under the cover (timeline). */
+  badges?: { label: string; icon?: string; variant?: "wax" | "sage" | "sky" | "gold" }[];
+  /** Cover gradient variant (timeline: housewarming/flash/mt). */
+  bg?: "hw" | "fl" | "mt";
 };
 
 export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
@@ -65,6 +71,7 @@ export type LocationContent = {
   body: Line[];
   flourishIcon?: string;
   mapButtons: { label: string; primary?: boolean }[];
+  tint?: boolean;
 };
 
 export type GalleryContent = { eyebrow: string; title: Line[]; images: { src: string; tall?: boolean }[] };
@@ -95,6 +102,60 @@ export type EndingContent = {
   below?: string;
   /** Rotated stamp label, e.g. "Challenge Sealed" (battle). */
   stamp?: string;
+  /** Signature with emphasis (timeline: accent word). */
+  signatureLines?: Line[];
+};
+
+/* ---- Timeline / schedule-sharing section content ---- */
+export type TimelineItem = {
+  time: string;
+  unit?: string;
+  title: string;
+  desc: string;
+  tags?: { label: string; variant?: "sage" | "sky" | "gold" }[];
+  state?: "done" | "now";
+};
+export type Kv = { k: string; v: string; u?: string };
+export type DetailsContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  info: Kv[];
+  party?: { avatars: { label: string; tone?: number }[]; more?: string; countLabel: string; countSub: string };
+};
+export type TimelineSectionContent = { eyebrow: string; title: Line[]; tint?: boolean; items: TimelineItem[] };
+export type MenuContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  cards: { cat: string; count: string; heading: string; items: { name: string; meta: string }[] }[];
+};
+export type ChecklistContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  items: { text: string; owner: string; checked?: boolean }[];
+};
+export type CostContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  costEb: string;
+  total: string;
+  split: Line;
+  info?: Kv[];
+};
+export type RouteContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  stops: { icon: string; title: string; meta: string; time: string; accent?: boolean }[];
+};
+export type DayPlanContent = {
+  eyebrow: string;
+  title: Line[];
+  tint?: boolean;
+  days: { label: string; en: string; items: TimelineItem[] }[];
 };
 
 /* ---- Battle / competitive section content ---- */
@@ -132,6 +193,13 @@ export type Section =
   | { id: string; type: "rules"; content: RulesContent }
   | { id: string; type: "roster"; content: RosterContent }
   | { id: string; type: "accept"; content: AcceptContent }
+  | { id: string; type: "details"; content: DetailsContent }
+  | { id: string; type: "timeline"; content: TimelineSectionContent }
+  | { id: string; type: "menu"; content: MenuContent }
+  | { id: string; type: "checklist"; content: ChecklistContent }
+  | { id: string; type: "cost"; content: CostContent }
+  | { id: string; type: "route"; content: RouteContent }
+  | { id: string; type: "dayPlan"; content: DayPlanContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

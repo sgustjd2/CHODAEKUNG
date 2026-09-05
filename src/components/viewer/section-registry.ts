@@ -32,6 +32,19 @@ import { BattleRoster } from "./sections/battle/roster";
 import { BattleAccept } from "./sections/battle/accept";
 import { BattleEnding } from "./sections/battle/ending";
 
+// Timeline renderers
+import { TimelineCover } from "./sections/timeline/cover";
+import { TimelineDetails } from "./sections/timeline/details";
+import { TimelineSchedule } from "./sections/timeline/timeline";
+import { TimelineMenu } from "./sections/timeline/menu";
+import { TimelineChecklist } from "./sections/timeline/checklist";
+import { TimelineCost } from "./sections/timeline/cost";
+import { TimelineLocation } from "./sections/timeline/location";
+import { TimelineCta } from "./sections/timeline/cta";
+import { TimelineEnding } from "./sections/timeline/ending";
+import { TimelineRoute } from "./sections/timeline/route";
+import { TimelineDayPlan } from "./sections/timeline/dayplan";
+
 type Renderer<T extends SectionType> = ComponentType<{
   content: Extract<Section, { type: T }>["content"];
   index?: number;
@@ -77,4 +90,18 @@ const battle: ThemeSet = {
   ending: BattleEnding,
 };
 
-export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, battle };
+const timeline: ThemeSet = {
+  cover: TimelineCover,
+  details: TimelineDetails,
+  timeline: TimelineSchedule,
+  menu: TimelineMenu,
+  checklist: TimelineChecklist,
+  cost: TimelineCost,
+  location: TimelineLocation,
+  accept: TimelineCta,
+  route: TimelineRoute,
+  dayPlan: TimelineDayPlan,
+  ending: TimelineEnding,
+};
+
+export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, battle, timeline };

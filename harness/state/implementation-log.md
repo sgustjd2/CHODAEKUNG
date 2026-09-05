@@ -134,3 +134,22 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   Regression: romantic (8 sections, calendar) and minimal unaffected by the Partial/guard change.
 - Follow-up required: yes — cute/editorial/developer viewers; timeline/gaming (scenario tabs) add
   more section types; real RSVP/accept submission + countdown; Kakao/link share.
+
+### 2026-09-05 — Timeline viewer (screen 16) — 집들이 · 번개 · MT
+
+- Scope: Implemented the Timeline / 일정 공유형 theme + all 3 scenarios as separate invitations
+  (`/i/jibdeuli`, `/i/beongae`, `/i/yangyang-mt`). Largest viewer so far.
+- PRD reference: §7 modules (timeline/menu/itinerary/roster), §9. Genspark: `design/16_viewer_timeline.html`.
+- Decisions:
+  - The design's scenario tabs are a presentation device; in-product each scenario is its own
+    invitation of the `timeline` theme (3 samples), so no scenario switcher ships.
+  - Added 7 section types — `details` (info grid + party avatars), `timeline` (done/now states +
+    tags), `menu` (category cards), `checklist` (client toggle), `cost` (split card + info grid),
+    `route` (MT stops), `dayPlan` (client day tabs, reuses the timeline list) — reusing
+    `cover`/`location`/`accept`(as CTA)/`ending` with a few added optional cover/ending fields.
+  - Shared helpers `TlSection` and `TimelineList` keep the modules DRY (dayPlan reuses TimelineList).
+- Verified: `tsc` clean. jibdeuli: 8 sections, hw gradient cover, 6 timeline items, 3 menu cards,
+  4 checklist, party avatars. yangyang-mt: route (4 stops) + day tabs switch (Day 2 → 새벽 낚시),
+  cost. beongae: cost split bold. All three `t-timeline`.
+- Follow-up required: yes — remaining viewers (cute/editorial/developer/gaming); real
+  submission/persistence; countdown/day computation from dates.
