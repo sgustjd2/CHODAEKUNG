@@ -1,4 +1,5 @@
 import { Rich } from "../rich-text";
+import { photoUrl } from "@/lib/photo";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function GallerySection({ content }: { content: GalleryContent }) {
@@ -11,7 +12,7 @@ export function GallerySection({ content }: { content: GalleryContent }) {
       <div className="iv-gallery-grid">
         {content.images.map((im, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={`/assets/photos/${im.src}.jpg`} alt="" className={im.tall ? "tall" : undefined} />
+          <img key={i} src={photoUrl(im.src)} alt="" className={im.tall ? "tall" : undefined} />
         ))}
       </div>
     </div>

@@ -611,3 +611,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` + `build` clean; viewer renders with ViewPing (RPC no-ops until 0003). Count display
   is login-gated (dashboard) — verified by logic; user sees it after login.
 - Requires migration 0003 for view counts to accrue (RSVP counts work already).
+
+### 2026-09-05 — Gallery photo upload (Supabase Storage)
+
+- Migration 0004: public `invite-photos` bucket + read/insert policies.
+- `src/lib/photo.ts` `photoUrl(src)` — full URL passthrough (uploaded) or bundled asset by name;
+  applied to all 5 gallery renderers (romantic/minimal/cute/editorial/developer) so uploaded images
+  render. `src/lib/db/upload.ts` uploads via the browser client (5MB/image limit) → public URL.
+- ContentEditors gallery section: thumbnail grid with per-image remove + "+ 사진 업로드" (PhotoUpload),
+  appends the uploaded URL to gallery.images. Works in desktop + mobile editors.
+- Verified: `tsc` + `build` clean; gallery editor shows thumbs + upload input. Actual upload needs
+  migration 0004 run (bucket). (Cover-photo upload can reuse the same mechanism later.)

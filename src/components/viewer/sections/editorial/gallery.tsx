@@ -1,4 +1,5 @@
 import { ESection } from "./e-section";
+import { photoUrl } from "@/lib/photo";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function EditorialGallery({ content }: { content: GalleryContent }) {
@@ -7,7 +8,7 @@ export function EditorialGallery({ content }: { content: GalleryContent }) {
       <div className="e-mag-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} className={`p${i + 1}`} src={`/assets/photos/${img.src}.jpg`} alt="" />
+          <img key={i} className={`p${i + 1}`} src={photoUrl(img.src)} alt="" />
         ))}
       </div>
       {content.caption && (

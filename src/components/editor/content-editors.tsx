@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { linesToText, plainTitle, textToLines } from "./editor-shared";
+import { photoUrl } from "@/lib/photo";
+import { uploadPhoto } from "@/lib/db/upload";
 import type {
   AcceptContent,
   ChecklistContent,
@@ -134,7 +137,18 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
           <h5>Gallery</h5>
           <Field label="Eyebrow" value={gallery.content.eyebrow} onChange={(v) => patch(gallery.id, { eyebrow: v } satisfies Partial<GalleryContent>)} />
           <Field label="제목" value={plainTitle(gallery.content.title)} onChange={(v) => patch(gallery.id, { title: [[v]] } satisfies Partial<GalleryContent>)} />
-          <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>사진 {gallery.content.images.length}장 · 이미지 업로드/교체는 곧 지원돼요.</p>
+          <div className="insp-photos">
+            {gallery.content.images.map((im, i) => (
+              <div key={i} className="insp-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photoUrl(im.src)} alt="" />
+                <button type="button" aria-label="사진 삭제" onClick={() => patch(gallery.id, { images: gallery.content.images.filter((_, j) => j !== i) })}>
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <PhotoUpload onUploaded={(url) => patch(gallery.id, { images: [...gallery.content.images, { src: url }] })} />
         </div>
       )}
       {rsvp && (
@@ -450,6 +464,36 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
       ) : (
         <input className="insp-input" value={value} onChange={(e) => onChange(e.target.value)} />
       )}
+    </div>
+  );
+}
+
+function PhotoUpload({ onUploaded }: { onUploaded: (url: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  return (
+    <div>
+      <label className="insp-add" style={{ display: "block", textAlign: "center", cursor: busy ? "default" : "pointer" }}>
+        {busy ? "업로드 중…" : "+ 사진 업로드"}
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          disabled={busy}
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setBusy(true);
+            setErr("");
+            const res = await uploadPhoto(file);
+            setBusy(false);
+            e.target.value = "";
+            if ("url" in res) onUploaded(res.url);
+            else setErr(res.error);
+          }}
+        />
+      </label>
+      {err && <div style={{ fontSize: 11, color: "var(--wax-deep)", marginTop: 4 }}>{err}</div>}
     </div>
   );
 }

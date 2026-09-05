@@ -1,4 +1,5 @@
 import { CCard } from "./c-card";
+import { photoUrl } from "@/lib/photo";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function CuteGallery({ content }: { content: GalleryContent }) {
@@ -7,7 +8,7 @@ export function CuteGallery({ content }: { content: GalleryContent }) {
       <div className="c-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={`/assets/photos/${img.src}.jpg`} alt="" />
+          <img key={i} src={photoUrl(img.src)} alt="" />
         ))}
       </div>
     </CCard>
