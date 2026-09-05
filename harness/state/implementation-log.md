@@ -469,3 +469,20 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Status: desktop Content editing now covers **every section type except** matchInfo (battle, nested
   {k, v:[{t,u?}]} value parts — awkward as plain fields) and champions (gaming, emoji picker — low value).
 - Follow-up: those two remaining types; mobile ContentPanel parity for all editors beyond the romantic set.
+
+### 2026-09-05 — Editor: extract shared ContentEditors → full mobile parity (no duplication)
+
+- Scope: Extracted the entire desktop Content-tab editor set into `content-editors.tsx`
+  (`<ContentEditors draft patch>`), and pointed BOTH the desktop inspector and the mobile bottom
+  sheet at it. Mobile now edits every section type the desktop can (versus/roster/menu/dayPlan/lanes/
+  gInfo/etc.), not just the romantic subset. One source of truth — no drift.
+- Decisions: ContentEditors computes its own `find` from `draft` + uses `patch`; emits `.insp-*`
+  markup, already styled under `.editor-page` so it works in the mobile sheet with no new CSS.
+  Slimmed `EditorApi` (removed message/location/date/gallery/schedule/rsvp/ending; kept `cover` for
+  the Design panel). Removed the now-dead `Field` (editor-client) and `MField` (mobile). Mobile
+  content sub-tab chips now derive from the invitation's actual sections (deduped) instead of a fixed
+  wedding list.
+- Verified: `tsc` clean; desktop `/editor` (romantic) renders all 8 editors + edit flows ("리팩터OK");
+  mobile `/editor?slug=jogi-battle` content sheet shows Cover/Location/Versus/Countdown/Rules/CTA/
+  Roster/Ending and versus edit flows ("모바일FC"). Cleared test values.
+- Remaining: matchInfo + champions editors (low value); gallery image upload; Layout/Animation config.
