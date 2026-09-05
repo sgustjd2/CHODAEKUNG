@@ -403,3 +403,18 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   and after a full reload the input + live preview both showed "지수TEST". Cleared the test value.
 - Ceiling: per-browser only — a shared invitation URL opened by a guest won't see the creator's
   draft. Real cross-device persistence + sharing needs the backend lane.
+
+### 2026-09-05 — Editor loads any invitation by slug (all 8 themes)
+
+- Scope: The editor previously always loaded the romantic sample. Now it resolves `?slug=` on mount
+  and edits that invitation; dashboard "edit" links pass the slug. Persistence is per-slug.
+- Decisions: mount effect reads `?slug=` (via `window.location`, like the wizard), loads
+  `getInvitation(slug)` (sample) or the per-slug saved draft; `keyFor(slug)` namespaces localStorage;
+  `defaultTitleFor` derives the title from cover names, else the slug. 되돌리기 resets to that slug's
+  sample; 저장 writes that slug's key. No `?slug=` → romantic (unchanged).
+- Value: all 8 themes now open in the editor — live preview renders the real theme, section list
+  supports select/reorder/hide/dup/delete, and common sections (cover/message/location/…) are editable.
+  Theme-specific section editors (versus/roster/lanes/menu/…) still show the "순차적으로 추가" note.
+- Verified: `tsc` clean; `/editor?slug=jogi-battle` → `iv t-battle`, 9 sections (커버/매치업/경기 정보/
+  카운트다운/규칙/…); `/editor` (no slug) → `iv t-romantic`, title "지수 · 민준". Reset viewport.
+- Follow-up: editors for the remaining theme-specific section types; nicer default titles.

@@ -11,6 +11,7 @@ import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
+import { getInvitation } from "@/lib/invitation/samples";
 import type { CoverContent, DateContent, EndingContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
@@ -18,6 +19,15 @@ type Tab = "content" | "style" | "layout" | "anim";
 // ponytail: localStorage draft store — swap for a real backend when multi-device/sharing lands
 const STORAGE_KEY = "chodaekung:editor:v1";
 type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; accent?: string | null };
+const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
+
+/** A friendly default editor title for an invitation (cover names, else slug). */
+function defaultTitleFor(inv: Invitation): string {
+  const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
+  const names = cover?.content.names;
+  if (names && names.length) return names.join(" · ");
+  return inv.slug;
+}
 
 export function EditorClient() {
   const [draft, setDraft] = useState<Invitation>(() => structuredClone(romanticSample));
@@ -29,35 +39,44 @@ export function EditorClient() {
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [accent, setAccent] = useState<string | null>(null);
   const [pubOpen, setPubOpen] = useState(false);
+  const [slug, setSlug] = useState(romanticSample.slug);
   const [hydrated, setHydrated] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
-  // Load a saved draft on mount (client-only; SSR renders the sample, then this swaps it in).
+  // On mount: resolve ?slug= (which invitation to edit), then load its saved draft or the sample.
+  // (SSR renders the romantic sample; this client effect swaps in the right invitation — no mismatch.)
   useEffect(() => {
+    const s = new URLSearchParams(window.location.search).get("slug")?.trim() || romanticSample.slug;
+    let d = getInvitation(s);
+    let loadedTitle: string | null = null;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(keyFor(s));
       if (raw) {
-        const s = JSON.parse(raw) as SavedEditor;
-        if (s.draft) setDraft(s.draft);
-        if (typeof s.title === "string") setTitle(s.title);
-        if (Array.isArray(s.hidden)) setHidden(new Set(s.hidden));
-        if (s.accent !== undefined) setAccent(s.accent);
+        const saved = JSON.parse(raw) as SavedEditor;
+        if (saved.draft) d = saved.draft;
+        if (typeof saved.title === "string") loadedTitle = saved.title;
+        if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
+        if (saved.accent !== undefined) setAccent(saved.accent);
       }
     } catch {
       /* private mode / corrupt value — fall back to the sample */
     }
+    setDraft(d);
+    setSelectedId(d.sections[0]?.id ?? "");
+    setTitle(loadedTitle ?? defaultTitleFor(d));
+    setSlug(s);
     setHydrated(true);
   }, []);
 
-  // Autosave after hydration so edits survive a refresh.
+  // Autosave (per invitation) after hydration so edits survive a refresh.
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
     } catch {
       /* storage unavailable — skip; edits stay in memory */
     }
-  }, [hydrated, draft, title, hidden, accent]);
+  }, [hydrated, slug, draft, title, hidden, accent]);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
   const find = <T extends SectionType>(t: T) =>
@@ -420,7 +439,18 @@ export function EditorClient() {
           </div>
 
           <div className="foot">
-            <Button variant="ghost" size="sm" onClick={() => { setDraft(structuredClone(romanticSample)); setHidden(new Set()); setAccent(null); }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const base = getInvitation(slug);
+                setDraft(structuredClone(base));
+                setSelectedId(base.sections[0]?.id ?? "");
+                setTitle(defaultTitleFor(base));
+                setHidden(new Set());
+                setAccent(null);
+              }}
+            >
               되돌리기
             </Button>
             <Button
@@ -428,7 +458,7 @@ export function EditorClient() {
               size="sm"
               onClick={() => {
                 try {
-                  localStorage.setItem(STORAGE_KEY, JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+                  localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
                 } catch {
                   /* storage unavailable */
                 }

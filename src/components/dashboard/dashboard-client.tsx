@@ -181,6 +181,7 @@ export function DashboardClient() {
 
           {filtered.map((c) => {
             const preview = c.slug ? `/i/${c.slug}` : "#";
+            const editHref = c.slug ? `/editor?slug=${c.slug}` : "/editor";
             return (
               <div className="inv-card" key={c.title}>
                 <div className="inv-cover">
@@ -208,9 +209,9 @@ export function DashboardClient() {
                     ))}
                   </div>
                   <div className="inv-actions">
-                    <Link className="ia" href="/editor">{c.actions[0]}</Link>
+                    <Link className="ia" href={editHref}>{c.actions[0]}</Link>
                     <Link className="ia" href={preview}>{c.actions[1]}</Link>
-                    <Link className="ia share" href={c.status === "draft" ? "/editor" : preview}>{c.actions[2]}</Link>
+                    <Link className="ia share" href={c.status === "draft" ? editHref : preview}>{c.actions[2]}</Link>
                   </div>
                 </div>
               </div>
