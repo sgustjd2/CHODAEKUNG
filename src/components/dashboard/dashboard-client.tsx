@@ -168,10 +168,10 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
           <Icon name="ic-book" className="ic" />
           템플릿
         </Link>
-        <button className="sb-item" type="button">
+        <Link className="sb-item" href="/media">
           <Icon name="ic-camera" className="ic" />
           미디어 라이브러리
-        </button>
+        </Link>
 
         <div className="sb-group">Settings</div>
         <Link className="sb-item" href="/settings">

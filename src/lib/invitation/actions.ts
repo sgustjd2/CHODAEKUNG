@@ -82,6 +82,30 @@ export async function listMyRsvpsAction(slug: string) {
   return listRsvpsByOwner(slug, user.id);
 }
 
+/** The signed-in user's uploaded photos (media library), newest first. */
+export async function listMyMediaAction() {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  if (!isDbEnabled()) return { ok: false as const, error: "백엔드가 설정되지 않았어요" };
+  const bucket = getServiceClient().storage.from("invite-photos");
+  const prefix = `u/${user.id}`;
+  const { data, error } = await bucket.list(prefix, { limit: 200, sortBy: { column: "created_at", order: "desc" } });
+  if (error) return { ok: false as const, error: error.message };
+  const items = (data ?? [])
+    .filter((o) => o.id) // files carry an id; folder placeholders don't
+    .map((o) => ({ path: `${prefix}/${o.name}`, url: bucket.getPublicUrl(`${prefix}/${o.name}`).data.publicUrl }));
+  return { ok: true as const, items };
+}
+
+/** Delete one of the signed-in user's uploaded photos (path must be under their folder). */
+export async function deleteMediaAction(path: string) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요해요" };
+  if (!path.startsWith(`u/${user.id}/`)) return { ok: false as const, error: "권한이 없어요" };
+  const { error } = await getServiceClient().storage.from("invite-photos").remove([path]);
+  return error ? { ok: false as const, error: error.message } : { ok: true as const };
+}
+
 /** Count one view (fire-and-forget from the public viewer). No-op if unconfigured/pre-migration. */
 export async function bumpViewAction(slug: string) {
   if (!isDbEnabled()) return;
