@@ -425,7 +425,41 @@ export function EditorClient() {
               </>
             )}
 
-            {tab === "layout" && <StubPanel note="레이아웃 컨트롤(높이·패딩·정렬·라운드)은 곧 연결됩니다." />}
+            {tab === "layout" && (
+              <>
+                <div className="insp-group">
+                  <h5>콘텐츠 폭</h5>
+                  <div className="radio-group">
+                    {([["narrow", "좁게"], ["normal", "기본"], ["wide", "넓게"]] as const).map(([id, label]) => (
+                      <button
+                        key={id}
+                        className={`radio-btn${(draft.layout?.width ?? "normal") === id ? " active" : ""}`}
+                        onClick={() => setDraft((d) => ({ ...d, layout: { ...d.layout, width: id } }))}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="insp-group">
+                  <h5>배경</h5>
+                  <div className="radio-group">
+                    {([["soft", "부드럽게"], ["solid", "단색"], ["none", "꽉 채움"]] as const).map(([id, label]) => (
+                      <button
+                        key={id}
+                        className={`radio-btn${(draft.layout?.background ?? "soft") === id ? " active" : ""}`}
+                        onClick={() => setDraft((d) => ({ ...d, layout: { ...d.layout, background: id } }))}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    초대장을 감싸는 폭·여백·배경이에요. 발행·미리보기 화면(특히 데스크톱)에 반영돼요 — 편집 프리뷰는 항상 폰 폭으로 꽉 차게 보여요.
+                  </p>
+                </div>
+              </>
+            )}
             {tab === "anim" && (
               <div className="insp-group">
                 <h5>등장 애니메이션</h5>
@@ -499,14 +533,6 @@ export function EditorClient() {
           }
         }}
       />
-    </div>
-  );
-}
-
-function StubPanel({ note }: { note: string }) {
-  return (
-    <div className="insp-group">
-      <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>{note}</p>
     </div>
   );
 }

@@ -296,6 +296,16 @@ export type SectionType = Section["type"];
 /** Section reveal-on-scroll animation for the public viewer (CLAUDE.md §4.4). */
 export type RevealAnim = "none" | "fade" | "fade-up" | "slide" | "zoom" | "blur" | "scale";
 
+/**
+ * Theme-agnostic layout of the shared invitation frame (not per-theme section CSS).
+ * `width` = the invitation column width on wide screens; `background` = the backdrop
+ * framing it. Applied on the public/preview page (the mobile editor frame is full-bleed).
+ */
+export type LayoutConfig = {
+  width?: "narrow" | "normal" | "wide";
+  background?: "soft" | "solid" | "none";
+};
+
 export type Invitation = {
   slug: string;
   theme: ThemeId;
@@ -303,5 +313,7 @@ export type Invitation = {
   shareCta: string;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
+  /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */
+  layout?: LayoutConfig;
   sections: Section[];
 };

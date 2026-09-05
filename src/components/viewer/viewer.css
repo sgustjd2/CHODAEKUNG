@@ -19,7 +19,7 @@
 }
 .iv-doc {
   width: 100%;
-  max-width: 430px;
+  max-width: var(--iv-w, 430px);
   background: #fff;
   box-shadow: var(--shadow-xl);
   overflow: hidden;
@@ -29,6 +29,12 @@
   .iv { padding: 0; }
   .iv-doc { max-width: 100%; box-shadow: none; }
 }
+
+/* Layout (invitation.layout) — shared frame only, no per-theme section CSS.
+   width → --iv-w (above); background → the backdrop framing the invitation. */
+.iv[data-bg="solid"] { background-image: none; }
+.iv[data-bg="none"] { background: transparent; background-image: none; padding: 0; }
+.iv[data-bg="none"] .iv-doc { max-width: 100%; box-shadow: none; }
 
 /* Section reveal-on-scroll (public viewer; set via invitation.reveal) */
 .iv-reveal { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease; }

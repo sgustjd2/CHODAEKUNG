@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, CSSProperties } from "react";
 import type { Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { invitationMeta } from "@/lib/invitation/meta";
@@ -33,8 +33,18 @@ export function InvitationViewer({
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
   const reveal = invitation.reveal ?? "none";
   const animate = !contained && reveal !== "none";
+  // Shared-frame layout (theme-agnostic): column width + backdrop. Full-bleed in the
+  // contained editor frame, so these apply on the published/preview page.
+  const lw = invitation.layout?.width;
+  const layoutStyle: CSSProperties | undefined =
+    lw === "narrow" ? ({ ["--iv-w"]: "392px" } as CSSProperties) : lw === "wide" ? ({ ["--iv-w"]: "512px" } as CSSProperties) : undefined;
+  const bg = invitation.layout?.background;
   return (
-    <div className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}>
+    <div
+      className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}
+      data-bg={!contained && bg && bg !== "soft" ? bg : undefined}
+      style={contained ? undefined : layoutStyle}
+    >
       {animate && (
         <noscript>
           <style>{`.iv-reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>
