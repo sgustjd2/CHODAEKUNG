@@ -482,12 +482,14 @@
     max-width: 1280px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr;
     gap: 40px;
     padding-bottom: 40px;
     border-bottom: 1px solid rgba(251,247,241,0.15);
   }
   .footer-brand svg { width: 40px; height: 40px; margin-bottom: 12px; }
+  /* Main logo on the dark footer: light "초대" via --ck-ink, sized to the lockup aspect */
+  .footer-brand .footer-logo { width: auto; height: 44px; margin-bottom: 8px; --ck-ink: var(--paper); }
   .footer-brand .name {
     font-family: var(--font-serif); font-weight: 500;
     font-size: 26px; letter-spacing: -0.02em; color: var(--paper);

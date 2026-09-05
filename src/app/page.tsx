@@ -50,10 +50,24 @@ const faqs: { q: string; a: string; open?: boolean }[] = [
   { q: "다른 사람이 만든 초대장을 살짝 바꿔서 쓸 수 있나요?", a: "본인이 만든 초대장은 언제든지 대시보드에서 \"복제하기\"로 새 초대장을 시작할 수 있어요. 곧 크리에이터 마켓을 통해 다른 사용자의 템플릿을 구매·활용하는 기능도 열릴 예정입니다." },
 ];
 
-const footerCols: { title: string; links: string[] }[] = [
-  { title: "Product", links: ["템플릿", "에디터", "RSVP"] },
-  { title: "Company", links: ["회사 소개", "블로그", "채용", "문의하기"] },
-  { title: "Support", links: ["도움말", "개인정보 처리방침", "이용약관", "쿠키 정책"] },
+const footerCols: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "템플릿", href: "/templates" },
+      { label: "새 초대장", href: "/new" },
+      { label: "대시보드", href: "/dashboard" },
+      { label: "RSVP", href: "/rsvp" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "자주 묻는 질문", href: "/#faq" },
+      { label: "카카오톡 공유", href: "/#kakao" },
+      { label: "로그인", href: "/login" },
+    ],
+  },
 ];
 
 export default function LandingPage() {
@@ -334,10 +348,7 @@ export default function LandingPage() {
       <footer>
         <div className="footer-wrap">
           <div className="footer-brand">
-            <Icon name="moi-mark" viewBox="0 0 48 48" />
-            <div className="name">
-              초대<span className="seal-kung">쿵</span>
-            </div>
+            <Logo className="footer-logo" />
             <p>
               초대하는 순간까지, 예쁘게. 모든 모임의 감성을 담은 모바일 인터랙티브
               초대장.
@@ -347,9 +358,9 @@ export default function LandingPage() {
             <div className="footer-col" key={col.title}>
               <h5>{col.title}</h5>
               {col.links.map((l) => (
-                <a href="#" key={l}>
-                  {l}
-                </a>
+                <Link href={l.href} key={l.label}>
+                  {l.label}
+                </Link>
               ))}
             </div>
           ))}

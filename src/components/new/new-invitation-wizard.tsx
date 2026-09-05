@@ -109,11 +109,11 @@ export function NewInvitationWizard() {
   const [customMoods, setCustomMoods] = useState<string[]>([]);
   const [template, setTemplate] = useState("1");
 
-  const [title, setTitle] = useState("지수 · 민준의 결혼식");
-  const [subtitle, setSubtitle] = useState("저희의 시작에 함께해주세요");
-  const [date, setDate] = useState("2026.05.24");
-  const [time, setTime] = useState("12:00");
-  const [location, setLocation] = useState("성수 가든 · 서울 성동구 성수동1가 685");
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [location, setLocation] = useState("");
 
   const panelRef = useRef<HTMLDivElement>(null);
   const customOpen = event === "custom";
@@ -446,8 +446,8 @@ export function NewInvitationWizard() {
               </span>
             </div>
             <div className="row"><span className="k">제목</span><span className="v">{title || "—"}</span></div>
-            <div className="row"><span className="k">일시</span><span className="v">{date} · {time}</span></div>
-            <div className="row"><span className="k">장소</span><span className="v">{location.split(" · ")[0]}</span></div>
+            <div className="row"><span className="k">일시</span><span className="v">{date || time ? [date, time].filter(Boolean).join(" · ") : "—"}</span></div>
+            <div className="row"><span className="k">장소</span><span className="v">{location.split(" · ")[0] || "—"}</span></div>
             <div className="row"><span className="k">템플릿</span><span className="v">{selectedStyle?.nameText} · {selectedStyle?.cat.split(" · ")[0]}</span></div>
             <div className="row"><span className="k">공개 상태</span><span className="v" style={{ color: "var(--sage-deep)" }}>Draft · 나만 볼 수 있음</span></div>
           </div>
