@@ -46,6 +46,8 @@ export type CoverContent = {
   badges?: { label: string; icon?: string; variant?: "wax" | "sage" | "sky" | "gold" }[];
   /** Cover gradient variant (timeline: housewarming/flash/mt). */
   bg?: "hw" | "fl" | "mt";
+  /** CSS filter for the cover photo (gaming scenario tints). */
+  imgFilter?: string;
 };
 
 export type MessageContent = { eyebrow: string; flourish?: string; title: Line[]; body: Line[] };
@@ -158,6 +160,17 @@ export type DayPlanContent = {
   days: { label: string; en: string; items: TimelineItem[] }[];
 };
 
+/* ---- Gaming (LoL party) section content ---- */
+export type GInfoContent = { eyebrow: string; title: Line[]; cells: Kv[] };
+export type Lane = "top" | "jgl" | "mid" | "adc" | "sup";
+export type LanesContent = {
+  eyebrow: string;
+  title: Line[];
+  players: { lane: Lane; laneLabel: string; name: string; summoner: string; tier: string; tierClass?: string; open?: boolean }[];
+};
+export type TierChartContent = { eyebrow: string; title: Line[]; cols: { t: string; n: string }[] };
+export type ChampionsContent = { eyebrow: string; title: Line[]; items: { icon: string; lane: string; picked?: boolean }[] };
+
 /* ---- Battle / competitive section content ---- */
 export type Team = {
   flag: string;
@@ -168,11 +181,20 @@ export type Team = {
 export type VersusContent = { eyebrow: string; title: Line[]; home: Team; away: Team; vsWord?: string };
 /** Editorial 2×2 match info; each value is unitized parts (`u` = small suffix face). */
 export type MatchInfoContent = { title: string; cells: { k: string; v: { t: string; u?: boolean }[] }[] };
-export type CountdownContent = { label: string; cells: { n: string; l: string; warn?: boolean }[] };
+export type CountdownContent = {
+  label: string;
+  cells: { n: string; l: string; warn?: boolean }[];
+  /** Optional section header (gaming wraps countdown in a titled section). */
+  eyebrow?: string;
+  title?: Line[];
+};
 export type RulesContent = {
   title: string;
   rules: { t: string; d: string }[];
   prize?: { eb: string; name: string; sub: string };
+  /** Optional titled-section header (gaming). */
+  eyebrow?: string;
+  titleLine?: Line[];
 };
 export type RosterContent = {
   groups: { title: string; players: { num: string; name: string; role: string; badge?: string }[] }[];
@@ -200,6 +222,10 @@ export type Section =
   | { id: string; type: "cost"; content: CostContent }
   | { id: string; type: "route"; content: RouteContent }
   | { id: string; type: "dayPlan"; content: DayPlanContent }
+  | { id: string; type: "gInfo"; content: GInfoContent }
+  | { id: string; type: "lanes"; content: LanesContent }
+  | { id: string; type: "tierChart"; content: TierChartContent }
+  | { id: string; type: "champions"; content: ChampionsContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

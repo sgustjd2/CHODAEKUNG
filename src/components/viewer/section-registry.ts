@@ -45,6 +45,17 @@ import { TimelineEnding } from "./sections/timeline/ending";
 import { TimelineRoute } from "./sections/timeline/route";
 import { TimelineDayPlan } from "./sections/timeline/dayplan";
 
+// Gaming renderers
+import { GamingCover } from "./sections/gaming/cover";
+import { GamingInfo } from "./sections/gaming/info";
+import { GamingCountdown } from "./sections/gaming/countdown";
+import { GamingLanes } from "./sections/gaming/lanes";
+import { GamingRules } from "./sections/gaming/rules";
+import { GamingTierChart } from "./sections/gaming/tierchart";
+import { GamingChampions } from "./sections/gaming/champions";
+import { GamingCta } from "./sections/gaming/cta";
+import { GamingEnding } from "./sections/gaming/ending";
+
 type Renderer<T extends SectionType> = ComponentType<{
   content: Extract<Section, { type: T }>["content"];
   index?: number;
@@ -104,4 +115,16 @@ const timeline: ThemeSet = {
   ending: TimelineEnding,
 };
 
-export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, battle, timeline };
+const gaming: ThemeSet = {
+  cover: GamingCover,
+  gInfo: GamingInfo,
+  countdown: GamingCountdown,
+  lanes: GamingLanes,
+  rules: GamingRules,
+  tierChart: GamingTierChart,
+  champions: GamingChampions,
+  accept: GamingCta,
+  ending: GamingEnding,
+};
+
+export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, battle, timeline, gaming };

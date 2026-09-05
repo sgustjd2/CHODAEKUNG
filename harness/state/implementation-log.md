@@ -223,3 +223,22 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; 4 stats + charts render; 참석 filter → 6 rows (all yes), name search → 1 row.
 - Follow-up required: yes — real response data + pagination; bulk actions on selected rows;
   per-invitation switching (currently the wedding sample).
+
+### 2026-09-05 — Gaming viewer (screen 17, 롤 파티)
+
+- Scope: Implemented the Gaming theme at `/i/[slug]` — LoL party invitations for 빠른대전 / 내전 / 랭크.
+- PRD reference: §2 (fun/versus + small-group scope). Genspark: `design/17_viewer_gaming.html`.
+- Decisions:
+  - New theme `gaming` (dark #14101E + neon-pastel glow). Added 4 section types
+    **gInfo, lanes, tierChart, champions**; reused cover/countdown/rules/accept/ending by
+    extending their content (cover `imgFilter` for per-scenario hue tint; countdown/rules gained
+    optional section-header fields `eyebrow`/`title`/`titleLine`).
+  - Renderers under `sections/gaming/` share a `GSection` shell (neon eyebrow + gradient-accent
+    heading). `em` runs map to gradient-clip text via `.iv.t-gaming` CSS (mockup used `.accent`).
+  - Lane roster models open slots (`open: true` → dashed slot + "모집" empty tier) and tier badges
+    via `tierClass` (iron…master). Summoner+tag kept as one string (tag dimming is cosmetic-only).
+  - 3 samples in `sample-gaming.ts` (lol-quick/scrim/rank), spread into `samples.ts`.
+- Verified: `tsc` clean; all 3 scenarios render at `/i/lol-quick|scrim|rank` (cover tint differs per
+  scenario, roster open slots, tier chart 7-col, champion pool picked-glow, gradient CTA). Earlier
+  console errors were stale HMR buffer (globals.css imports are at top; tsc confirms TS clean).
+- Follow-up required: yes — join-slot interaction is visual-only in the mockup; wire to RSVP later.
