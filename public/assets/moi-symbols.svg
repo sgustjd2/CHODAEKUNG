@@ -277,13 +277,7 @@
        ============================================================ -->
   <symbol id="chodaekung-lockup" viewBox="0 0 400 140">
     <defs>
-      <!-- Wax seal gradient — high contrast for kung visibility -->
-      <radialGradient id="ck-wax-grad" cx="35%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="#C96A6A"/>
-        <stop offset="45%" stop-color="#A04547"/>
-        <stop offset="100%" stop-color="#7A2D2E"/>
-      </radialGradient>
-      <!-- Envelope flap gradient -->
+      <!-- Envelope flap gradient (MOMO mascot) -->
       <linearGradient id="ck-flap-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stop-color="#FDE4DC"/>
         <stop offset="100%" stop-color="#F5C7C0"/>
@@ -321,55 +315,23 @@
       <circle cx="78" cy="88" r="4" fill="#F5B5B0" opacity="0.6"/>
     </g>
 
-    <!-- "초대" text -->
-    <text x="130" y="92"
+    <!-- Wordmark: "초대" + "쿵" flat stamp chip — 초대쿵 reads as one word, kung stays legible at any size -->
+    <text x="106" y="94"
           font-family="'Pretendard Variable', Pretendard, sans-serif"
-          font-weight="900"
-          font-size="72"
-          letter-spacing="-5"
+          font-weight="800"
+          font-size="68"
+          letter-spacing="-3"
           fill="#1A1A2E">초대</text>
-
-    <!-- Wax seal with "쿵" — tucked right after 초대 so 초대쿵 reads as one word -->
-    <g transform="translate(272, 24) rotate(-6 46 46)">
-      <!-- Irregular wax edge silhouette (like real pressed wax) -->
-      <path d="M 46 4
-               C 60 4, 72 8, 80 16
-               C 88 20, 90 30, 88 42
-               C 92 50, 88 62, 82 72
-               C 82 82, 72 88, 62 88
-               C 54 92, 42 90, 32 84
-               C 22 88, 10 82, 6 72
-               C -2 66, 2 52, 8 42
-               C 4 32, 12 22, 22 16
-               C 26 8, 36 4, 46 4 Z"
-            fill="url(#ck-wax-grad)"
-            stroke="#5C1F20"
-            stroke-width="1.5"/>
-      <!-- Inner embossed ring -->
-      <circle cx="46" cy="46" r="34" fill="none"
-              stroke="rgba(255,255,255,0.15)" stroke-width="1.5"
-              stroke-dasharray="2 2"/>
-      <circle cx="46" cy="46" r="34" fill="none"
-              stroke="rgba(0,0,0,0.35)" stroke-width="1"/>
-      <!-- Glossy top highlight -->
-      <ellipse cx="34" cy="24" rx="18" ry="10" fill="rgba(255,255,255,0.35)"/>
-      <!-- "쿵" character — LARGE, BOLD, HIGH CONTRAST -->
-      <text x="46" y="62"
+    <g transform="translate(240, 33)">
+      <rect width="74" height="74" rx="21" fill="#C96A6A"/>
+      <text x="37" y="54"
             text-anchor="middle"
             font-family="'Pretendard Variable', Pretendard, sans-serif"
-            font-weight="900"
-            font-size="42"
-            letter-spacing="-2"
-            fill="#FFFFFF"
-            stroke="#3D1113"
-            stroke-width="0.6"
-            paint-order="stroke"
-            style="filter: drop-shadow(0 2px 3px rgba(60,10,15,0.6))">쿵</text>
+            font-weight="800"
+            font-size="47"
+            letter-spacing="-1"
+            fill="#FFFFFF">쿵</text>
     </g>
-
-    <!-- Small sparkle above seal -->
-    <path d="M 367 20 L 370 30 L 380 33 L 370 36 L 367 46 L 364 36 L 354 33 L 364 30 Z"
-          fill="#F5D896" opacity="0.9"/>
   </symbol>
 
   <!-- ============================================================
