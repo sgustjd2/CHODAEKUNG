@@ -1,0 +1,915 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>02 · 랜딩 · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body { background: var(--paper); overflow-x: hidden; }
+
+  /* ------------ NAV ------------ */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--ink);
+  }
+  .nav-logo svg.ck-logo { width: auto; height: 40px; }
+  .nav-logo svg:not(.ck-logo) { width: 32px; height: 32px; }
+  .nav-brand {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 22px; letter-spacing: -0.02em;
+  }
+  .nav-brand em { font-weight: 700; color: var(--rose); }
+  .nav-links {
+    display: flex; gap: 32px; align-items: center;
+  }
+  .nav-links a {
+    text-decoration: none; color: var(--fg-2);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { display: flex; gap: 10px; }
+
+  /* ------------ HERO ------------ */
+  .hero {
+    padding: 80px 32px 100px;
+    max-width: 1280px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-en);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 20px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; width: 28px; height: 1px; background: var(--rose);
+  }
+  .hero-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 84px;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .hero-title em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose);
+    font-weight: 400;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--fg-2);
+    line-height: 1.65;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; }
+  .hero-meta {
+    display: flex; gap: 32px; margin-top: 48px;
+    padding-top: 32px; border-top: 1px solid var(--line);
+  }
+  .hero-meta div .k {
+    font-family: var(--font-en);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .hero-meta div .v {
+    font-family: var(--font-serif);
+    font-size: 24px; font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .hero-visual {
+    position: relative;
+    aspect-ratio: 4/5;
+    border-radius: var(--r-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+  }
+  .hero-visual img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero-visual .float-card {
+    position: absolute;
+    background: rgba(251,247,241,0.95);
+    backdrop-filter: blur(12px);
+    border-radius: var(--r-md);
+    padding: 14px 18px;
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .float-card.top-left {
+    top: 24px; left: 24px;
+  }
+  .float-card.bottom-right {
+    bottom: 24px; right: 24px;
+    max-width: 260px;
+  }
+  .float-card .fc-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+  }
+  .float-card .fc-label {
+    font-family: var(--font-en);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--rose-deep);
+  }
+  .float-card .fc-title {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-top: 2px;
+  }
+  .float-card .fc-sub {
+    font-size: 11px; color: var(--fg-3); margin-top: 3px;
+  }
+
+  /* Decorative flourishes */
+  .hero-flourish {
+    position: absolute;
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose-soft);
+    font-size: 120px;
+    line-height: 1;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  .hero-flourish.tl { top: 40px; right: -40px; transform: rotate(-8deg); }
+
+  /* ------------ SECTION common ------------ */
+  section { padding: 100px 32px; }
+  .section-wrap { max-width: 1280px; margin: 0 auto; }
+
+  .sec-head {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 64px;
+  }
+  .sec-eyebrow {
+    font-family: var(--font-en);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 16px;
+  }
+  .sec-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .sec-title em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose);
+  }
+  .sec-desc {
+    font-size: 17px; color: var(--fg-2); line-height: 1.65;
+  }
+
+  /* ------------ TEMPLATES row ------------ */
+  .templates-section-bg { background: var(--paper-2); }
+  .templates-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .tpl-card {
+    aspect-ratio: 3/4;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: transform 250ms ease-out, box-shadow 250ms;
+    cursor: pointer;
+  }
+  .tpl-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .tpl-card img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .tpl-card .over {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(42,42,62,0.75) 100%);
+    padding: 16px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    color: var(--paper);
+  }
+  .tpl-card .tpl-cat {
+    font-family: var(--font-en);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  .tpl-card .tpl-name {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .tpl-card .tpl-name em {
+    font-family: var(--font-serif-italic);
+    
+  }
+
+  /* ------------ STEPS ------------ */
+  .steps-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+  .step {
+    text-align: left;
+    padding: 40px 32px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    position: relative;
+  }
+  .step .num {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 76px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--rose);
+    
+    margin-bottom: 20px;
+    font-family: var(--font-serif-italic);
+  }
+  .step h3 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .step p {
+    color: var(--fg-2);
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .step-visual {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--line);
+    font-family: var(--font-en);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* ------------ Feature (Kakao share) ------------ */
+  .feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .feature-row.reverse { direction: rtl; }
+  .feature-row.reverse > * { direction: ltr; }
+  .feature-visual {
+    position: relative;
+    aspect-ratio: 4/5;
+    background: var(--wax-tint);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    padding: 32px;
+  }
+
+  /* Kakao chat mockup */
+  .kakao-mock {
+    width: 100%;
+    max-width: 320px;
+    background: #B2C7D9;
+    border-radius: 24px;
+    padding: 20px 16px;
+    box-shadow: var(--shadow-xl);
+  }
+  .kakao-header {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-ko); color: var(--ink); font-weight: 700; font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .kakao-msg {
+    display: flex; gap: 8px; align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .kakao-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--rose-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .kakao-bubble {
+    background: #fff; padding: 10px 14px; border-radius: 12px 12px 12px 4px;
+    font-family: var(--font-ko); font-size: 12px;
+    color: var(--ink); max-width: 200px; line-height: 1.4;
+  }
+  .kakao-card {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 240px; margin-left: 40px; margin-top: 8px;
+  }
+  .kakao-card .kc-img {
+    aspect-ratio: 16/10;
+    background: url('assets/photos/romantic_wedding.jpg') center/cover;
+  }
+  .kakao-card .kc-body {
+    padding: 12px 14px;
+  }
+  .kakao-card .kc-title {
+    font-size: 13px; font-weight: 700; line-height: 1.35;
+    letter-spacing: -0.01em; margin-bottom: 3px;
+  }
+  .kakao-card .kc-sub {
+    font-family: var(--font-en);
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .kakao-card .kc-cta {
+    padding: 10px 14px; border-top: 1px solid rgba(0,0,0,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; font-weight: 700; color: var(--ink);
+  }
+  .kakao-card .kc-cta .arr { color: var(--rose); }
+
+  /* ------------ FAQ ------------ */
+  .faq {
+    max-width: 780px; margin: 0 auto;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0;
+  }
+  .faq-item summary {
+    list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    font-size: 17px; font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: '+';
+    font-family: var(--font-serif);
+    font-size: 28px; color: var(--rose);
+    transition: transform 200ms;
+    line-height: 1;
+  }
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+  .faq-item .body {
+    color: var(--fg-2);
+    line-height: 1.7;
+    font-size: 15px;
+    margin-top: 12px;
+    max-width: 640px;
+  }
+
+  /* ------------ Pricing ------------ */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .price-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    padding: 40px 32px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .price-card.featured {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: transparent;
+    box-shadow: var(--shadow-xl);
+    transform: scale(1.03);
+  }
+  .price-card .plan-name {
+    font-family: var(--font-en);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 8px;
+  }
+  .price-card.featured .plan-name { color: var(--butter); }
+  .price-card .plan-title {
+    font-family: var(--font-serif);
+    font-size: 32px; font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .price-card .plan-price {
+    font-family: var(--font-serif);
+    font-size: 40px; font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 16px 0;
+  }
+  .price-card .plan-price .u {
+    font-size: 14px; font-family: var(--font-en); font-weight: 600;
+    letter-spacing: 0.02em; color: var(--muted);
+  }
+  .price-card.featured .plan-price .u { color: rgba(251,247,241,0.6); }
+  .price-card .plan-desc {
+    color: var(--fg-2); font-size: 14px; line-height: 1.6; margin-bottom: 20px;
+  }
+  .price-card.featured .plan-desc { color: rgba(251,247,241,0.75); }
+  .price-card ul {
+    list-style: none; padding: 0; margin: 0 0 32px;
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+  .price-card li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 13.5px; line-height: 1.5;
+  }
+  .price-card li::before {
+    content: '✓';
+    color: var(--rose);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .price-card.featured li::before { color: var(--butter); }
+
+  /* ------------ Footer ------------ */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 32px 40px;
+  }
+  .footer-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(251,247,241,0.15);
+  }
+  .footer-brand svg { width: 40px; height: 40px; margin-bottom: 12px; }
+  .footer-brand .name {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 26px; letter-spacing: -0.02em; color: var(--paper);
+  }
+  .footer-brand .name em { font-weight: 700; color: var(--butter); }
+  .footer-brand p {
+    color: rgba(251,247,241,0.55);
+    font-size: 13px; line-height: 1.65; margin-top: 12px;
+    max-width: 260px;
+  }
+  .footer-col h5 {
+    font-family: var(--font-en);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--butter);
+    margin-bottom: 16px;
+  }
+  .footer-col a {
+    display: block; color: rgba(251,247,241,0.75);
+    text-decoration: none; font-size: 13.5px;
+    padding: 5px 0;
+  }
+  .footer-col a:hover { color: var(--paper); }
+  .footer-bottom {
+    max-width: 1280px; margin: 0 auto;
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-en); font-size: 11px;
+    color: rgba(251,247,241,0.5);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 1024px) {
+    .templates-row { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 900px) {
+    section { padding: 64px 20px; }
+    .hero { padding: 48px 20px 64px; grid-template-columns: 1fr; gap: 40px; }
+    .hero-title { font-size: 56px; }
+    .hero-visual { aspect-ratio: 4/5; }
+    .hero-meta { gap: 20px; flex-wrap: wrap; }
+    .hero-meta div .v { font-size: 20px; }
+    .templates-row { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: 1fr; }
+    .feature-row { grid-template-columns: 1fr; gap: 32px; direction: ltr !important; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .price-card.featured { transform: none; }
+    .footer-wrap { grid-template-columns: 1fr 1fr; padding: 40px 20px; }
+    .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .sec-title { font-size: 32px; }
+    .sec-head { margin-bottom: 40px; }
+    .nav-inner { padding: 12px 20px; }
+    .nav-links { display: none; }
+    .float-card { padding: 10px 12px; }
+    .float-card.top-left { top: 14px; left: 14px; }
+    .float-card.bottom-right { bottom: 14px; right: 14px; max-width: 200px; }
+    .float-card .fc-icon { width: 28px; height: 28px; }
+    .float-card .fc-title { font-size: 12px; }
+    .float-card .fc-sub { font-size: 10px; }
+    .nav-cta .btn:first-child { display: none; }
+  }
+  @media (max-width: 480px) {
+    .hero-title { font-size: 44px; }
+    .templates-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tpl-card .tpl-name { font-size: 16px; }
+    .step { padding: 28px 24px; }
+    .step .num { font-size: 60px; }
+    .step h3 { font-size: 20px; }
+    .footer-wrap { grid-template-columns: 1fr; gap: 28px; }
+    .price-card { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <svg class="ck-logo" viewBox="0 0 400 140"><use href="assets/moi-symbols.svg#chodaekung-lockup"/></svg>
+    </a>
+    <div class="nav-links">
+      <a href="#templates">템플릿</a>
+      <a href="#how">이렇게 만들어요</a>
+      <a href="#pricing">요금제</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <button class="btn btn-ghost btn-sm">로그인</button>
+      <button class="btn btn-primary btn-sm">무료로 만들기</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">C · H · O · D · A · E · K · U · N · G</div>
+    <h1 class="hero-title">초대하는<br>순간까지,<br><em>예쁘게.</em></h1>
+    <p class="hero-sub">
+      사진과 문구만 넣으면 완성되는 나만의 모바일 초대장.
+      결혼식·돌잔치부터 러닝, 등산, 조기축구, 스터디, 야구 관람까지 —
+      어떤 모임이든 카카오톡으로 바로 나누세요.
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg">무료로 만들기</button>
+      <button class="btn btn-ghost btn-lg">템플릿 구경하기 →</button>
+    </div>
+    <div class="hero-meta">
+      <div><div class="k">평균 제작</div><div class="v">10분</div></div>
+      <div><div class="k">템플릿</div><div class="v">80+</div></div>
+      <div><div class="k">지금 만들어진</div><div class="v">124K</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <img src="assets/photos/hero_flatlay.jpg" alt="편지지 위에 놓인 초대장">
+    <div class="float-card top-left">
+      <svg class="fc-icon" viewBox="0 0 48 48"><use href="assets/moi-symbols.svg#moi-mark"/></svg>
+      <div>
+        <div class="fc-label">Draft · Saved</div>
+        <div class="fc-title">지수 · 민준</div>
+        <div class="fc-sub">2026.05.24 · Sat 12:00</div>
+      </div>
+    </div>
+    <div class="float-card bottom-right">
+      <div class="seal" style="width: 44px; height: 44px; font-size: 20px;">M</div>
+      <div>
+        <div class="fc-label">Ready to share</div>
+        <div class="fc-title">카카오톡으로 공유하기</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES -->
+<section id="templates" style="background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+  <div class="section-wrap">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Templates</div>
+      <h2 class="sec-title">모든 <em>모임에</em> 맞는<br>초대장</h2>
+      <p class="sec-desc">80개 이상의 무료·프리미엄 템플릿. 이벤트 유형과 취향에 맞춰 선택하세요.</p>
+    </div>
+    <div class="templates-row">
+      <div class="tpl-card">
+        <img src="assets/photos/romantic_wedding.jpg" alt="">
+        <div class="over">
+          <div class="tpl-cat">Wedding · Romantic</div>
+          <div class="tpl-name">Meadow <em>Love</em></div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <img src="assets/photos/minimal_birthday.jpg" alt="">
+        <div class="over">
+          <div class="tpl-cat">Birthday · Minimal</div>
+          <div class="tpl-name">Quiet <em>Day</em></div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <img src="assets/photos/cute_housewarming.jpg" alt="">
+        <div class="over">
+          <div class="tpl-cat">Housewarming · Cute</div>
+          <div class="tpl-name">Cozy <em>Home</em></div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <img src="assets/photos/editorial_party.jpg" alt="">
+        <div class="over">
+          <div class="tpl-cat">Party · Editorial</div>
+          <div class="tpl-name">After <em>Hours</em></div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <img src="assets/photos/tmpl_doljanchi.jpg" alt="">
+        <div class="over">
+          <div class="tpl-cat">Doljanchi · Warm</div>
+          <div class="tpl-name">First <em>Year</em></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 40px;">
+      <button class="btn btn-outline btn-lg">전체 템플릿 보기 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS · How it works -->
+<section class="steps-section" id="how">
+  <div class="section-wrap">
+    <div class="sec-head">
+      <div class="sec-eyebrow">How it works</div>
+      <h2 class="sec-title">3단계로 <em>완성</em></h2>
+      <p class="sec-desc">디자인 지식이 없어도 괜찮아요. 사진과 정보를 넣기만 하면 됩니다.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01.</div>
+        <h3>템플릿 선택</h3>
+        <p>이벤트 유형과 스타일에 맞는 템플릿을 고르세요. 80종 중 하나를 선택하면 초대장의 뼈대가 자동으로 준비됩니다.</p>
+        <div class="step-visual">Wedding · Birthday · Party · +80</div>
+      </div>
+      <div class="step">
+        <div class="num">02.</div>
+        <h3>정보 입력</h3>
+        <p>사진, 이름, 날짜, 장소를 넣으세요. 폰트와 색상은 즉시 반영됩니다. 원하면 세부 편집도 가능해요.</p>
+        <div class="step-visual">Photo · Text · Date · Location</div>
+      </div>
+      <div class="step">
+        <div class="num">03.</div>
+        <h3>공유하기</h3>
+        <p>발행 버튼을 누르면 URL이 생성됩니다. 카카오톡, 링크 복사, QR 등 원하는 방법으로 공유하세요.</p>
+        <div class="step-visual">Kakao · Link · QR · OS Share</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KAKAO FEATURE -->
+<section>
+  <div class="section-wrap">
+    <div class="feature-row">
+      <div>
+        <div class="sec-eyebrow" style="margin-bottom: 12px;">Kakao Share</div>
+        <h2 style="font-family: var(--font-serif); font-weight: 500; font-size: 48px; letter-spacing: -0.025em; line-height: 1.08; margin-bottom: 24px;">단톡방에서<br>바로 열리는 <em style="font-weight: 700; color: var(--rose);">초대장</em></h2>
+        <p style="font-size: 16px; color: var(--fg-2); line-height: 1.7; margin-bottom: 32px; max-width: 460px;">
+          카카오톡 공유 시 대표 사진, 날짜, 장소가 담긴 카드가 자동 생성됩니다.
+          받는 사람은 카톡 인앱 브라우저에서 부드럽게 초대장을 확인할 수 있어요.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="seal" style="width: 32px; height: 32px; font-size: 14px; flex-shrink: 0;">1</div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">공유 버튼 한 번</div>
+              <div style="font-size: 13.5px; color: var(--fg-3);">Kakao SDK 완전 통합 · 별도 설정 불필요</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="seal" style="width: 32px; height: 32px; font-size: 14px; flex-shrink: 0;">2</div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">자동 OG 카드</div>
+              <div style="font-size: 13.5px; color: var(--fg-3);">사진·제목·날짜·장소가 담긴 미리보기 카드 자동 생성</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="seal" style="width: 32px; height: 32px; font-size: 14px; flex-shrink: 0;">3</div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">인앱 브라우저 최적화</div>
+              <div style="font-size: 13.5px; color: var(--fg-3);">카톡·라인·인스타 어디서 열어도 자연스러운 경험</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <div class="kakao-mock">
+          <div class="kakao-header">
+            <svg style="width:16px;height:16px;color:var(--ink);"><use href="assets/moi-symbols.svg#ic-user-group"/></svg>
+            지수 &amp; 민준 결혼 준비방
+          </div>
+          <div class="kakao-msg">
+            <div class="kakao-avatar">지</div>
+            <div class="kakao-bubble">청첩장 나왔어요 :) 5월 24일에 꼭 와주세요</div>
+          </div>
+          <div class="kakao-card">
+            <div class="kc-img"></div>
+            <div class="kc-body">
+              <div class="kc-title">지수 · 민준의 결혼식에 초대합니다</div>
+              <div class="kc-sub">2026.05.24 · Sat · Seongsu Garden</div>
+            </div>
+            <div class="kc-cta">
+              <span>초대장 보기</span>
+              <span class="arr">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: var(--paper-2);">
+  <div class="section-wrap">
+    <div class="sec-head">
+      <div class="sec-eyebrow">FAQ</div>
+      <h2 class="sec-title">자주 묻는 <em>질문</em></h2>
+    </div>
+    <div class="faq">
+      <details class="faq-item" open>
+        <summary>무료로 어디까지 만들 수 있나요?</summary>
+        <div class="body">Free 플랜은 초대장 1개, 기본 템플릿, 기본 섹션을 제공합니다. 하단에 작은 초대쿵 워터마크가 표시되지만, 카카오톡 공유·링크 복사·RSVP 기본 기능은 모두 사용할 수 있어요.</div>
+      </details>
+      <details class="faq-item">
+        <summary>카카오톡 공유 시 사진과 정보가 잘 나오나요?</summary>
+        <div class="body">발행된 초대장의 대표 사진과 제목·날짜가 담긴 Open Graph 카드가 자동 생성됩니다. Kakao Share 카드에는 CTA 버튼이 포함되어 받는 사람이 한 번의 탭으로 초대장을 열 수 있습니다.</div>
+      </details>
+      <details class="faq-item">
+        <summary>참석 여부(RSVP)를 확인할 수 있나요?</summary>
+        <div class="body">네. 초대장 편집기에서 RSVP 섹션을 활성화하면 참석 여부·동반 인원·메시지를 수집할 수 있고, 대시보드에서 실시간으로 응답 통계를 확인할 수 있습니다.</div>
+      </details>
+      <details class="faq-item">
+        <summary>초대장을 비공개로 설정할 수 있나요?</summary>
+        <div class="body">Draft(제작자만) · Unlisted(링크 아는 사람만) · Public(검색 노출)의 세 가지 공개 상태 중 선택할 수 있습니다. 기본값은 Unlisted이며 검색 엔진에 노출되지 않습니다.</div>
+      </details>
+      <details class="faq-item">
+        <summary>모바일에서도 편집할 수 있나요?</summary>
+        <div class="body">초대쿵는 모바일 우선으로 설계되었습니다. 스마트폰에서도 라이브 프리뷰와 바텀시트 편집기로 초대장을 완성할 수 있으며, 데스크탑에서는 3-column 에디터로 더 정밀한 편집이 가능합니다.</div>
+      </details>
+      <details class="faq-item">
+        <summary>다른 사람이 만든 초대장을 살짝 바꿔서 쓸 수 있나요?</summary>
+        <div class="body">본인이 만든 초대장은 언제든지 대시보드에서 "복제하기"로 새 초대장을 시작할 수 있어요. 곧 크리에이터 마켓을 통해 다른 사용자의 템플릿을 구매·활용하는 기능도 열릴 예정입니다.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-wrap">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Pricing</div>
+      <h2 class="sec-title">필요한 만큼만, <em>가볍게</em></h2>
+      <p class="sec-desc">첫 초대장은 무료로 만들어보세요. 언제든 상위 플랜으로 업그레이드할 수 있습니다.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-title">무료</div>
+        <div class="plan-price">₩0<span class="u"> / month</span></div>
+        <div class="plan-desc">가볍게 하나 만들어보고 싶은 분에게.</div>
+        <ul>
+          <li>초대장 1개</li>
+          <li>기본 템플릿 40종</li>
+          <li>카카오톡 공유</li>
+          <li>기본 RSVP</li>
+          <li>초대쿵 워터마크</li>
+        </ul>
+        <button class="btn btn-outline">무료로 시작하기</button>
+      </div>
+      <div class="price-card featured">
+        <div class="plan-name">Plus · 인기</div>
+        <div class="plan-title">플러스</div>
+        <div class="plan-price">₩7,900<span class="u"> / month</span></div>
+        <div class="plan-desc">여러 모임을 정성껏 준비하는 분에게.</div>
+        <ul>
+          <li>초대장 무제한</li>
+          <li>프리미엄 템플릿 전체 (80+)</li>
+          <li>워터마크 제거</li>
+          <li>RSVP 관리 · CSV 내보내기</li>
+          <li>프리미엄 애니메이션</li>
+          <li>방명록</li>
+        </ul>
+        <button class="btn btn-rose">플러스 시작하기</button>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">Pro · Creator</div>
+        <div class="plan-title">프로</div>
+        <div class="plan-price">₩19,900<span class="u"> / month</span></div>
+        <div class="plan-desc">브랜드·크리에이터·소상공인을 위해.</div>
+        <ul>
+          <li>Plus 전체 포함</li>
+          <li>커스텀 도메인 (yourname.moi)</li>
+          <li>방문 통계 · 응답 분석</li>
+          <li>템플릿 판매(마켓 참여)</li>
+          <li>API 접근 · 워크스페이스</li>
+          <li>우선 지원</li>
+        </ul>
+        <button class="btn btn-outline">프로 시작하기</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section style="text-align: center; padding: 120px 32px;">
+  <div class="section-wrap">
+    <svg style="width: 88px; height: 100px; margin: 0 auto 24px; display: block;" viewBox="0 0 240 240">
+      <use href="assets/moi-symbols.svg#momo-run"/>
+    </svg>
+    <div class="sec-eyebrow">Ready?</div>
+    <h2 class="sec-title" style="font-size: 72px;">지금, 첫 <em>초대장</em>을<br>시작하세요.</h2>
+    <div style="margin-top: 40px;">
+      <button class="btn btn-primary btn-lg">무료로 만들기 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-brand">
+      <svg viewBox="0 0 48 48"><use href="assets/moi-symbols.svg#moi-mark"/></svg>
+      <div class="name">초대<span class="seal-kung">쿵</span></div>
+      <p>초대하는 순간까지, 예쁘게. 모든 모임의 감성을 담은 모바일 인터랙티브 초대장.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <a href="#">템플릿</a>
+      <a href="#">에디터</a>
+      <a href="#">RSVP</a>
+      <a href="#">Pricing</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#">회사 소개</a>
+      <a href="#">블로그</a>
+      <a href="#">채용</a>
+      <a href="#">문의하기</a>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <a href="#">도움말</a>
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
+      <a href="#">쿠키 정책</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 CHODAEKUNG. All rights reserved.</div>
+    <div style="display:inline-flex; align-items:center; gap:6px;">MADE WITH <svg style="width:12px;height:12px;color:var(--butter);"><use href="assets/moi-symbols.svg#ic-heart-fill"/></svg> IN SEOUL</div>
+  </div>
+</footer>
+
+</body>
+</html>

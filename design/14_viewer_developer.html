@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>14 · Developer Terminal · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body { background: var(--paper-2); min-height: 100vh; display: flex; padding: 40px 20px; }
+  .stage { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; width: 100%; }
+  .info .eb { font-family: var(--font-en); font-size: 11px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--rose-deep); margin-bottom: 12px; }
+  .info h1 { font-family: var(--font-serif); font-weight: 500; font-size: 56px; letter-spacing: -0.03em; line-height: 1.02; margin-bottom: 16px; }
+  .info h1 em { font-weight: 700; color: var(--rose); }
+  .info p { color: var(--fg-2); font-size: 15px; line-height: 1.65; max-width: 400px; margin-bottom: 24px; }
+  .mode-switch { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 4px; gap: 2px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+  .ms { padding: 8px 16px; background: transparent; border: none; border-radius: var(--r-pill); font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--fg-3); cursor: pointer; }
+  .ms.active { background: var(--ink); color: var(--paper); }
+  .theme-tokens { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); max-width: 400px; }
+  .theme-tokens .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+  .theme-tokens .k { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .theme-tokens .v { font-weight: 700; color: var(--ink); }
+  .theme-tokens .swatches { display: flex; gap: 4px; }
+  .theme-tokens .sw { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--line); }
+
+  .device { width: 390px; height: 810px; background: var(--ink); border-radius: 44px; padding: 10px; box-shadow: var(--shadow-xl); position: relative; flex-shrink: 0; }
+  .device .screen { width: 100%; height: 100%; border-radius: 34px; overflow: hidden; background: #0D0F0A; position: relative; }
+  .device .notch { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 100px; height: 26px; background: var(--ink); border-radius: 14px; z-index: 100; }
+  .statusbar { position: absolute; top: 0; left: 0; right: 0; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 14px 28px 0; font-family: var(--font-mono); font-size: 12px; font-weight: 500; z-index: 50; color: #7ED77E; }
+  .viewport { width: 100%; height: 100%; overflow-y: auto; padding-top: 42px; }
+  .viewport::-webkit-scrollbar { display: none; }
+
+  /* ============================================================
+     DEVELOPER TERMINAL
+     ============================================================ */
+  .d-viewer {
+    background: #0D0F0A;
+    color: #C9D6BC;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 20px 16px 40px;
+    position: relative;
+  }
+  .d-viewer::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        rgba(126,215,126,0.03) 0,
+        rgba(126,215,126,0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    pointer-events: none;
+    z-index: 1;
+  }
+  .d-viewer > * { position: relative; z-index: 2; }
+
+  /* Header bar (like terminal titlebar) */
+  .d-titlebar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(126,215,126,0.15);
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+  .d-titlebar .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .d-titlebar .dot.r { background: #FF6D6D; }
+  .d-titlebar .dot.y { background: #F5D896; }
+  .d-titlebar .dot.g { background: #7ED77E; }
+  .d-titlebar .name {
+    flex: 1;
+    text-align: center;
+    color: #7A8973;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+  .d-titlebar .status {
+    color: #7ED77E;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Command line intro */
+  .d-cmd {
+    color: #7ED77E;
+    margin: 12px 0;
+  }
+  .d-cmd .prompt { color: #E38B8B; }
+  .d-cmd .flag { color: #F5D896; }
+  .d-cmd .cursor {
+    display: inline-block;
+    width: 8px; height: 12px;
+    background: #7ED77E;
+    animation: blink 1s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  .d-output {
+    color: #A9B69C;
+    padding: 4px 0;
+  }
+  .d-output .key { color: #F5D896; }
+  .d-output .val { color: #7ED77E; }
+  .d-output .str { color: #C9D6BC; }
+  .d-output .comment { color: #5A6851;  }
+  .d-output.warn { color: #F5D896; }
+  .d-output.error { color: #E38B8B; }
+  .d-output.info { color: #A0A8B8; }
+
+  /* ASCII banner */
+  .d-banner {
+    color: #7ED77E;
+    font-size: 8px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    white-space: pre;
+    text-align: center;
+    padding: 16px 0;
+    margin: 16px 0;
+    border-top: 1px dashed rgba(126,215,126,0.3);
+    border-bottom: 1px dashed rgba(126,215,126,0.3);
+  }
+
+  /* Section */
+  .d-section {
+    margin: 24px 0;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(126,215,126,0.2);
+  }
+  .d-sec-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+    color: #7ED77E;
+    font-weight: 500;
+  }
+  .d-sec-head::before {
+    content: '#';
+    color: #E38B8B;
+  }
+  .d-sec-head .badge {
+    margin-left: auto;
+    padding: 2px 6px;
+    background: rgba(126,215,126,0.1);
+    border: 1px solid rgba(126,215,126,0.3);
+    border-radius: 3px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #7ED77E;
+  }
+
+  /* JSON block */
+  .d-json {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(126,215,126,0.15);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 8px 0;
+    font-size: 11.5px;
+  }
+  .d-json .indent { padding-left: 12px; display: block; }
+
+  /* Countdown ASCII */
+  .d-countdown-ascii {
+    text-align: center;
+    padding: 20px 0;
+    font-family: var(--font-mono);
+  }
+  .d-countdown-ascii .n {
+    font-size: 44px;
+    font-weight: 500;
+    color: #F5D896;
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+  .d-countdown-ascii .u {
+    font-size: 10px;
+    color: #7A8973;
+    letter-spacing: 0.3em;
+    margin-top: 6px;
+  }
+  .d-countdown-ascii .n .sep { color: #E38B8B; margin: 0 4px; }
+
+  /* Progress bar */
+  .d-progress {
+    margin: 12px 0;
+    color: #A9B69C;
+  }
+  .d-progress .bar {
+    display: inline-block;
+    color: #7ED77E;
+    letter-spacing: -0.1em;
+  }
+  .d-progress .pct {
+    color: #F5D896;
+    margin-left: 8px;
+  }
+
+  /* ANSI-style table */
+  .d-table {
+    border: 1px solid rgba(126,215,126,0.3);
+    margin: 8px 0;
+    font-size: 11.5px;
+  }
+  .d-table .row {
+    display: grid; grid-template-columns: 80px 1fr;
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(126,215,126,0.15);
+  }
+  .d-table .row:last-child { border-bottom: none; }
+  .d-table .row .k { color: #F5D896; }
+  .d-table .row .v { color: #C9D6BC; }
+
+  /* Buttons — pseudo terminal buttons */
+  .d-btns {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .d-btn {
+    padding: 10px;
+    border: 1px solid rgba(126,215,126,0.3);
+    background: rgba(126,215,126,0.05);
+    color: #7ED77E;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-align: center;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .d-btn:hover { background: rgba(126,215,126,0.15); }
+  .d-btn.primary { background: rgba(227,139,139,0.15); border-color: #E38B8B; color: #FF7A85; }
+
+  /* RSVP terminal input */
+  .d-rsvp {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(126,215,126,0.3);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 12px 0;
+  }
+  .d-rsvp .q { color: #7ED77E; margin-bottom: 8px; }
+  .d-rsvp .q .prompt { color: #E38B8B; }
+  .d-rsvp-opts {
+    display: flex; flex-direction: column; gap: 4px;
+    padding-left: 12px;
+  }
+  .d-rsvp-opt {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: #A9B69C;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .d-rsvp-opt:hover { background: rgba(126,215,126,0.08); }
+  .d-rsvp-opt.selected {
+    background: rgba(126,215,126,0.15);
+    color: #7ED77E;
+  }
+  .d-rsvp-opt::before {
+    content: '[ ]';
+    color: #5A6851;
+  }
+  .d-rsvp-opt.selected::before {
+    content: '[✓]';
+    color: #7ED77E;
+  }
+
+  /* Gallery — ASCII grid */
+  .d-gallery {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .d-gallery-item {
+    aspect-ratio: 1;
+    position: relative;
+    border: 1px solid rgba(126,215,126,0.3);
+    overflow: hidden;
+  }
+  .d-gallery-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: hue-rotate(30deg) saturate(0.7) brightness(0.9);
+    opacity: 0.85;
+  }
+  .d-gallery-item .cap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 3px 6px;
+    background: rgba(0,0,0,0.7);
+    color: #7ED77E;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+  }
+
+  /* End */
+  .d-end {
+    margin-top: 24px;
+    padding: 16px 0;
+    border-top: 1px dashed rgba(126,215,126,0.3);
+    text-align: center;
+    color: #7A8973;
+    font-size: 10px;
+    line-height: 1.8;
+  }
+  .d-end .accent { color: #F5D896; }
+
+  .share-pill { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 4px; padding: 5px; background: rgba(42,42,62,0.9); backdrop-filter: blur(12px); border-radius: var(--r-pill); z-index: 60; box-shadow: var(--shadow-lg); max-width: calc(100% - 32px); }
+  .share-pill button { background: transparent; border: none; padding: 8px 12px; border-radius: var(--r-pill); font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--paper); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; line-height: 1; }
+  .share-pill button.primary { background: var(--wax); padding: 8px 14px; }
+
+  @media (max-width: 900px) {
+    body { padding: 20px 12px; align-items: stretch; }
+    .stage { grid-template-columns: 1fr; gap: 24px; }
+    .info { text-align: center; }
+    .info p { margin: 0 auto 20px; }
+    .info h1 { font-size: 38px; }
+    .theme-tokens { max-width: 100%; }
+    .device { margin: 0 auto; }
+  }
+  @media (max-width: 500px) {
+    .device { transform: scale(0.88); transform-origin: top center; margin: 0 auto -60px; }
+    .info h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="info">
+    <div class="eb">Viewer · Developer Terminal</div>
+    <h1>$ moi <em>--invite</em></h1>
+    <p>다크 인터페이스, 모노스페이스 폰트, ANSI 컬러, JSON 구조. 개발자 파티나 스터디 그룹 밋업에 어울리는 재미있고 정교한 초대장.</p>
+    <div class="mode-switch">
+      <button class="ms active" data-mode="scroll">Scroll</button>
+      <button class="ms" data-mode="story">Story</button>
+      <button class="ms" data-mode="magazine">Magazine</button>
+    </div>
+    <div class="theme-tokens">
+      <div class="row"><span class="k">Palette</span>
+        <div class="swatches">
+          <div class="sw" style="background: #0D0F0A;"></div>
+          <div class="sw" style="background: #7ED77E;"></div>
+          <div class="sw" style="background: #F5D896;"></div>
+          <div class="sw" style="background: #E38B8B;"></div>
+          <div class="sw" style="background: #A0A8B8;"></div>
+        </div>
+      </div>
+      <div class="row"><span class="k">Font</span><span class="v" style="font-family: var(--font-mono);">DM Mono</span></div>
+      <div class="row"><span class="k">Voice</span><span class="v">$ commands · logs</span></div>
+      <div class="row"><span class="k">Motion</span><span class="v">Blinking cursor</span></div>
+      <div class="row"><span class="k">Effect</span><span class="v">CRT scanlines</span></div>
+      <div class="row"><span class="k">Use case</span><span class="v">Dev meetup · Study group</span></div>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar"><span>09:41</span><span>● 100%</span></div>
+      <div class="viewport">
+        <div class="d-viewer">
+
+          <div class="d-titlebar">
+            <div class="dot r"></div>
+            <div class="dot y"></div>
+            <div class="dot g"></div>
+            <div class="name">moi-letter ~ zsh</div>
+            <div class="status">● live</div>
+          </div>
+
+          <div class="d-cmd">
+            <span class="prompt">$</span> moi <span class="flag">--invite</span> <span class="flag">--from=jisu</span>
+          </div>
+          <div class="d-output"><span class="comment">// resolving invitation payload...</span></div>
+          <div class="d-output"><span class="key">status</span>: <span class="val">200 OK</span> · <span class="comment">// ✓ published</span></div>
+
+          <div class="d-banner">
+ ███╗   ███╗ ██████╗ ██╗
+ ████╗ ████║██╔═══██╗██║
+ ██╔████╔██║██║   ██║██║
+ ██║╚██╔╝██║██║   ██║██║
+ ██║ ╚═╝ ██║╚██████╔╝██║
+ ╚═╝     ╚═╝ ╚═════╝ ╚═╝
+   L · E · T · T · E · R
+          </div>
+
+          <div class="d-cmd">
+            <span class="prompt">$</span> cat invitation.json
+          </div>
+          <div class="d-json">
+            <span style="color: #A9B69C;">{</span><br>
+            <span class="indent"><span style="color:#F5D896;">"event"</span>: <span style="color:#C9D6BC;">"Spring Dev Meetup 2026"</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"host"</span>: <span style="color:#C9D6BC;">"@jisu · Frontend Guild"</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"date"</span>: <span style="color:#7ED77E;">"2026-04-12T19:00+09:00"</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"venue"</span>: <span style="color:#C9D6BC;">"성수동 스타트업 캠퍼스"</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"topic"</span>: <span style="color:#C9D6BC;">"React 19 · Server Components"</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"capacity"</span>: <span style="color:#A0A8B8;">42</span>,</span>
+            <span class="indent"><span style="color:#F5D896;">"snacks"</span>: <span style="color:#7ED77E;">true</span></span>
+            <span style="color: #A9B69C;">}</span>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">datetime <span class="badge">D-32</span></div>
+            <div class="d-countdown-ascii">
+              <div class="n">04<span class="sep">.</span>12</div>
+              <div class="u">SUN · 19:00 KST</div>
+            </div>
+            <div class="d-table">
+              <div class="row"><span class="k">day</span><span class="v">Sunday</span></div>
+              <div class="row"><span class="k">start</span><span class="v">19:00</span></div>
+              <div class="row"><span class="k">end</span><span class="v">22:00 (3h)</span></div>
+              <div class="row"><span class="k">tz</span><span class="v">Asia/Seoul (UTC+9)</span></div>
+            </div>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">location <span class="badge">GEO</span></div>
+            <div class="d-output"><span class="key">venue</span>: <span class="str">"성수동 스타트업 캠퍼스"</span></div>
+            <div class="d-output"><span class="key">addr </span>: <span class="str">"서울 성동구 성수이로 113"</span></div>
+            <div class="d-output"><span class="key">floor</span>: <span class="str">"3층 · Auditorium"</span></div>
+            <div class="d-output"><span class="key">lat  </span>: <span style="color:#A0A8B8;">37.54432</span></div>
+            <div class="d-output"><span class="key">lng  </span>: <span style="color:#A0A8B8;">127.05678</span></div>
+            <div class="d-btns">
+              <button class="d-btn">$ kakaomap</button>
+              <button class="d-btn primary">$ copy-addr</button>
+            </div>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">schedule <span class="badge">4 items</span></div>
+            <div class="d-table">
+              <div class="row"><span class="k">19:00</span><span class="v">Doors open · welcome drinks</span></div>
+              <div class="row"><span class="k">19:30</span><span class="v">Talk 01 · React 19 이야기</span></div>
+              <div class="row"><span class="k">20:15</span><span class="v">Talk 02 · Server Components</span></div>
+              <div class="row"><span class="k">21:00</span><span class="v">Q&A · networking · afterparty</span></div>
+            </div>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">gallery <span class="badge">./past-events</span></div>
+            <div class="d-gallery">
+              <div class="d-gallery-item"><img src="assets/photos/developer_terminal.jpg"><div class="cap">v01.jpg</div></div>
+              <div class="d-gallery-item"><img src="assets/photos/tmpl_seminar.jpg"><div class="cap">v02.jpg</div></div>
+              <div class="d-gallery-item"><img src="assets/photos/tmpl_yearend.jpg"><div class="cap">v03.jpg</div></div>
+            </div>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">rsvp <span class="badge">required</span></div>
+            <div class="d-rsvp">
+              <div class="q"><span class="prompt">?</span> will_you_attend</div>
+              <div class="d-rsvp-opts">
+                <div class="d-rsvp-opt selected">yes · 참석</div>
+                <div class="d-rsvp-opt">maybe · 미정</div>
+                <div class="d-rsvp-opt">no · 불참</div>
+              </div>
+            </div>
+            <div class="d-progress">
+              <span class="bar">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░</span><span class="pct">32 / 42</span>
+            </div>
+            <div class="d-output"><span class="comment">// 32 of 42 seats filled · 10 remaining</span></div>
+          </div>
+
+          <div class="d-section">
+            <div class="d-sec-head">share</div>
+            <div class="d-btns" style="grid-template-columns: 1fr 1fr;">
+              <button class="d-btn">$ share --kakao</button>
+              <button class="d-btn">$ copy-url</button>
+              <button class="d-btn">$ gen-qr</button>
+              <button class="d-btn primary">$ export-cal</button>
+            </div>
+          </div>
+
+          <div class="d-end">
+            <div class="d-cmd"><span class="prompt">$</span> echo "see you there"</div>
+            <div class="d-output">see you there</div>
+            <br>
+            <div>CHODAEKUNG · <span class="accent">v0.1.0</span> · MIT License</div>
+            <div style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">Made in Seoul · <svg style="width:10px;height:10px;color:#E38B8B;fill:currentColor;stroke:none;"><use href="assets/moi-symbols.svg#ic-heart-fill"/></svg> · 2026</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="share-pill">
+        <button><svg style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;color:#7ED77E;"><use href="assets/moi-symbols.svg#ic-chat"/></svg>kakao</button>
+        <button><svg style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;color:#7ED77E;"><use href="assets/moi-symbols.svg#ic-link"/></svg>link</button>
+        <button class="primary"><svg style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;"><use href="assets/moi-symbols.svg#ic-heart"/></svg>rsvp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.ms').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('.ms').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    };
+  });
+  document.querySelectorAll('.d-rsvp-opt').forEach(o => {
+    o.onclick = () => {
+      document.querySelectorAll('.d-rsvp-opt').forEach(x => x.classList.remove('selected'));
+      o.classList.add('selected');
+    };
+  });
+</script>
+</body>
+</html>

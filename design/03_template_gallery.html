@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>03 · 템플릿 갤러리 · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body { background: var(--paper); }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1360px; margin: 0 auto;
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .nav-logo svg.ck-logo { width: auto; height: 40px; }
+  .nav-logo svg:not(.ck-logo) { width: 32px; height: 32px; }
+  .nav-brand { font-weight: 900; font-size: 20px; letter-spacing: -0.02em; }
+  .nav-brand .seal-kung { --seal-size: 0.95em; }
+  .nav-crumb { font-family: var(--font-en); font-size: 11px; color: var(--muted); letter-spacing: 0.16em; font-weight: 700; }
+  .nav-crumb .cur { color: var(--ink); font-weight: 800; }
+
+  /* Header */
+  .head {
+    max-width: 1360px; margin: 0 auto;
+    padding: 56px 32px 32px;
+  }
+  .head-eyebrow {
+    font-family: var(--font-en); font-size: 12px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--wax-deep); font-weight: 800;
+  }
+  .head-title {
+    font-weight: 800;
+    font-size: 60px; letter-spacing: -0.03em; line-height: 1.02;
+    margin: 12px 0 12px;
+    color: var(--ink);
+  }
+  .head-title em { color: var(--wax); font-weight: 800; }
+  .head-sub { font-size: 17px; color: var(--fg-2); max-width: 720px; line-height: 1.65; word-break: keep-all; }
+
+  /* Category quick nav */
+  .cat-nav {
+    max-width: 1360px; margin: 0 auto;
+    padding: 8px 32px 16px;
+    display: flex; gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .cat-nav::-webkit-scrollbar { display: none; }
+  .cat-nav a {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 20px 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    font-size: 14px; font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 200ms;
+  }
+  .cat-nav a:hover {
+    border-color: var(--wax-soft);
+    color: var(--wax-deep);
+  }
+  .cat-nav a:hover .ic-wrap { background: var(--wax-soft); color: var(--wax-deep); }
+  .cat-nav a.active {
+    background: var(--wax);
+    color: var(--paper);
+    border-color: var(--wax);
+  }
+  .cat-nav a.active .ic-wrap {
+    background: rgba(255,255,255,0.22);
+    color: var(--paper);
+  }
+  .cat-nav a .ic-wrap {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--paper-2);
+    color: var(--wax-deep);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 200ms;
+  }
+  .cat-nav a .ic {
+    width: 16px; height: 16px;
+  }
+  .cat-nav a .count {
+    font-family: var(--font-en);
+    font-size: 11px;
+    padding: 2px 7px;
+    background: var(--paper-2);
+    color: var(--muted);
+    border-radius: 100px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  .cat-nav a:hover .count, .cat-nav a.active .count {
+    background: rgba(255,255,255,0.25);
+    color: var(--paper);
+  }
+
+  /* Search */
+  .search-wrap {
+    max-width: 1360px; margin: 0 auto;
+    padding: 20px 32px 0;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .search {
+    flex: 1; max-width: 480px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    padding: 12px 16px;
+  }
+  .search input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: var(--font-ko); font-size: 15px;
+  }
+  .search svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+  .sort {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-en); font-size: 12px;
+    letter-spacing: 0.05em; color: var(--muted); font-weight: 700;
+  }
+  .sort select {
+    background: transparent; border: none;
+    font-family: var(--font-ko); font-weight: 700;
+    color: var(--ink); font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Custom event banner */
+  .custom-event-banner {
+    max-width: 1360px; margin: 24px auto 0;
+    padding: 24px 32px;
+    background: var(--wax-tint);
+    border-radius: var(--r-xl);
+    display: flex; align-items: center; gap: 20px;
+  }
+  .ceb-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--wax);
+    box-shadow: var(--shadow-sm);
+  }
+  .ceb-icon svg { width: 28px; height: 28px; }
+  .ceb-text { flex: 1; }
+  .ceb-title {
+    font-size: 18px; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .ceb-title em { color: var(--wax); font-weight: 800; }
+  .ceb-desc {
+    font-size: 13.5px; color: var(--fg-2);
+    line-height: 1.5;
+  }
+  .ceb-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 14px 22px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: var(--r-md);
+    font-family: var(--font-ko);
+    font-size: 14px; font-weight: 800;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    transition: transform 150ms;
+  }
+  .ceb-btn:hover { transform: translateY(-2px); }
+  .ceb-btn svg { width: 16px; height: 16px; }
+
+  /* Custom event modal */
+  .ce-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(42, 42, 62, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 250ms;
+  }
+  .ce-modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .ce-modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -48%) scale(0.98);
+    width: 100%; max-width: 640px;
+    max-height: 85vh;
+    background: var(--card);
+    border-radius: var(--r-2xl);
+    box-shadow: var(--shadow-xl);
+    z-index: 101;
+    opacity: 0; pointer-events: none;
+    display: flex; flex-direction: column;
+    transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .ce-modal.open {
+    opacity: 1; pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .ce-modal-head {
+    padding: 28px 32px 20px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ce-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 800;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--wax-deep);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .ce-modal-head h3 {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.025em; line-height: 1.15;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .ce-modal-head h3 em { color: var(--wax); }
+  .ce-modal-head p {
+    font-size: 14px; color: var(--fg-2);
+    line-height: 1.5;
+    max-width: 440px;
+  }
+  .ce-close {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--paper-2);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--fg-2);
+    flex-shrink: 0;
+  }
+  .ce-close:hover { background: var(--paper-3); }
+  .ce-modal-body {
+    padding: 24px 32px 8px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .ce-field { margin-bottom: 24px; }
+  .ce-suggestions {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .ce-sug {
+    padding: 7px 13px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-family: var(--font-ko); font-size: 12px; font-weight: 600;
+    color: var(--fg-2);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ce-sug:hover { background: var(--wax-tint); border-color: var(--wax-soft); color: var(--wax-deep); }
+
+  .ce-mood-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .ce-mood {
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-ko);
+    font-size: 12px; font-weight: 700;
+    color: var(--ink);
+    transition: all 150ms;
+  }
+  .ce-mood:hover { border-color: var(--line-strong); }
+  .ce-mood.active {
+    border-color: var(--wax);
+    background: var(--wax-tint);
+    color: var(--wax-deep);
+    box-shadow: 0 0 0 3px rgba(227,139,139,0.15);
+  }
+  .mood-swatch {
+    width: 32px; height: 32px; border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+
+  .ce-sec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .ce-sec {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 150ms;
+  }
+  .ce-sec input {
+    accent-color: var(--wax);
+    width: 16px; height: 16px;
+    cursor: pointer;
+  }
+  .ce-sec span {
+    font-size: 13.5px; font-weight: 600;
+    letter-spacing: -0.01em; color: var(--ink);
+  }
+  .ce-sec:has(input:checked) {
+    background: var(--wax-tint);
+    border-color: var(--wax-soft);
+  }
+
+  .ce-preview {
+    padding: 16px 18px;
+    background: var(--sage-light);
+    border-radius: 14px;
+    margin-bottom: 12px;
+  }
+  .ce-preview-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .ce-preview-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 800;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--sage-deep);
+  }
+  .ce-preview-name {
+    font-size: 15px; font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .ce-preview-body {
+    font-size: 13px; color: var(--fg-2); line-height: 1.55;
+  }
+  .ce-preview-body b { color: var(--ink); font-weight: 800; }
+
+  .ce-modal-foot {
+    padding: 20px 32px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 10px; justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 700px) {
+    .custom-event-banner { flex-direction: column; align-items: flex-start; padding: 20px; text-align: left; margin: 20px 20px 0; }
+    .ceb-btn { width: 100%; justify-content: center; }
+    .ce-modal { max-width: calc(100% - 24px); max-height: 90vh; }
+    .ce-modal-head, .ce-modal-body, .ce-modal-foot { padding-left: 20px; padding-right: 20px; }
+    .ce-modal-head h3 { font-size: 22px; }
+    .ce-mood-grid { grid-template-columns: repeat(3, 1fr); }
+    .ce-sec-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Category section */
+  .cat-section {
+    max-width: 1360px; margin: 0 auto;
+    padding: 64px 32px 32px;
+    scroll-margin-top: 80px;
+  }
+  .cat-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cat-header-left {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .cat-header-left .cat-icon {
+    width: 60px; height: 60px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--wax-deep);
+  }
+  .cat-header-left .cat-icon svg { width: 32px; height: 32px; }
+  .cat-header-left .cat-icon.c-wedding { background: var(--wax-soft); }
+  .cat-header-left .cat-icon.c-birthday { background: var(--peach-soft); color: var(--peach-deep); }
+  .cat-header-left .cat-icon.c-home { background: var(--gold-light); color: var(--gold-deep); }
+  .cat-header-left .cat-icon.c-sports { background: var(--sky-soft); color: var(--sky-deep); }
+  .cat-header-left .cat-icon.c-outdoor { background: var(--sage-light); color: var(--sage-deep); }
+  .cat-header-left .cat-icon.c-hobby { background: var(--lilac-soft); color: var(--lilac-deep); }
+  .cat-header-left .cat-icon.c-gaming { background: var(--peach-soft); color: var(--wax-deep); }
+  .cat-header-left .cat-icon.c-party { background: var(--wax-soft); color: var(--wax-deep); }
+
+  .cat-eb {
+    font-family: var(--font-en); font-size: 11px; font-weight: 800;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--wax-deep);
+    margin-bottom: 6px;
+  }
+  .cat-title {
+    font-size: 30px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .cat-title em { color: var(--wax); }
+  .cat-desc {
+    font-size: 14.5px; color: var(--fg-2);
+    line-height: 1.5;
+    max-width: 480px;
+  }
+  .cat-header-right {
+    display: flex; align-items: baseline; gap: 8px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .cat-count {
+    font-family: var(--font-en);
+    font-size: 40px; font-weight: 900;
+    color: var(--wax);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .cat-count-lbl {
+    font-family: var(--font-en);
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cat-view-all {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; font-weight: 700;
+    color: var(--wax-deep);
+    text-decoration: none;
+    margin-top: 4px;
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
+  }
+  .tpl {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+    transition: transform 200ms ease-out, box-shadow 200ms;
+    cursor: pointer;
+    position: relative;
+  }
+  .tpl:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .tpl .thumb {
+    aspect-ratio: 3/4;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+  .tpl .thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 400ms ease-out;
+  }
+  .tpl:hover .thumb img { transform: scale(1.05); }
+  .tpl .badge {
+    position: absolute; top: 12px; left: 12px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    padding: 5px 10px;
+    border-radius: var(--r-pill);
+    font-family: var(--font-en);
+    font-size: 9px; font-weight: 800;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink);
+    z-index: 2;
+    white-space: nowrap;
+  }
+  .tpl .badge.pro {
+    background: var(--ink);
+    color: var(--gold-light);
+  }
+  .tpl .badge.free {
+    background: var(--sage-light);
+    color: var(--sage-deep);
+  }
+  .tpl .badge.new {
+    background: var(--wax);
+    color: var(--paper);
+  }
+  .tpl .fav {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2;
+    color: var(--fg-3);
+    border: none;
+  }
+  .tpl .fav.active { color: var(--wax); }
+  .tpl .fav svg { width: 16px; height: 16px; }
+  .tpl .info {
+    padding: 16px 18px 20px;
+  }
+  .tpl .cat-tag {
+    font-family: var(--font-en);
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--wax-deep);
+    margin-bottom: 6px;
+  }
+  .tpl .name {
+    font-size: 18px; font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .tpl .name em { color: var(--wax); }
+  .tpl .meta {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    font-family: var(--font-en);
+    font-size: 11px; letter-spacing: 0.02em;
+    color: var(--muted); font-weight: 700;
+    margin-top: 8px;
+  }
+  .tpl .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+
+  /* Custom card at end */
+  .tpl.custom {
+    background: var(--wax-tint);
+    border: 1.5px dashed var(--wax-soft);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    aspect-ratio: unset;
+    min-height: 380px;
+  }
+  .tpl.custom svg { width: 60px; height: 68px; margin-bottom: 12px; }
+  .tpl.custom .cus-title {
+    font-size: 20px; font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .tpl.custom .cus-title em { color: var(--wax); }
+  .tpl.custom .cus-desc {
+    font-size: 13px; color: var(--fg-2); line-height: 1.55; max-width: 220px; margin-bottom: 16px;
+  }
+
+  /* Bottom CTA */
+  .bottom-cta {
+    max-width: 1200px;
+    margin: 40px auto 100px;
+    padding: 60px 40px;
+    background: var(--wax-tint);
+    border-radius: var(--r-2xl);
+    text-align: center;
+  }
+  .bottom-cta h2 {
+    font-size: 36px; font-weight: 800;
+    letter-spacing: -0.025em; line-height: 1.1;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .bottom-cta h2 em { color: var(--wax); }
+  .bottom-cta p {
+    font-size: 16px; color: var(--fg-2); line-height: 1.6;
+    max-width: 500px; margin: 0 auto 28px;
+  }
+
+  @media (max-width: 900px) {
+    .nav-inner { padding: 12px 20px; }
+    .nav-crumb { display: none; }
+    .head { padding: 40px 20px 20px; }
+    .head-title { font-size: 40px; }
+    .cat-nav { padding: 8px 20px 16px; }
+    .search-wrap { padding: 16px 20px 0; flex-wrap: wrap; }
+    .search { max-width: 100%; }
+    .cat-section { padding: 48px 20px 24px; }
+    .cat-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .cat-header-left { gap: 16px; }
+    .cat-header-left .cat-icon { width: 48px; height: 48px; }
+    .cat-header-left .cat-icon svg { width: 24px; height: 24px; }
+    .cat-title { font-size: 24px; }
+    .cat-count { font-size: 32px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .tpl .name { font-size: 16px; }
+    .bottom-cta { padding: 40px 24px; margin: 24px 20px 60px; }
+    .bottom-cta h2 { font-size: 28px; }
+  }
+  @media (max-width: 400px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="00_index.html">
+      <svg class="ck-logo" viewBox="0 0 400 140"><use href="assets/moi-symbols.svg#chodaekung-lockup"/></svg>
+    </a>
+    <div class="nav-crumb">HOME · <span class="cur">TEMPLATES</span></div>
+    <div style="display:flex; gap: 10px;">
+      <button class="btn btn-ghost btn-sm">로그인</button>
+      <button class="btn btn-primary btn-sm">무료로 시작하기</button>
+    </div>
+  </div>
+</nav>
+
+<div class="head">
+  <div class="head-eyebrow">Templates · 8 Categories</div>
+  <h1 class="head-title">청첩장부터 <em>롤 파티까지.</em><br>어떤 모임이든 초대장이 있어요.</h1>
+  <p class="head-sub">감성적인 결혼식, 따끈한 집들이, 진지한 조기축구, 다같이 모이는 롤 내전까지 — 카테고리를 골라 마음에 드는 템플릿을 고르세요. 편집기에서 자유롭게 커스터마이징할 수 있어요.</p>
+</div>
+
+<!-- Category quick nav -->
+<div class="cat-nav">
+  <a href="#cat-wedding" class="active">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-ring"/></svg></div>
+    결혼 · 기념일
+  </a>
+  <a href="#cat-birthday">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-cake"/></svg></div>
+    생일 · 돌잔치
+  </a>
+  <a href="#cat-home">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-house"/></svg></div>
+    집들이 · 홈파티
+  </a>
+  <a href="#cat-sports">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-ball"/></svg></div>
+    스포츠 배틀
+  </a>
+  <a href="#cat-gaming">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-controller"/></svg></div>
+    게이밍 · 롤
+  </a>
+  <a href="#cat-outdoor">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-mountain"/></svg></div>
+    아웃도어
+  </a>
+  <a href="#cat-hobby">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-book"/></svg></div>
+    취미 소모임
+  </a>
+  <a href="#cat-party">
+    <div class="ic-wrap"><svg class="ic"><use href="assets/moi-symbols.svg#ic-confetti"/></svg></div>
+    파티 · 이벤트
+  </a>
+</div>
+
+<div class="search-wrap">
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input type="text" placeholder="템플릿 검색 · 예: 미니멀 웨딩, 조기축구, 캠핑장">
+  </div>
+  <div class="sort">
+    SORT BY
+    <select>
+      <option>인기순</option>
+      <option>최신순</option>
+      <option>이름순</option>
+    </select>
+  </div>
+</div>
+
+<!-- Custom event prompt banner -->
+<div class="custom-event-banner">
+  <div class="ceb-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3L14 10L21 12L14 14L12 21L10 14L3 12L10 10L12 3Z"/>
+    </svg>
+  </div>
+  <div class="ceb-text">
+    <div class="ceb-title">여기에 없는 이벤트도 <em>직접 만들 수 있어요</em></div>
+    <div class="ceb-desc">캠핑장 초대, 팬 미팅, 프로필 촬영, 결혼기념일, 이사 인사, 그 어떤 모임이든 — 이벤트 이름과 성격만 입력하면 어울리는 템플릿이 준비돼요.</div>
+  </div>
+  <button class="ceb-btn" id="openCustomEvent">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    커스텀 이벤트 만들기
+  </button>
+</div>
+
+<!-- Custom event modal -->
+<div class="ce-modal-backdrop" id="ceBackdrop"></div>
+<div class="ce-modal" id="ceModal">
+  <div class="ce-modal-head">
+    <div>
+      <div class="ce-eb">Custom Event</div>
+      <h3>어떤 <em>이벤트</em>인가요?</h3>
+      <p>이름과 성격을 알려주시면 AI가 어울리는 템플릿·색상·문구를 추천해드릴게요.</p>
+    </div>
+    <button class="ce-close" id="ceClose">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="ce-modal-body">
+    <div class="ce-field">
+      <label class="input-label">이벤트 이름 <span style="color: var(--wax-deep);">*</span></label>
+      <input class="input" placeholder="예: 캠핑장 봄맞이 모임, 팬 미팅, 결혼 5주년 파티" id="ceName">
+      <div class="ce-suggestions">
+        <button class="ce-sug" data-name="캠핑장 봄맞이 모임">캠핑장 봄맞이</button>
+        <button class="ce-sug" data-name="반려동물 생일 파티">반려동물 생일</button>
+        <button class="ce-sug" data-name="이사 인사 모임">이사 인사</button>
+        <button class="ce-sug" data-name="결혼 5주년">결혼 기념일</button>
+        <button class="ce-sug" data-name="팬 미팅">팬 미팅</button>
+        <button class="ce-sug" data-name="독서 모임">독서 모임</button>
+        <button class="ce-sug" data-name="와인 테이스팅">와인 테이스팅</button>
+        <button class="ce-sug" data-name="쿠킹 클래스">쿠킹 클래스</button>
+      </div>
+    </div>
+
+    <div class="ce-field">
+      <label class="input-label">이벤트 성격을 골라주세요 <span style="color: var(--muted);">(여러 개 선택 가능)</span></label>
+      <div class="ce-mood-grid">
+        <button class="ce-mood" data-mood="warm">
+          <div class="mood-swatch" style="background: var(--wax-soft);"></div>
+          <span>따뜻하게</span>
+        </button>
+        <button class="ce-mood" data-mood="minimal">
+          <div class="mood-swatch" style="background: var(--paper-3);"></div>
+          <span>미니멀</span>
+        </button>
+        <button class="ce-mood" data-mood="playful">
+          <div class="mood-swatch" style="background: var(--peach-soft);"></div>
+          <span>재미있게</span>
+        </button>
+        <button class="ce-mood" data-mood="nature">
+          <div class="mood-swatch" style="background: var(--sage-light);"></div>
+          <span>자연스럽게</span>
+        </button>
+        <button class="ce-mood" data-mood="fresh">
+          <div class="mood-swatch" style="background: var(--sky-soft);"></div>
+          <span>산뜻하게</span>
+        </button>
+        <button class="ce-mood" data-mood="elegant">
+          <div class="mood-swatch" style="background: var(--lilac-soft);"></div>
+          <span>우아하게</span>
+        </button>
+        <button class="ce-mood" data-mood="celebratory">
+          <div class="mood-swatch" style="background: var(--gold-light);"></div>
+          <span>축하하게</span>
+        </button>
+        <button class="ce-mood" data-mood="bold">
+          <div class="mood-swatch" style="background: var(--ink);"></div>
+          <span>강렬하게</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="ce-field">
+      <label class="input-label">필요한 섹션 <span style="color: var(--muted);">(있으면 체크)</span></label>
+      <div class="ce-sec-grid">
+        <label class="ce-sec"><input type="checkbox" checked><span>시간·일정</span></label>
+        <label class="ce-sec"><input type="checkbox" checked><span>장소·지도</span></label>
+        <label class="ce-sec"><input type="checkbox"><span>메뉴·준비물</span></label>
+        <label class="ce-sec"><input type="checkbox"><span>비용·정산</span></label>
+        <label class="ce-sec"><input type="checkbox" checked><span>참석 여부</span></label>
+        <label class="ce-sec"><input type="checkbox"><span>참가자 명단</span></label>
+        <label class="ce-sec"><input type="checkbox"><span>갤러리·사진</span></label>
+        <label class="ce-sec"><input type="checkbox"><span>규칙·안내</span></label>
+      </div>
+    </div>
+
+    <div class="ce-preview" id="cePreview" style="display: none;">
+      <div class="ce-preview-head">
+        <span class="ce-preview-eb">AI Recommendation</span>
+        <span class="ce-preview-name" id="cePreviewName">이벤트</span>
+      </div>
+      <div class="ce-preview-body">
+        입력하신 정보로 <b id="cePreviewTemplate">Warm Casual</b> 스타일 템플릿을 추천드릴게요.<br>
+        선택하신 섹션이 자동으로 준비됩니다.
+      </div>
+    </div>
+  </div>
+  <div class="ce-modal-foot">
+    <button class="btn btn-ghost" id="ceCancel">취소</button>
+    <button class="btn btn-primary" id="ceCreate">이 이벤트로 시작 →</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     1. 결혼 · 기념일
+     ============================================================ -->
+<section class="cat-section" id="cat-wedding">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-wedding"><svg><use href="assets/moi-symbols.svg#ic-ring"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 01</div>
+        <h2 class="cat-title">결혼 · <em>기념일</em></h2>
+        <p class="cat-desc">두 사람의 시작, 그리고 매년 돌아오는 소중한 순간. 로맨틱, 미니멀, 파인 아트까지 다양한 감성.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/romantic_wedding.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav active"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="assets/moi-symbols.svg#ic-heart-fill"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Romantic Wedding</div>
+        <div class="name">Meadow <em>Love</em></div>
+        <div class="meta"><span>Fraunces</span><span class="dot"></span><span>Rose · Ivory</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/hero_flatlay.jpg" alt="">
+        <div class="badge">Classic</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Handwritten</div>
+        <div class="name">Wax <em>Seal</em></div>
+        <div class="meta"><span>Calligraphy</span><span class="dot"></span><span>Dried Florals</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/wedding_gallery_1.jpg" alt="">
+        <div class="badge">Featured</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Fine Art · Serif</div>
+        <div class="name">Hands <em>Together</em></div>
+        <div class="meta"><span>Blush · Cream</span><span class="dot"></span><span>Parallax</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/wedding_gallery_2.jpg" alt="">
+        <div class="badge new">New</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Editorial · Trending</div>
+        <div class="name">Golden <em>Trail</em></div>
+        <div class="meta"><span>Backlit</span><span class="dot"></span><span>Sunset</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     2. 생일 · 돌잔치
+     ============================================================ -->
+<section class="cat-section" id="cat-birthday">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-birthday"><svg><use href="assets/moi-symbols.svg#ic-cake"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 02</div>
+        <h2 class="cat-title">생일 · <em>돌잔치</em></h2>
+        <p class="cat-desc">첫 생일부터 환갑까지, 매년의 축하가 특별해지는 초대장. 아기부터 어른까지 톤 별로.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/minimal_birthday.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Minimal Birthday</div>
+        <div class="name">Quiet <em>Day</em></div>
+        <div class="meta"><span>Editorial Grid</span><span class="dot"></span><span>Cream · Blush</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_doljanchi.jpg" alt="">
+        <div class="badge new">Doljanchi</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">첫 번째 생일</div>
+        <div class="name">First <em>Year</em></div>
+        <div class="meta"><span>Rounded</span><span class="dot"></span><span>Butter · Peach</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/cute_housewarming.jpg" alt="">
+        <div class="badge pro">Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Kids Birthday</div>
+        <div class="name">Little <em>Party</em></div>
+        <div class="meta"><span>Cute Mascot</span><span class="dot"></span><span>Pastel</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_yearend.jpg" alt="">
+        <div class="badge">환갑 · 칠순</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Milestone Birthday</div>
+        <div class="name">Golden <em>Age</em></div>
+        <div class="meta"><span>Traditional</span><span class="dot"></span><span>Gold Accent</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. 집들이 · 홈파티
+     ============================================================ -->
+<section class="cat-section" id="cat-home">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-home"><svg><use href="assets/moi-symbols.svg#ic-house"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 03</div>
+        <h2 class="cat-title">집들이 · <em>홈파티</em></h2>
+        <p class="cat-desc">새 집 첫 손님, 저녁 홈파티, 브런치 모임. 시간별 진행과 메뉴 구성까지 담을 수 있어요.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/cute_housewarming.jpg" alt="">
+        <div class="badge new">New</div>
+        <div class="fav active"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="assets/moi-symbols.svg#ic-heart-fill"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Cute · Housewarming</div>
+        <div class="name">Cozy <em>Home</em></div>
+        <div class="meta"><span>MOMO Mascot</span><span class="dot"></span><span>Pastel</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/timeline_gathering.jpg" alt="">
+        <div class="badge pro">Timeline · Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Timeline · Menu</div>
+        <div class="name">Home <em>Timeline</em></div>
+        <div class="meta"><span>시간별 진행</span><span class="dot"></span><span>메뉴 카드</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/hero_flatlay.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Dinner Party</div>
+        <div class="name">Warm <em>Dinner</em></div>
+        <div class="meta"><span>Editorial</span><span class="dot"></span><span>Wine · Cream</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. 스포츠 배틀
+     ============================================================ -->
+<section class="cat-section" id="cat-sports">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-sports"><svg><use href="assets/moi-symbols.svg#ic-ball"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 04</div>
+        <h2 class="cat-title">스포츠 <em>배틀</em></h2>
+        <p class="cat-desc">조기축구, 배드민턴, 테니스, 야구관람, 반대항 경기까지. VS 대결 구도의 재미있는 도전장.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/battle_sports.jpg" alt="">
+        <div class="badge new">Battle</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Soccer · 조기축구</div>
+        <div class="name">조기축구 <em>배틀</em></div>
+        <div class="meta"><span>VS Layout</span><span class="dot"></span><span>Team Roster</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_badminton.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Badminton · 배드민턴</div>
+        <div class="name">Shuttle <em>Battle</em></div>
+        <div class="meta"><span>2v2 · 개인전</span><span class="dot"></span><span>Bracket</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_baseball.jpg" alt="">
+        <div class="badge pro">Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Baseball · 야구</div>
+        <div class="name">야구장 <em>관람</em></div>
+        <div class="meta"><span>좌석 정보</span><span class="dot"></span><span>응원 팀</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_tennis.jpg" alt="">
+        <div class="badge">Tennis</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Tennis · Golf</div>
+        <div class="name">Match <em>Day</em></div>
+        <div class="meta"><span>Score Card</span><span class="dot"></span><span>Court Info</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/battle_sports.jpg" alt="" style="filter: hue-rotate(-15deg) saturate(0.9) brightness(1.05);">
+        <div class="badge new">반대항</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Company · 반대항</div>
+        <div class="name">반대항 <em>매치</em></div>
+        <div class="meta"><span>팀 배지</span><span class="dot"></span><span>스코어보드</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4-2. 게이밍 · 롤
+     ============================================================ -->
+<section class="cat-section" id="cat-gaming">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-gaming"><svg><use href="assets/moi-symbols.svg#ic-controller"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 05</div>
+        <h2 class="cat-title">게이밍 · <em>롤</em></h2>
+        <p class="cat-desc">롤 빠른대전, 내전, 랭크 파티, 발로란트, 오버워치까지. 소환사명·티어·포지션 정보를 담은 게이밍 초대장.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_gaming.jpg" alt="">
+        <div class="badge new">New · LoL</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">League of Legends · 롤</div>
+        <div class="name">랭크 <em>파티</em></div>
+        <div class="meta"><span>티어 · 포지션</span><span class="dot"></span><span>Duo · Flex</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_gaming.jpg" alt="" style="filter: hue-rotate(30deg) saturate(1.1);">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">LoL · 빠른대전</div>
+        <div class="name">빠대 <em>파티</em></div>
+        <div class="meta"><span>5인 파티</span><span class="dot"></span><span>ARAM · 노말</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_gaming.jpg" alt="" style="filter: hue-rotate(-40deg) saturate(1.15);">
+        <div class="badge pro">Pro · 내전</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Custom · 내전</div>
+        <div class="name">10인 <em>내전</em></div>
+        <div class="meta"><span>블루 vs 레드</span><span class="dot"></span><span>드래프트</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_gaming.jpg" alt="" style="filter: hue-rotate(90deg) saturate(0.9);">
+        <div class="badge">Valorant</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">FPS · Valorant</div>
+        <div class="name">Agent <em>Lock</em></div>
+        <div class="meta"><span>5v5</span><span class="dot"></span><span>에이전트 선택</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/developer_terminal.jpg" alt="">
+        <div class="badge pro">Dev · Terminal</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Game · e-Sports</div>
+        <div class="name">$ moi <em>--invite</em></div>
+        <div class="meta"><span>Dark · Mono</span><span class="dot"></span><span>Tournament</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. 아웃도어 모임
+     ============================================================ -->
+<section class="cat-section" id="cat-outdoor">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-outdoor"><svg><use href="assets/moi-symbols.svg#ic-mountain"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 06</div>
+        <h2 class="cat-title">아웃도어 <em>모임</em></h2>
+        <p class="cat-desc">러닝, 등산, 캠핑, 피크닉, 여행/MT. 이동 경로, 준비물, 일정 공유가 필요한 모임.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_running.jpg" alt="">
+        <div class="badge new">New</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Running Club</div>
+        <div class="name">Morning <em>Run</em></div>
+        <div class="meta"><span>페이스 · 거리</span><span class="dot"></span><span>루트 맵</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_hiking.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Hiking Meet</div>
+        <div class="name">Trail <em>Together</em></div>
+        <div class="meta"><span>난이도</span><span class="dot"></span><span>준비물</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_camping.jpg" alt="">
+        <div class="badge pro">Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Camping · 차박</div>
+        <div class="name">Under <em>Stars</em></div>
+        <div class="meta"><span>사이트 정보</span><span class="dot"></span><span>담당표</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_picnic.jpg" alt="">
+        <div class="badge new">Trending</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Picnic</div>
+        <div class="name">Sunny <em>Picnic</em></div>
+        <div class="meta"><span>가져올 것</span><span class="dot"></span><span>공원 위치</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_travel.jpg" alt="">
+        <div class="badge pro">MT · Trip</div>
+        <div class="fav active"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="assets/moi-symbols.svg#ic-heart-fill"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">MT · 여행</div>
+        <div class="name">Trip <em>Together</em></div>
+        <div class="meta"><span>일별 일정</span><span class="dot"></span><span>비용 정산</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. 취미 소모임
+     ============================================================ -->
+<section class="cat-section" id="cat-hobby">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-hobby"><svg><use href="assets/moi-symbols.svg#ic-book"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 07</div>
+        <h2 class="cat-title">취미 <em>소모임</em></h2>
+        <p class="cat-desc">스터디, 요가, 사진 출사, 반려동물, 카페 투어. 관심사로 모이는 작은 만남들.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_study.jpg" alt="">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Study Group</div>
+        <div class="name">Study <em>Time</em></div>
+        <div class="meta"><span>주제 · 교재</span><span class="dot"></span><span>커리큘럼</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_yoga.jpg" alt="">
+        <div class="badge new">New</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Yoga · Wellness</div>
+        <div class="name">Slow <em>Flow</em></div>
+        <div class="meta"><span>레벨</span><span class="dot"></span><span>준비물</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_pet.jpg" alt="">
+        <div class="badge new">Cute</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Pet Meetup</div>
+        <div class="name">Furry <em>Friends</em></div>
+        <div class="meta"><span>견종·크기</span><span class="dot"></span><span>애견 카페</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/editorial_party.jpg" alt="" style="filter: hue-rotate(20deg) brightness(1.05) saturate(0.85);">
+        <div class="badge pro">Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Photo Walk</div>
+        <div class="name">Golden <em>Hour</em></div>
+        <div class="meta"><span>스팟 리스트</span><span class="dot"></span><span>장비 안내</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_study.jpg" alt="" style="filter: hue-rotate(-20deg) saturate(0.9);">
+        <div class="badge free">Free</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Cafe · Foodie</div>
+        <div class="name">Cafe <em>Hop</em></div>
+        <div class="meta"><span>코스</span><span class="dot"></span><span>추천 메뉴</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. 파티 · 이벤트
+     ============================================================ -->
+<section class="cat-section" id="cat-party">
+  <div class="cat-header">
+    <div class="cat-header-left">
+      <div class="cat-icon c-party"><svg><use href="assets/moi-symbols.svg#ic-confetti"/></svg></div>
+      <div>
+        <div class="cat-eb">Category 08</div>
+        <h2 class="cat-title">파티 · <em>이벤트</em></h2>
+        <p class="cat-desc">송년회, 브라이덜/베이비 샤워, 회사 행사, 세미나. 격식 있는 이벤트부터 캐주얼 파티까지.</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="grid">
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/editorial_party.jpg" alt="">
+        <div class="badge new">Featured</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Editorial Party</div>
+        <div class="name">After <em>Hours</em></div>
+        <div class="meta"><span>Film Grain</span><span class="dot"></span><span>Magazine</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_yearend.jpg" alt="">
+        <div class="badge">Year-End</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Year-End · 송년회</div>
+        <div class="name">Golden <em>Night</em></div>
+        <div class="meta"><span>Dark</span><span class="dot"></span><span>Ink · Gold</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_bridalshower.jpg" alt="">
+        <div class="badge new">New</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Bridal Shower</div>
+        <div class="name">Lavender <em>Fields</em></div>
+        <div class="meta"><span>Botanical</span><span class="dot"></span><span>Lavender</span></div>
+      </div>
+    </div>
+    <div class="tpl">
+      <div class="thumb">
+        <img src="assets/photos/tmpl_seminar.jpg" alt="">
+        <div class="badge pro">Pro</div>
+        <div class="fav"><svg viewBox="0 0 24 24"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+      </div>
+      <div class="info">
+        <div class="cat-tag">Seminar · Corporate</div>
+        <div class="name">Modern <em>Assembly</em></div>
+        <div class="meta"><span>Formal</span><span class="dot"></span><span>Neutral</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom CTA -->
+<div class="bottom-cta">
+  <h2>원하는 게 <em>없다면?</em></h2>
+  <p>빈 캔버스로 시작해서 자유롭게 만들거나, 어떤 템플릿이든 편집기에서 색상·폰트·섹션을 원하는 대로 커스터마이징할 수 있어요.</p>
+  <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <a href="05_new_invitation_wizard.html" style="text-decoration:none;">
+      <button class="btn btn-primary btn-lg">빈 캔버스로 시작</button>
+    </a>
+    <a href="05_new_invitation_wizard.html" style="text-decoration:none;">
+      <button class="btn btn-outline btn-lg">템플릿 찾아보기 →</button>
+    </a>
+  </div>
+</div>
+
+<script>
+  // ============== Custom Event Modal ==============
+  const ceModal = document.getElementById('ceModal');
+  const ceBackdrop = document.getElementById('ceBackdrop');
+  const ceName = document.getElementById('ceName');
+  const cePreview = document.getElementById('cePreview');
+  const cePreviewName = document.getElementById('cePreviewName');
+  const cePreviewTemplate = document.getElementById('cePreviewTemplate');
+
+  function openCE() {
+    ceModal.classList.add('open');
+    ceBackdrop.classList.add('open');
+    setTimeout(() => ceName.focus(), 300);
+  }
+  function closeCE() {
+    ceModal.classList.remove('open');
+    ceBackdrop.classList.remove('open');
+  }
+  document.getElementById('openCustomEvent').addEventListener('click', openCE);
+  document.getElementById('ceClose').addEventListener('click', closeCE);
+  document.getElementById('ceCancel').addEventListener('click', closeCE);
+  ceBackdrop.addEventListener('click', closeCE);
+
+  // Suggestion pills
+  document.querySelectorAll('.ce-sug').forEach(s => {
+    s.addEventListener('click', () => {
+      ceName.value = s.dataset.name;
+      updatePreview();
+    });
+  });
+
+  // Mood toggle (multi-select)
+  document.querySelectorAll('.ce-mood').forEach(m => {
+    m.addEventListener('click', () => {
+      m.classList.toggle('active');
+      updatePreview();
+    });
+  });
+
+  // Section checkboxes
+  document.querySelectorAll('.ce-sec input').forEach(cb => {
+    cb.addEventListener('change', updatePreview);
+  });
+
+  // Name input
+  ceName.addEventListener('input', updatePreview);
+
+  // Preview logic
+  function updatePreview() {
+    const name = ceName.value.trim();
+    const moods = Array.from(document.querySelectorAll('.ce-mood.active')).map(m => m.dataset.mood);
+    if (!name && moods.length === 0) {
+      cePreview.style.display = 'none';
+      return;
+    }
+    cePreview.style.display = 'block';
+    cePreviewName.textContent = name || '입력 대기 중';
+    // Map moods to template name
+    const templateMap = {
+      warm: 'Warm & Cozy',
+      minimal: 'Clean Minimal',
+      playful: 'Playful Peach',
+      nature: 'Nature Sage',
+      fresh: 'Fresh Sky',
+      elegant: 'Elegant Lilac',
+      celebratory: 'Celebratory Gold',
+      bold: 'Bold Ink'
+    };
+    const primary = moods[0] ? templateMap[moods[0]] : 'Warm & Cozy';
+    cePreviewTemplate.textContent = primary;
+  }
+
+  document.getElementById('ceCreate').addEventListener('click', () => {
+    const name = ceName.value.trim() || '내 이벤트';
+    // In real product, this would create a draft with the custom event name.
+    // Here, redirect to wizard with the event name pre-filled.
+    location.href = '05_new_invitation_wizard.html?event=' + encodeURIComponent(name);
+  });
+
+  // Fav toggle
+  document.querySelectorAll('.fav').forEach(f => {
+    f.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasActive = f.classList.contains('active');
+      f.classList.toggle('active');
+      const useEl = f.querySelector('use');
+      if (useEl) {
+        useEl.setAttribute('href', 'assets/moi-symbols.svg#' + (f.classList.contains('active') ? 'ic-heart-fill' : 'ic-heart'));
+      }
+      const svg = f.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', f.classList.contains('active') ? 'currentColor' : 'none');
+        svg.setAttribute('stroke', f.classList.contains('active') ? 'none' : 'currentColor');
+      }
+    });
+  });
+
+  // Active cat-nav based on scroll
+  const catLinks = document.querySelectorAll('.cat-nav a');
+  const catSections = document.querySelectorAll('.cat-section');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    catSections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
+      if (top < 200) current = '#' + sec.id;
+    });
+    catLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === current));
+  });
+
+  // Smooth scroll on nav click — use window.scrollTo, not scrollIntoView (avoids bugs)
+  catLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        const y = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

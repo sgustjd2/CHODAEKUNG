@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>10 · Romantic Wedding · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body {
+    background: var(--paper-2);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(227,139,139,0.08), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(181,202,178,0.06), transparent 40%);
+    min-height: 100vh;
+    display: flex;
+    padding: 40px 20px;
+  }
+
+  .stage {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .info { }
+  .info .eb {
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 12px;
+  }
+  .info h1 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 56px; letter-spacing: -0.03em; line-height: 1.02;
+    margin-bottom: 16px;
+  }
+  .info h1 em { font-weight: 700; color: var(--rose); }
+  .info p {
+    color: var(--fg-2); font-size: 15px; line-height: 1.65;
+    max-width: 400px;
+    margin-bottom: 24px;
+  }
+
+  .mode-switch {
+    display: inline-flex;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    padding: 4px;
+    gap: 2px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .ms {
+    padding: 8px 16px;
+    background: transparent; border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-ko); font-size: 12px; font-weight: 700;
+    color: var(--fg-3);
+    cursor: pointer;
+  }
+  .ms.active { background: var(--ink); color: var(--paper); }
+  .ms.active em {
+    font-weight: 700;
+    color: var(--butter);
+    margin-left: 4px;
+  }
+
+  .theme-tokens {
+    display: grid; grid-template-columns: 1fr; gap: 8px;
+    padding: 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    max-width: 400px;
+  }
+  .theme-tokens .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .theme-tokens .row .k {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .theme-tokens .row .v {
+    font-weight: 700; color: var(--ink);
+  }
+  .theme-tokens .swatches {
+    display: flex; gap: 4px;
+  }
+  .theme-tokens .sw { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--line); }
+
+  /* Device */
+  .device {
+    width: 390px;
+    height: 810px;
+    background: var(--ink);
+    border-radius: 44px;
+    padding: 10px;
+    box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .device .screen {
+    width: 100%; height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: var(--card);
+    position: relative;
+  }
+  .device .notch {
+    position: absolute; top: 16px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 26px;
+    background: var(--ink);
+    border-radius: 14px;
+    z-index: 100;
+  }
+  .statusbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 42px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px 0;
+    font-family: var(--font-en); font-size: 12px; font-weight: 700;
+    z-index: 50;
+  }
+  .statusbar.light { color: var(--paper); }
+  .statusbar.dark { color: var(--ink); }
+
+  .viewport {
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    background: #FFFFFF;
+  }
+  .viewport::-webkit-scrollbar { display: none; }
+
+  /* Sticky share pill */
+  .share-pill { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 4px; padding: 5px; background: rgba(42,42,62,0.9); backdrop-filter: blur(12px); border-radius: var(--r-pill); z-index: 60; box-shadow: var(--shadow-lg); max-width: calc(100% - 32px); }
+  .share-pill button { background: transparent; border: none; padding: 8px 12px; border-radius: var(--r-pill); font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--paper); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; line-height: 1; }
+  .share-pill button.primary { background: var(--wax); padding: 8px 14px; }
+  .share-pill button:hover { background: rgba(255,255,255,0.1); }
+  .share-pill button.primary:hover { background: var(--rose-deep); }
+
+  /* ============================================================
+     ROMANTIC WEDDING VIEWER STYLES
+     ============================================================ */
+  .romantic-viewer {
+    padding-top: 42px;
+    background: #FFFFFF;
+    color: #2A2A3E;
+  }
+
+  /* Cover */
+  .r-cover {
+    height: 700px;
+    background: url('assets/photos/romantic_wedding.jpg') center/cover;
+    position: relative;
+    padding: 36px 32px 40px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--paper);
+  }
+  .r-cover::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(42,42,62,0.35) 0%, transparent 25%, transparent 55%, rgba(42,42,62,0.7) 100%);
+    pointer-events: none;
+  }
+  .r-cover > * { position: relative; z-index: 2; }
+
+  .r-cover-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-top: 8px;
+  }
+  .r-brand {
+    font-family: var(--font-en); font-size: 9px;
+    letter-spacing: 0.4em; opacity: 0.9; font-weight: 700;
+  }
+  .r-mini-seal {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--rose) 0%, var(--rose-deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(201, 106, 106, 0.5), inset 0 -1px 2px rgba(0,0,0,0.2);
+  }
+
+  .r-cover-bot {
+    text-align: center;
+  }
+  .r-cover-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 16px;
+  }
+  .r-cover-eb::before, .r-cover-eb::after {
+    content: '·';
+    margin: 0 8px;
+  }
+  .r-cover-couple {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: 54px; letter-spacing: -0.02em; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .r-cover-couple .and {
+    display: block;
+    font-weight: 700;
+    font-size: 32px; font-weight: 400;
+    color: rgba(255,249,242,0.9);
+    margin: 4px 0;
+  }
+  .r-cover-date {
+    font-family: var(--font-en); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.32em;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* Sections */
+  .r-section {
+    padding: 72px 32px;
+    text-align: center;
+    position: relative;
+  }
+  .r-section .flourish {
+    font-weight: 700;
+    font-size: 32px; color: var(--rose); font-weight: 400;
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+  .r-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .r-eb::before, .r-eb::after {
+    content: ''; width: 20px; height: 1px; background: var(--rose);
+  }
+  .r-title {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 30px; letter-spacing: -0.02em; line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .r-title em { font-weight: 700; color: var(--rose); }
+  .r-body {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: 15px; line-height: 1.9;
+    color: rgba(42,42,62,0.75);
+    max-width: 280px; margin: 0 auto;
+  }
+
+  /* Date section with calendar */
+  .r-calendar {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 300px;
+    margin: 24px auto 0;
+    box-shadow: 0 4px 20px rgba(42,42,62,0.06);
+    border: 1px solid var(--line);
+  }
+  .r-cal-head {
+    font-family: var(--font-serif); font-size: 18px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .r-cal-head em { font-weight: 700; color: var(--rose); }
+  .r-cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  }
+  .r-cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-en); font-size: 11px; font-weight: 600;
+    color: rgba(42,42,62,0.7);
+  }
+  .r-cal-day.head { color: var(--rose-deep); font-weight: 700; font-size: 9px; letter-spacing: 0.1em; }
+  .r-cal-day.dim { color: rgba(42,42,62,0.25); }
+  .r-cal-day.today {
+    background: var(--rose);
+    color: var(--paper);
+    border-radius: 50%;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(227,139,139,0.4);
+  }
+
+  .r-countdown {
+    display: flex; justify-content: center; gap: 8px;
+    margin-top: 28px;
+  }
+  .r-cd {
+    padding: 12px 14px;
+    min-width: 56px;
+    border-left: 1px solid var(--line);
+  }
+  .r-cd:first-child { border-left: none; }
+  .r-cd .n {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 32px; letter-spacing: -0.02em; line-height: 1;
+    color: var(--ink);
+  }
+  .r-cd .l {
+    font-family: var(--font-en); font-size: 8px; font-weight: 700;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--muted); margin-top: 6px;
+  }
+
+  /* Location */
+  .r-loc-card {
+    padding: 0;
+  }
+  .r-map {
+    aspect-ratio: 4/3;
+    background: #EFEEF1;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23EFEEF1"/><path d="M0 150 L400 150 M200 0 L200 300 M50 100 L350 100 M50 200 L350 200 M100 50 L100 250 M300 50 L300 250" stroke="%23DDDCE0" stroke-width="1"/><circle cx="200" cy="150" r="7" fill="%23E86A6A"/><circle cx="200" cy="150" r="18" fill="%23E86A6A" opacity="0.25"/></svg>');
+    background-size: cover;
+    margin-top: 28px;
+  }
+  .r-loc-actions {
+    display: flex; gap: 8px;
+    padding: 20px 32px 0;
+  }
+  .r-loc-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 10px;
+    font-family: var(--font-ko); font-size: 12px; font-weight: 700;
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .r-loc-btn.primary { background: var(--ink); color: var(--paper); border-color: transparent; }
+
+  /* Gallery */
+  .r-gallery {
+    padding: 40px 24px 0;
+  }
+  .r-gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .r-gallery-grid img {
+    width: 100%; aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .r-gallery-grid .tall { grid-row: span 2; aspect-ratio: 3/8; }
+
+  /* Schedule */
+  .r-schedule {
+    max-width: 320px; margin: 24px auto 0;
+    text-align: left;
+    padding: 0 8px;
+  }
+  .r-sch-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .r-sch-time {
+    font-family: var(--font-en); font-size: 12px; font-weight: 700;
+    color: var(--rose-deep);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .r-sch-content .t {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 15px; letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .r-sch-content .d { font-size: 11.5px; color: var(--muted); font-family: var(--font-serif); }
+
+  /* RSVP */
+  .r-rsvp-buttons {
+    display: flex; gap: 8px;
+    max-width: 300px; margin: 24px auto 0;
+  }
+  .r-rsvp-btn {
+    flex: 1;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 10px;
+    font-family: var(--font-ko); font-size: 12px; font-weight: 700;
+    color: var(--ink); cursor: pointer;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .r-rsvp-btn.selected { background: var(--rose); color: var(--paper); border-color: transparent; box-shadow: var(--shadow-rose); }
+
+  /* Ending */
+  .r-ending {
+    padding: 80px 32px 120px;
+    text-align: center;
+    background: linear-gradient(180deg, transparent, rgba(227,139,139,0.06));
+  }
+  .r-ending .signature {
+    font-weight: 700;
+    font-size: 40px; color: var(--rose); font-weight: 400;
+    letter-spacing: -0.02em; line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .r-ending .names {
+    font-family: var(--font-serif); font-size: 20px; letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .r-ending .brand-tiny {
+    margin-top: 60px;
+    font-family: var(--font-en); font-size: 9px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--muted); font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .r-ending .brand-tiny svg { width: 16px; height: 16px; }
+
+  /* Story mode overlay (when active) */
+  .story-container {
+    height: 100%;
+    display: flex;
+    scroll-snap-type: y mandatory;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .story-container.on > * { scroll-snap-align: start; min-height: 100%; }
+  .story-container::-webkit-scrollbar { display: none; }
+  .story-progress {
+    position: absolute; top: 46px; left: 20px; right: 20px;
+    display: flex; gap: 3px; z-index: 30;
+  }
+  .story-progress .bar {
+    flex: 1; height: 2.5px; border-radius: 1px;
+    background: rgba(255,255,255,0.35);
+    overflow: hidden;
+  }
+  .story-progress .bar.active { background: rgba(255,255,255,0.4); }
+  .story-progress .bar.active::after {
+    content: ''; display: block; height: 100%; width: 60%;
+    background: var(--paper); border-radius: 1px;
+  }
+  .story-progress .bar.done { background: var(--paper); }
+
+  /* Magazine mode: larger typography, less scroll */
+  .magazine-mode .r-title { font-size: 40px; }
+  .magazine-mode .r-cover-couple { font-size: 68px; }
+  .magazine-mode .r-section { padding: 100px 32px; }
+
+  @media (max-width: 900px) {
+    body { padding: 20px 12px; align-items: stretch; }
+    .stage { grid-template-columns: 1fr; gap: 24px; }
+    .info { text-align: center; }
+    .info p { margin: 0 auto 20px; }
+    .info h1 { font-size: 38px; }
+    .theme-tokens { max-width: 100%; margin: 0 auto; }
+    .device { margin: 0 auto; }
+  }
+  @media (max-width: 500px) {
+    .device { transform: scale(0.88); transform-origin: top center; margin: 0 auto -60px; }
+    .info h1 { font-size: 32px; }
+    .mode-switch { padding: 3px; }
+    .ms { padding: 6px 10px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="info">
+    <div class="eb">Viewer · Romantic Wedding</div>
+    <h1>Meadow <em>Love</em></h1>
+    <p>Fraunces serif, ivory 배경과 rose 인장. 대형 포트레이트 사진에 부드러운 페이드 애니메이션. 결혼식과 잘 어울리는 클래식한 편지 감성.</p>
+
+    <div class="mode-switch">
+      <button class="ms active" data-mode="scroll">Scroll</button>
+      <button class="ms" data-mode="story">Story <em>▶</em></button>
+      <button class="ms" data-mode="magazine">Magazine</button>
+    </div>
+
+    <div class="theme-tokens">
+      <div class="row">
+        <span class="k">Palette</span>
+        <div class="swatches">
+          <div class="sw" style="background: #FFFFFF;"></div>
+          <div class="sw" style="background: #E38B8B;"></div>
+          <div class="sw" style="background: #B5CAB2;"></div>
+          <div class="sw" style="background: #FCE0DC;"></div>
+          <div class="sw" style="background: #2A2A3E;"></div>
+        </div>
+      </div>
+      <div class="row"><span class="k">Display</span><span class="v" style="font-family: var(--font-serif);">Fraunces 500</span></div>
+      <div class="row"><span class="k">Italic</span><span class="v" style="font-weight: 700;">Instrument Serif</span></div>
+      <div class="row"><span class="k">Body</span><span class="v">Fraunces 400</span></div>
+      <div class="row"><span class="k">Label</span><span class="v" style="font-family: var(--font-en); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;">Manrope 700</span></div>
+      <div class="row"><span class="k">Motion</span><span class="v">Fade Up · 600ms</span></div>
+      <div class="row"><span class="k">Sections</span><span class="v">10 · Cover, Msg, Date, Cal, Loc, Gallery, Schedule, RSVP, Share, End</span></div>
+    </div>
+  </div>
+
+  <!-- DEVICE -->
+  <div class="device">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar light" id="statusBar"><span>9:41</span><span style="display:inline-flex; align-items:center; gap:5px;"><svg style="width:14px;height:10px;" viewBox="0 0 14 10" fill="currentColor"><path d="M0 8h2v2H0zM4 5h2v5H4zM8 2h2v8H8zM12 0h2v10h-2z"/></svg><svg style="width:14px;height:10px;" viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1"><path d="M7 2C4 2 1.5 3 0 5c1.5 2 4 4 7 4s5.5-2 7-4c-1.5-2-4-3-7-3z"/></svg><svg style="width:22px;height:10px;" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="15" height="6" rx="1" fill="currentColor"/><rect x="19" y="3" width="2" height="4" rx="0.5" fill="currentColor"/></svg></span></div>
+
+      <div class="viewport" id="viewport">
+        <div class="romantic-viewer">
+
+          <div class="r-cover">
+            <div class="r-cover-top">
+              <div class="r-brand">C · H · O · D · A · E · K · U · N · G</div>
+              <div class="r-mini-seal">M</div>
+            </div>
+            <div class="r-cover-bot">
+              <div class="r-cover-eb">Save the Date</div>
+              <div class="r-cover-couple">
+                지수
+                <span class="and">&amp;</span>
+                민준
+              </div>
+              <div class="r-cover-date">2026 · 05 · 24 · SAT</div>
+            </div>
+          </div>
+
+          <div class="r-section">
+            <div class="flourish">✻</div>
+            <div class="r-eb">Invitation</div>
+            <div class="r-title">우리의 시작에<br><em>초대합니다.</em></div>
+            <div class="r-body">
+              두 사람이 오래 걸어온 길의 끝에서<br>
+              새로운 시작을 함께 하려 합니다.<br>
+              소중한 분들의 축복 속에서<br>
+              작지만 따뜻한 하루를 열고 싶어요.
+            </div>
+          </div>
+
+          <div class="r-section" style="background: rgba(227,139,139,0.04);">
+            <div class="r-eb">The Date</div>
+            <div class="r-title">2026. 05. 24<br>Saturday <em>12:00</em></div>
+            <div class="r-calendar">
+              <div class="r-cal-head">May <em>2026</em></div>
+              <div class="r-cal-grid">
+                <div class="r-cal-day head">S</div>
+                <div class="r-cal-day head">M</div>
+                <div class="r-cal-day head">T</div>
+                <div class="r-cal-day head">W</div>
+                <div class="r-cal-day head">T</div>
+                <div class="r-cal-day head">F</div>
+                <div class="r-cal-day head">S</div>
+                <div class="r-cal-day dim">26</div><div class="r-cal-day dim">27</div><div class="r-cal-day dim">28</div><div class="r-cal-day dim">29</div><div class="r-cal-day dim">30</div><div class="r-cal-day">1</div><div class="r-cal-day">2</div>
+                <div class="r-cal-day">3</div><div class="r-cal-day">4</div><div class="r-cal-day">5</div><div class="r-cal-day">6</div><div class="r-cal-day">7</div><div class="r-cal-day">8</div><div class="r-cal-day">9</div>
+                <div class="r-cal-day">10</div><div class="r-cal-day">11</div><div class="r-cal-day">12</div><div class="r-cal-day">13</div><div class="r-cal-day">14</div><div class="r-cal-day">15</div><div class="r-cal-day">16</div>
+                <div class="r-cal-day">17</div><div class="r-cal-day">18</div><div class="r-cal-day">19</div><div class="r-cal-day">20</div><div class="r-cal-day">21</div><div class="r-cal-day">22</div><div class="r-cal-day">23</div>
+                <div class="r-cal-day">24</div><div class="r-cal-day">25</div><div class="r-cal-day today">24</div><div class="r-cal-day">27</div><div class="r-cal-day">28</div><div class="r-cal-day">29</div><div class="r-cal-day">30</div>
+              </div>
+            </div>
+            <div class="r-countdown">
+              <div class="r-cd"><div class="n">92</div><div class="l">Days</div></div>
+              <div class="r-cd"><div class="n">14</div><div class="l">Hrs</div></div>
+              <div class="r-cd"><div class="n">32</div><div class="l">Min</div></div>
+              <div class="r-cd"><div class="n">08</div><div class="l">Sec</div></div>
+            </div>
+          </div>
+
+          <div class="r-section r-loc-card">
+            <div class="flourish"><svg style="width:32px;height:32px;color:var(--rose);opacity:0.6;"><use href="assets/moi-symbols.svg#ic-flower"/></svg></div>
+            <div class="r-eb">Location</div>
+            <div class="r-title">성수 <em>가든</em></div>
+            <div class="r-body" style="font-family: var(--font-serif);">서울 성동구 성수동1가 685<br>1층 야외 정원 · 지하 주차 가능</div>
+            <div class="r-map"></div>
+            <div class="r-loc-actions">
+              <div class="r-loc-btn">카카오맵</div>
+              <div class="r-loc-btn">네이버지도</div>
+              <div class="r-loc-btn primary">주소 복사</div>
+            </div>
+          </div>
+
+          <div class="r-section r-gallery">
+            <div class="r-eb">Gallery</div>
+            <div class="r-title" style="margin-bottom: 20px;">우리의 <em>순간들</em></div>
+            <div class="r-gallery-grid">
+              <img src="assets/photos/romantic_wedding.jpg" class="tall">
+              <img src="assets/photos/wedding_gallery_1.jpg">
+              <img src="assets/photos/wedding_gallery_2.jpg">
+              <img src="assets/photos/hero_flatlay.jpg">
+              <img src="assets/photos/tmpl_bridalshower.jpg">
+            </div>
+          </div>
+
+          <div class="r-section">
+            <div class="r-eb">Schedule</div>
+            <div class="r-title">그날의 <em>흐름</em></div>
+            <div class="r-schedule">
+              <div class="r-sch-item">
+                <div class="r-sch-time">11:30</div>
+                <div class="r-sch-content"><div class="t">하객 입장</div><div class="d">가든 로비에서 안내드립니다</div></div>
+              </div>
+              <div class="r-sch-item">
+                <div class="r-sch-time">12:00</div>
+                <div class="r-sch-content"><div class="t">본식 · 예식</div><div class="d">1층 야외 정원</div></div>
+              </div>
+              <div class="r-sch-item">
+                <div class="r-sch-time">12:45</div>
+                <div class="r-sch-content"><div class="t">기념 촬영</div><div class="d">가족, 친구 순서로 진행</div></div>
+              </div>
+              <div class="r-sch-item">
+                <div class="r-sch-time">13:30</div>
+                <div class="r-sch-content"><div class="t">피로연 · 식사</div><div class="d">2층 다이닝홀 · 코스 요리</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="r-section" style="background: rgba(227,139,139,0.04);">
+            <div class="r-eb">RSVP</div>
+            <div class="r-title">참석해주실 <em>거죠?</em></div>
+            <div class="r-body">두 사람의 시작을 함께해주세요.<br>여러분의 참석 여부를 알려주시면 감사하겠습니다.</div>
+            <div class="r-rsvp-buttons">
+              <button class="r-rsvp-btn selected">참석</button>
+              <button class="r-rsvp-btn">미정</button>
+              <button class="r-rsvp-btn">불참</button>
+            </div>
+          </div>
+
+          <div class="r-ending">
+            <div class="flourish">✻</div>
+            <div class="signature">with love,</div>
+            <div class="names">지수 &amp; 민준</div>
+            <div class="brand-tiny">
+              <svg viewBox="0 0 48 48"><use href="assets/moi-symbols.svg#moi-mark"/></svg>
+              MADE WITH CHODAEKUNG
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sticky share bar -->
+      <div class="share-pill">
+        <button><svg style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;"><use href="assets/moi-symbols.svg#ic-chat"/></svg>카톡</button>
+        <button><svg style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;"><use href="assets/moi-symbols.svg#ic-link"/></svg>링크</button>
+        <button class="primary">참석 답장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Mode switch
+  document.querySelectorAll('.ms').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('.ms').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const mode = b.dataset.mode;
+      const vp = document.getElementById('viewport');
+      vp.classList.remove('magazine-mode');
+      vp.querySelector('.romantic-viewer').classList.remove('story-container', 'on');
+      if (mode === 'magazine') vp.classList.add('magazine-mode');
+      if (mode === 'story') vp.querySelector('.romantic-viewer').classList.add('story-container', 'on');
+    };
+  });
+
+  // Status bar color based on scroll (cover is dark, rest is light)
+  const vp = document.getElementById('viewport');
+  const sb = document.getElementById('statusBar');
+  vp.addEventListener('scroll', () => {
+    if (vp.scrollTop < 400) { sb.classList.add('light'); sb.classList.remove('dark'); }
+    else { sb.classList.add('dark'); sb.classList.remove('light'); }
+  });
+
+  // RSVP buttons
+  document.querySelectorAll('.r-rsvp-btn').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('.r-rsvp-btn').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+    };
+  });
+</script>
+
+</body>
+</html>

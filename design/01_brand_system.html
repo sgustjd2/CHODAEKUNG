@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>01 · 브랜드 시스템 · CHODAEKUNG</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body { padding: 60px 48px 100px; background: var(--paper); }
+  .wrap { max-width: 1360px; margin: 0 auto; }
+
+  @media (max-width: 900px) {
+    body { padding: 40px 20px 60px; }
+    .board-head { grid-template-columns: 1fr !important; gap: 32px !important; padding-bottom: 24px !important; margin-bottom: 40px !important; }
+    .wordmark-ko { font-size: 48px !important; }
+    .tagline { font-size: 24px !important; }
+    .board-head svg { width: 60px !important; height: 60px !important; }
+    .brand-meta { grid-template-columns: 1fr !important; gap: 16px !important; margin-top: 24px !important; }
+    .section { margin-bottom: 56px !important; }
+    .sec-title { font-size: 30px !important; }
+    .palette-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    .type-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .type-card { padding: 24px !important; }
+    .mascot-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .mascot-hero { padding: 32px 24px !important; }
+    .icons-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+    .tokens-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .comp-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .voice { padding: 32px 24px !important; grid-template-columns: 1fr !important; gap: 24px !important; }
+    .voice-quote { font-size: 22px !important; }
+  }
+  @media (max-width: 500px) {
+    .palette-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .wordmark-ko { font-size: 40px !important; }
+  }
+
+  /* Section headers */
+  .sec-num {
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+  }
+  .sec-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 44px;
+    letter-spacing: -0.025em;
+    margin: 8px 0 4px;
+    line-height: 1.05;
+  }
+  .sec-title em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose);
+  }
+  .sec-desc {
+    font-size: 15px;
+    color: var(--fg-2);
+    max-width: 560px;
+    line-height: 1.65;
+  }
+
+  /* Top hero */
+  .board-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    padding-bottom: 40px;
+    margin-bottom: 60px;
+    border-bottom: 1px solid var(--line);
+  }
+  .board-head .logo {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .board-head svg { width: 88px; height: 88px; }
+  .wordmark-ko {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 76px;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    color: var(--ink);
+  }
+  .wordmark-ko em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose);
+    letter-spacing: -0.04em;
+  }
+  .wordmark-en {
+    font-family: var(--font-en);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5em;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .tagline {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .tagline em {
+    
+    font-family: var(--font-serif-italic);
+    color: var(--rose);
+  }
+  .tagline-en {
+    font-family: var(--font-en);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 12px;
+    font-weight: 500;
+  }
+  .brand-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .bm-item .bm-lbl {
+    font-family: var(--font-en);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .bm-item .bm-val {
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* Section grid */
+  .section { margin-bottom: 80px; }
+  .section-head { margin-bottom: 32px; }
+
+  /* Palette */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+  }
+  .swatch {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    aspect-ratio: 3/4;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+  }
+  .swatch .fill {
+    flex: 1;
+    position: relative;
+  }
+  .swatch .info {
+    padding: 12px 14px 14px;
+    background: var(--card);
+  }
+  .swatch .name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .swatch .hex {
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+  .swatch .role {
+    font-family: var(--font-en);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-top: 6px;
+  }
+  .swatch .fill.dark::before {
+    content: 'Aa';
+    position: absolute; bottom: 12px; left: 14px;
+    font-family: var(--font-serif);
+    font-size: 32px;
+    color: var(--paper);
+  }
+  .swatch .fill.light::before {
+    content: 'Aa';
+    position: absolute; bottom: 12px; left: 14px;
+    font-family: var(--font-serif);
+    font-size: 32px;
+    color: var(--ink);
+  }
+
+  /* Type */
+  .type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .type-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 32px;
+  }
+  .type-card .fam-lbl {
+    font-family: var(--font-en);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+  }
+  .type-card .fam-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 6px 0 20px;
+  }
+  .type-card .fam-name em {
+    color: var(--rose);
+    font-family: var(--font-serif-italic);
+    
+    font-weight: 500;
+  }
+  .specimen {
+    padding: 24px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .specimen:first-of-type { border-top: none; padding-top: 0; }
+  .specimen .weight-lbl {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .spec-ko { font-family: var(--font-ko); }
+  .spec-serif { font-family: var(--font-serif); }
+  .spec-en { font-family: var(--font-en); }
+  .spec-mono { font-family: var(--font-mono); }
+
+  /* Mascot section */
+  .mascot-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 24px;
+  }
+  .mascot-hero {
+    background: var(--wax-tint);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .mascot-hero svg { width: 200px; height: 240px; }
+  .mascot-hero .name {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .mascot-hero .name em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--rose);
+  }
+  .mascot-hero .desc {
+    text-align: center;
+    color: var(--fg-2);
+    font-size: 14px;
+    line-height: 1.65;
+    max-width: 300px;
+  }
+
+  .mascot-set {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .mascot-slot {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .mascot-slot svg {
+    width: 68%;
+    height: 68%;
+  }
+  .mascot-slot .m-lbl {
+    position: absolute;
+    bottom: 8px; left: 10px;
+    font-family: var(--font-en);
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .mascot-guidelines {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .mg-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .mg-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .mg-item {
+    display: flex; gap: 12px;
+    align-items: flex-start;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .mg-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .mg-item .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%; background: var(--rose);
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+  .mg-item .text { font-size: 13px; color: var(--fg-2); line-height: 1.5; }
+  .mg-item .text b { color: var(--ink); font-weight: 700; }
+
+  /* App icon showcase */
+  .icons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .icon-tile {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 24px;
+    text-align: center;
+  }
+  .icon-tile .display {
+    border-radius: 28px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+  .icon-tile.a .display { background: var(--paper); }
+  .icon-tile.b .display { background: var(--rose); }
+  .icon-tile.c .display { background: var(--ink); }
+  .icon-tile.d .display { background: var(--sage); }
+  .icon-tile svg { width: 62%; height: 62%; }
+  .icon-tile .lbl {
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .icon-tile .cap {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Tokens grid */
+  .tokens-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .token-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 24px;
+  }
+  .token-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .radii-demo {
+    display: flex; gap: 10px; align-items: flex-end;
+  }
+  .radii-demo .r {
+    background: var(--rose-mist);
+    border: 1px solid var(--rose-soft);
+    flex: 1; aspect-ratio: 1;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 6px;
+    font-family: var(--font-en); font-size: 10px; color: var(--rose-deep); font-weight: 700;
+  }
+  .spacing-demo {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .sp-row { display: flex; align-items: center; gap: 12px; }
+  .sp-row .bar { background: var(--sage); height: 8px; border-radius: 2px; }
+  .sp-row .lbl { font-family: var(--font-en); font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.1em; width: 40px; }
+
+  .shadow-demo {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+  }
+  .sh-box {
+    background: var(--card);
+    border-radius: var(--r-md);
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-en); font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  /* Component preview */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .comp-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 28px;
+  }
+  .comp-card h4 {
+    font-family: var(--font-en);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 20px;
+  }
+  .comp-row {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .comp-row:last-child { margin-bottom: 0; }
+
+  /* Voice section */
+  .voice {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: var(--r-2xl);
+    padding: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .voice .sec-num { color: var(--butter); }
+  .voice .sec-title { color: var(--paper); }
+  .voice .sec-title em { color: var(--butter); }
+  .voice-quote {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+  }
+  .voice-quote em {
+    font-family: var(--font-serif-italic);
+    
+    color: var(--butter);
+  }
+  .voice-list {
+    list-style: none; padding: 0; margin: 24px 0 0;
+  }
+  .voice-list li {
+    padding: 12px 0;
+    border-bottom: 1px dashed rgba(251,247,241,0.15);
+    color: rgba(251,247,241,0.75);
+    font-size: 14px;
+  }
+  .voice-list li b { color: var(--paper); }
+
+  code {
+    font-family: var(--font-mono);
+    background: rgba(42,42,62,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEAD -->
+  <div class="board-head">
+    <div>
+      <div class="sec-num">Brand Identity · v0.1</div>
+      <div class="logo" style="margin-top: 20px;">
+        <svg viewBox="0 0 200 240"><use href="assets/moi-symbols.svg#momo-front"/></svg>
+        <div>
+          <div class="wordmark-ko">초대<span class="seal-kung">쿵</span></div>
+          <div class="wordmark-en">C · H · O · D · A · E · K · U · N · G</div>
+        </div>
+      </div>
+      <div class="brand-meta">
+        <div class="bm-item">
+          <div class="bm-lbl">Category</div>
+          <div class="bm-val">Mobile Invitation<br>Web App / PWA</div>
+        </div>
+        <div class="bm-item">
+          <div class="bm-lbl">Character</div>
+          <div class="bm-val">MOMO<br>봉투 캐릭터</div>
+        </div>
+        <div class="bm-item">
+          <div class="bm-lbl">Voice</div>
+          <div class="bm-val">Warm · Elegant<br>Playful</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="tagline">초대하는 순간까지,<br><em>예쁘게.</em></div>
+      <div class="tagline-en">The moment you invite, made beautiful.</div>
+      <p style="margin-top: 32px; color: var(--fg-2); font-size: 15px; line-height: 1.7; max-width: 480px;">
+        초대쿵는 결혼식뿐 아니라 생일, 집들이, 돌잔치, 브라이덜 샤워, 파티까지
+        모든 모임의 순간을 감성적으로 초대하는 모바일 인터랙티브 초대장 서비스입니다.
+        디자인 지식 없이도 10분 만에 완성되는 초대의 순간.
+      </p>
+    </div>
+  </div>
+
+  <!-- PALETTE -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">01 · Palette</div>
+      <h2 class="sec-title"><em>편지</em> · 실링왁스 · 잉크</h2>
+      <p class="sec-desc">Wax는 진짜 밀랍인장의 딥 버건디 Primary, Gold는 씰의 골드 스탬프 하이라이트, Sage와 Slate는 자연 액센트. Paper는 순백 베이스에 쿨 그레이로 편지의 정적인 감각을 유지합니다.</p>
+    </div>
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="fill light" style="background: var(--paper);"></div>
+        <div class="info">
+          <div class="name">Paper</div>
+          <div class="hex">#FFFFFF</div>
+          <div class="role">Base</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill light" style="background: var(--card); border-bottom: 1px solid var(--line);"></div>
+        <div class="info">
+          <div class="name">Card</div>
+          <div class="hex">#FFFFFF</div>
+          <div class="role">Surface</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill dark" style="background: var(--ink);"></div>
+        <div class="info">
+          <div class="name">Ink</div>
+          <div class="hex">#2A2A3E</div>
+          <div class="role">Text · Dark</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill dark" style="background: var(--wax);"></div>
+        <div class="info">
+          <div class="name">Wax</div>
+          <div class="hex">#E38B8B</div>
+          <div class="role">Primary · Sealing
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill dark" style="background: var(--sage);"></div>
+        <div class="info">
+          <div class="name">Sage</div>
+          <div class="hex">#B5CAB2</div>
+          <div class="role">Nature</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill dark" style="background: var(--slate);"></div>
+        <div class="info">
+          <div class="name">Slate</div>
+          <div class="hex">#A0A8B8</div>
+          <div class="role">Alt Ink
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="fill dark" style="background: var(--gold);"></div>
+        <div class="info">
+          <div class="name">Gold</div>
+          <div class="hex">#F5D896</div>
+          <div class="role">Highlight
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">02 · Typography</div>
+      <h2 class="sec-title">한글 · <em>세리프</em> · 영문 · 모노</h2>
+      <p class="sec-desc">Pretendard로 UI와 본문을, Fraunces·Instrument Serif로 편지의 감성을, Manrope로 라벨과 숫자, DM Mono로 코드와 개발자 테마를 다룹니다.</p>
+    </div>
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="fam-lbl">Korean · Body & Display</div>
+        <div class="fam-name">Pretendard Variable</div>
+        <div class="specimen">
+          <div class="weight-lbl">Display · 800</div>
+          <div class="spec-ko" style="font-weight: 800; font-size: 44px; letter-spacing: -0.035em; line-height: 1;">초대하는 순간까지</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Heading · 700</div>
+          <div class="spec-ko" style="font-weight: 700; font-size: 24px; letter-spacing: -0.02em;">우리의 시간이 되어주세요</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Body · 500</div>
+          <div class="spec-ko" style="font-weight: 500; font-size: 15px; line-height: 1.65; color: var(--fg-2);">사진과 문구, 장소와 시간만 넣으면 감성적인 모바일 초대장이 완성됩니다. 카카오톡으로 바로 공유하세요.</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="fam-lbl">Serif · Editorial · Wedding</div>
+        <div class="fam-name">Fraunces · <em>Instrument Serif</em></div>
+        <div class="specimen">
+          <div class="weight-lbl">Display · 500</div>
+          <div class="spec-serif" style="font-weight: 500; font-size: 44px; letter-spacing: -0.02em; line-height: 1;">Save the Date</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Italic Display</div>
+          <div style="font-weight: 700; font-weight: 400; font-size: 44px; letter-spacing: -0.015em; line-height: 1; color: var(--rose);">with love,</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Body Serif · 400</div>
+          <div class="spec-serif" style="font-weight: 400; font-size: 16px; line-height: 1.7; color: var(--fg-2);">Two hearts, one story — please join us for a celebration of love, laughter, and forever.</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="fam-lbl">Latin Sans · Labels</div>
+        <div class="fam-name">Manrope</div>
+        <div class="specimen">
+          <div class="weight-lbl">Eyebrow · 700 · 0.28em</div>
+          <div class="spec-en" style="font-weight: 700; font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--rose-deep);">Save the Date</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Numeric Display · 800</div>
+          <div class="spec-en" style="font-weight: 800; font-size: 44px; letter-spacing: -0.03em; line-height: 1;">2026.05.24</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Meta · 600</div>
+          <div class="spec-en" style="font-weight: 600; font-size: 13px; color: var(--fg-2); letter-spacing: 0.02em;">Sat · 12:00 · Seongsu Garden</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="fam-lbl">Mono · Developer Theme</div>
+        <div class="fam-name">DM Mono</div>
+        <div class="specimen">
+          <div class="weight-lbl">Command</div>
+          <div class="spec-mono" style="font-weight: 500; font-size: 20px; color: var(--sage-deep);">$ moi --invite</div>
+        </div>
+        <div class="specimen">
+          <div class="weight-lbl">Log</div>
+          <div class="spec-mono" style="font-weight: 400; font-size: 13px; color: var(--fg-2); line-height: 1.7;">
+            &gt; scheduled: 2026-05-24 12:00 KST<br>
+            &gt; venue: 성수동 가든 · 2F<br>
+            &gt; rsvp: awaiting response
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MASCOT -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">03 · Character</div>
+      <h2 class="sec-title">모모 · <em>MOMO</em></h2>
+      <p class="sec-desc">봉투의 flap이 귀 또는 앞머리처럼 보이는 둥근 캐릭터. 밀랍인장 M 마크가 얼굴 중앙에 자리하고, 작은 점 눈과 은은한 미소로 감정을 표현합니다.</p>
+    </div>
+    <div class="mascot-grid">
+      <div class="mascot-hero">
+        <svg viewBox="0 0 200 240"><use href="assets/moi-symbols.svg#momo-front"/></svg>
+        <div>
+          <div class="name" style="text-align: center;">모모 · <em>MOMO</em></div>
+        </div>
+        <div class="desc">편지를 배달하는 작은 봉투. 서두르지 않고, 다정하게. 초대장이라는 매개를 사람의 온도로 옮겨주는 브랜드의 얼굴입니다.</div>
+      </div>
+      <div class="mascot-set">
+        <div class="mascot-slot">
+          <svg viewBox="0 0 200 240"><use href="assets/moi-symbols.svg#momo-front"/></svg>
+          <div class="m-lbl">Default</div>
+        </div>
+        <div class="mascot-slot">
+          <svg viewBox="0 0 220 240"><use href="assets/moi-symbols.svg#momo-card"/></svg>
+          <div class="m-lbl">Card</div>
+        </div>
+        <div class="mascot-slot">
+          <svg viewBox="0 0 240 240"><use href="assets/moi-symbols.svg#momo-run"/></svg>
+          <div class="m-lbl">Delivery</div>
+        </div>
+        <div class="mascot-slot">
+          <svg viewBox="0 0 200 260"><use href="assets/moi-symbols.svg#momo-party"/></svg>
+          <div class="m-lbl">Party</div>
+        </div>
+      </div>
+      <div class="mascot-guidelines">
+        <div class="mg-title">사용 가이드라인</div>
+        <ul class="mg-list">
+          <li class="mg-item">
+            <div class="dot"></div>
+            <div class="text"><b>사이즈</b> · 24px 스티커부터 대형 마케팅 일러스트까지 스케일링 가능. 최소 크기 24px.</div>
+          </li>
+          <li class="mg-item">
+            <div class="dot"></div>
+            <div class="text"><b>표정</b> · 기본은 점 눈+미소. 파티 상황에서만 눈웃음(∨∨). 슬픈 표정은 사용하지 않음.</div>
+          </li>
+          <li class="mg-item">
+            <div class="dot"></div>
+            <div class="text"><b>플랩 색상</b> · Wax-soft를 기본으로, 상황별 Sage · Slate · Gold로 파생.</div>
+          </li>
+          <li class="mg-item">
+            <div class="dot"></div>
+            <div class="text"><b>인장</b> · 얼굴 중앙 밀랍인장은 반드시 유지. 브랜드 인식의 핵심.</div>
+          </li>
+          <li class="mg-item">
+            <div class="dot"></div>
+            <div class="text"><b>사용처</b> · 로딩, 빈 상태, 성공 상태, 축하 모먼트에 국한. 남용 금지.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP ICON -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">04 · App Icon</div>
+      <h2 class="sec-title">앱 아이콘 · <em>4 variations</em></h2>
+      <p class="sec-desc">봉투와 밀랍인장을 핵심 실루엣으로. iOS·PWA·favicon·소셜 아바타 어디에서든 32px에서도 인식 가능한 최소 형태로 설계했습니다.</p>
+    </div>
+    <div class="icons-grid">
+      <div class="icon-tile a">
+        <div class="display"><svg viewBox="0 0 512 512"><use href="assets/moi-symbols.svg#app-icon"/></svg></div>
+        <div class="lbl">A · Paper Base</div>
+        <div class="cap">기본</div>
+      </div>
+      <div class="icon-tile b">
+        <div class="display" style="background: var(--rose);">
+          <svg viewBox="0 0 64 64" style="filter: brightness(1.2);"><use href="assets/moi-symbols.svg#momo-icon"/></svg>
+        </div>
+        <div class="lbl">B · Wax Ground</div>
+        <div class="cap">Primary</div>
+      </div>
+      <div class="icon-tile c">
+        <div class="display" style="background: var(--ink);">
+          <svg viewBox="0 0 64 64"><use href="assets/moi-symbols.svg#momo-icon"/></svg>
+        </div>
+        <div class="lbl">C · Ink Dark</div>
+        <div class="cap">Dark Mode</div>
+      </div>
+      <div class="icon-tile d">
+        <div class="display" style="background: var(--sage);">
+          <svg viewBox="0 0 64 64"><use href="assets/moi-symbols.svg#momo-icon"/></svg>
+        </div>
+        <div class="lbl">D · Sage Alt</div>
+        <div class="cap">Nature</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKENS -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">05 · Foundation Tokens</div>
+      <h2 class="sec-title">Radii · Spacing · <em>Shadow</em></h2>
+    </div>
+    <div class="tokens-grid">
+      <div class="token-card">
+        <h4>Border Radius</h4>
+        <div class="radii-demo">
+          <div class="r" style="border-radius: 8px;">8</div>
+          <div class="r" style="border-radius: 12px;">12</div>
+          <div class="r" style="border-radius: 16px;">16</div>
+          <div class="r" style="border-radius: 20px;">20</div>
+          <div class="r" style="border-radius: 24px;">24</div>
+          <div class="r" style="border-radius: 100px;">P</div>
+        </div>
+      </div>
+      <div class="token-card">
+        <h4>Spacing Scale · 4px base</h4>
+        <div class="spacing-demo">
+          <div class="sp-row"><span class="lbl">04</span><div class="bar" style="width:4px;"></div></div>
+          <div class="sp-row"><span class="lbl">08</span><div class="bar" style="width:8px;"></div></div>
+          <div class="sp-row"><span class="lbl">12</span><div class="bar" style="width:12px;"></div></div>
+          <div class="sp-row"><span class="lbl">16</span><div class="bar" style="width:16px;"></div></div>
+          <div class="sp-row"><span class="lbl">24</span><div class="bar" style="width:24px;"></div></div>
+          <div class="sp-row"><span class="lbl">32</span><div class="bar" style="width:32px;"></div></div>
+          <div class="sp-row"><span class="lbl">48</span><div class="bar" style="width:48px;"></div></div>
+          <div class="sp-row"><span class="lbl">64</span><div class="bar" style="width:64px;"></div></div>
+        </div>
+      </div>
+      <div class="token-card">
+        <h4>Elevation · 5 tiers</h4>
+        <div class="shadow-demo">
+          <div class="sh-box" style="box-shadow: var(--shadow-xs);">XS</div>
+          <div class="sh-box" style="box-shadow: var(--shadow-sm);">SM</div>
+          <div class="sh-box" style="box-shadow: var(--shadow-md);">MD</div>
+          <div class="sh-box" style="box-shadow: var(--shadow-lg);">LG</div>
+          <div class="sh-box" style="box-shadow: var(--shadow-xl);">XL</div>
+          <div class="sh-box" style="box-shadow: var(--shadow-rose); background: var(--rose); color: var(--paper);">ROSE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENTS -->
+  <div class="section">
+    <div class="section-head">
+      <div class="sec-num">06 · Core Components</div>
+      <h2 class="sec-title">버튼 · 칩 · 입력 · <em>인장</em></h2>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <h4>Buttons</h4>
+        <div class="comp-row">
+          <button class="btn btn-primary">초대장 만들기</button>
+          <button class="btn btn-rose">공유하기</button>
+          <button class="btn btn-outline">미리보기</button>
+          <button class="btn btn-ghost">취소</button>
+        </div>
+        <div class="comp-row">
+          <button class="btn btn-primary btn-lg">지금 시작하기</button>
+          <button class="btn btn-primary btn-sm">저장</button>
+        </div>
+      </div>
+      <div class="comp-card">
+        <h4>Chips · Filters</h4>
+        <div class="comp-row">
+          <button class="chip chip-rose active">추천</button>
+          <button class="chip">결혼식</button>
+          <button class="chip">생일</button>
+          <button class="chip">집들이</button>
+          <button class="chip">돌잔치</button>
+          <button class="chip">파티</button>
+        </div>
+      </div>
+      <div class="comp-card">
+        <h4>Inputs</h4>
+        <label class="input-label">초대장 제목</label>
+        <input class="input" placeholder="예: 지수 · 민준의 결혼식" value="지수 · 민준의 결혼식">
+        <div style="height: 12px;"></div>
+        <label class="input-label">날짜 · 시간</label>
+        <input class="input" placeholder="2026.05.24  · 12:00" value="2026.05.24 · 12:00">
+      </div>
+      <div class="comp-card">
+        <h4>Wax Seal · Accent</h4>
+        <div class="comp-row" style="gap: 20px;">
+          <div class="seal">M</div>
+          <div class="seal" style="background: radial-gradient(circle at 30% 30%, var(--sage) 0%, var(--sage-deep) 100%);">m</div>
+          <div class="seal" style="background: radial-gradient(circle at 30% 30%, var(--lavender) 0%, var(--lavender-deep) 100%);">L</div>
+          <div class="seal" style="background: radial-gradient(circle at 30% 30%, var(--butter) 0%, var(--butter-deep) 100%); color: var(--ink);">◆</div>
+        </div>
+        <p style="font-size: 12px; color: var(--fg-3); margin-top: 12px;">밀랍 인장은 편지 감성을 담은 시그니처 액센트. 이니셜·이모지·심볼 삽입 가능.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE -->
+  <div class="section voice">
+    <div>
+      <div class="sec-num">07 · Voice</div>
+      <h2 class="sec-title">따뜻하고,<br><em>담백하게.</em></h2>
+      <p style="color: rgba(251,247,241,0.75); font-size: 15px; line-height: 1.7; margin-top: 20px; max-width: 400px;">
+        느낌표는 아끼고, 편지의 온도를 지킵니다.
+        존댓말이 기본이며, MOMO는 3인칭으로 등장해 사용자를 조용히 응원합니다.
+      </p>
+    </div>
+    <div>
+      <div class="voice-quote">
+        "당신의 하루에 <em>초대합니다.</em> 사진과 문구만 있으면 됩니다."
+      </div>
+      <ul class="voice-list">
+        <li><b>Hero</b> · "초대하는 순간까지, 예쁘게."</li>
+        <li><b>Empty state</b> · "아직 만든 초대장이 없어요. 첫 초대장을 시작해볼까요?"</li>
+        <li><b>Publish</b> · "초대장이 준비됐어요. 이제 나누세요."</li>
+        <li><b>MOMO</b> · "모모가 편지를 전해드릴게요."</li>
+        <li><b>Error</b> · "잠시만요. 사진 크기가 조금 커요. 최대 8MB까지 올릴 수 있어요."</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

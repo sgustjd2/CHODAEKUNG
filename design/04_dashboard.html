@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>04 · 대시보드 · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body { background: var(--paper); display: flex; }
+
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100% !important; height: auto !important; position: sticky; top: 0; z-index: 20; padding: 12px 16px !important; flex-direction: row !important; align-items: center; gap: 12px; border-right: none !important; border-bottom: 1px solid var(--line); }
+    .sb-brand { padding: 0 !important; flex-shrink: 0; }
+    .sb-cta { display: none; }
+    .sb-group, .sb-item, .sb-footer { display: none !important; }
+    .sb-mobile-cta { display: flex !important; margin-left: auto; gap: 8px; }
+    main { padding: 24px 20px 60px !important; width: 100%; }
+    .head { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .head-title { font-size: 30px !important; }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat { padding: 18px; }
+    .stat-val { font-size: 34px; }
+    .toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
+    .toolbar .right { width: 100%; }
+    .search-mini { width: 100% !important; flex: 1; }
+    .tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { flex-shrink: 0; }
+    .inv-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .inv-empty { min-height: 320px; padding: 32px 16px; }
+    .inv-empty svg { width: 60px; height: 72px; }
+  }
+  @media (max-width: 500px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .inv-grid { grid-template-columns: 1fr; }
+    .head-title { font-size: 26px !important; }
+    .stat-val { font-size: 30px; }
+    .stat-lbl { font-size: 9px; letter-spacing: 0.2em; }
+  }
+
+  .sb-mobile-cta { display: none; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    background: var(--card);
+    border-right: 1px solid var(--line);
+    height: 100vh;
+    position: sticky; top: 0;
+    padding: 24px 16px;
+    display: flex; flex-direction: column;
+    flex-shrink: 0;
+  }
+  .sb-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 12px 24px;
+    text-decoration: none; color: var(--ink);
+  }
+  .sb-brand svg.ck-logo { width: auto; height: 38px; }
+  .sb-brand svg:not(.ck-logo) { width: 32px; height: 32px; }
+  .sb-name { font-family: var(--font-serif); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; }
+  .sb-name em { font-weight: 700; color: var(--rose); }
+
+  .sb-cta {
+    margin: 0 8px 24px;
+  }
+
+  .sb-group {
+    padding: 12px 8px 6px;
+    font-family: var(--font-en);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .sb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    text-decoration: none;
+    color: var(--fg-2);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+  }
+  .sb-item:hover { background: var(--paper); color: var(--ink); }
+  .sb-item.active { background: var(--ink); color: var(--paper); }
+  .sb-item .ic {
+    width: 18px; height: 18px; opacity: 0.8;
+  }
+  .sb-item .count {
+    margin-left: auto;
+    font-family: var(--font-en); font-size: 10px;
+    background: var(--paper-2);
+    padding: 2px 7px; border-radius: var(--r-pill);
+    color: var(--muted);
+  }
+  .sb-item.active .count { background: rgba(251,247,241,0.15); color: var(--paper); }
+
+  .sb-footer {
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 12px; align-items: center;
+  }
+  .sb-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--wax-soft);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper); font-weight: 700; font-family: var(--font-ko);
+  }
+  .sb-user .n { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+  .sb-user .p { font-family: var(--font-en); font-size: 10px; color: var(--rose-deep); font-weight: 700; letter-spacing: 0.2em; }
+
+  /* Main */
+  main {
+    flex: 1;
+    padding: 40px 48px 80px;
+    min-height: 100vh;
+  }
+
+  .head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 32px;
+  }
+  .head-eyebrow {
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+  }
+  .head-title {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 44px; letter-spacing: -0.025em;
+    margin-top: 6px;
+  }
+  .head-title em { font-weight: 700; color: var(--rose); }
+  .head-sub { color: var(--fg-3); font-size: 14px; margin-top: 4px; }
+
+  /* Stats row */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat.featured {
+    background: var(--ink); color: var(--paper);
+    border-color: transparent;
+  }
+  .stat.featured .stat-lbl { color: var(--butter); }
+  .stat.featured .stat-sub { color: rgba(251,247,241,0.6); }
+  .stat-lbl {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 12px;
+  }
+  .stat-val {
+    font-family: var(--font-serif);
+    font-size: 48px; font-weight: 500;
+    letter-spacing: -0.025em; line-height: 1;
+  }
+  .stat-val .u {
+    font-family: var(--font-en); font-size: 14px; font-weight: 600;
+    color: var(--muted); letter-spacing: 0.05em; margin-left: 2px;
+  }
+  .stat.featured .stat-val .u { color: rgba(251,247,241,0.5); }
+  .stat-sub {
+    font-family: var(--font-en); font-size: 11px; color: var(--muted);
+    margin-top: 8px; letter-spacing: 0.02em;
+  }
+  .stat-sub b { color: var(--sage-deep); font-weight: 700; }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    padding: 4px;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    background: transparent; border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-ko); font-size: 13px; font-weight: 700;
+    color: var(--fg-3);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .tab-btn.active { background: var(--ink); color: var(--paper); }
+  .tab-btn .c { font-family: var(--font-en); font-size: 10px; opacity: 0.7; }
+
+  .toolbar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .search-mini {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 8px 12px;
+    width: 240px;
+  }
+  .search-mini input { border: none; outline: none; background: transparent; flex: 1; font-family: var(--font-ko); font-size: 13px; }
+  .search-mini svg { width: 16px; height: 16px; color: var(--muted); }
+
+  .view-toggle {
+    display: flex;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--r-md); padding: 3px;
+    gap: 2px;
+  }
+  .view-toggle button {
+    width: 32px; height: 30px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+  }
+  .view-toggle button.active { background: var(--paper-2); color: var(--ink); }
+
+  /* Cards grid */
+  .inv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .inv-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+    transition: transform 200ms ease-out, box-shadow 200ms;
+    position: relative;
+  }
+  .inv-card:hover {
+    transform: translateY(-3px); box-shadow: var(--shadow-md);
+  }
+  .inv-cover {
+    aspect-ratio: 4/5;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+  .inv-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .inv-status {
+    position: absolute; top: 12px; left: 12px;
+    padding: 5px 10px;
+    border-radius: var(--r-pill);
+    font-family: var(--font-en); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    backdrop-filter: blur(8px);
+  }
+  .inv-status.published { background: rgba(181,202,178,0.95); color: var(--ink); }
+  .inv-status.draft { background: rgba(251,247,241,0.94); color: var(--ink); }
+  .inv-status.unlisted { background: rgba(110,122,147,0.94); color: var(--ink); }
+  .inv-status.past { background: rgba(42,42,62,0.8); color: var(--paper); }
+  .inv-menu {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(251,247,241,0.95);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--ink);
+    z-index: 5;
+    border: none;
+  }
+  .inv-info {
+    padding: 16px 18px 20px;
+  }
+  .inv-cat {
+    font-family: var(--font-en); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 4px;
+  }
+  .inv-title {
+    font-size: 17px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .inv-date {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-en); font-size: 12px;
+    color: var(--fg-2); font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .inv-date .d {
+    padding: 3px 8px; border-radius: 6px;
+    background: var(--paper-2);
+    color: var(--ink); font-weight: 700;
+  }
+  .inv-date .dday {
+    color: var(--rose-deep); font-weight: 800;
+  }
+  .inv-actions {
+    display: flex; gap: 6px; margin-top: 14px;
+    padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  .inv-actions button {
+    flex: 1;
+    padding: 8px 8px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    font-family: var(--font-ko);
+    font-size: 12px; font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .inv-actions button:hover { background: var(--paper); }
+  .inv-actions button.share { background: var(--ink); color: var(--paper); border-color: transparent; }
+  .inv-actions button.share:hover { background: var(--rose); }
+  .inv-actions svg { width: 12px; height: 12px; }
+
+  .inv-analytics {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    background: var(--paper);
+    padding: 10px;
+    border-radius: var(--r-sm);
+    margin-top: 12px;
+  }
+  .inv-analytics .a {
+    text-align: center;
+  }
+  .inv-analytics .av {
+    font-family: var(--font-en); font-size: 15px; font-weight: 800;
+    color: var(--ink); letter-spacing: -0.02em; line-height: 1;
+  }
+  .inv-analytics .al {
+    font-family: var(--font-en); font-size: 8px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-top: 2px;
+  }
+
+  /* Empty card */
+  .inv-empty {
+    background: linear-gradient(135deg, var(--paper), var(--rose-mist));
+    border: 1.5px dashed var(--rose-soft);
+    border-radius: var(--r-lg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    min-height: 460px;
+    cursor: pointer;
+    transition: all 200ms;
+  }
+  .inv-empty:hover { background: linear-gradient(135deg, var(--paper), var(--rose-soft)); }
+  .inv-empty svg { width: 80px; height: 96px; margin-bottom: 16px; }
+  .inv-empty .et { font-family: var(--font-serif); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .inv-empty .et em { font-weight: 700; color: var(--rose); }
+  .inv-empty .es { font-size: 13px; color: var(--fg-2); max-width: 200px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a class="sb-brand" href="00_index.html">
+    <svg class="ck-logo" viewBox="0 0 400 140"><use href="assets/moi-symbols.svg#chodaekung-lockup"/></svg>
+  </a>
+
+  <div class="sb-cta">
+    <a href="05_new_invitation_wizard.html" style="text-decoration: none;">
+      <button class="btn btn-primary" style="width: 100%;">
+        <span style="font-size: 16px;">+</span> 새 초대장 만들기
+      </button>
+    </a>
+  </div>
+
+  <div class="sb-mobile-cta">
+    <a href="05_new_invitation_wizard.html" style="text-decoration:none;">
+      <button class="btn btn-primary btn-sm">+ 새 초대장</button>
+    </a>
+    <div class="sb-avatar" style="width:32px; height:32px; font-size:14px;">지</div>
+  </div>
+
+  <div class="sb-group">Workspace</div>
+  <a class="sb-item active">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    내 초대장
+    <span class="count">12</span>
+  </a>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 4 15 4 9a5 5 0 0 1 5-5c1.7 0 3.2.9 4 2.3C13.8 4.9 15.3 4 17 4a5 5 0 0 1 5 5c0 6-8 12-8 12z"/></svg>
+    즐겨찾기
+    <span class="count">3</span>
+  </a>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+    행사 캘린더
+  </a>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+    RSVP 응답
+    <span class="count">247</span>
+  </a>
+
+  <div class="sb-group">Library</div>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    템플릿
+  </a>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+    미디어 라이브러리
+  </a>
+
+  <div class="sb-group">Settings</div>
+  <a class="sb-item">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    설정
+  </a>
+
+  <div class="sb-footer">
+    <div class="sb-avatar">지</div>
+    <div class="sb-user">
+      <div class="n">유지수</div>
+      <div class="p">PLUS PLAN</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+  <div class="head">
+    <div>
+      <div class="head-eyebrow">Dashboard</div>
+      <h1 class="head-title">안녕하세요, <em>지수</em>님.</h1>
+      <div class="head-sub">지금까지 12개의 초대장을 만드셨어요. 이번 달 발행 예정 2개.</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-outline">가이드 보기</button>
+      <button class="btn btn-primary">+ 새 초대장</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat featured">
+      <div class="stat-lbl">Active · Upcoming</div>
+      <div class="stat-val">3<span class="u">개</span></div>
+      <div class="stat-sub">이번 달 · <b>2개 발행 예정</b></div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Invitations</div>
+      <div class="stat-val">12</div>
+      <div class="stat-sub">누적 · <b>+2</b> vs. 지난달</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Views</div>
+      <div class="stat-val">4.8<span class="u">K</span></div>
+      <div class="stat-sub">모든 초대장 합산</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">RSVP Responses</div>
+      <div class="stat-val">247</div>
+      <div class="stat-sub">참석 <b>168</b> · 미정 <b>52</b> · 불참 27</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="tabs">
+      <button class="tab-btn active">전체 <span class="c">12</span></button>
+      <button class="tab-btn">Draft <span class="c">4</span></button>
+      <button class="tab-btn">Unlisted <span class="c">3</span></button>
+      <button class="tab-btn">Published <span class="c">3</span></button>
+      <button class="tab-btn">Past <span class="c">2</span></button>
+    </div>
+    <div class="right">
+      <div class="search-mini">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input placeholder="초대장 검색">
+      </div>
+      <div class="view-toggle">
+        <button class="active" title="Grid"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></button>
+        <button title="List"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="inv-grid">
+
+    <!-- Empty new invitation -->
+    <a href="05_new_invitation_wizard.html" style="text-decoration:none; color: inherit;">
+      <div class="inv-empty">
+        <svg viewBox="0 0 240 240"><use href="assets/moi-symbols.svg#momo-run"/></svg>
+        <div class="et">새 <em>초대장</em> 시작</div>
+        <div class="es">80종의 템플릿에서 시작하거나 빈 캔버스로 만들어보세요.</div>
+      </div>
+    </a>
+
+    <!-- Published -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/romantic_wedding.jpg" alt="">
+        <div class="inv-status published">● Published</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Wedding · Romantic</div>
+        <div class="inv-title">지수 · 민준의 결혼식에 초대합니다</div>
+        <div class="inv-date">
+          <span class="d">2026.05.24</span>
+          <span>Sat 12:00</span>
+          <span class="dday">D-92</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">1.2K</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">168</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">92%</div><div class="al">Attend</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>편집</button>
+          <button>미리보기</button>
+          <button class="share">공유 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unlisted -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/minimal_birthday.jpg" alt="">
+        <div class="inv-status unlisted">Unlisted</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Birthday · Minimal</div>
+        <div class="inv-title">아빠의 60번째 생신에 모여요</div>
+        <div class="inv-date">
+          <span class="d">2026.06.15</span>
+          <span>Mon 18:30</span>
+          <span class="dday">D-114</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">48</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">14</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">—</div><div class="al">Attend</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>편집</button>
+          <button>미리보기</button>
+          <button class="share">공유 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draft -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/cute_housewarming.jpg" alt="">
+        <div class="inv-status draft">Draft</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Housewarming · Cute</div>
+        <div class="inv-title">새 집으로 이사했어요 :)</div>
+        <div class="inv-date">
+          <span class="d">2026.04.05</span>
+          <span>Sun 15:00</span>
+          <span class="dday">D-42</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">—</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">—</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">78%</div><div class="al">Ready</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>편집 계속</button>
+          <button>미리보기</button>
+          <button class="share">발행</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Published -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/editorial_party.jpg" alt="">
+        <div class="inv-status published">● Published</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Party · Editorial</div>
+        <div class="inv-title">After Hours · 봄 파티 초대</div>
+        <div class="inv-date">
+          <span class="d">2026.03.28</span>
+          <span>Sat 20:00</span>
+          <span class="dday">D-34</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">842</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">65</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">88%</div><div class="al">Attend</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>편집</button>
+          <button>미리보기</button>
+          <button class="share">공유 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draft -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/tmpl_doljanchi.jpg" alt="">
+        <div class="inv-status draft">Draft</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Doljanchi · Warm</div>
+        <div class="inv-title">우리 하은이 첫 생일이에요</div>
+        <div class="inv-date">
+          <span class="d">2026.07.02</span>
+          <span>Thu 12:00</span>
+          <span class="dday">D-131</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">—</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">—</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">42%</div><div class="al">Ready</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>편집 계속</button>
+          <button>미리보기</button>
+          <button class="share">발행</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Past -->
+    <div class="inv-card">
+      <div class="inv-cover">
+        <img src="assets/photos/tmpl_yearend.jpg" alt="">
+        <div class="inv-status past">Past</div>
+        <button class="inv-menu">⋯</button>
+      </div>
+      <div class="inv-info">
+        <div class="inv-cat">Year-End · Dark</div>
+        <div class="inv-title">Golden Hour · 2025 송년회</div>
+        <div class="inv-date">
+          <span class="d">2025.12.28</span>
+          <span>Sun 19:00</span>
+          <span style="color: var(--muted);">완료</span>
+        </div>
+        <div class="inv-analytics">
+          <div class="a"><div class="av">2.1K</div><div class="al">Views</div></div>
+          <div class="a"><div class="av">124</div><div class="al">RSVP</div></div>
+          <div class="a"><div class="av">96%</div><div class="al">Attend</div></div>
+        </div>
+        <div class="inv-actions">
+          <button>복제</button>
+          <button>미리보기</button>
+          <button class="share">보관</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

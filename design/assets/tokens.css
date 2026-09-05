@@ -1,0 +1,441 @@
+/* ============================================================
+   모이레터 · MOI LETTER — Design Tokens
+   Interactive Mobile Invitation Web App
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  /* ---------- PALETTE — 파스텔 실링왁스 (Pastel Sealing Wax) ----------
+     moumoon.co.kr 감성을 참고한 밝고 파스텔한 톤. 왁스 씰의 상징성은
+     유지하되, 어두운 버건디 대신 밝은 코럴/피치 계열로 재구성.
+     화이트 베이스 + 파스텔 액센트 + 진한 네이비 텍스트. */
+
+  /* Ink — 본문 텍스트 (가독성 위해 진한 톤 유지) */
+  --ink:          #2A2A3E;
+  --ink-2:        #4A4A5E;
+  --ink-3:        #6E6E82;
+  --ink-4:        rgba(42, 42, 62, 0.55);
+
+  /* Wax — 밝은 코럴 로즈. Primary. 실링왁스의 밝은 파스텔 버전 */
+  --wax:          #E38B8B;   /* Primary · 밝은 코럴 왁스 */
+  --wax-deep:     #C96A6A;   /* hover / 강조 */
+  --wax-light:    #F5B5B0;   /* 연한 피치 */
+  --wax-soft:     #FCE0DC;   /* 아주 연한 블러시 */
+  --wax-tint:     #FEF6F4;   /* 배경용 미묘 블러시 */
+
+  /* Legacy aliases → wax */
+  --rose:         var(--wax);
+  --rose-deep:    var(--wax-deep);
+  --rose-soft:    var(--wax-soft);
+  --rose-mist:    var(--wax-tint);
+  --rose-tint:    var(--wax-tint);
+
+  /* Peach — 살구빛 액센트 (돌잔치·소모임 감성) */
+  --peach:        #F5C4A1;
+  --peach-deep:   #E29F76;
+  --peach-soft:   #FCE7D5;
+
+  /* Gold — 파스텔 골드 (은은한 축하 하이라이트) */
+  --gold:         #F5D896;
+  --gold-deep:    #D9B96A;
+  --gold-light:   #FCECC4;
+  --butter:       var(--gold);
+  --butter-deep:  var(--gold-deep);
+
+  /* Sage — 파스텔 세이지 그린 (등산·자연 모임) */
+  --sage:         #B5CAB2;
+  --sage-deep:    #8AA588;
+  --sage-light:   #DCE7DA;
+  --sage-mist:    #F1F5F0;
+
+  /* Sky — 파스텔 하늘 블루 (러닝·야외 스포츠) */
+  --sky:          #B5D0DE;
+  --sky-deep:     #8AB2C6;
+  --sky-soft:     #DFEBF2;
+
+  /* Lilac — 파스텔 라일락 (스터디·감성 모임) */
+  --lilac:        #D5C4E3;
+  --lilac-deep:   #B097CC;
+  --lilac-soft:   #ECE4F3;
+  --lavender:     var(--lilac);
+  --lavender-deep:var(--lilac-deep);
+  --lavender-mist:var(--lilac-soft);
+
+  /* Slate — 서브 텍스트/보조 액센트 */
+  --slate:        #6E7A93;
+  --slate-deep:   #4A5065;
+  --slate-light:  #A0A8B8;
+
+  /* Paper — 순백 + 쿨 그레이 (베이지 완전 제거) */
+  --paper:        #FFFFFF;
+  --paper-2:      #FAFAFC;   /* 아주 연한 오프화이트 (섹션 구분) */
+  --paper-3:      #F2F2F5;   /* 미묘한 쿨 그레이 */
+  --card:         #FFFFFF;
+  --card-soft:    #FCFCFD;
+  --paper-warm:   var(--wax-tint);   /* 웜 액센트 필요 시 살짝 블러시 */
+
+  /* ---------- LINES / MUTED ---------- */
+  --line:         rgba(42, 42, 62, 0.06);
+  --line-strong:  rgba(42, 42, 62, 0.12);
+  --line-soft:    rgba(42, 42, 62, 0.03);
+  --muted:        rgba(42, 42, 62, 0.55);
+
+  /* ---------- SEMANTIC ---------- */
+  --fg-1: var(--ink);
+  --fg-2: var(--ink-2);
+  --fg-3: var(--ink-3);
+  --fg-inverse: var(--paper);
+
+  --bg-1: var(--paper);
+  --bg-2: var(--card);
+  --bg-3: var(--paper-2);
+  --bg-inverse: var(--ink);
+
+  --accent:        var(--rose);
+  --accent-nature: var(--sage);
+  --accent-warm:   var(--butter);
+
+  --accent:        var(--wax);
+  --accent-nature: var(--sage);
+  --accent-warm:   var(--gold);
+
+  --success: var(--sage);
+  --warning: var(--gold-deep);
+  --danger:  var(--wax-deep);
+  --info:    var(--slate);
+
+  /* ---------- RADII ---------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --r-2xl: 32px;
+  --r-pill: 100px;
+  --r-full: 9999px;
+
+  /* ---------- SPACING (4px base) ---------- */
+  --sp-1: 4px;   --sp-2: 8px;    --sp-3: 12px;  --sp-4: 16px;
+  --sp-5: 20px;  --sp-6: 24px;   --sp-8: 32px;  --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px;  --sp-20: 80px; --sp-24: 96px;
+
+  /* ---------- SHADOWS (softer, pastel-friendly) ---------- */
+  --shadow-xs:  0 1px 2px  -1px rgba(42,42,62,0.06);
+  --shadow-sm:  0 4px 10px -3px rgba(42,42,62,0.08);
+  --shadow-md:  0 8px 24px -8px rgba(42,42,62,0.10);
+  --shadow-lg:  0 14px 40px -10px rgba(42,42,62,0.14);
+  --shadow-xl:  0 30px 60px -20px rgba(42,42,62,0.18);
+  --shadow-wax:  0 8px 20px -6px rgba(227,139,139,0.35);
+  --shadow-rose: var(--shadow-wax);
+  --shadow-paper: 0 2px 0 rgba(42,42,62,0.03), 0 20px 40px -18px rgba(42,42,62,0.12);
+
+  /* ---------- FONTS ----------
+     Pretendard-first system: all display/body text uses Pretendard for tight,
+     modern Korean typography. Manrope is retained only for latin eyebrows/numbers.
+     DM Mono is retained only for the developer/terminal viewer.
+     Formerly Fraunces/Instrument Serif — replaced with Pretendard for unified feel. */
+  --font-ko: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font-en: 'Manrope', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --font-serif: var(--font-ko);          /* was Fraunces — now Pretendard */
+  --font-serif-italic: var(--font-ko);   /* was Instrument Serif — now Pretendard */
+  --font-mono: 'DM Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --font-display: var(--font-ko);
+  --font-body:    var(--font-ko);
+  --font-label:   var(--font-en);
+
+  /* ---------- TYPE ROLES — 가시성 개선을 위해 전반 15~20% 확대 ---------- */
+  --t-display-1-size: 112px; --t-display-1-weight: 800; --t-display-1-lh: 0.94; --t-display-1-ls: -0.045em;
+  --t-display-2-size: 84px;  --t-display-2-weight: 800; --t-display-2-lh: 0.98; --t-display-2-ls: -0.035em;
+
+  --t-h1-size: 48px; --t-h1-weight: 700; --t-h1-lh: 1.08; --t-h1-ls: -0.028em;
+  --t-h2-size: 36px; --t-h2-weight: 700; --t-h2-lh: 1.15; --t-h2-ls: -0.022em;
+  --t-h3-size: 26px; --t-h3-weight: 700; --t-h3-lh: 1.28; --t-h3-ls: -0.018em;
+  --t-h4-size: 20px; --t-h4-weight: 700; --t-h4-lh: 1.32; --t-h4-ls: -0.015em;
+
+  --t-body-lg-size: 19px; --t-body-lg-weight: 500; --t-body-lg-lh: 1.62;
+  --t-body-size:    16px; --t-body-weight: 500;    --t-body-lh: 1.65;
+  --t-body-sm-size: 14px; --t-body-sm-weight: 500; --t-body-sm-lh: 1.55;
+  --t-caption-size: 12px; --t-caption-weight: 500; --t-caption-lh: 1.5;
+
+  --t-label-size:   12px;
+  --t-label-weight: 700;
+  --t-label-ls:     0.2em;
+  --t-label-tt:     uppercase;
+}
+
+/* ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-lh);
+  font-weight: var(--t-body-weight);
+}
+
+img { max-width: 100%; display: block; }
+button { font-family: inherit; }
+
+/* ============================================================
+   TYPE CLASSES
+   ============================================================ */
+.t-display-1 { font: var(--t-display-1-weight) var(--t-display-1-size)/var(--t-display-1-lh) var(--font-display); letter-spacing: var(--t-display-1-ls); }
+.t-display-2 { font: var(--t-display-2-weight) var(--t-display-2-size)/var(--t-display-2-lh) var(--font-display); letter-spacing: var(--t-display-2-ls); }
+/* Pretendard "display serif" replacements — heavier weight + tight spacing */
+.t-serif-display-1 { font: 800 96px/0.95 var(--font-ko); letter-spacing: -0.05em; }
+.t-serif-display-2 { font: 800 72px/1.0 var(--font-ko); letter-spacing: -0.04em; }
+.t-serif-h1 { font: 700 44px/1.1 var(--font-ko); letter-spacing: -0.03em; }
+.t-serif-h2 { font: 700 32px/1.15 var(--font-ko); letter-spacing: -0.025em; }
+
+/* No italic anywhere — decorative <em>/<i> are rendered as bold accent color instead */
+em, i,
+[style*="font-style: italic"],
+[style*="font-style:italic"] {
+  font-style: normal !important;
+  font-weight: 700;
+}
+
+h1, .t-h1 { font: var(--t-h1-weight) var(--t-h1-size)/var(--t-h1-lh) var(--font-display); letter-spacing: var(--t-h1-ls); margin: 0; }
+h2, .t-h2 { font: var(--t-h2-weight) var(--t-h2-size)/var(--t-h2-lh) var(--font-display); letter-spacing: var(--t-h2-ls); margin: 0; }
+h3, .t-h3 { font: var(--t-h3-weight) var(--t-h3-size)/var(--t-h3-lh) var(--font-display); letter-spacing: var(--t-h3-ls); margin: 0; }
+h4, .t-h4 { font: var(--t-h4-weight) var(--t-h4-size)/var(--t-h4-lh) var(--font-display); letter-spacing: var(--t-h4-ls); margin: 0; }
+
+p, .t-body { font-size: var(--t-body-size); font-weight: var(--t-body-weight); line-height: var(--t-body-lh); margin: 0; }
+.t-body-lg { font-size: var(--t-body-lg-size); font-weight: var(--t-body-lg-weight); line-height: var(--t-body-lg-lh); }
+.t-body-sm { font-size: var(--t-body-sm-size); font-weight: var(--t-body-sm-weight); line-height: var(--t-body-sm-lh); }
+.t-caption { font-size: var(--t-caption-size); font-weight: var(--t-caption-weight); line-height: var(--t-caption-lh); color: var(--fg-3); }
+
+.eyebrow, .t-label {
+  font-family: var(--font-label);
+  font-size: var(--t-label-size);
+  font-weight: var(--t-label-weight);
+  letter-spacing: var(--t-label-ls);
+  text-transform: var(--t-label-tt);
+  color: var(--fg-3);
+}
+.t-mono { font-family: var(--font-mono); letter-spacing: 0.01em; }
+
+.fg-1 { color: var(--fg-1); } .fg-2 { color: var(--fg-2); } .fg-3 { color: var(--fg-3); }
+.fg-rose { color: var(--rose-deep); } .fg-sage { color: var(--sage-deep); }
+.fg-lavender { color: var(--lavender-deep); } .fg-butter { color: var(--butter-deep); }
+.fg-inverse { color: var(--fg-inverse); }
+
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+
+/* Buttons — scaled up for accessibility */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 14px 24px;
+  font-family: var(--font-ko);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 150ms ease-out, background 150ms, box-shadow 200ms;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
+.btn-primary:hover { background: #12102a; box-shadow: var(--shadow-md); }
+.btn-wax, .btn-rose { background: var(--wax); color: var(--paper); box-shadow: var(--shadow-wax); }
+.btn-wax:hover, .btn-rose:hover { background: var(--wax-deep); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-ghost:hover { background: rgba(26,26,46,0.04); }
+.btn-outline { background: var(--card); color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-outline:hover { background: var(--paper-2); }
+.btn-lg { padding: 17px 30px; font-size: 16px; border-radius: var(--r-md); }
+.btn-sm { padding: 9px 16px; font-size: 13px; border-radius: var(--r-sm); }
+
+/* Chips — scaled up */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-family: var(--font-ko);
+  font-size: 13px; font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  white-space: nowrap;   /* prevent one-char-per-line wrap for CJK */
+  flex-shrink: 0;         /* prevent shrink inside overflow rows */
+}
+.chip:hover { border-color: var(--line-strong); }
+.chip.active { background: var(--ink); color: var(--paper); border-color: transparent; }
+.chip-wax.active, .chip-rose.active { background: var(--wax); color: var(--paper); }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
+}
+.card-elevated { box-shadow: var(--shadow-md); }
+
+/* Inputs — scaled up */
+.input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  font-family: var(--font-ko);
+  font-size: 15px;
+  color: var(--ink);
+  transition: border-color 150ms, box-shadow 150ms;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--wax);
+  box-shadow: 0 0 0 3px rgba(123,45,46,0.15);
+}
+.input-label {
+  display: block;
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--line);
+  border: none;
+}
+
+/* Icon helper — currentColor SVG, sized by width/height or CSS width */
+.ic, .icon {
+  display: inline-block;
+  width: 1em; height: 1em;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+.ic-16 { width: 16px; height: 16px; }
+.ic-18 { width: 18px; height: 18px; }
+.ic-20 { width: 20px; height: 20px; }
+.ic-24 { width: 24px; height: 24px; }
+.ic-32 { width: 32px; height: 32px; }
+
+/* Envelope-style wax seal accent — real burgundy wax with subtle glossy highlight */
+.seal {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.4) 0%, transparent 40%),
+    radial-gradient(circle at 60% 65%, var(--wax-deep) 0%, transparent 65%),
+    var(--wax);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--paper);
+  font-family: var(--font-ko);
+  font-weight: 800;
+  font-size: 18px;
+  box-shadow:
+    0 3px 8px rgba(227, 139, 139, 0.45),
+    inset 0 -2px 4px rgba(201, 106, 106, 0.35),
+    inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+/* ============================================================
+   KUNG WAX SEAL — the "쿵" character rendered as a pressed wax stamp
+   Use inline within wordmark: <span class="seal-kung">쿵</span>
+   ============================================================ */
+.seal-kung {
+  --seal-size: 1.55em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--seal-size);
+  height: var(--seal-size);
+  aspect-ratio: 1;
+  vertical-align: -0.42em;
+  margin: 0 0.02em 0 0.12em;
+  border-radius: 50%;
+  color: #FFFFFF;
+  font-family: var(--font-ko);
+  font-weight: 900;
+  font-size: 0.9em;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35) 0%, transparent 42%),
+    radial-gradient(circle at 55% 60%, #7A2D2E 0%, #A04547 65%, #C96A6A 100%);
+  box-shadow:
+    0 3px 6px rgba(60, 10, 15, 0.35),
+    inset 0 -3px 6px rgba(60, 10, 15, 0.4),
+    inset 0 3px 4px rgba(255,255,255,0.35),
+    inset 0 0 0 2px rgba(60, 10, 15, 0.5);
+  text-shadow:
+    0 1px 2px rgba(0,0,0,0.6),
+    0 0 3px rgba(60, 10, 15, 0.5);
+  transform: rotate(-5deg);
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  font-feature-settings: "kern" 1;
+  -webkit-text-stroke: 0.3px rgba(60, 10, 15, 0.4);
+}
+a:hover .seal-kung, .seal-kung:hover {
+  transform: rotate(-5deg) scale(0.94);
+}
+
+/* ============================================================
+   CHODAEKUNG LOGO — full brand lockup with MOMO character
+   Use: <svg class="ck-logo" viewBox="0 0 400 140"><use href="assets/moi-symbols.svg#chodaekung-lockup"/></svg>
+   ============================================================ */
+.ck-logo {
+  height: 44px;
+  width: 126px;   /* 44 * (400/140) */
+  display: inline-block;
+  vertical-align: middle;
+}
+.ck-logo-sm { height: 32px; width: 91px; }
+.ck-logo-lg { height: 64px; width: 183px; }
+.ck-logo-xl { height: 96px; width: 274px; }
+.seal-kung::before {
+  top: -0.02em; left: 0.15em;
+  transform: scale(0.6, 1);
+}
+.seal-kung::after {
+  bottom: 0.02em; right: 0.12em;
+  transform: scale(0.5, 0.8);
+}
+/* On hover, seal presses down slightly */
+a:hover .seal-kung,
+.seal-kung:hover {
+  transform: rotate(-4deg) scale(0.94);
+}
+
+/* Slightly larger, more dramatic version for hero display */
+.seal-kung-lg {
+  --seal-size: 1.2em;
+  transform: rotate(-6deg);
+}
+
+/* No-tilt version for tight nav bars */
+.seal-kung-flat {
+  transform: rotate(0);
+}
+.seal-kung-flat:hover,
+a:hover .seal-kung-flat {
+  transform: scale(0.94);
+}

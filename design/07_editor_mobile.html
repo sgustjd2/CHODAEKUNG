@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>07 · 모바일 에디터 · 초대쿵</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/tokens.css?v13">
+<style>
+  body {
+    background: var(--paper-2);
+    min-height: 100vh;
+    display: flex;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(227,139,139,0.06), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(181,202,178,0.06), transparent 40%);
+  }
+
+  .stage {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+  }
+  .stage-note {
+    max-width: 300px;
+  }
+  .stage-note .eb {
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-bottom: 8px;
+  }
+  .stage-note h2 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 32px; letter-spacing: -0.025em; line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .stage-note h2 em { font-weight: 700; color: var(--rose); }
+  .stage-note p { color: var(--fg-2); font-size: 14px; line-height: 1.65; }
+  .stage-note .list { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .stage-note .list-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    font-size: 12px; color: var(--fg-2); line-height: 1.5;
+  }
+  .stage-note .list-item .k {
+    background: var(--rose);
+    color: var(--paper);
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-en); font-size: 10px; font-weight: 800;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* Device */
+  .device {
+    width: 390px;
+    height: 810px;
+    background: var(--ink);
+    border-radius: 44px;
+    padding: 10px;
+    box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .device .screen {
+    width: 100%; height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: var(--card);
+    position: relative;
+  }
+  .device .notch {
+    position: absolute; top: 16px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 26px;
+    background: var(--ink);
+    border-radius: 14px;
+    z-index: 100;
+  }
+  .statusbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 42px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px 0;
+    font-family: var(--font-en); font-size: 12px; font-weight: 700;
+    color: var(--ink); z-index: 50;
+  }
+
+  /* Editor top bar (inside phone) */
+  .editor-top {
+    position: absolute; top: 42px; left: 0; right: 0;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(20px);
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--line);
+    z-index: 40;
+  }
+  .et-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .et-title {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    min-width: 0;
+  }
+  .et-title .n {
+    font-size: 13px; font-weight: 700; letter-spacing: -0.01em;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .et-title .s {
+    display: flex; align-items: center; gap: 4px;
+    font-family: var(--font-en); font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--sage-deep); font-weight: 700;
+  }
+  .et-title .s .d {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--sage-deep);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Live preview (invitation content) */
+  .preview {
+    position: absolute; top: 96px; left: 0; right: 0; bottom: 132px;
+    overflow-y: auto;
+    background: var(--card);
+  }
+  .preview::-webkit-scrollbar { display: none; }
+
+  .inv-cover {
+    height: 500px;
+    background: url('assets/photos/romantic_wedding.jpg') center/cover;
+    position: relative;
+    padding: 32px 28px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--paper);
+  }
+  .inv-cover::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(42,42,62,0.35) 0%, transparent 30%, transparent 55%, rgba(42,42,62,0.65) 100%);
+    pointer-events: none;
+  }
+  .inv-cover > * { position: relative; z-index: 2; }
+  .inv-top-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 8px;
+  }
+  .inv-tiny-brand {
+    font-family: var(--font-en); font-size: 9px; letter-spacing: 0.32em;
+    opacity: 0.85; font-weight: 700;
+  }
+  .inv-mini-seal {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--rose) 0%, var(--rose-deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .inv-bot { }
+  .inv-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    opacity: 0.9; margin-bottom: 10px;
+  }
+  .inv-couple {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 36px; letter-spacing: -0.025em; line-height: 1;
+    margin-bottom: 10px;
+  }
+  .inv-couple em {
+    display: block; text-align: center;
+    font-weight: 700;
+    font-weight: 400; font-size: 22px;
+    margin: 2px 0;
+  }
+  .inv-date-strip {
+    font-family: var(--font-en); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.15em;
+  }
+
+  .p-section {
+    padding: 44px 28px;
+    text-align: center;
+  }
+  .p-eb {
+    font-family: var(--font-en); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--rose-deep); margin-bottom: 10px;
+  }
+  .p-title {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 24px; letter-spacing: -0.02em; line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .p-title em { font-weight: 700; color: var(--rose); }
+  .p-body {
+    font-size: 13px; color: var(--fg-2); line-height: 1.8;
+  }
+  .p-countdown { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+  .p-cd {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 12px; min-width: 48px;
+  }
+  .p-cd .n { font-family: var(--font-serif); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+  .p-cd .l { font-family: var(--font-en); font-size: 8px; font-weight: 700; color: var(--muted); letter-spacing: 0.2em; margin-top: 3px; }
+
+  /* Selected element ring in preview */
+  .sel-ring {
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--rose);
+    border-radius: 6px;
+    pointer-events: none;
+    box-shadow: 0 0 0 3px rgba(227,139,139,0.15);
+    z-index: 5;
+  }
+
+  /* Bottom tabs */
+  .btabs {
+    position: absolute; bottom: 32px; left: 0; right: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    height: 60px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+    z-index: 40;
+    padding: 0 4px;
+  }
+  .btab {
+    background: none; border: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 6px;
+    font-family: var(--font-ko);
+  }
+  .btab .ic { width: 20px; height: 20px; }
+  .btab .lbl { font-size: 10px; font-weight: 700; }
+  .btab.active { color: var(--rose-deep); }
+
+  /* Home indicator */
+  .home-ind {
+    position: absolute; bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 4px;
+    background: var(--ink);
+    border-radius: 2px;
+    z-index: 45;
+  }
+
+  /* Bottom sheet */
+  .sheet-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(42,42,62,0.4);
+    z-index: 60;
+    opacity: 0; pointer-events: none;
+    transition: opacity 250ms;
+  }
+  .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .bsheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    z-index: 70;
+    padding: 8px 20px 24px;
+    max-height: 72%;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow: 0 -8px 32px rgba(42,42,62,0.15);
+  }
+  .bsheet.open { transform: translateY(0); }
+  .bsheet::-webkit-scrollbar { display: none; }
+
+  .sheet-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--line-strong);
+    margin: 4px auto 12px;
+  }
+  .sheet-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sheet-title {
+    font-size: 15px; font-weight: 700; letter-spacing: -0.015em;
+  }
+  .sheet-title .sub {
+    font-family: var(--font-en); font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-left: 6px; font-weight: 600;
+  }
+  .sheet-close {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--paper-2); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--fg-2);
+    font-size: 14px;
+  }
+
+  .sh-tabs {
+    display: flex; gap: 6px; padding: 12px 0;
+    overflow-x: auto;
+  }
+  .sh-tabs::-webkit-scrollbar { display: none; }
+  .sh-tab {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: var(--paper-2);
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-ko); font-size: 11px; font-weight: 700;
+    color: var(--fg-2);
+    cursor: pointer;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .sh-tab.active { background: var(--ink); color: var(--paper); }
+
+  .sh-panel { padding: 8px 0; }
+  .sh-group {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .sh-group:last-child { border-bottom: none; }
+  .sh-group h6 {
+    font-family: var(--font-en); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .sh-field { margin-bottom: 10px; }
+  .sh-lbl {
+    font-size: 11px; font-weight: 600; color: var(--fg-2);
+    margin-bottom: 4px;
+    display: flex; justify-content: space-between;
+  }
+  .sh-lbl .v { font-family: var(--font-en); font-size: 10px; color: var(--rose-deep); font-weight: 700; }
+  .sh-input {
+    width: 100%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 12px; font-family: var(--font-ko);
+    color: var(--ink);
+  }
+  .sh-input:focus { outline: none; border-color: var(--rose); background: var(--card); }
+  textarea.sh-input { min-height: 60px; resize: vertical; }
+
+  .sh-colors { display: flex; gap: 6px; }
+  .sh-color {
+    width: 30px; height: 30px; border-radius: 8px;
+    cursor: pointer; border: 2px solid transparent;
+  }
+  .sh-color.active { border-color: var(--ink); box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--ink); }
+
+  .sh-radios { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sh-radio {
+    padding: 6px 12px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    font-family: var(--font-ko); font-size: 11px; font-weight: 600;
+    color: var(--fg-2);
+    cursor: pointer;
+   white-space: nowrap; flex-shrink: 0;
+  }
+  .sh-radio.active { background: var(--ink); color: var(--paper); border-color: transparent; }
+
+  .sh-slider { -webkit-appearance: none; width: 100%; height: 3px; background: var(--paper-3); border-radius: 2px; outline: none; }
+  .sh-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--rose); cursor: pointer; box-shadow: 0 2px 4px rgba(227,139,139,0.4); }
+
+  .sh-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .sh-thumb {
+    aspect-ratio: 1;
+    background-size: cover; background-position: center;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .sh-thumb.active { border-color: var(--rose); }
+
+  .sh-toggle-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+  }
+  .sh-toggle {
+    width: 34px; height: 20px; border-radius: 10px;
+    background: var(--paper-3);
+    position: relative; cursor: pointer;
+    transition: background 200ms;
+  }
+  .sh-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; background: var(--paper);
+    border-radius: 50%; transition: transform 200ms;
+    box-shadow: var(--shadow-sm);
+  }
+  .sh-toggle.on { background: var(--rose); }
+  .sh-toggle.on::after { transform: translateX(14px); }
+
+  @media (max-width: 800px) {
+    body { padding: 0; align-items: stretch; }
+    .stage { flex-direction: column; gap: 24px; padding: 24px 12px; }
+    .stage-note { max-width: 100%; text-align: center; }
+    .stage-note .list { display: none; }
+    .device { transform: scale(0.92); transform-origin: top center; margin-top: -30px; }
+  }
+  @media (max-width: 500px) {
+    .device { transform: scale(0.82); margin-top: -60px; margin-bottom: -70px; }
+    .stage-note h2 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="stage-note">
+    <div class="eb">Mobile Editor · Bottom Sheet</div>
+    <h2>모바일에서도<br><em>완성까지.</em></h2>
+    <p>스마트폰만으로도 초대장을 처음부터 끝까지 만들 수 있어요. 하단 네 개의 탭에서 내용·디자인·섹션·효과를 편집합니다.</p>
+    <div class="list">
+      <div class="list-item"><div class="k">1</div><div>편집기 상단 · 저장 상태와 미리보기</div></div>
+      <div class="list-item"><div class="k">2</div><div>중앙 · 실제 초대장 라이브 프리뷰 (스크롤 가능)</div></div>
+      <div class="list-item"><div class="k">3</div><div>하단 · 내용 / 디자인 / 섹션 / 효과 4탭</div></div>
+      <div class="list-item"><div class="k">4</div><div>탭 선택 시 바텀시트로 속성 편집</div></div>
+    </div>
+    <div style="margin-top: 24px; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px;">
+      <div class="eb" style="margin-bottom: 4px;">Try it</div>
+      <div style="font-size: 12px; color: var(--fg-2);">아래 4탭을 눌러 바텀시트를 열어보세요.</div>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar"><span>9:41</span><span style="display:inline-flex; align-items:center; gap:5px;"><svg style="width:14px;height:10px;" viewBox="0 0 14 10" fill="currentColor"><path d="M0 8h2v2H0zM4 5h2v5H4zM8 2h2v8H8zM12 0h2v10h-2z"/></svg><svg style="width:14px;height:10px;" viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1"><path d="M7 2C4 2 1.5 3 0 5c1.5 2 4 4 7 4s5.5-2 7-4c-1.5-2-4-3-7-3z"/></svg><svg style="width:22px;height:10px;" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="15" height="6" rx="1" fill="currentColor"/><rect x="19" y="3" width="2" height="4" rx="0.5" fill="currentColor"/></svg></span></div>
+
+      <!-- Editor top -->
+      <div class="editor-top">
+        <button class="et-btn" title="뒤로">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18 9 12l6-6"/></svg>
+        </button>
+        <div class="et-title">
+          <div class="n">지수 · 민준의 결혼식</div>
+          <div class="s"><span class="d"></span> Saved</div>
+        </div>
+        <button class="et-btn" title="미리보기">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="et-btn" style="background: var(--ink); color: var(--paper); border-color: transparent;" title="발행">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        </button>
+      </div>
+
+      <!-- Live preview -->
+      <div class="preview" id="mobilePreview">
+        <div class="inv-cover">
+          <div class="inv-top-row">
+            <div class="inv-tiny-brand">C · H · O · D · A · E · K · U · N · G</div>
+            <div class="inv-mini-seal">M</div>
+          </div>
+          <div class="inv-bot">
+            <div class="inv-eb">SAVE THE DATE</div>
+            <div class="inv-couple" style="position: relative;">
+              <div class="sel-ring"></div>
+              <span id="pName1">지수</span>
+              <em>&amp;</em>
+              <span id="pName2">민준</span>
+            </div>
+            <div class="inv-date-strip">2026 · 05 · 24 · SAT</div>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-eb">Message</div>
+          <div class="p-title">우리의 시작에<br><em>초대합니다.</em></div>
+          <div class="p-body" id="pMessage">
+            두 사람이 새로운 시작을 함께 하는 자리.<br>
+            소중한 분들과 함께 나누고 싶어요.
+          </div>
+        </div>
+
+        <div class="p-section" style="background: var(--paper-2);">
+          <div class="p-eb">Date · Countdown</div>
+          <div class="p-title">2026. 05. 24<br>Sat <em>12:00</em></div>
+          <div class="p-countdown">
+            <div class="p-cd"><div class="n">92</div><div class="l">Days</div></div>
+            <div class="p-cd"><div class="n">14</div><div class="l">Hrs</div></div>
+            <div class="p-cd"><div class="n">32</div><div class="l">Min</div></div>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-eb">Location</div>
+          <div class="p-title" id="pVenue">성수 <em>가든</em></div>
+          <div class="p-body" id="pVenueAddr">서울 성동구 성수동1가 685<br>1층 · 야외 정원</div>
+        </div>
+
+        <div class="p-section" style="padding: 60px 28px;">
+          <svg style="width: 48px; height: 58px; margin: 0 auto 12px; display: block;" viewBox="0 0 240 240"><use href="assets/moi-symbols.svg#momo-run"/></svg>
+          <div style="font-weight: 700; font-size: 24px; color: var(--rose); letter-spacing: -0.02em; line-height: 1.15;">with love,<br>지수 &amp; 민준</div>
+        </div>
+      </div>
+
+      <!-- Bottom tabs -->
+      <div class="btabs">
+        <button class="btab active" data-tab="content">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+          <span class="lbl">내용</span>
+        </button>
+        <button class="btab" data-tab="design">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+          <span class="lbl">디자인</span>
+        </button>
+        <button class="btab" data-tab="sections">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <span class="lbl">섹션</span>
+        </button>
+        <button class="btab" data-tab="anim">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <span class="lbl">효과</span>
+        </button>
+      </div>
+
+      <div class="home-ind"></div>
+
+      <!-- Bottom sheet backdrop -->
+      <div class="sheet-backdrop" id="sheetBack"></div>
+
+      <!-- Bottom sheet -->
+      <div class="bsheet" id="bsheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <div class="sheet-title">
+            <span id="sheetTitle">내용</span>
+            <span class="sub" id="sheetSub">Cover · Message</span>
+          </div>
+          <button class="sheet-close" id="sheetClose">×</button>
+        </div>
+
+        <!-- CONTENT sheet -->
+        <div class="sh-panel" data-panel="content">
+          <div class="sh-tabs">
+            <button class="sh-tab active">Cover</button>
+            <button class="sh-tab">Message</button>
+            <button class="sh-tab">Date</button>
+            <button class="sh-tab">Location</button>
+            <button class="sh-tab">Gallery</button>
+            <button class="sh-tab">RSVP</button>
+          </div>
+          <div class="sh-group">
+            <h6>Cover · Names</h6>
+            <div class="sh-field">
+              <div class="sh-lbl">이름 1</div>
+              <input class="sh-input" id="mName1" value="지수">
+            </div>
+            <div class="sh-field">
+              <div class="sh-lbl">이름 2</div>
+              <input class="sh-input" id="mName2" value="민준">
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Message</h6>
+            <div class="sh-field">
+              <div class="sh-lbl">본문</div>
+              <textarea class="sh-input" id="mMessage" rows="3">두 사람이 새로운 시작을 함께 하는 자리.
+소중한 분들과 함께 나누고 싶어요.</textarea>
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Location</h6>
+            <div class="sh-field">
+              <div class="sh-lbl">장소명</div>
+              <input class="sh-input" id="mVenue" value="성수 가든">
+            </div>
+          </div>
+        </div>
+
+        <!-- DESIGN sheet -->
+        <div class="sh-panel" data-panel="design" style="display:none;">
+          <div class="sh-tabs">
+            <button class="sh-tab active">Theme</button>
+            <button class="sh-tab">Color</button>
+            <button class="sh-tab">Font</button>
+            <button class="sh-tab">Cover</button>
+          </div>
+          <div class="sh-group">
+            <h6>Theme Preset</h6>
+            <div class="sh-radios">
+              <div class="sh-radio active">Romantic</div>
+              <div class="sh-radio">Minimal</div>
+              <div class="sh-radio">Editorial</div>
+              <div class="sh-radio">Cute</div>
+              <div class="sh-radio">Dark</div>
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Accent Color</h6>
+            <div class="sh-colors">
+              <div class="sh-color active" style="background: #E38B8B;" data-color="#E38B8B"></div>
+              <div class="sh-color" style="background: #C96A6A;" data-color="#C96A6A"></div>
+              <div class="sh-color" style="background: #B5CAB2;" data-color="#B5CAB2"></div>
+              <div class="sh-color" style="background: #A0A8B8;" data-color="#A0A8B8"></div>
+              <div class="sh-color" style="background: #F5D896;" data-color="#F5D896"></div>
+              <div class="sh-color" style="background: #2A2A3E;" data-color="#2A2A3E"></div>
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Cover Background</h6>
+            <div class="sh-thumbs">
+              <div class="sh-thumb active" style="background-image: url('assets/photos/romantic_wedding.jpg');" data-bg="assets/photos/romantic_wedding.jpg"></div>
+              <div class="sh-thumb" style="background-image: url('assets/photos/wedding_gallery_2.jpg');" data-bg="assets/photos/wedding_gallery_2.jpg"></div>
+              <div class="sh-thumb" style="background-image: url('assets/photos/hero_flatlay.jpg');" data-bg="assets/photos/hero_flatlay.jpg"></div>
+              <div class="sh-thumb" style="background-image: url('assets/photos/minimal_birthday.jpg');" data-bg="assets/photos/minimal_birthday.jpg"></div>
+            </div>
+            <div class="sh-field" style="margin-top: 12px;">
+              <div class="sh-lbl">Overlay 강도 <span class="v" id="mOvVal">65%</span></div>
+              <input type="range" class="sh-slider" min="0" max="100" value="65" id="mOverlay">
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Display Font</h6>
+            <div class="sh-radios">
+              <div class="sh-radio active">Fraunces</div>
+              <div class="sh-radio">Instrument Italic</div>
+              <div class="sh-radio">Pretendard</div>
+              <div class="sh-radio">DM Mono</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTIONS sheet -->
+        <div class="sh-panel" data-panel="sections" style="display:none;">
+          <div style="display: flex; justify-content: flex-end; padding: 8px 0;">
+            <button class="btn btn-primary btn-sm">+ 섹션 추가</button>
+          </div>
+          <div class="sh-group" style="padding: 0;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--paper-2); border: 1px solid var(--rose); border-radius: 10px; box-shadow: 0 0 0 2px rgba(227,139,139,0.15);">
+                <div style="color: var(--muted); font-size: 14px;">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--rose); color: var(--paper); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-cover"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">커버</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">Cover</div></div>
+                <div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.2em; color: var(--rose-deep); font-weight: 700;">ACTIVE</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="color: var(--muted);">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-message"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">초대 문구</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">Message</div></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="color: var(--muted);">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-clock"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">날짜 · 시간</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">Date</div></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="color: var(--muted);">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-pin"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">장소</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">Location</div></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="color: var(--muted);">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-grid"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">갤러리</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">Gallery</div></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="color: var(--muted);">⋮⋮</div>
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; "><svg style="width:14px;height:14px;"><use href="assets/moi-symbols.svg#ic-heart"/></svg></div>
+                <div style="flex:1;"><div style="font-size: 12px; font-weight: 700;">RSVP</div><div style="font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase;">RSVP</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANIMATION sheet -->
+        <div class="sh-panel" data-panel="anim" style="display:none;">
+          <div class="sh-group">
+            <h6>Page Mode</h6>
+            <div class="sh-radios">
+              <div class="sh-radio active">Scroll</div>
+              <div class="sh-radio">Story</div>
+              <div class="sh-radio">Magazine</div>
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Reveal Animation</h6>
+            <div class="sh-radios">
+              <div class="sh-radio">None</div>
+              <div class="sh-radio active">Fade Up</div>
+              <div class="sh-radio">Slide</div>
+              <div class="sh-radio">Zoom</div>
+              <div class="sh-radio">Blur</div>
+              <div class="sh-radio">Parallax</div>
+            </div>
+          </div>
+          <div class="sh-group">
+            <h6>Timing</h6>
+            <div class="sh-field">
+              <div class="sh-lbl">Duration <span class="v">600ms</span></div>
+              <input type="range" class="sh-slider" min="200" max="1500" value="600">
+            </div>
+            <div class="sh-field">
+              <div class="sh-lbl">Delay <span class="v">100ms</span></div>
+              <input type="range" class="sh-slider" min="0" max="800" value="100">
+            </div>
+          </div>
+          <div class="sh-group">
+            <div class="sh-toggle-row">
+              <div style="font-size: 12px; font-weight: 600; color: var(--fg-2);">prefers-reduced-motion 준수</div>
+              <div class="sh-toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="sh-toggle-row">
+              <div style="font-size: 12px; font-weight: 600; color: var(--fg-2);">배경 음악</div>
+              <div class="sh-toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tabTitles = {
+    content: { title: '내용', sub: 'Cover · Message · Date · Location' },
+    design:  { title: '디자인', sub: 'Theme · Color · Font · Cover' },
+    sections:{ title: '섹션', sub: 'Add · Reorder · Toggle' },
+    anim:    { title: '효과', sub: 'Mode · Animation · Timing' }
+  };
+
+  const sheet = document.getElementById('bsheet');
+  const back = document.getElementById('sheetBack');
+
+  function openSheet(tab) {
+    sheet.classList.add('open');
+    back.classList.add('open');
+    document.getElementById('sheetTitle').textContent = tabTitles[tab].title;
+    document.getElementById('sheetSub').textContent = tabTitles[tab].sub;
+    document.querySelectorAll('.sh-panel').forEach(p => p.style.display = p.dataset.panel === tab ? 'block' : 'none');
+    document.querySelectorAll('.btab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  }
+  function closeSheet() {
+    sheet.classList.remove('open');
+    back.classList.remove('open');
+  }
+
+  document.querySelectorAll('.btab').forEach(b => {
+    b.onclick = () => openSheet(b.dataset.tab);
+  });
+  document.getElementById('sheetClose').onclick = closeSheet;
+  back.onclick = closeSheet;
+
+  // In-sheet interactions
+  document.querySelectorAll('.sh-radios').forEach(g => {
+    g.addEventListener('click', (e) => {
+      const r = e.target.closest('.sh-radio');
+      if (!r) return;
+      g.querySelectorAll('.sh-radio').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.sh-tabs').forEach(g => {
+    g.addEventListener('click', (e) => {
+      const r = e.target.closest('.sh-tab');
+      if (!r) return;
+      g.querySelectorAll('.sh-tab').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.sh-color').forEach(c => {
+    c.onclick = () => {
+      document.querySelectorAll('.sh-color').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      document.documentElement.style.setProperty('--rose', c.dataset.color);
+      document.documentElement.style.setProperty('--rose-deep', c.dataset.color);
+    };
+  });
+  document.querySelectorAll('.sh-thumb').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.sh-thumb').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelector('.inv-cover').style.backgroundImage = `url('${t.dataset.bg}')`;
+    };
+  });
+
+  // Live bindings
+  document.getElementById('mName1').oninput = (e) => document.getElementById('pName1').textContent = e.target.value;
+  document.getElementById('mName2').oninput = (e) => document.getElementById('pName2').textContent = e.target.value;
+  document.getElementById('mMessage').oninput = (e) => document.getElementById('pMessage').innerHTML = e.target.value.replace(/\n/g, '<br>');
+  document.getElementById('mVenue').oninput = (e) => document.getElementById('pVenue').textContent = e.target.value;
+  document.getElementById('mOverlay').oninput = (e) => {
+    document.getElementById('mOvVal').textContent = e.target.value + '%';
+    // Update cover overlay visually
+    const cov = document.querySelector('.inv-cover');
+    const v = e.target.value/100;
+    cov.style.setProperty('background-image', `linear-gradient(180deg, rgba(42,42,62,${0.35*v}) 0%, transparent 30%, transparent 55%, rgba(42,42,62,${0.65*v}) 100%), url('assets/photos/romantic_wedding.jpg')`);
+    cov.style.setProperty('background-size', 'cover');
+    cov.style.setProperty('background-position', 'center');
+  };
+</script>
+
+</body>
+</html>
