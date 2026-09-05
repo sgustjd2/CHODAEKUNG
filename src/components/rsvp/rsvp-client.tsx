@@ -1,12 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
+import { listRsvpsAction } from "@/lib/invitation/actions";
+import type { RsvpRow } from "@/lib/invitation/store";
 
 type Resp = "yes" | "no" | "maybe";
-type Row = { name: string; response: Resp; plus: string; side: "신랑측" | "신부측"; msg: string; time: string };
+type Row = { name: string; response: Resp; plus: string; side: string; msg: string; time: string };
+
+function relTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "방금 전";
+  if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}시간 전`;
+  return `${Math.floor(h / 24)}일 전`;
+}
+function toRow(r: RsvpRow): Row {
+  const resp: Resp = /참석|yes/i.test(r.response) ? "yes" : /불참|no/i.test(r.response) ? "no" : "maybe";
+  return { name: r.name, response: resp, plus: r.guests > 1 ? `+${r.guests - 1}` : "—", side: "—", msg: r.message || "—", time: relTime(r.createdAt) };
+}
 
 const ROWS: Row[] = [
   { name: "김서연", response: "yes", plus: "+2", side: "신부측", msg: "축하해요! 오랜만에 얼굴 볼 수 있겠네요 :)", time: "2분 전" },
@@ -40,8 +56,29 @@ const STATS = [
 export function RsvpClient() {
   const [chip, setChip] = useState("all");
   const [q, setQ] = useState("");
+  const [liveRows, setLiveRows] = useState<Row[] | null>(null);
 
-  const filtered = ROWS.filter((r) => {
+  // If opened as /rsvp?slug=… and we hold that invitation's owner token, load real responses.
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("slug")?.trim();
+    if (!slug) return;
+    let token = "";
+    try {
+      token = localStorage.getItem(`chodaekung:editor:token:${slug}`) || "";
+    } catch {
+      /* ignore */
+    }
+    if (!token) return;
+    listRsvpsAction(slug, token).then((res) => {
+      if (res.ok) setLiveRows(res.rows.map(toRow));
+    });
+  }, []);
+
+  const rows = liveRows ?? ROWS;
+  const countFor = (key: string) =>
+    key === "all" ? rows.length : key === "groom" ? rows.filter((r) => r.side === "신랑측").length : key === "bride" ? rows.filter((r) => r.side === "신부측").length : rows.filter((r) => r.response === key).length;
+
+  const filtered = rows.filter((r) => {
     const chipOk =
       chip === "all" ||
       chip === r.response ||
@@ -171,7 +208,7 @@ export function RsvpClient() {
           <div className="table-head">
             <div>
               <div className="chart-t">참석자 명단</div>
-              <div className="chart-s" style={{ marginTop: 4 }}>247 RESPONSES · LAST UPDATED 방금 전</div>
+              <div className="chart-s" style={{ marginTop: 4 }}>{liveRows ? `${rows.length} RESPONSES · LIVE` : "247 RESPONSES · LAST UPDATED 방금 전"}</div>
             </div>
             <div className="table-actions">
               <div className="search-mini">
@@ -186,7 +223,7 @@ export function RsvpClient() {
           <div className="filter-chips">
             {CHIPS.map((c) => (
               <button key={c.key} className={`fc${chip === c.key ? " active" : ""}`} onClick={() => setChip(c.key)}>
-                {c.label} <span className="c">{c.count}</span>
+                {c.label} <span className="c">{liveRows ? countFor(c.key) : c.count}</span>
               </button>
             ))}
           </div>
@@ -222,7 +259,7 @@ export function RsvpClient() {
             </table>
           </div>
           <div className="table-foot">
-            <div>SHOWING {filtered.length} OF 247</div>
+            <div>SHOWING {filtered.length} OF {liveRows ? rows.length : 247}</div>
             <div style={{ display: "flex", gap: 4 }}>
               <Button variant="ghost" size="sm">← 이전</Button>
               <Button variant="ghost" size="sm">다음 →</Button>

@@ -531,3 +531,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; `/i/jisoo-minjun` → primary CTA opens modal with 참석/미정/불참; submit without
   keys shows graceful "백엔드가 아직 설정되지 않았어요". Inserts for real when keys + a published row exist.
 - Next: host RSVP list — wire `/rsvp` dashboard to `listRsvps(slug, editToken)`.
+
+### 2026-09-05 — Backend: RSVP host list (dashboard) — RSVP loop complete
+
+- Scope: `/rsvp` reads real responses when opened as `/rsvp?slug=<slug>` and the owner token is in
+  localStorage (`listRsvpsAction` → `listRsvps`, edit_token verified). Otherwise the mock demo shows
+  (no regression). Chip counts / table header / footer reflect live data when live.
+- Decisions: mapped `RsvpRow` → the existing table Row (response label → yes/no/maybe, guests → +N,
+  relative time); `side` is "—" (simple schema has no bride/groom split). Stats cards + charts remain
+  illustrative demo. RSVP loop now closed: guest submits via ShareBar → DB → host sees it here.
+- Verified: `tsc` + `npm run build` clean; `/rsvp` (no slug) still renders the 9-row demo, no errors.

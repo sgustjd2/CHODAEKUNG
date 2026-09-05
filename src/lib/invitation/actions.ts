@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, type Visibility } from "./store";
 import type { Invitation, ThemeId } from "./types";
 
 function randomSlug(): string {
@@ -31,4 +31,9 @@ export async function publishInvitationAction(input: {
 /** Guest RSVP submission from a published invitation. */
 export async function submitRsvpAction(slug: string, entry: { name: string; response: string; guests?: number; message?: string }) {
   return submitRsvp(slug, entry);
+}
+
+/** Owner-only RSVP list (verifies the invitation's edit token). */
+export async function listRsvpsAction(slug: string, editToken: string) {
+  return listRsvps(slug, editToken);
 }
