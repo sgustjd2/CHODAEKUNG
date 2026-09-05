@@ -343,3 +343,23 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Follow-up required: yes — (1) `wizard.css` still has 2 nested `@keyframes` (wiz-fade-in,
   cep-slide-in) with the same latent bug — spawned as a separate task. (2) Mobile Layout/Animation
   timing controls are stubs; overlay slider is visual-only. (3) Save/publish still stubbed.
+
+### 2026-09-05 — Editor content editing expansion (desktop)
+
+- Scope: Expanded the desktop editor's Content tab from cover/message/location to also edit
+  **date, schedule, gallery, rsvp** (the romantic invitation's full section set). User picked
+  "에디터 편집 확장" as the next lane.
+- Decisions:
+  - Reused the existing `find`/`patch`/`Field` pattern; added `date`/`gallery`/`schedule`/`rsvp`
+    finds. Editors: date (eyebrow/title/D-day countdown days), schedule (eyebrow/title + per-item
+    time/title/desc with **add + remove**), gallery (eyebrow/title; image upload deferred), rsvp
+    (title/body/options — one per line). Also added a title field to the message editor.
+  - Rich titles collapse to plain text on edit (existing first-cut behavior; `plainTitle` +
+    `[[v]]`), consistent with the location editor. Schedule item add/remove mutate `content.items`
+    via `patch`, re-rendering the live preview.
+  - Small inspector CSS added (`.insp-subitem`/`.insp-subitem-head`/`.insp-add`).
+- Verified: `tsc` clean; at 1280px the Content tab shows all 7 groups; editing schedule item #1
+  title shows live in preview, "+ 일정 추가" adds a 5th item (visible in preview), RSVP options
+  textarea rewrites the preview's options (new options in, 미정 out). Reset viewport after.
+- Follow-up required: yes — mirror these editors in the mobile `ContentPanel` (next increment);
+  gallery image upload/reorder; rich-text (em) editing without collapsing.

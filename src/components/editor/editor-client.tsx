@@ -11,7 +11,7 @@ import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ACCENTS, COVER_PHOTOS, THEME_PRESETS, linesToText, metaFor, plainTitle, textToLines, type Mode } from "@/components/editor/editor-shared";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import type { CoverContent, Invitation, LocationContent, MessageContent, Section, SectionType } from "@/lib/invitation/types";
+import type { CoverContent, DateContent, GalleryContent, Invitation, LocationContent, MessageContent, RsvpContent, ScheduleContent, Section, SectionType } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -79,6 +79,12 @@ export function EditorClient() {
   const cover = find("cover");
   const message = find("message");
   const location = find("location");
+  const date = find("date");
+  const gallery = find("gallery");
+  const schedule = find("schedule");
+  const rsvp = find("rsvp");
+  /** Update one item in a section whose content has an `items` array. */
+  const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
   const previewStyle = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
 
   const api: EditorApi = {
@@ -234,6 +240,7 @@ export function EditorClient() {
                 {message && (
                   <div className="insp-group">
                     <h5>Message</h5>
+                    <Field label="제목" value={plainTitle(message.content.title)} onChange={(v) => patch(message.id, { title: [[v]] } satisfies Partial<MessageContent>)} />
                     <Field
                       label="본문"
                       textarea
@@ -249,12 +256,63 @@ export function EditorClient() {
                     <Field label="주소 · 설명" textarea value={linesToText(location.content.body)} onChange={(v) => patch(location.id, { body: textToLines(v) })} />
                   </div>
                 )}
-                {!cover && !message && !location && (
+                {date && (
+                  <div className="insp-group">
+                    <h5>Date</h5>
+                    <Field label="Eyebrow" value={date.content.eyebrow} onChange={(v) => patch(date.id, { eyebrow: v } satisfies Partial<DateContent>)} />
+                    <Field label="제목" value={plainTitle(date.content.title)} onChange={(v) => patch(date.id, { title: [[v]] } satisfies Partial<DateContent>)} />
+                    {date.content.countdown && (
+                      <Field
+                        label="D-day (남은 일수)"
+                        value={String(date.content.countdown.days)}
+                        onChange={(v) => patch(date.id, { countdown: { ...date.content.countdown!, days: Math.max(0, Number(v) || 0) } })}
+                      />
+                    )}
+                  </div>
+                )}
+                {schedule && (
+                  <div className="insp-group">
+                    <h5>Schedule</h5>
+                    <Field label="Eyebrow" value={schedule.content.eyebrow} onChange={(v) => patch(schedule.id, { eyebrow: v } satisfies Partial<ScheduleContent>)} />
+                    <Field label="제목" value={plainTitle(schedule.content.title)} onChange={(v) => patch(schedule.id, { title: [[v]] } satisfies Partial<ScheduleContent>)} />
+                    {schedule.content.items.map((it, i) => (
+                      <div key={i} className="insp-subitem">
+                        <div className="insp-subitem-head">
+                          <span>#{i + 1}</span>
+                          <button type="button" onClick={() => patchScheduleItems(schedule.id, schedule.content.items.filter((_, j) => j !== i))}>
+                            삭제
+                          </button>
+                        </div>
+                        <Field label="시간" value={it.time} onChange={(v) => patchScheduleItems(schedule.id, schedule.content.items.map((x, j) => (j === i ? { ...x, time: v } : x)))} />
+                        <Field label="제목" value={it.title} onChange={(v) => patchScheduleItems(schedule.id, schedule.content.items.map((x, j) => (j === i ? { ...x, title: v } : x)))} />
+                        <Field label="설명" value={it.desc} onChange={(v) => patchScheduleItems(schedule.id, schedule.content.items.map((x, j) => (j === i ? { ...x, desc: v } : x)))} />
+                      </div>
+                    ))}
+                    <button type="button" className="insp-add" onClick={() => patchScheduleItems(schedule.id, [...schedule.content.items, { time: "00:00", title: "새 일정", desc: "" }])}>
+                      + 일정 추가
+                    </button>
+                  </div>
+                )}
+                {gallery && (
+                  <div className="insp-group">
+                    <h5>Gallery</h5>
+                    <Field label="Eyebrow" value={gallery.content.eyebrow} onChange={(v) => patch(gallery.id, { eyebrow: v } satisfies Partial<GalleryContent>)} />
+                    <Field label="제목" value={plainTitle(gallery.content.title)} onChange={(v) => patch(gallery.id, { title: [[v]] } satisfies Partial<GalleryContent>)} />
+                    <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>사진 {gallery.content.images.length}장 · 이미지 업로드/교체는 곧 지원돼요.</p>
+                  </div>
+                )}
+                {rsvp && (
+                  <div className="insp-group">
+                    <h5>RSVP</h5>
+                    <Field label="제목" value={plainTitle(rsvp.content.title)} onChange={(v) => patch(rsvp.id, { title: [[v]] } satisfies Partial<RsvpContent>)} />
+                    <Field label="안내 문구" textarea value={linesToText(rsvp.content.body)} onChange={(v) => patch(rsvp.id, { body: textToLines(v) })} />
+                    <Field label="응답 옵션 (한 줄에 하나)" textarea value={rsvp.content.options.join("\n")} onChange={(v) => patch(rsvp.id, { options: v.split("\n").filter((o) => o.trim().length > 0) })} />
+                  </div>
+                )}
+                {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && (
                   <div className="insp-group">
                     <h5>Content</h5>
-                    <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>
-                      이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다. 지금은 커버·문구·장소 편집을 지원해요.
-                    </p>
+                    <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>
                   </div>
                 )}
               </>
