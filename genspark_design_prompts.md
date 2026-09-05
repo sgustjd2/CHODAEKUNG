@@ -4,11 +4,11 @@
 
 당신은 시니어 Product Designer이자 Mobile-first SaaS UX 전문가다.
 
-`모이레터(MOI LETTER)`라는 모바일 인터랙티브 초대장 제작 웹앱의 전체 UX/UI를 디자인하라.
+`초대쿵(CHODAE KUNG)`라는 모바일 인터랙티브 초대장 제작 웹앱의 전체 UX/UI를 디자인하라.
 
 제품 목적은 사용자가 디자인 지식 없이도 사진, 문구, 폰트, 색상, 장소, 일정, 갤러리, RSVP, 애니메이션을 조합해 모바일 초대장을 만들고 카카오톡이나 URL로 공유하게 하는 것이다.
 
-이 서비스는 모바일 청첩장의 감성적인 경험을 결혼식에 한정하지 않고 생일, 집들이, 돌잔치, 브라이덜 샤워, 송년회, 동호회, 파티, 세미나, 회사 행사 등 모든 모임으로 확장한다.
+이 서비스는 모바일 청첩장의 감성적인 경험을 결혼식에 한정하지 않고 생일, 집들이, 돌잔치, 브라이덜 샤워, 송년회, 동호회, 파티, 세미나, 회사 행사는 물론 러닝·배드민턴·등산·스터디·야구장 관람 같은 소모임 초대, 번개·정모·MT(여행)처럼 일정을 공유하는 모임, 그리고 반 대항 게임 배틀·반 대항 축구·조기축구 배틀 신청처럼 재미와 승부욕을 담은 대항전(배틀) 초대까지 모든 모임으로 확장한다.
 
 ### 핵심 UX 원칙
 - Mobile-first
@@ -21,8 +21,8 @@
 - 지나친 장식보다 whitespace, typography, photo, subtle motion으로 고급스럽게 표현
 
 ### Brand
-- Brand name: 모이레터 / MOI LETTER
-- Keyword: invitation, gathering, letter, moment, warm, playful, elegant
+- Brand name: 초대쿵 / CHODAE KUNG
+- Keyword: invitation, gathering, letter, moment, warm, playful, elegant, club/meetup, sports, versus, challenge, fun
 - Brand character: MOMO
 - MOMO는 작은 봉투/카드 모양의 둥근 캐릭터이며 봉투 flap이 머리나 귀처럼 보인다.
 - 얼굴은 작은 점 눈과 미소로 단순하게 표현한다.
@@ -33,13 +33,16 @@
 - Editorial + warm minimal
 - soft ivory / warm white base
 - charcoal text
-- peach, coral, lavender, sage 계열은 accent preset으로 활용
+- 전체 톤은 밝고 파스텔 중심(bright & airy). 어둡고 무거운 실링왁스/버건디/딥 마룬 계열은 기본 테마에서 지양한다.
+- accent preset: peach, coral, blush pink, lavender, sky blue, mint, sage, butter yellow — 모두 밝은 파스텔 채도로 유지
+- 봉투 wax-seal(heart seal) 모티브는 유지하되 어두운 왁스색이 아니라 밝은 파스텔(coral/blush 등)로 표현
 - radius 12~18px
 - subtle shadow
 - clean iconography
 - generous spacing
 - modern Korean typography
 - minimal but emotional
+- 어두운 테마는 기본이 아니라 옵션(다크 모드, Developer/Terminal 템플릿)에서만 사용
 
 ### 반드시 디자인할 Desktop/Web 화면
 1. Landing page
@@ -130,6 +133,7 @@ B. Minimal Birthday
 C. Cute Housewarming
 D. Editorial Party
 E. Developer / Terminal themed invitation
+F. Sports / Versus Battle (대항전·배틀 신청)
 
 Viewer의 기본 콘텐츠:
 - Cover
@@ -144,6 +148,17 @@ Viewer의 기본 콘텐츠:
 - RSVP
 - Share
 - Ending
+
+### 카테고리별 선택 콘텐츠 모듈 (필요한 것만 조합)
+초대 종류에 따라 아래 모듈을 켜고 끌 수 있어야 하며, 편집기에서 Section add로 추가·재정렬한다.
+
+- Timeline / Rundown (시간별 진행표): 예) 18:00 도착·환영 → 19:00 저녁 → 20:00 게임 → 21:00 마무리. 집들이·번개·정모·파티에 활용
+- Menu / Food (메뉴 구성): 오늘의 메뉴, 음식 리스트, 포트럭/준비물 분담
+- Trip Itinerary (여행·MT 일정): Day 1 / Day 2 일자별 일정, 이동·숙소·활동, 준비물, 회비
+- Versus Matchup (대항전·배틀): 팀 vs 팀, 경기 규칙, 배틀 수락/거절
+- Attendee / Roster (참가자 명단): 참석 인원, 역할·준비물 분담
+
+각 모듈은 카드형으로 디자인하고, 밝은 파스텔 톤과 subtle motion으로 감성과 재미를 함께 살린다.
 
 ### Viewer interaction
 - Scroll mode
@@ -186,7 +201,7 @@ Viewer의 기본 콘텐츠:
 
 ## 2. 캐릭터 디자인 프롬프트
 
-Design an original mascot character named `MOMO` for a Korean mobile invitation web app called `MOI LETTER`.
+Design an original mascot character named `MOMO` for a Korean mobile invitation web app called `CHODAE KUNG`.
 
 MOMO is a tiny rounded envelope / invitation card creature.
 The envelope flap subtly works like hair or ears.
@@ -230,7 +245,7 @@ Make the silhouette distinct enough to become a recognizable standalone brand as
 
 ## 3. 앱 아이콘 디자인 프롬프트
 
-Create an app icon for `MOI LETTER`, a mobile invitation creator.
+Create an app icon for `CHODAE KUNG`, a mobile invitation creator.
 
 Use the MOMO mascot as the central symbol.
 MOMO is a tiny rounded envelope creature with a simple smile.
@@ -264,7 +279,7 @@ Also show the selected icon as:
 
 ## 4. 초대장 템플릿 디자인 프롬프트
 
-Create five visually distinct mobile invitation templates for `MOI LETTER` while using exactly the same information architecture.
+Create five visually distinct mobile invitation templates for `CHODAE KUNG` while using exactly the same information architecture.
 
 Common sections:
 Cover → Invitation Message → Date → Countdown → Calendar → Location → Gallery → Schedule → Notice → RSVP → Share → Ending.
@@ -302,6 +317,14 @@ Template 5 — Developer / Terminal
 - command line inspired copy
 - calendar/countdown visualized as system UI
 - still polished enough for a real invitation
+
+Template 6 — Sports / Versus Battle
+- 대항전·배틀 신청 초대 (반 대항, 조기축구, 동호회 매치 등)
+- VS 매치업 레이아웃: 우리 팀 vs 상대 팀 (이름/로고/컬러)
+- 경기 일시·장소·규칙, 카운트다운을 스코어보드/전광판 스타일로 표현
+- RSVP 대신 "배틀 수락 / 거절" + 참가자 명단
+- 밝은 파스텔 기반이되 스포티하고 경쾌한 에너지, 승부욕을 자극하는 다이내믹 타이포
+- 과하지 않게, 실제 초대장으로도 손색없는 완성도 유지
 
 For every template, design both Scroll Mode and Story Mode.
 Keep all important information easy to read on a 390px-wide mobile viewport.

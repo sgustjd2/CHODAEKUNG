@@ -1,0 +1,37 @@
+project:
+  name: "CHODAE KUNG"
+  product_type: "mobile-first interactive invitation builder"
+
+source_of_truth:
+  product:
+    - "prd.md"
+  design_roots:
+    - "design/genspark"
+    - "design"
+  precedence:
+    - "latest_explicit_user_instruction"
+    - "latest_approved_genspark_design"
+    - "prd"
+    - "existing_codebase"
+    - "harness_rules"
+    - "assumptions"
+
+implementation:
+  component_first: true
+  allow_unrequested_redesign: false
+  allow_raw_html_as_invitation_source: false
+  require_component_registry: true
+  require_responsive_review: true
+  require_accessibility_review: true
+  prefer_existing_components: true
+
+quality_gates:
+  - "design_fidelity"
+  - "functional_alignment"
+  - "component_reuse"
+  - "responsive"
+  - "accessibility"
+  - "typecheck"
+  - "lint"
+  - "tests_when_available"
+  - "build_when_available"
