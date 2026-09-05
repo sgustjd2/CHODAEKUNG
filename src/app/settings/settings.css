@@ -1,0 +1,58 @@
+.settings { min-height: 100vh; background: var(--paper-2); }
+
+.set-top {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.set-logo { display: flex; align-items: center; text-decoration: none; }
+.set-logo svg.ck-logo { width: auto; height: 34px; }
+.set-crumb {
+  font-family: var(--font-en); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  margin-left: auto;
+}
+.set-crumb b { color: var(--ink); }
+.set-top > a:last-child { margin-left: 16px; }
+
+.set-wrap { max-width: 640px; margin: 0 auto; padding: 40px 24px 80px; }
+.set-head { margin-bottom: 28px; }
+.set-eb {
+  font-family: var(--font-en); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--wax-deep); margin-bottom: 8px;
+}
+.set-title { font-family: var(--font-ko); font-weight: 800; font-size: 38px; letter-spacing: -0.03em; margin: 0; color: var(--ink); }
+
+.set-card {
+  background: var(--card, #fff); border: 1px solid var(--line); border-radius: 18px;
+  padding: 24px 24px 22px; margin-bottom: 20px;
+}
+.set-card h2 { font-family: var(--font-ko); font-weight: 700; font-size: 17px; letter-spacing: -0.02em; margin: 0 0 18px; color: var(--ink); }
+
+.set-field { margin-bottom: 16px; }
+.set-field label { display: block; font-size: 13px; font-weight: 600; color: var(--fg-2, #4a4a5a); margin-bottom: 7px; }
+.set-input {
+  width: 100%; box-sizing: border-box;
+  font: inherit; font-size: 15px; color: var(--ink);
+  padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px;
+  background: #fff; transition: border-color 0.15s;
+}
+.set-input:focus { outline: none; border-color: var(--wax, #c96a6a); }
+.set-input.readonly { background: var(--paper-2); color: var(--muted); cursor: default; }
+.set-hint { font-size: 12px; color: var(--fg-3, #8a8a99); margin: 7px 0 0; line-height: 1.5; }
+
+.set-note { font-size: 13px; font-weight: 600; margin: 4px 0 12px; }
+.set-note.ok { color: var(--sage-deep, #5a7a58); }
+.set-note.err { color: var(--wax-deep, #a04547); }
+
+.set-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+@media (max-width: 560px) {
+  .set-top { padding: 12px 16px; }
+  .set-wrap { padding: 28px 16px 64px; }
+  .set-title { font-size: 30px; }
+  .set-card { padding: 20px 18px; border-radius: 16px; }
+}
