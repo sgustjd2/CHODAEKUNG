@@ -20,7 +20,7 @@ Handoff notes: `design/README.md`. Bundle archive: `design_handoff_chodaekung.zi
 | Landing | `design/02_landing.html` | ✅ implemented (`src/app/page.tsx` + `landing.css`) |
 | Template Gallery | `design/03_template_gallery.html` | ✅ implemented (`src/app/templates/`) |
 | Dashboard | `design/04_dashboard.html` | pending |
-| New Invitation Wizard | `design/05_new_invitation_wizard.html` | pending |
+| New Invitation Wizard | `design/05_new_invitation_wizard.html` | ✅ implemented (`src/app/new/`) |
 | Desktop Editor | `design/06_editor_desktop.html` | pending |
 | Mobile Editor | `design/07_editor_mobile.html` | pending |
 | Publish/Share | `design/08_publish_share.html` | pending |

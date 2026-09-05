@@ -50,3 +50,23 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc` clean; 8 sections / 35 cards / 8 nav pills render; head-title 60px/800; icons
   from sprite; modal opens with reactive mood toggle + live AI preview (opacity→1, ink heading).
 - Follow-up required: yes — build wizard (`/new`) so gallery CTAs resolve.
+
+### 2026-09-05 — New Invitation Wizard (screen 05)
+
+- Scope: Implemented `/new` — 4-step wizard (event type → basic info → template → ready),
+  34-event grid, custom-event panel, dynamic completion summary.
+- PRD reference: §6.1/§6.2 (creation + quick mode), §9 (categories/templates).
+- Genspark/design reference: `design/05_new_invitation_wizard.html`.
+- Decisions:
+  - Single client component `NewInvitationWizard` holds all wizard state; page CSS scoped under
+    `.wizard` (nesting), consistent with landing/gallery convention.
+  - Step-2 basic-info inputs are controlled so Step-4 summary reflects real values; event + template
+    selections also feed the summary.
+  - **`?event=` prefill**: `useSearchParams()` returned empty at effect time under Next 16 even
+    though `location.search` had the param, so read `window.location.search` in a mount effect
+    instead. This also removed the `<Suspense>` requirement. Verified prefill selects the custom
+    card, opens the panel, and fills the name (gallery → wizard flow now works end-to-end).
+  - Finish → `/editor` and top-bar close/logo → `/` (editor/dashboard screens not built yet).
+- Verified: `tsc` clean; 34 cards, stepper done/active states correct, step nav + scroll,
+  custom panel icon/mood/preview reactive, summary dynamic.
+- Follow-up required: yes — build editor (`/editor`, screen 06) and dashboard (`/dashboard`, 04).
