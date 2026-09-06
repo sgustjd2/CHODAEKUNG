@@ -115,6 +115,19 @@ export const romanticSample: Invitation = {
       },
     },
     {
+      id: "account",
+      type: "account",
+      content: {
+        eyebrow: "Gift",
+        title: [["마음 ", { text: "전하기", em: true }]],
+        note: "축하의 마음을 전하고 싶으신 분들을 위해 계좌를 안내드립니다.",
+        accounts: [
+          { side: "신랑측", bank: "○○은행", number: "000-0000-0000", holder: "김민준" },
+          { side: "신부측", bank: "○○은행", number: "000-0000-0000", holder: "이지수" },
+        ],
+      },
+    },
+    {
       id: "guestbook",
       type: "guestbook",
       content: {
