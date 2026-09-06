@@ -40,6 +40,9 @@ export function ShareBar({
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
   const [copied, setCopied] = useState(false);
+  const [guests, setGuests] = useState(1);
+  const [message, setMessage] = useState("");
+  const attending = resp === (options[0] ?? "참석");
 
   // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
   useEffect(() => {
@@ -99,7 +102,7 @@ export function ShareBar({
     }
     setState("sending");
     setErr("");
-    const res = await submitRsvpAction(slug, { name: name.trim(), response: resp });
+    const res = await submitRsvpAction(slug, { name: name.trim(), response: resp, guests: attending ? guests : 0, message: message.trim() });
     if (res.ok) {
       setState("done");
       // Let the on-invite attendee roster refresh immediately.
@@ -158,6 +161,20 @@ export function ShareBar({
                     ))}
                   </div>
                 </div>
+                {attending && (
+                  <div className="rsvp-field">
+                    <span>동반 인원 (본인 포함)</span>
+                    <div className="rsvp-step">
+                      <button type="button" aria-label="한 명 줄이기" onClick={() => setGuests((g) => Math.max(1, g - 1))}>−</button>
+                      <span className="rsvp-step-n">{guests}</span>
+                      <button type="button" aria-label="한 명 늘리기" onClick={() => setGuests((g) => Math.min(20, g + 1))}>+</button>
+                    </div>
+                  </div>
+                )}
+                <label className="rsvp-field">
+                  <span>전하고 싶은 말 (선택)</span>
+                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="축하 메시지나 전달 사항을 남겨주세요" rows={2} maxLength={200} />
+                </label>
                 {hasAttendees && (
                   <div style={{ fontSize: 12, color: "var(--muted, #8a8a95)", lineHeight: 1.5, marginBottom: 4 }}>
                     ‘참석’을 선택하면 이름이 초대장 참석자 명단에 표시돼요.
