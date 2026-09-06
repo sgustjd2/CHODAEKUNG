@@ -90,7 +90,18 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
   };
 
   const [menuSlug, setMenuSlug] = useState<string | null>(null);
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const onCopyLink = (slug: string) => {
+    try {
+      navigator.clipboard?.writeText(`${window.location.origin}/i/${slug}`);
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug((s) => (s === slug ? null : s)), 1500);
+    } catch {
+      /* clipboard blocked */
+    }
+  };
 
   const onDuplicate = async (slug: string) => {
     setMenuSlug(null);
@@ -274,6 +285,7 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
                         <>
                           <div onClick={() => setMenuSlug(null)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
                           <div style={{ position: "absolute", top: 40, right: 10, zIndex: 41, minWidth: 136, display: "flex", flexDirection: "column", gap: 1, padding: 6, background: "#fff", border: "1px solid var(--line)", borderRadius: 12, boxShadow: "0 12px 32px rgba(26,26,46,0.16)" }}>
+                            <button style={menuItem} disabled={c.status === "draft"} onClick={() => onCopyLink(c.slug!)}>{copiedSlug === c.slug ? "복사됨!" : "링크 복사"}</button>
                             <button style={menuItem} onClick={() => onDuplicate(c.slug!)}>복제</button>
                             <Link style={menuItem} href={`/rsvp?slug=${c.slug}`}>응답 보기</Link>
                             <button style={{ ...menuItem, color: "var(--wax-deep)" }} onClick={() => onDelete(c.slug!, c.title)}>삭제</button>
