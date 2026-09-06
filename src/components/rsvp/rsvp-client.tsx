@@ -9,7 +9,7 @@ import { listMyRsvpsAction, listRsvpsAction } from "@/lib/invitation/actions";
 import type { RsvpRow } from "@/lib/invitation/store";
 
 type Resp = "yes" | "no" | "maybe";
-type Row = { name: string; response: Resp; plus: string; side: string; msg: string; time: string };
+type Row = { name: string; response: Resp; plus: string; side: string; msg: string; time: string; guests?: number };
 
 function relTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -22,7 +22,7 @@ function relTime(iso: string): string {
 }
 function toRow(r: RsvpRow): Row {
   const resp: Resp = /참석|yes/i.test(r.response) ? "yes" : /불참|no/i.test(r.response) ? "no" : "maybe";
-  return { name: r.name, response: resp, plus: r.guests > 1 ? `+${r.guests - 1}` : "—", side: "—", msg: r.message || "—", time: relTime(r.createdAt) };
+  return { name: r.name, response: resp, plus: r.guests > 1 ? `+${r.guests - 1}` : "—", side: "—", msg: r.message || "—", time: relTime(r.createdAt), guests: r.guests };
 }
 
 const ROWS: Row[] = [
@@ -95,6 +95,8 @@ export function RsvpClient() {
   const nNo = rows.filter((r) => r.response === "no").length;
   const nMaybe = rows.filter((r) => r.response === "maybe").length;
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+  // Total attending headcount = sum of guest counts for 참석 (what catering needs), not just the response count.
+  const headcount = rows.filter((r) => r.response === "yes").reduce((s, r) => s + (r.guests ?? 1), 0);
 
   const countFor = (key: string) =>
     key === "all" ? rows.length : key === "groom" ? rows.filter((r) => r.side === "신랑측").length : key === "bride" ? rows.filter((r) => r.side === "신부측").length : rows.filter((r) => r.response === key).length;
@@ -113,7 +115,7 @@ export function RsvpClient() {
   const stats: Stat[] = isLive
     ? [
         { dark: true, lbl: "Total Responses", val: String(total), u: "", sub: <>실시간 집계</>, barW: "100%", barC: "var(--gold)" },
-        { dark: false, lbl: "참석 · Attend", val: String(nYes), u: "", sub: <>{pct(nYes)}% of total</>, barW: `${pct(nYes)}%`, barC: "var(--sage)", valC: "var(--sage-deep)" },
+        { dark: false, lbl: "참석 · Attend", val: String(nYes), u: "", sub: <>{pct(nYes)}% · 총 {headcount}명</>, barW: `${pct(nYes)}%`, barC: "var(--sage)", valC: "var(--sage-deep)" },
         { dark: false, lbl: "불참 · Decline", val: String(nNo), u: "", sub: <>{pct(nNo)}% of total</>, barW: `${pct(nNo)}%`, barC: "var(--wax)", valC: "var(--wax-deep)" },
         { dark: false, lbl: "미정 · Pending", val: String(nMaybe), u: "", sub: <>{pct(nMaybe)}% of total</>, barW: `${pct(nMaybe)}%`, barC: "var(--lilac)", valC: "var(--lilac-deep)" },
       ]
