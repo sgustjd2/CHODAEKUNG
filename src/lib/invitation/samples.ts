@@ -36,6 +36,8 @@ export function getInvitation(slug: string): Invitation {
 export function blankSection(type: SectionType): Section {
   const id = `${type}-${Date.now().toString(36)}`;
   switch (type) {
+    case "cover":
+      return { id, type, content: { image: "romantic_wedding", eyebrow: "", names: ["", ""], connector: "&", dateLabel: "" } };
     case "date":
       return { id, type, content: { eyebrow: "", title: [[""]] } };
     case "location":

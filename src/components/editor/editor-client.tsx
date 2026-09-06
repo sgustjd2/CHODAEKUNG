@@ -360,21 +360,17 @@ export function EditorClient() {
                     <Icon name={m.icon} />
                   </span>
                   <div className="sec-info">
-                    {s.type === "cover" ? (
-                      <div className="sec-name">{m.label}</div>
-                    ) : (
-                      <select
-                        className="sec-type-select"
-                        value={s.type}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
-                        title="섹션 종류 변경"
-                      >
-                        {(addableTypes.includes(s.type) ? addableTypes : [s.type, ...addableTypes]).map((t) => (
-                          <option key={t} value={t}>{metaFor(t).label}</option>
-                        ))}
-                      </select>
-                    )}
+                    <select
+                      className="sec-type-select"
+                      value={s.type}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
+                      title="섹션 종류 변경"
+                    >
+                      {Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type])).map((t) => (
+                        <option key={t} value={t}>{metaFor(t).label}</option>
+                      ))}
+                    </select>
                     <div className="sec-type">{s.type}</div>
                   </div>
                   <div className="sec-actions">
