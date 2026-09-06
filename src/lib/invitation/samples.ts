@@ -96,6 +96,8 @@ export function blankSection(type: SectionType): Section {
       return { id, type, content: { eyebrow: "", title: [[""]], cols: [] } };
     case "champions":
       return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
+    case "account":
+      return { id, type, content: { eyebrow: "", title: [[""]], note: "", accounts: [] } };
     default:
       return { id, type: "message", content: { eyebrow: "", title: [[""]], body: [""] } };
   }

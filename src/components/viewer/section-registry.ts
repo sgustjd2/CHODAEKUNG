@@ -73,6 +73,9 @@ import { DevGallery } from "./sections/developer/gallery";
 import { DevRsvp } from "./sections/developer/rsvp";
 import { DevEnding } from "./sections/developer/ending";
 
+// Shared (theme-agnostic) renderers
+import { AccountSection } from "./sections/account";
+
 // Gaming renderers
 import { GamingCover } from "./sections/gaming/cover";
 import { GamingInfo } from "./sections/gaming/info";
@@ -188,4 +191,17 @@ const gaming: ThemeSet = {
   ending: GamingEnding,
 };
 
-export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = { romantic, minimal, cute, editorial, developer, battle, timeline, gaming };
+// Sections every theme supports (rendered theme-agnostically). Spread last so a theme
+// could still override, and so it appears at the end of each theme's section palette.
+const common: ThemeSet = { account: AccountSection };
+
+export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = {
+  romantic: { ...romantic, ...common },
+  minimal: { ...minimal, ...common },
+  cute: { ...cute, ...common },
+  editorial: { ...editorial, ...common },
+  developer: { ...developer, ...common },
+  battle: { ...battle, ...common },
+  timeline: { ...timeline, ...common },
+  gaming: { ...gaming, ...common },
+};

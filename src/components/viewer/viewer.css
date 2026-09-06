@@ -125,6 +125,22 @@
 .gcover-split .gcover-sub { margin-left: auto; margin-right: auto; }
 
 /* ============================================================
+   ACCOUNT — "마음 전하기" (theme-agnostic neutral card, copy-to-clipboard)
+   ============================================================ */
+.iv-account { padding: 48px 28px; text-align: center; }
+.acc-eb { font-family: var(--font-en); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.acc-title { font-family: var(--font-serif); font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 8px; letter-spacing: -0.02em; }
+.acc-note { font-size: 14px; color: #666; line-height: 1.6; margin: 0 auto 24px; max-width: 30ch; }
+.acc-list { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+.acc-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 16px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.acc-info { min-width: 0; }
+.acc-side { display: inline-block; font-size: 11px; font-weight: 700; color: var(--wax-deep, #a04547); margin-bottom: 4px; }
+.acc-bank { font-size: 15px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.01em; word-break: break-all; }
+.acc-holder { font-size: 13px; color: #777; margin-top: 2px; }
+.acc-copy { flex-shrink: 0; padding: 9px 16px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.acc-copy:hover { background: var(--wax-deep, #c96a6a); }
+
+/* ============================================================
    THEME · ROMANTIC WEDDING
    ============================================================ */
 .iv.t-romantic {

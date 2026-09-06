@@ -678,3 +678,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - ShareBar shows a "캘린더" button (in the pill) only when eventStart exists; InvitationViewer passes
   eventStart + the location section's title. Verified: preview shows the button, .ics has correct
   DTSTART/SUMMARY, pill doesn't overflow.
+
+## "마음 전하기" (account) section — copy-to-clipboard bank accounts
+- New section type `account` (AccountContent: eyebrow/title/note + accounts[{side,bank,number,holder}]) —
+  the near-universal Korean invitation feature (축의금/부조금 계좌).
+- One theme-agnostic renderer (src/components/viewer/sections/account.tsx): a neutral info card with a
+  per-account "복사" button (navigator.clipboard). Registered for ALL themes via a `common` spread in
+  section-registry (also makes future shared sections easy). Styled top-level in viewer.css (.iv-account).
+- Editor: content editor (add/edit/remove accounts) mirroring the rules-list pattern; SECTION_META entry
+  (마음 전하기 / ic-heart) so it shows in the add menu + type-change for every theme. blankSection covers it.
+- Verified: offered in add menu, adds, editor edits, viewer renders the card + copy button with correct text.

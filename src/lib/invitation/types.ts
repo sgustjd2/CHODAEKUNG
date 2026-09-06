@@ -268,6 +268,14 @@ export type RosterContent = {
 };
 export type AcceptContent = { title: Line[]; sub: string; accept: string; decline: string };
 
+/** "마음 전하기" — gift/congratulatory bank accounts with copy-to-clipboard (Korean invitations). */
+export type AccountContent = {
+  eyebrow?: string;
+  title?: Line[];
+  note?: string;
+  accounts: { side?: string; bank: string; number: string; holder: string }[];
+};
+
 export type Section =
   | { id: string; type: "cover"; content: CoverContent }
   | { id: string; type: "message"; content: MessageContent }
@@ -295,6 +303,7 @@ export type Section =
   | { id: string; type: "champions"; content: ChampionsContent }
   | { id: string; type: "notice"; content: NoticeContent }
   | { id: string; type: "quote"; content: QuoteContent }
+  | { id: string; type: "account"; content: AccountContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

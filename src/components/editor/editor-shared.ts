@@ -30,6 +30,7 @@ export const SECTION_META: Partial<Record<SectionType, { label: string; icon: st
   lanes: { label: "라인업", icon: "ic-users" },
   tierChart: { label: "티어 분포", icon: "ic-grid" },
   champions: { label: "챔피언", icon: "ic-grid" },
+  account: { label: "마음 전하기", icon: "ic-heart" },
 };
 export const metaFor = (t: SectionType) => SECTION_META[t] ?? { label: t, icon: "ic-info" };
 

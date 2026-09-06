@@ -8,6 +8,7 @@ import { uploadPhoto } from "@/lib/db/upload";
 import { listMyMediaAction } from "@/lib/invitation/actions";
 import type {
   AcceptContent,
+  AccountContent,
   ChecklistContent,
   CostContent,
   CountdownContent,
@@ -72,6 +73,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
   const roster = find("roster");
   const menu = find("menu");
   const dayPlan = find("dayPlan");
+  const account = find("account");
 
   return (
     <>
@@ -244,6 +246,27 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
             </div>
           ))}
           <button type="button" className="insp-add" onClick={() => patch(rules.id, { rules: [...rules.content.rules, { t: "", d: "" }] })}>+ 규칙 추가</button>
+        </div>
+      )}
+      {account && (
+        <div className="insp-group">
+          <h5>마음 전하기</h5>
+          <Field label="Eyebrow" value={account.content.eyebrow ?? ""} onChange={(v) => patch(account.id, { eyebrow: v } satisfies Partial<AccountContent>)} />
+          <Field label="제목" value={plainTitle(account.content.title ?? [[""]])} onChange={(v) => patch(account.id, { title: [[v]] } satisfies Partial<AccountContent>)} />
+          <Field label="안내 문구" textarea value={account.content.note ?? ""} onChange={(v) => patch(account.id, { note: v } satisfies Partial<AccountContent>)} />
+          {account.content.accounts.map((a, i) => (
+            <div key={i} className="insp-subitem">
+              <div className="insp-subitem-head">
+                <span>#{i + 1}</span>
+                <button type="button" onClick={() => patch(account.id, { accounts: account.content.accounts.filter((_, j) => j !== i) })}>삭제</button>
+              </div>
+              <Field label="구분 (선택)" value={a.side ?? ""} onChange={(v) => patch(account.id, { accounts: account.content.accounts.map((x, j) => (j === i ? { ...x, side: v } : x)) })} />
+              <Field label="은행" value={a.bank} onChange={(v) => patch(account.id, { accounts: account.content.accounts.map((x, j) => (j === i ? { ...x, bank: v } : x)) })} />
+              <Field label="계좌번호" value={a.number} onChange={(v) => patch(account.id, { accounts: account.content.accounts.map((x, j) => (j === i ? { ...x, number: v } : x)) })} />
+              <Field label="예금주" value={a.holder} onChange={(v) => patch(account.id, { accounts: account.content.accounts.map((x, j) => (j === i ? { ...x, holder: v } : x)) })} />
+            </div>
+          ))}
+          <button type="button" className="insp-add" onClick={() => patch(account.id, { accounts: [...account.content.accounts, { side: "", bank: "", number: "", holder: "" }] })}>+ 계좌 추가</button>
         </div>
       )}
       {accept && (
