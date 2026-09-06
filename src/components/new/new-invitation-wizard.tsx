@@ -86,6 +86,17 @@ const CUSTOM_MOODS: { id: string; label: string; swatch: string }[] = [
   { id: "celebratory", label: "축하하게", swatch: "var(--gold-light)" },
 ];
 
+// Custom-event mood → the theme + accent the blank editor starts with, so the mood choice
+// actually shapes the invitation instead of being discarded.
+const MOOD_THEME: Record<string, { theme: string; accent: string }> = {
+  warm: { theme: "romantic", accent: "#E38B8B" },
+  playful: { theme: "cute", accent: "#F5D896" },
+  nature: { theme: "timeline", accent: "#B5CAB2" },
+  fresh: { theme: "minimal", accent: "#A0A8B8" },
+  elegant: { theme: "editorial", accent: "#2A2A3E" },
+  celebratory: { theme: "cute", accent: "#C96A6A" },
+};
+
 type StyleDef = { id: string; img?: string; blank?: boolean; cat: string; name: ReactNode; nameText: string };
 const STYLES: StyleDef[] = [
   { id: "1", img: "romantic_wedding", cat: "Romantic · Featured", name: <>Meadow <em>Love</em></>, nameText: "Meadow Love" },
@@ -149,8 +160,13 @@ export function NewInvitationWizard() {
   // and hand the typed basics to the editor via sessionStorage.
   const startEditor = () => {
     const eventName = event === "custom" ? customName : selectedEvent?.name ?? "";
+    // Custom events start blank; apply the picked mood as the starting theme + accent.
+    const moodStyle = event === "custom" ? MOOD_THEME[customMoods[0]] : undefined;
     try {
-      sessionStorage.setItem("chodaekung:wizard", JSON.stringify({ title, subtitle, date, time, location, eventName }));
+      sessionStorage.setItem(
+        "chodaekung:wizard",
+        JSON.stringify({ title, subtitle, date, time, location, eventName, theme: moodStyle?.theme, accent: moodStyle?.accent }),
+      );
     } catch {
       /* ignore */
     }

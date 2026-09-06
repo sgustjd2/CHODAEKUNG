@@ -41,7 +41,7 @@ export function getSampleOrNull(slug: string): Invitation | null {
  */
 /** A single empty section of the given type, for the editor's "add section" picker. */
 export function blankSection(type: SectionType): Section {
-  const id = `${type}-${Date.now().toString(36)}`;
+  const id = `${type}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   switch (type) {
     case "cover":
       return { id, type, content: { image: "romantic_wedding", eyebrow: "", names: ["", ""], connector: "&", dateLabel: "" } };
@@ -101,20 +101,38 @@ export function blankSection(type: SectionType): Section {
   }
 }
 
+/** A sensible starter section flow per theme (only types that theme actually renders). */
+const THEME_DEFAULT_SECTIONS: Record<ThemeId, SectionType[]> = {
+  romantic: ["cover", "message", "date", "location", "gallery", "schedule", "rsvp", "ending"],
+  minimal: ["cover", "message", "date", "location", "gallery", "rsvp", "ending"],
+  cute: ["cover", "date", "location", "notice", "gallery", "rsvp", "ending"],
+  editorial: ["cover", "message", "details", "location", "gallery", "rsvp", "ending"],
+  timeline: ["cover", "details", "timeline", "location", "accept", "ending"],
+  battle: ["cover", "versus", "matchInfo", "countdown", "location", "accept", "ending"],
+  gaming: ["cover", "gInfo", "countdown", "lanes", "location", "accept", "ending"],
+  developer: ["cover", "date", "location", "schedule", "rsvp", "ending"],
+};
+/** A theme-appropriate default cover photo (bundled asset id). */
+const THEME_COVER: Record<ThemeId, string> = {
+  romantic: "romantic_wedding",
+  minimal: "minimal_birthday",
+  cute: "cute_housewarming",
+  editorial: "editorial_party",
+  timeline: "timeline_gathering",
+  battle: "battle_sports",
+  gaming: "game_lol_rank",
+  developer: "developer_terminal",
+};
+
+/**
+ * A blank invitation for the "new" flow — the theme's natural section set with empty text,
+ * so a new invitation opens ready to fill (not pre-filled with a sample) and matches the
+ * chosen theme (its own sections + a theme-appropriate cover photo).
+ */
 export function blankInvitation(theme: ThemeId = "romantic"): Invitation {
-  return {
-    slug: "new",
-    theme,
-    shareCta: "참석 여부 전하기",
-    sections: [
-      { id: "cover", type: "cover", content: { image: "romantic_wedding", eyebrow: "", names: ["", ""], connector: "&", dateLabel: "" } },
-      { id: "message", type: "message", content: { eyebrow: "", title: [[""]], body: [""] } },
-      { id: "date", type: "date", content: { eyebrow: "", title: [[""]] } },
-      { id: "location", type: "location", content: { eyebrow: "", title: [[""]], body: [""], mapButtons: [] } },
-      { id: "gallery", type: "gallery", content: { eyebrow: "", title: [[""]], images: [] } },
-      { id: "schedule", type: "schedule", content: { eyebrow: "", title: [[""]], items: [] } },
-      { id: "rsvp", type: "rsvp", content: { eyebrow: "", title: [[""]], body: [""], options: ["참석", "미정", "불참"], defaultSelected: 0 } },
-      { id: "ending", type: "ending", content: { signature: "", names: "" } },
-    ],
-  };
+  const types = THEME_DEFAULT_SECTIONS[theme] ?? THEME_DEFAULT_SECTIONS.romantic;
+  const sections = types.map((t) => blankSection(t));
+  const cover = sections.find((s) => s.type === "cover");
+  if (cover && cover.type === "cover") cover.content.image = THEME_COVER[theme] ?? "romantic_wedding";
+  return { slug: "new", theme, shareCta: "참석 여부 전하기", sections };
 }

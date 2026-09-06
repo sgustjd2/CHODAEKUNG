@@ -657,3 +657,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   ["cover", ...addableTypes] so any section (incl. cover) can convert and it's reversible.
 - Limitation: converting between theme-specific types works only within a theme that renders both;
   a type the theme doesn't render is simply not offered.
+
+## Theme-aware blankInvitation + wizard mood → theme/accent
+- blankInvitation(theme) now builds the theme's OWN section set (THEME_DEFAULT_SECTIONS via
+  blankSection per type) + a theme-appropriate cover photo (THEME_COVER), instead of always the
+  romantic section set. romantic default is unchanged (backward compatible). Fixes blank-start for
+  non-romantic themes (previously unsupported sections rendered null).
+- The /new wizard's custom-event mood picker (따뜻하게/재미있게/…) was collected but discarded. It now
+  maps (MOOD_THEME) to a starting theme + accent, passed through the wizard→editor sessionStorage seed
+  (WizardSeed gained theme/accent); the editor applies them on a blank start. Verified: custom + a mood
+  opens the editor in that theme with the accent and the theme's section set.
+- blankSection ids gained a random suffix (batch-built sections can't collide).

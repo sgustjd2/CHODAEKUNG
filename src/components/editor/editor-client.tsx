@@ -17,7 +17,7 @@ import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
-import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
+import type { Invitation, Section, SectionType, ThemeId } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -28,7 +28,7 @@ const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
 /** Basics handed over from the /new wizard (one-shot, via sessionStorage). */
-type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string };
+type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string; theme?: ThemeId; accent?: string };
 function readWizardSeed(): WizardSeed | null {
   try {
     const raw = sessionStorage.getItem("chodaekung:wizard");
@@ -116,10 +116,14 @@ export function EditorClient() {
 
     const s = slugParam || "new";
     // No ?slug= means a brand-new invitation → start blank, not a filled sample.
-    let d = slugParam ? getInvitation(slugParam) : blankInvitation();
+    // Blank start uses the wizard's mood theme when provided, else the default blank.
+    let d = slugParam ? getInvitation(slugParam) : blankInvitation(wiz?.theme);
     // Wizard "처음부터" (blank) start: seed the typed title fresh; don't restore a prior "new" draft.
     const freshFromWizard = !slugParam && !!wiz;
-    if (freshFromWizard) applyWizardSeed(d, wiz!);
+    if (freshFromWizard) {
+      applyWizardSeed(d, wiz!);
+      if (wiz!.accent) setAccent(wiz!.accent);
+    }
     let loadedTitle: string | null = null;
     let hadLocalDraft = false;
     if (!freshFromWizard) {
