@@ -20,9 +20,16 @@ export const sampleInvitations: Record<string, Invitation> = {
   ...Object.fromEntries(gamingSamples.map((s) => [s.slug, s])),
 };
 
-/** Look up by slug; falls back to the romantic sample so any demo link renders. */
+/** Look up by slug; falls back to the romantic sample so any demo link renders.
+ * Used by the editor for template/slug seeding (always wants *something*). */
 export function getInvitation(slug: string): Invitation {
   return sampleInvitations[slug] ?? romanticSample;
+}
+
+/** Strict lookup: a curated sample, or null. Used by the public viewer so an
+ * unknown slug is a real 404 instead of silently showing the romantic sample. */
+export function getSampleOrNull(slug: string): Invitation | null {
+  return sampleInvitations[slug] ?? null;
 }
 
 /**

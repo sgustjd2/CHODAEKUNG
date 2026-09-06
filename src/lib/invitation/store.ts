@@ -1,5 +1,5 @@
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
-import { getInvitation as getSampleInvitation } from "./samples";
+import { getSampleOrNull } from "./samples";
 import type { Invitation, ThemeId } from "./types";
 
 /**
@@ -11,17 +11,21 @@ export type Visibility = "draft" | "unlisted" | "published";
 
 export type RsvpRow = { id: string; name: string; response: string; guests: number; message: string; createdAt: string };
 
-/** Public read for the share page: a live (published/unlisted) DB row, else the sample fallback. */
-export async function getPublishedInvitation(slug: string): Promise<Invitation> {
+/**
+ * Public read for the share page: a live (published/unlisted) DB row, or null (→ 404).
+ * With a DB, the DB is the source of truth — an unknown/deleted/draft slug is not found
+ * (never a stray sample). With no DB (local/demo), only curated sample slugs resolve.
+ */
+export async function getPublishedInvitation(slug: string): Promise<Invitation | null> {
   if (isDbEnabled()) {
     const { data, error } = await getServiceClient()
       .from("invitations")
       .select("data, visibility")
       .eq("slug", slug)
       .maybeSingle();
-    if (!error && data && data.visibility !== "draft") return data.data as Invitation;
+    return !error && data && data.visibility !== "draft" ? (data.data as Invitation) : null;
   }
-  return getSampleInvitation(slug);
+  return getSampleOrNull(slug);
 }
 
 /**

@@ -35,10 +35,10 @@ Server-only, service-role access; app falls back to bundled samples when unconfi
 |---|---|---|
 | Schema | `supabase/migrations/0001_init.sql` | `invitations` (slug PK, data jsonb, visibility, secret `edit_token`) + `rsvps`; RLS on with public-read-live + anon-rsvp-insert policies; writes are server-only |
 | Server client | `src/lib/db/client.ts` | `isDbEnabled()` / `getServiceClient()` (service role, bypasses RLS). Never import client-side |
-| Data store | `src/lib/invitation/store.ts` | `getPublishedInvitation` (DB→sample fallback), `upsertInvitation` (edit_token owner check), `submitRsvp`, `listRsvps` |
+| Data store | `src/lib/invitation/store.ts` | `getPublishedInvitation` (live DB row or `null`→404; curated samples only in no-DB demo), `upsertInvitation` (edit_token owner check), `submitRsvp`, `listRsvps` |
 | Env | `.env.example` | `NEXT_PUBLIC_SUPABASE_URL` / `_ANON_KEY` + server-only `SUPABASE_SERVICE_ROLE_KEY` |
 
-Viewer route `/i/[slug]` now `await getPublishedInvitation(slug)` (dynamic, server-rendered).
+Viewer route `/i/[slug]` now `await getPublishedInvitation(slug)` (dynamic, server-rendered); an unknown/deleted/draft slug calls `notFound()` → branded `src/app/not-found.tsx`.
 
 ## Invitation viewer + section renderer (CLAUDE.md §7.3)
 
