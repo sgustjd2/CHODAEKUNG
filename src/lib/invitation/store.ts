@@ -10,6 +10,36 @@ import type { Invitation, ThemeId } from "./types";
 export type Visibility = "draft" | "unlisted" | "published";
 
 export type RsvpRow = { id: string; name: string; response: string; guests: number; message: string; createdAt: string };
+export type GuestbookRow = { id: string; name: string; message: string; createdAt: string };
+
+/** Is this invitation live (published/unlisted)? Gates the public guestbook read/write. */
+async function isLiveInvitation(slug: string): Promise<boolean> {
+  const { data } = await getServiceClient().from("invitations").select("visibility").eq("slug", slug).maybeSingle();
+  return !!data && (data.visibility === "published" || data.visibility === "unlisted");
+}
+
+/** Public: post a congratulatory message to a live invitation's guestbook. */
+export async function submitGuestbookEntry(slug: string, entry: { name: string; message: string }): Promise<{ ok: boolean; error?: string }> {
+  if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
+  if (!entry.message.trim()) return { ok: false, error: "메시지를 입력해주세요" };
+  if (!(await isLiveInvitation(slug))) return { ok: false, error: "발행된 초대장에만 남길 수 있어요" };
+  const { error } = await getServiceClient().from("guestbook").insert({ invitation_slug: slug, name: entry.name, message: entry.message });
+  return error ? { ok: false, error: error.message } : { ok: true };
+}
+
+/** Public: read a live invitation's guestbook messages (newest first). */
+export async function listGuestbook(slug: string): Promise<GuestbookRow[]> {
+  if (!isDbEnabled()) return [];
+  if (!(await isLiveInvitation(slug))) return [];
+  const { data, error } = await getServiceClient()
+    .from("guestbook")
+    .select("id, name, message, created_at")
+    .eq("invitation_slug", slug)
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) return [];
+  return (data ?? []).map((r) => ({ id: r.id, name: r.name, message: r.message, createdAt: r.created_at }));
+}
 
 /**
  * Public read for the share page: a live (published/unlisted) DB row, or null (→ 404).

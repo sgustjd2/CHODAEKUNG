@@ -11,6 +11,7 @@ import type {
   AccountContent,
   ChecklistContent,
   DdayContent,
+  GuestbookContent,
   CostContent,
   CountdownContent,
   CoverContent,
@@ -76,6 +77,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
   const dayPlan = find("dayPlan");
   const account = find("account");
   const dday = find("dday");
+  const guestbook = find("guestbook");
 
   return (
     <>
@@ -278,6 +280,17 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
           <Field label="제목" value={plainTitle(dday.content.title ?? [[""]])} onChange={(v) => patch(dday.id, { title: [[v]] } satisfies Partial<DdayContent>)} />
           <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
             카운트다운은 “내용” 탭 하단의 <b>행사 일시</b>를 기준으로 자동 계산돼요. 행사 일시를 설정해 주세요.
+          </div>
+        </div>
+      )}
+      {guestbook && (
+        <div className="insp-group">
+          <h5>방명록</h5>
+          <Field label="Eyebrow" value={guestbook.content.eyebrow ?? ""} onChange={(v) => patch(guestbook.id, { eyebrow: v } satisfies Partial<GuestbookContent>)} />
+          <Field label="제목" value={plainTitle(guestbook.content.title ?? [[""]])} onChange={(v) => patch(guestbook.id, { title: [[v]] } satisfies Partial<GuestbookContent>)} />
+          <Field label="안내 문구" textarea value={guestbook.content.note ?? ""} onChange={(v) => patch(guestbook.id, { note: v } satisfies Partial<GuestbookContent>)} />
+          <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+            방문객이 남긴 축하 메시지는 발행된 초대장에서 자동으로 모여 표시돼요. (백엔드·마이그레이션 필요)
           </div>
         </div>
       )}

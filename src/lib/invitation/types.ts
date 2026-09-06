@@ -271,6 +271,9 @@ export type AcceptContent = { title: Line[]; sub: string; accept: string; declin
 /** Live D-Day countdown to the invitation's eventStart (target injected by the viewer). */
 export type DdayContent = { eyebrow?: string; title?: Line[] };
 
+/** 방명록 header — messages themselves live in the DB (submitted by guests), not in the invitation. */
+export type GuestbookContent = { eyebrow?: string; title?: Line[]; note?: string };
+
 /** "마음 전하기" — gift/congratulatory bank accounts with copy-to-clipboard (Korean invitations). */
 export type AccountContent = {
   eyebrow?: string;
@@ -308,6 +311,7 @@ export type Section =
   | { id: string; type: "quote"; content: QuoteContent }
   | { id: string; type: "account"; content: AccountContent }
   | { id: string; type: "dday"; content: DdayContent }
+  | { id: string; type: "guestbook"; content: GuestbookContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];

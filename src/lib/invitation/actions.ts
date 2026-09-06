@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, submitGuestbookEntry, listGuestbook, type Visibility } from "./store";
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
@@ -68,6 +68,16 @@ export async function deleteInvitationAction(slug: string) {
 /** Guest RSVP submission from a published invitation. */
 export async function submitRsvpAction(slug: string, entry: { name: string; response: string; guests?: number; message?: string }) {
   return submitRsvp(slug, entry);
+}
+
+/** Public: post a guestbook message to a live invitation. */
+export async function submitGuestbookAction(slug: string, entry: { name: string; message: string }) {
+  return submitGuestbookEntry(slug, entry);
+}
+
+/** Public: read a live invitation's guestbook messages. */
+export async function listGuestbookAction(slug: string) {
+  return { ok: true as const, rows: await listGuestbook(slug) };
 }
 
 /** Owner-only RSVP list (verifies the invitation's edit token). */

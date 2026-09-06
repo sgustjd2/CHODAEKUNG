@@ -697,3 +697,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   dday render to inject target (registry renderers only receive `content`).
 - State starts null → no SSR/hydration mismatch; renders nothing when eventStart is unset (editor hints to
   set 행사 일시). SECTION_META + blankSection cover it. Verified: ticks live, correct numbers, graceful when unset.
+
+## 방명록 (guestbook) section — guest congratulatory messages (DB-backed)
+- New `guestbook` section (GuestbookContent = eyebrow/title/note header; messages live in the DB).
+- Persistence mirrors RSVP: migration 0005_guestbook.sql (guestbook table + FK + anon insert & public-read
+  policies gated to live invitations). store: submitGuestbookEntry / listGuestbook (service role, gated by
+  isLiveInvitation). actions: submitGuestbookAction / listGuestbookAction (both public).
+- Viewer GuestbookSection (client): fetches messages on the live page, posts new ones, optimistic append.
+  slug optional + `noDb` guard so preview/editor (and the registry render path) stay DB-free and previewable.
+  Registered via `common` spread; InvitationViewer special-cases the render to pass slug + preview(||contained).
+- Editor: header content editor + SECTION_META (방명록 / ic-message). blankSection covers it.
+- USER STEP: run supabase/migrations/0005_guestbook.sql for the guestbook to persist live (like 0003/0004).
+- Verified (client/preview path): addable, renders form + empty state, optimistic message card on submit.

@@ -1,9 +1,10 @@
 import { Fragment } from "react";
 import type { ComponentType, CSSProperties } from "react";
-import type { CoverContent, DdayContent, Invitation } from "@/lib/invitation/types";
+import type { CoverContent, DdayContent, GuestbookContent, Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { GenericCover } from "./sections/generic-cover";
 import { DdaySection } from "./sections/dday";
+import { GuestbookSection } from "./sections/guestbook";
 import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
@@ -69,6 +70,9 @@ export function InvitationViewer({
           ) : s.type === "dday" ? (
             // Live countdown needs the invitation's canonical datetime, which the registry render can't pass.
             <DdaySection content={s.content as DdayContent} target={invitation.eventStart} />
+          ) : s.type === "guestbook" ? (
+            // Guestbook needs the slug (DB reads/writes) + preview flag, which the registry render can't pass.
+            <GuestbookSection content={s.content as GuestbookContent} slug={invitation.slug} preview={preview || contained} />
           ) : Renderer ? (
             <Renderer content={s.content} index={i} />
           ) : null;
