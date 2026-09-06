@@ -126,6 +126,15 @@ export const romanticSample: Invitation = {
       },
     },
     {
+      id: "attendees",
+      type: "attendees",
+      content: {
+        eyebrow: "Guest List",
+        title: [["함께하는 ", { text: "분들", em: true }]],
+        note: "참석해주시는 분들이 실시간으로 채워져요.",
+      },
+    },
+    {
       id: "account",
       type: "account",
       content: {
