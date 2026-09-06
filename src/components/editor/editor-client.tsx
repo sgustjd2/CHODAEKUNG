@@ -373,12 +373,6 @@ export function EditorClient() {
                     <div className="sec-type">{s.type}</div>
                   </div>
                   <div className="sec-actions">
-                    <button title="위로" disabled={i === 0} onClick={(e) => { e.stopPropagation(); move(i, i - 1); }}>
-                      <Icon name="ic-chevron-up" />
-                    </button>
-                    <button title="아래로" disabled={i === draft.sections.length - 1} onClick={(e) => { e.stopPropagation(); move(i, i + 1); }}>
-                      <Icon name="ic-chevron-down" />
-                    </button>
                     <button title="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
                       <Icon name={hidden.has(s.id) ? "ic-eye" : "ic-eye-off"} />
                     </button>

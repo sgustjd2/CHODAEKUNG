@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <radialGradient id="wax" cx="35%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#A04547"/>
+      <stop offset="45%" stop-color="#7B2D2E"/>
+      <stop offset="100%" stop-color="#5C1F20"/>
+    </radialGradient>
+  </defs>
+  <!-- Irregular pressed-wax seal -->
+  <path d="M 60 8 C 76 8, 88 12, 96 20 C 104 22, 108 32, 108 44 C 112 52, 110 66, 104 76 C 106 88, 96 100, 84 104 C 76 112, 60 114, 48 110 C 36 114, 22 108, 16 96 C 8 90, 4 76, 8 64 C 4 52, 10 36, 20 28 C 24 16, 40 8, 60 8 Z" fill="url(#wax)"/>
+  <circle cx="60" cy="60" r="42" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="1.5"/>
+  <!-- 쿵 in cream for legibility at small sizes (system Korean font fallback) -->
+  <text x="60" y="80" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-weight="900" font-size="58" fill="#F5E6D3">쿵</text>
+</svg>
