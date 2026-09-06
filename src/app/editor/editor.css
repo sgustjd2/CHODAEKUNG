@@ -242,7 +242,7 @@
   .share-btn.native .ic { background: var(--sage-light); color: var(--sage-deep); }
   .share-btn .sub-t { font-family: var(--font-en); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; font-weight: 600; }
 
-  .pub-foot { display: flex; gap: 8px; padding: 16px 0 4px; border-top: 1px solid var(--line); margin-top: auto; position: sticky; bottom: 0; background: var(--card); }
+  .pub-foot { display: flex; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); margin-top: auto; }
 
   @media (max-width: 800px) {
     padding: 0;
