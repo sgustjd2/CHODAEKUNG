@@ -1,4 +1,4 @@
-import type { Invitation, ThemeId } from "./types";
+import type { Invitation, Section, SectionType, ThemeId } from "./types";
 import { romanticSample } from "./sample-romantic";
 import { minimalSample } from "./sample-minimal";
 import { cuteSample } from "./sample-cute";
@@ -32,6 +32,27 @@ export function getInvitation(slug: string): Invitation {
  * keeps the standard 참석/미정/불참 choices since those are functional, not text
  * the user has to delete.
  */
+/** A single empty section of the given type, for the editor's "add section" picker. */
+export function blankSection(type: SectionType): Section {
+  const id = `${type}-${Date.now().toString(36)}`;
+  switch (type) {
+    case "date":
+      return { id, type, content: { eyebrow: "", title: [[""]] } };
+    case "location":
+      return { id, type, content: { eyebrow: "", title: [[""]], body: [""], mapButtons: [] } };
+    case "gallery":
+      return { id, type, content: { eyebrow: "", title: [[""]], images: [] } };
+    case "schedule":
+      return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
+    case "rsvp":
+      return { id, type, content: { eyebrow: "", title: [[""]], body: [""], options: ["참석", "미정", "불참"], defaultSelected: 0 } };
+    case "ending":
+      return { id, type, content: { signature: "", names: "" } };
+    default:
+      return { id, type: "message", content: { eyebrow: "", title: [[""]], body: [""] } };
+  }
+}
+
 export function blankInvitation(theme: ThemeId = "romantic"): Invitation {
   return {
     slug: "new",

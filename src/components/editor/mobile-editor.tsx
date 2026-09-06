@@ -5,8 +5,9 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
-import type { Invitation, Section } from "@/lib/invitation/types";
+import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { themeRegistry } from "@/components/viewer/section-registry";
+import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
 /** Shared editor state/actions, owned by EditorClient and consumed by both layouts. */
 export type EditorApi = {
@@ -22,7 +23,7 @@ export type EditorApi = {
   setAccent: (c: string) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
-  addSection: () => void;
+  addSection: (type: SectionType) => void;
   reorder: (to: number) => void;
   dragIndex: { current: number | null };
   cover?: Extract<Section, { type: "cover" }>;
@@ -188,13 +189,32 @@ function DesignPanel({ api }: { api: EditorApi }) {
 
 function SectionsPanel({ api }: { api: EditorApi }) {
   const { draft, selectedId, setSelectedId, addSection, reorder, dragIndex } = api;
+  const [pick, setPick] = useState(false);
+  const addableTypes = ADDABLE_SECTIONS.filter((t) => themeRegistry[draft.theme]?.[t]);
   return (
     <>
       <div className="m-sec-add-row">
-        <button type="button" className="btn btn-primary btn-sm" onClick={addSection}>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => setPick((v) => !v)}>
           + 섹션 추가
         </button>
       </div>
+      {pick && (
+        <div className="m-sec-pick" style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "0 0 12px" }}>
+          {addableTypes.map((t) => {
+            const m = metaFor(t);
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => { addSection(t); setPick(false); }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--paper-2, #f0ece4)", border: "1px solid var(--line)", borderRadius: 999, padding: "8px 12px", font: "inherit", fontSize: 13, fontWeight: 600, color: "var(--ink)", cursor: "pointer" }}
+              >
+                <Icon name={m.icon} /> {m.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
       <div className="m-sec-list">
         {draft.sections.map((s, i) => {
           const m = metaFor(s.type);

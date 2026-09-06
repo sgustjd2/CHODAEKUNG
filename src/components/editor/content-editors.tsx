@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { linesToText, plainTitle, textToLines } from "./editor-shared";
+import { COVER_PHOTOS, linesToText, plainTitle, textToLines } from "./editor-shared";
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
@@ -82,6 +82,18 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
             <Field key={i} label={`이름 ${i + 1}`} value={n} onChange={(v) => patch(cover.id, { names: cover.content.names!.map((x, j) => (j === i ? v : x)) })} />
           ))}
           <Field label="날짜 표기" value={cover.content.dateLabel ?? ""} onChange={(v) => patch(cover.id, { dateLabel: v })} />
+          <div style={{ fontSize: 12, fontWeight: 600, color: "var(--fg-2, #4a4a5a)", margin: "14px 0 8px" }}>커버 사진</div>
+          <div className="cover-thumbs">
+            {/^https?:\/\//.test(cover.content.image) && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cover.content.image} alt="" className="cover-thumb active" />
+            )}
+            {COVER_PHOTOS.map((p) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={p} src={`/assets/photos/${p}.jpg`} alt="" className={`cover-thumb${cover.content.image === p ? " active" : ""}`} onClick={() => patch(cover.id, { image: p } satisfies Partial<CoverContent>)} />
+            ))}
+          </div>
+          <PhotoUpload onUploaded={(url) => patch(cover.id, { image: url } satisfies Partial<CoverContent>)} label="+ 커버 사진 업로드" />
         </div>
       )}
       {message && (

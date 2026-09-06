@@ -10,9 +10,10 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import { blankInvitation, getInvitation } from "@/lib/invitation/samples";
+import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
@@ -72,6 +73,7 @@ export function EditorClient() {
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [accent, setAccent] = useState<string | null>(null);
   const [pubOpen, setPubOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
   const [editToken, setEditToken] = useState<string | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
@@ -171,6 +173,8 @@ export function EditorClient() {
   }, [hydrated, slug, draft, title, hidden, accent]);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
+  // Section types the current theme can actually render (for the add-section picker).
+  const addableTypes = ADDABLE_SECTIONS.filter((t) => themeRegistry[draft.theme]?.[t]);
   const find = <T extends SectionType>(t: T) =>
     draft.sections.find((s) => s.type === t) as Extract<Section, { type: T }> | undefined;
 
@@ -198,15 +202,8 @@ export function EditorClient() {
       s.splice(i + 1, 0, clone);
       return { ...d, sections: s };
     });
-  const addSection = () =>
-    setDraft((d) => {
-      const s: Section = {
-        id: `message-${Date.now().toString(36)}`,
-        type: "message",
-        content: { eyebrow: "", title: [[""]], body: [""] },
-      };
-      return { ...d, sections: [...d.sections, s] };
-    });
+  const addSection = (type: SectionType) =>
+    setDraft((d) => ({ ...d, sections: [...d.sections, blankSection(type)] }));
   const reorder = (to: number) => {
     const from = dragIndex.current;
     dragIndex.current = null;
@@ -294,9 +291,31 @@ export function EditorClient() {
         <aside className="col-sections">
           <div className="col-head">
             <h4>Sections</h4>
-            <button className="add-section" title="섹션 추가" onClick={addSection}>
-              <Icon name="ic-plus" />
-            </button>
+            <div style={{ position: "relative" }}>
+              <button className="add-section" title="섹션 추가" onClick={() => setAddOpen((v) => !v)}>
+                <Icon name="ic-plus" />
+              </button>
+              {addOpen && (
+                <>
+                  <div onClick={() => setAddOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
+                  <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 41, minWidth: 164, background: "#fff", border: "1px solid var(--line)", borderRadius: 12, boxShadow: "0 12px 32px rgba(26,26,46,0.16)", padding: 6, display: "flex", flexDirection: "column", gap: 1 }}>
+                    {addableTypes.map((t) => {
+                      const m = metaFor(t);
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => { addSection(t); setAddOpen(false); }}
+                          style={{ display: "flex", alignItems: "center", gap: 8, textAlign: "left", background: "none", border: "none", cursor: "pointer", font: "inherit", fontSize: 13, fontWeight: 600, color: "var(--ink)", padding: "9px 10px", borderRadius: 8 }}
+                        >
+                          <Icon name={m.icon} /> {m.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           <div className="sec-list">
             {draft.sections.map((s, i) => {

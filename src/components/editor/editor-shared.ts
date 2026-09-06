@@ -52,6 +52,9 @@ export const REVEALS: { id: RevealAnim; label: string }[] = [
   { id: "scale", label: "Scale Reveal" },
 ];
 
+/** Section types offered by the editor's "add section" picker (filtered by theme support at use). */
+export const ADDABLE_SECTIONS: SectionType[] = ["message", "date", "location", "gallery", "schedule", "rsvp", "ending"];
+
 export type Mode = "scroll" | "story" | "magazine";
 
 // --- Line[] <-> plain text helpers (edits lose emphasis; acceptable for the first cut) ---
