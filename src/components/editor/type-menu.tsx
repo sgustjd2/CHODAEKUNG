@@ -26,6 +26,7 @@ export function TypeMenu({
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggle = () => {
     if (!open && btnRef.current) {
@@ -43,12 +44,17 @@ export function TypeMenu({
 
   useEffect(() => {
     if (!open) return;
-    const close = () => setOpen(false);
-    window.addEventListener("scroll", close, true);
-    window.addEventListener("resize", close);
+    // Close when the page/list scrolls, but NOT when scrolling inside the menu itself.
+    const onScroll = (e: Event) => {
+      if (menuRef.current && e.target instanceof Node && menuRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
+    const onResize = () => setOpen(false);
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
     return () => {
-      window.removeEventListener("scroll", close, true);
-      window.removeEventListener("resize", close);
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onResize);
     };
   }, [open]);
 
@@ -73,7 +79,7 @@ export function TypeMenu({
         createPortal(
           <>
             <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 200 }} />
-            <div className="type-menu" role="listbox" style={{ position: "fixed", top: pos.top, left: pos.left, zIndex: 201 }}>
+            <div ref={menuRef} className="type-menu" role="listbox" style={{ position: "fixed", top: pos.top, left: pos.left, zIndex: 201 }}>
               {options.map((t) => (
                 <button
                   key={t}
