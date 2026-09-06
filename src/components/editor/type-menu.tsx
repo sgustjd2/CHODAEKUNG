@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@/components/ui/icon";
 import { metaFor } from "./editor-shared";
@@ -58,6 +59,39 @@ export function TypeMenu({
     };
   }, [open]);
 
+  // Keyboard a11y (a native <select> gave this for free): focus the selected/first option on open.
+  useEffect(() => {
+    if (!open) return;
+    const el = menuRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLButtonElement>(".type-menu-item");
+    (el.querySelector<HTMLButtonElement>(".type-menu-item.active") ?? items[0])?.focus();
+  }, [open]);
+
+  const onMenuKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    const el = menuRef.current;
+    if (!el) return;
+    const items = [...el.querySelectorAll<HTMLButtonElement>(".type-menu-item")];
+    const i = items.indexOf(document.activeElement as HTMLButtonElement);
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+      requestAnimationFrame(() => btnRef.current?.focus());
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      items[Math.min(i + 1, items.length - 1)]?.focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      items[Math.max(i - 1, 0)]?.focus();
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === "End") {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    }
+  };
+
   return (
     <>
       <button
@@ -79,7 +113,7 @@ export function TypeMenu({
         createPortal(
           <>
             <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 200 }} />
-            <div ref={menuRef} className="type-menu" role="listbox" style={{ position: "fixed", top: pos.top, left: pos.left, zIndex: 201 }}>
+            <div ref={menuRef} className="type-menu" role="listbox" onKeyDown={onMenuKeyDown} style={{ position: "fixed", top: pos.top, left: pos.left, zIndex: 201 }}>
               {options.map((t) => (
                 <button
                   key={t}
@@ -90,6 +124,7 @@ export function TypeMenu({
                   onClick={() => {
                     onChange(t);
                     setOpen(false);
+                    requestAnimationFrame(() => btnRef.current?.focus());
                   }}
                 >
                   <Icon name={metaFor(t).icon} width={16} height={16} style={{ flexShrink: 0 }} />
