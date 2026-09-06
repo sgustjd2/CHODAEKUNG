@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
-import { QrCode } from "@/components/ui/qr-code";
+import { QrCode, downloadQrPng } from "@/components/ui/qr-code";
+import { ensureKakao, kakaoEnabled } from "@/lib/kakao";
+import { photoUrl } from "@/lib/photo";
 import { publishInvitationAction } from "@/lib/invitation/actions";
 import type { Invitation, Line } from "@/lib/invitation/types";
 
@@ -81,6 +83,36 @@ export function PublishDialog({
       copy();
     }
   };
+  // Real KakaoTalk share (falls back to copying the link when the Kakao key isn't set).
+  const shareKakao = async () => {
+    if (!kakaoEnabled()) {
+      copy();
+      setMsg({ ok: true, text: "링크를 복사했어요. (카카오 공유는 키 설정 후 동작해요)" });
+      return;
+    }
+    const K = await ensureKakao();
+    if (!K) {
+      copy();
+      return;
+    }
+    const rel = photoUrl(coverImage(invitation));
+    const imageUrl = /^https?:\/\//.test(rel) ? rel : `${origin || "https://chodaekung.com"}${rel}`;
+    try {
+      K.Share.sendDefault({
+        objectType: "feed",
+        content: {
+          title: title || "초대합니다",
+          description: desc,
+          imageUrl,
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+        },
+        buttons: [{ title: "초대장 열기", link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
+      });
+    } catch {
+      copy();
+    }
+  };
+  const saveQrPng = () => downloadQrPng(shareUrl, `chodaekung-${slug}-qr.png`);
   const publish = async () => {
     setBusy(true);
     setMsg(null);
@@ -179,6 +211,9 @@ export function PublishDialog({
                 </div>
                 <div className="qr-cap">스캔해서 초대장 열기</div>
                 <div className="qr-url">{displayHost}/i/{slug}</div>
+                <button type="button" className="qr-dl" onClick={saveQrPng}>
+                  <Icon name="ic-qr" /> PNG로 저장
+                </button>
               </div>
             </div>
           )}
@@ -230,7 +265,7 @@ export function PublishDialog({
             <div className="r-lbl">Step 3 · Share</div>
             <div className="r-title">공유 방법 선택</div>
             <div className="share-grid">
-              <button className="share-btn kakao" onClick={copy}>
+              <button className="share-btn kakao" onClick={shareKakao}>
                 <span className="ic"><Icon name="ic-chat" /></span>
                 <span>카카오톡<span className="sub-t" style={{ display: "block" }}>KAKAO SDK</span></span>
               </button>
