@@ -97,6 +97,11 @@ export const editorialSample: Invitation = {
       },
     },
     {
+      id: "guestbook",
+      type: "guestbook",
+      content: { eyebrow: "Guestbook", title: [["한마디 ", { text: "남기기", em: true }]], note: "파티에 대한 기대를 한마디로 남겨주세요." },
+    },
+    {
       id: "e-ending",
       type: "ending",
       content: {

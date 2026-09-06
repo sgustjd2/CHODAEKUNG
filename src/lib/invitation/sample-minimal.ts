@@ -96,6 +96,11 @@ export const minimalSample: Invitation = {
       },
     },
     {
+      id: "guestbook",
+      type: "guestbook",
+      content: { eyebrow: "Guestbook", title: [["축하 ", { text: "한마디", em: true }]], note: "따뜻한 축하 메시지를 남겨주세요." },
+    },
+    {
       id: "ending",
       type: "ending",
       content: { huge: [["THANK"], ["YOU", { text: ".", em: true }]], below: "Family · Friends · Love" },

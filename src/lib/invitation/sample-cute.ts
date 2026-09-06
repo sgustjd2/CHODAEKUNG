@@ -83,6 +83,7 @@ export const cuteSample: Invitation = {
         defaultSelected: 0,
       },
     },
+    { id: "guestbook", type: "guestbook", content: { eyebrow: "Guestbook", title: [["방명록"]], note: "집들이 방문 인사를 남겨주세요 🏡" } },
     { id: "c-ending", type: "ending", content: { signature: "See you at home", names: "지수 & 모모" } },
   ],
 };
