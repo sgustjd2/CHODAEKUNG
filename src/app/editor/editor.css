@@ -328,7 +328,10 @@
   .m-sec-list { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
   .m-sec { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
   .m-sec.active { background: var(--paper-2); border-color: var(--wax); box-shadow: 0 0 0 2px rgba(227,139,139,0.15); }
-  .m-sec-drag { color: var(--muted); font-size: 12px; cursor: grab; }
+  .m-sec-drag { display: flex; align-items: center; justify-content: center; width: 30px; height: 38px; margin: -8px 2px -8px -6px; flex-shrink: 0; color: var(--muted); cursor: grab; touch-action: none; }
+  .m-sec-drag:active { cursor: grabbing; }
+  .m-sec-drag svg { width: 16px; height: 16px; }
+  .m-sec.dragging { opacity: 0.75; box-shadow: 0 8px 20px rgba(26,26,46,0.18); }
   .m-sec-icon { width: 26px; height: 26px; border-radius: 6px; background: var(--paper-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
   .m-sec-icon svg { width: 14px; height: 14px; }
   .m-sec.active .m-sec-icon { background: var(--wax); color: var(--paper); border-color: transparent; }
@@ -338,10 +341,6 @@
   .m-sec-type-select:active { opacity: 0.6; }
   .m-sec-type { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
   .m-sec-badge { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.2em; color: var(--wax-deep); font-weight: 700; }
-  .m-sec-move { display: flex; gap: 4px; flex-shrink: 0; }
-  .m-sec-move button { width: 32px; height: 32px; border-radius: 8px; background: var(--paper-2); border: 1px solid var(--line); color: var(--fg-2); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
-  .m-sec-move button:disabled { opacity: 0.3; pointer-events: none; }
-  .m-sec-move svg { width: 16px; height: 16px; }
 
   .m-toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--fg-2); }
   .m-toggle { width: 34px; height: 20px; border-radius: 10px; background: var(--paper-3); position: relative; cursor: pointer; border: none; transition: background 200ms; flex-shrink: 0; }

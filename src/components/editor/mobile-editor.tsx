@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import type { CSSProperties, Dispatch, SetStateAction } from "react";
+import { useRef, useState } from "react";
+import type { CSSProperties, Dispatch, PointerEvent as ReactPointerEvent, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
@@ -220,10 +220,36 @@ function DesignPanel({ api }: { api: EditorApi }) {
 }
 
 function SectionsPanel({ api }: { api: EditorApi }) {
-  const { draft, selectedId, setSelectedId, addSection, changeSectionType, reorder, move, dragIndex } = api;
+  const { draft, selectedId, setSelectedId, addSection, changeSectionType, move } = api;
   const [pick, setPick] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   // The current theme's own section palette, minus cover (order follows the theme flow).
   const addableTypes = (Object.keys(themeRegistry[draft.theme] ?? {}) as SectionType[]).filter((t) => t !== "cover");
+
+  // Touch-capable drag reorder (HTML5 drag doesn't fire on touch): pointer events on the handle,
+  // reordering live as the finger passes each row's midpoint.
+  const onDragMove = (e: ReactPointerEvent) => {
+    if (!dragId) return;
+    e.preventDefault();
+    const rows = [...(listRef.current?.querySelectorAll(".m-sec") ?? [])] as HTMLElement[];
+    let target = rows.findIndex((r) => {
+      const b = r.getBoundingClientRect();
+      return e.clientY < b.top + b.height / 2;
+    });
+    if (target === -1) target = rows.length - 1;
+    const from = draft.sections.findIndex((s) => s.id === dragId);
+    if (from !== -1 && from !== target) move(from, target);
+  };
+  const endDrag = (e: ReactPointerEvent) => {
+    setDragId(null);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* pointer already released */
+    }
+  };
+
   return (
     <>
       <div className="m-sec-add-row">
@@ -248,21 +274,38 @@ function SectionsPanel({ api }: { api: EditorApi }) {
           })}
         </div>
       )}
-      <div className="m-sec-list">
-        {draft.sections.map((s, i) => {
+      <div className="m-sec-list" ref={listRef}>
+        {draft.sections.map((s) => {
           const m = metaFor(s.type);
           const active = selectedId === s.id;
           return (
             <div
               key={s.id}
-              className={`m-sec${active ? " active" : ""}`}
+              className={`m-sec${active ? " active" : ""}${dragId === s.id ? " dragging" : ""}`}
               onClick={() => setSelectedId(s.id)}
-              draggable
-              onDragStart={() => (dragIndex.current = i)}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={() => reorder(i)}
             >
-              <span className="m-sec-drag">⋮⋮</span>
+              <span
+                className="m-sec-drag"
+                role="button"
+                aria-label="드래그해서 순서 변경"
+                title="드래그해서 순서 변경"
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setDragId(s.id);
+                  try {
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  } catch {
+                    /* capture unsupported — pointermove still bubbles */
+                  }
+                }}
+                onPointerMove={onDragMove}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
+              >
+                <Icon name="ic-drag" />
+              </span>
               <span className="m-sec-icon">
                 <Icon name={m.icon} />
               </span>
@@ -276,14 +319,6 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 <div className="m-sec-type">{s.type}</div>
               </div>
               {active && <span className="m-sec-badge">ACTIVE</span>}
-              <div className="m-sec-move">
-                <button type="button" title="위로" aria-label="위로 이동" disabled={i === 0} onClick={(e) => { e.stopPropagation(); move(i, i - 1); }}>
-                  <Icon name="ic-chevron-up" />
-                </button>
-                <button type="button" title="아래로" aria-label="아래로 이동" disabled={i === draft.sections.length - 1} onClick={(e) => { e.stopPropagation(); move(i, i + 1); }}>
-                  <Icon name="ic-chevron-down" />
-                </button>
-              </div>
             </div>
           );
         })}
