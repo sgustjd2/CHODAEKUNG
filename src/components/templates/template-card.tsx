@@ -22,9 +22,12 @@ const SAMPLE_BY_IMG: Record<string, string> = {
   cute_housewarming: "cozy-home", timeline_gathering: "jibdeuli",
   battle_sports: "jogi-battle", tmpl_badminton: "jogi-battle", tmpl_baseball: "jogi-battle", tmpl_tennis: "jogi-battle",
   tmpl_gaming: "lol-quick", developer_terminal: "dev-meetup",
+  game_lol_rank: "lol-rank", game_lol_aram: "lol-quick", game_lol_draft: "lol-scrim",
+  game_valorant: "lol-quick", game_overwatch: "lol-quick", game_fifa: "lol-quick", game_battleroyale: "lol-quick", game_rts: "lol-scrim",
   tmpl_running: "beongae", tmpl_hiking: "beongae", tmpl_camping: "yangyang-mt", tmpl_picnic: "beongae", tmpl_travel: "yangyang-mt",
-  tmpl_study: "beongae", tmpl_yoga: "beongae", tmpl_pet: "cozy-home",
-  editorial_party: "after-hours", tmpl_yearend: "after-hours", tmpl_bridalshower: "after-hours", tmpl_seminar: "after-hours",
+  tmpl_study: "beongae", tmpl_yoga: "beongae", tmpl_pet: "cozy-home", tmpl_bookclub: "beongae", tmpl_rooftop_party: "after-hours",
+  tmpl_climbing: "jogi-battle", tmpl_housewarming_v2: "cozy-home", tmpl_stationery_flatlay: "after-hours",
+  editorial_party: "after-hours", tmpl_yearend: "after-hours", tmpl_yearend_v2: "after-hours", tmpl_bridalshower: "after-hours", tmpl_seminar: "after-hours",
 };
 
 export function TemplateCard({ img, imgFilter, badge, catTag, name, meta, fav = false }: Template) {

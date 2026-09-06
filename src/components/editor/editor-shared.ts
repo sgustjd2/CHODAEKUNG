@@ -43,7 +43,7 @@ export const COVER_PHOTOS_BY_THEME: Record<ThemeId, string[]> = {
   editorial: ["editorial_party", "tmpl_yearend", "tmpl_bridalshower", "tmpl_seminar"],
   timeline: ["timeline_gathering", "tmpl_camping", "tmpl_travel", "tmpl_hiking"],
   battle: ["battle_sports", "tmpl_badminton", "tmpl_baseball", "tmpl_tennis"],
-  gaming: ["tmpl_gaming", "developer_terminal", "battle_sports", "editorial_party"],
+  gaming: ["game_lol_rank", "game_valorant", "game_overwatch", "developer_terminal"],
   developer: ["developer_terminal", "tmpl_gaming", "tmpl_seminar", "tmpl_study"],
 };
 /** Cover presets for a theme, falling back to the default set. */
