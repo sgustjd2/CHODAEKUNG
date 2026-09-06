@@ -360,22 +360,22 @@ export function EditorClient() {
                     <Icon name={m.icon} />
                   </span>
                   <div className="sec-info">
-                    <div className="sec-name">{m.label}</div>
                     {s.type === "cover" ? (
-                      <div className="sec-type">{s.type}</div>
+                      <div className="sec-name">{m.label}</div>
                     ) : (
                       <select
+                        className="sec-type-select"
                         value={s.type}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
                         title="섹션 종류 변경"
-                        style={{ font: "inherit", fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", color: "var(--muted, #9a9aa5)", background: "transparent", border: "none", cursor: "pointer", padding: 0, maxWidth: "100%" }}
                       >
                         {(addableTypes.includes(s.type) ? addableTypes : [s.type, ...addableTypes]).map((t) => (
                           <option key={t} value={t}>{metaFor(t).label}</option>
                         ))}
                       </select>
                     )}
+                    <div className="sec-type">{s.type}</div>
                   </div>
                   <div className="sec-actions">
                     <button title="위로" disabled={i === 0} onClick={(e) => { e.stopPropagation(); move(i, i - 1); }}>
