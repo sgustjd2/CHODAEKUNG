@@ -63,6 +63,16 @@ export function ShareBar({
     };
   }, [preview]);
 
+  // A11y: close the RSVP dialog on Escape while it's open (CLAUDE.md §10).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const copyLink = () => {
     try {
       navigator.clipboard?.writeText(window.location.href);
@@ -149,7 +159,8 @@ export function ShareBar({
                 <div className="rsvp-modal-t">{shareCta}</div>
                 <label className="rsvp-field">
                   <span>이름</span>
-                  <input value={name} onChange={(e) => setName(e.target.value)} placeholder="성함을 입력하세요" />
+                  {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+                  <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="성함을 입력하세요" />
                 </label>
                 <div className="rsvp-field">
                   <span>참석 여부</span>
