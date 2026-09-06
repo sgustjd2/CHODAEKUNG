@@ -1,6 +1,16 @@
 /* New Invitation Wizard — ported from design/05_new_invitation_wizard.html <style>.
    Scoped under .wizard (CSS nesting). Asset URLs rooted at /assets/. */
 
+/* Top-level (keyframes can't live inside a nested rule, or they don't register). */
+@keyframes cep-slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes wiz-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .wizard {
   background: var(--paper);
   min-height: 100vh;
@@ -74,10 +84,6 @@
   }
   .step-panel { display: none; }
   .step-panel.active { display: block; animation: wiz-fade-in 300ms ease-out; }
-  @keyframes wiz-fade-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
   .step-eyebrow {
     font-family: var(--font-en); font-size: 11px; font-weight: 700;
@@ -147,10 +153,6 @@
     animation: cep-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .custom-event-panel.open { display: block; }
-  @keyframes cep-slide-in {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
   .cep-head {
     display: flex; justify-content: space-between; align-items: flex-start;
     gap: 20px;
