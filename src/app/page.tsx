@@ -65,6 +65,7 @@ const footerCols: { title: string; links: { label: string; href: string }[] }[] 
     links: [
       { label: "이용 가이드", href: "/guide" },
       { label: "자주 묻는 질문", href: "/#faq" },
+      { label: "개인정보 처리방침", href: "/privacy" },
       { label: "카카오톡 공유", href: "/#kakao" },
       { label: "로그인", href: "/login" },
     ],
