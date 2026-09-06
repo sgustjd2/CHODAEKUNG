@@ -27,6 +27,22 @@ export async function submitGuestbookEntry(slug: string, entry: { name: string; 
   return error ? { ok: false, error: error.message } : { ok: true };
 }
 
+/** Public: names of people who RSVP'd 참석 to a live invitation (for the on-invite attendee roster).
+ * Only the name is exposed here — the full RSVP (guests/message) stays owner-only. */
+export async function listAttendees(slug: string): Promise<{ name: string }[]> {
+  if (!isDbEnabled()) return [];
+  if (!(await isLiveInvitation(slug))) return [];
+  const { data, error } = await getServiceClient()
+    .from("rsvps")
+    .select("name")
+    .eq("invitation_slug", slug)
+    .eq("response", "참석")
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (error) return [];
+  return (data ?? []).filter((r) => r.name?.trim()).map((r) => ({ name: r.name }));
+}
+
 /** Public: read a live invitation's guestbook messages (newest first). */
 export async function listGuestbook(slug: string): Promise<GuestbookRow[]> {
   if (!isDbEnabled()) return [];

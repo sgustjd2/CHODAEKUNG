@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
+import { createBrowserSupabase } from "@/lib/db/supabase-browser";
 
 export type ShareMeta = { title: string; description: string; image: string };
 
@@ -20,6 +21,7 @@ export function ShareBar({
   share,
   eventStart,
   eventLocation,
+  hasAttendees,
 }: {
   slug: string;
   shareCta: string;
@@ -29,6 +31,8 @@ export function ShareBar({
   /** Canonical event start (ISO) → shows an "add to calendar" (.ics) button when present. */
   eventStart?: string;
   eventLocation?: string;
+  /** The invitation has a public attendee roster → pre-fill the name for signed-in guests + warn it's shown. */
+  hasAttendees?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -36,6 +40,25 @@ export function ShareBar({
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
   const [copied, setCopied] = useState(false);
+
+  // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
+  useEffect(() => {
+    if (preview) return;
+    let alive = true;
+    (async () => {
+      try {
+        const { data } = await createBrowserSupabase().auth.getUser();
+        const u = data.user;
+        const n = (typeof u?.user_metadata?.name === "string" && u.user_metadata.name.trim()) || u?.email?.split("@")[0] || "";
+        if (alive && n) setName((prev) => prev || n);
+      } catch {
+        /* backend not configured / signed out */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [preview]);
 
   const copyLink = () => {
     try {
@@ -77,8 +100,11 @@ export function ShareBar({
     setState("sending");
     setErr("");
     const res = await submitRsvpAction(slug, { name: name.trim(), response: resp });
-    if (res.ok) setState("done");
-    else {
+    if (res.ok) {
+      setState("done");
+      // Let the on-invite attendee roster refresh immediately.
+      if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("chodaekung:rsvp"));
+    } else {
       setErr(res.error || "전송에 실패했어요.");
       setState("error");
     }
@@ -132,6 +158,11 @@ export function ShareBar({
                     ))}
                   </div>
                 </div>
+                {hasAttendees && (
+                  <div style={{ fontSize: 12, color: "var(--muted, #8a8a95)", lineHeight: 1.5, marginBottom: 4 }}>
+                    ‘참석’을 선택하면 이름이 초대장 참석자 명단에 표시돼요.
+                  </div>
+                )}
                 {state === "error" && <div className="rsvp-err">{err}</div>}
                 <button type="button" className="rsvp-btn" onClick={submit} disabled={state === "sending"}>
                   {state === "sending" ? "보내는 중…" : "보내기"}

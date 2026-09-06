@@ -77,6 +77,7 @@ import { DevEnding } from "./sections/developer/ending";
 import { AccountSection } from "./sections/account";
 import { DdaySection } from "./sections/dday";
 import { GuestbookSection } from "./sections/guestbook";
+import { AttendeesSection } from "./sections/attendees";
 
 // Gaming renderers
 import { GamingCover } from "./sections/gaming/cover";
@@ -195,7 +196,7 @@ const gaming: ThemeSet = {
 
 // Sections every theme supports (rendered theme-agnostically). Spread last so a theme
 // could still override, and so it appears at the end of each theme's section palette.
-const common: ThemeSet = { account: AccountSection, dday: DdaySection, guestbook: GuestbookSection };
+const common: ThemeSet = { account: AccountSection, dday: DdaySection, guestbook: GuestbookSection, attendees: AttendeesSection };
 
 export const themeRegistry: Partial<Record<ThemeId, ThemeSet>> = {
   romantic: { ...romantic, ...common },

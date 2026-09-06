@@ -709,3 +709,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Editor: header content editor + SECTION_META (방명록 / ic-message). blankSection covers it.
 - USER STEP: run supabase/migrations/0005_guestbook.sql for the guestbook to persist live (like 0003/0004).
 - Verified (client/preview path): addable, renders form + empty state, optimistic message card on submit.
+
+## Live 참석자 roster (attendees) — names fill from 참석 RSVPs in real time
+- New `attendees` section: shows the names of everyone who RSVP'd 참석, filling live on the invitation.
+- Reads the EXISTING rsvps table (no new migration): store.listAttendees(slug) → names where response="참석",
+  gated to live + service-role (only the NAME is exposed; full RSVP stays owner-only). action listAttendeesAction.
+- AttendeesSection (common section, special-cased in InvitationViewer for slug/preview): fetches on the live
+  page, polls every 12s, and refetches instantly on the "chodaekung:rsvp" window event that ShareBar fires on
+  a successful RSVP → near-real-time on the same page.
+- ShareBar: pre-fills the name from the signed-in account (logged-in guests show their real name); shows a
+  consent note ("'참석' 선택 시 이름이 명단에 표시돼요") when the invitation has an attendees section (hasAttendees).
+- Editor: header content editor + SECTION_META (참석자 명단 / ic-users). Verified: addable, renders, empty
+  state, consent note appears in the preview RSVP form.

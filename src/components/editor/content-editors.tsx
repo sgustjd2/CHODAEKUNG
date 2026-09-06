@@ -9,6 +9,7 @@ import { listMyMediaAction } from "@/lib/invitation/actions";
 import type {
   AcceptContent,
   AccountContent,
+  AttendeesContent,
   ChecklistContent,
   DdayContent,
   GuestbookContent,
@@ -78,6 +79,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
   const account = find("account");
   const dday = find("dday");
   const guestbook = find("guestbook");
+  const attendees = find("attendees");
 
   return (
     <>
@@ -291,6 +293,17 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
           <Field label="안내 문구" textarea value={guestbook.content.note ?? ""} onChange={(v) => patch(guestbook.id, { note: v } satisfies Partial<GuestbookContent>)} />
           <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
             방문객이 남긴 축하 메시지는 발행된 초대장에서 자동으로 모여 표시돼요. (백엔드·마이그레이션 필요)
+          </div>
+        </div>
+      )}
+      {attendees && (
+        <div className="insp-group">
+          <h5>참석자 명단</h5>
+          <Field label="Eyebrow" value={attendees.content.eyebrow ?? ""} onChange={(v) => patch(attendees.id, { eyebrow: v } satisfies Partial<AttendeesContent>)} />
+          <Field label="제목" value={plainTitle(attendees.content.title ?? [[""]])} onChange={(v) => patch(attendees.id, { title: [[v]] } satisfies Partial<AttendeesContent>)} />
+          <Field label="안내 문구" textarea value={attendees.content.note ?? ""} onChange={(v) => patch(attendees.id, { note: v } satisfies Partial<AttendeesContent>)} />
+          <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+            ‘참석’으로 응답한 사람들의 이름이 발행된 초대장에 실시간으로 채워져요. 로그인한 방문객은 계정 이름으로 표시돼요. (백엔드·마이그레이션 필요)
           </div>
         </div>
       )}

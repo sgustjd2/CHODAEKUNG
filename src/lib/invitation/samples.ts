@@ -102,6 +102,8 @@ export function blankSection(type: SectionType): Section {
       return { id, type, content: { eyebrow: "", title: [[""]] } };
     case "guestbook":
       return { id, type, content: { eyebrow: "", title: [[""]], note: "" } };
+    case "attendees":
+      return { id, type, content: { eyebrow: "", title: [[""]], note: "" } };
     default:
       return { id, type: "message", content: { eyebrow: "", title: [[""]], body: [""] } };
   }

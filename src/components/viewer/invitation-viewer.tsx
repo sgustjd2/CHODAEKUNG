@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import type { ComponentType, CSSProperties } from "react";
-import type { CoverContent, DdayContent, GuestbookContent, Invitation } from "@/lib/invitation/types";
+import type { AttendeesContent, CoverContent, DdayContent, GuestbookContent, Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { GenericCover } from "./sections/generic-cover";
 import { DdaySection } from "./sections/dday";
 import { GuestbookSection } from "./sections/guestbook";
+import { AttendeesSection } from "./sections/attendees";
 import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
@@ -73,6 +74,8 @@ export function InvitationViewer({
           ) : s.type === "guestbook" ? (
             // Guestbook needs the slug (DB reads/writes) + preview flag, which the registry render can't pass.
             <GuestbookSection content={s.content as GuestbookContent} slug={invitation.slug} preview={preview || contained} />
+          ) : s.type === "attendees" ? (
+            <AttendeesSection content={s.content as AttendeesContent} slug={invitation.slug} preview={preview || contained} />
           ) : Renderer ? (
             <Renderer content={s.content} index={i} />
           ) : null;
@@ -95,6 +98,7 @@ export function InvitationViewer({
         share={invitationMeta(invitation)}
         eventStart={invitation.eventStart}
         eventLocation={eventLocationOf(invitation)}
+        hasAttendees={invitation.sections.some((s) => s.type === "attendees")}
       />
       {!contained && !preview && <ViewPing slug={invitation.slug} />}
     </div>

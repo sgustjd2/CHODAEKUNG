@@ -33,6 +33,7 @@ export const SECTION_META: Partial<Record<SectionType, { label: string; icon: st
   account: { label: "마음 전하기", icon: "ic-heart" },
   dday: { label: "D-Day 카운트다운", icon: "ic-clock" },
   guestbook: { label: "방명록", icon: "ic-message" },
+  attendees: { label: "참석자 명단", icon: "ic-users" },
 };
 export const metaFor = (t: SectionType) => SECTION_META[t] ?? { label: t, icon: "ic-info" };
 

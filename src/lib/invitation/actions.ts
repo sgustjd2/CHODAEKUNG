@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, submitGuestbookEntry, listGuestbook, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, submitGuestbookEntry, listGuestbook, listAttendees, type Visibility } from "./store";
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
@@ -78,6 +78,11 @@ export async function submitGuestbookAction(slug: string, entry: { name: string;
 /** Public: read a live invitation's guestbook messages. */
 export async function listGuestbookAction(slug: string) {
   return { ok: true as const, rows: await listGuestbook(slug) };
+}
+
+/** Public: names of confirmed attendees (참석) for the on-invite roster. */
+export async function listAttendeesAction(slug: string) {
+  return { ok: true as const, names: (await listAttendees(slug)).map((a) => a.name) };
 }
 
 /** Owner-only RSVP list (verifies the invitation's edit token). */

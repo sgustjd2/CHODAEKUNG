@@ -274,6 +274,9 @@ export type DdayContent = { eyebrow?: string; title?: Line[] };
 /** 방명록 header — messages themselves live in the DB (submitted by guests), not in the invitation. */
 export type GuestbookContent = { eyebrow?: string; title?: Line[]; note?: string };
 
+/** 참석자 roster header — names fill live from 참석 RSVPs (from the DB), not the invitation. */
+export type AttendeesContent = { eyebrow?: string; title?: Line[]; note?: string };
+
 /** "마음 전하기" — gift/congratulatory bank accounts with copy-to-clipboard (Korean invitations). */
 export type AccountContent = {
   eyebrow?: string;
@@ -312,6 +315,7 @@ export type Section =
   | { id: string; type: "account"; content: AccountContent }
   | { id: string; type: "dday"; content: DdayContent }
   | { id: string; type: "guestbook"; content: GuestbookContent }
+  | { id: string; type: "attendees"; content: AttendeesContent }
   | { id: string; type: "ending"; content: EndingContent };
 
 export type SectionType = Section["type"];
