@@ -1,6 +1,8 @@
 import { ESection } from "./e-section";
 import { Rich } from "../../rich-text";
 import { photoUrl } from "@/lib/photo";
+import { LocationMap } from "../../location-map";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function EditorialLocation({ content }: { content: LocationContent }) {
@@ -23,6 +25,7 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
           <Rich lines={content.body} />
         </div>
       )}
+      <LocationMap className="iv-locmap" address={lineText(content.body)} />
       {content.mapButtons.length > 0 && (
         <div className="e-loc-actions">
           {content.mapButtons.map((b, i) => (

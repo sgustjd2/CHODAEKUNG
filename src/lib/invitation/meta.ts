@@ -7,7 +7,7 @@ import type { Invitation, Line } from "./types";
  */
 export type InvitationMeta = { title: string; description: string; image: string };
 
-function lineText(lines: Line[] | undefined): string {
+export function lineText(lines: Line[] | undefined): string {
   if (!lines) return "";
   return lines
     .map((l) => (typeof l === "string" ? l : l.map((r) => (typeof r === "string" ? r : r.text)).join("")))

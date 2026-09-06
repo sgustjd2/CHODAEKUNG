@@ -1,6 +1,8 @@
 import { CCard } from "./c-card";
 import { Icon } from "@/components/ui/icon";
 import { photoUrl } from "@/lib/photo";
+import { LocationMap } from "../../location-map";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function CuteLocation({ content }: { content: LocationContent }) {
@@ -21,6 +23,7 @@ export function CuteLocation({ content }: { content: LocationContent }) {
           </div>
         </div>
       )}
+      <LocationMap className="iv-locmap" address={content.address?.a || lineText(content.body)} />
       {content.mapButtons.length > 0 && (
         <div className="c-loc-actions">
           {content.mapButtons.map((b, i) => (

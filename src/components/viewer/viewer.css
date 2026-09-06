@@ -30,6 +30,9 @@
   .iv-doc { max-width: 100%; box-shadow: none; }
 }
 
+/* Kakao Map pin (shared, theme-agnostic) — shown when a map key is configured */
+.iv-locmap { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin: 18px auto 0; background: var(--paper-2, #f0ece4); }
+
 /* Layout (invitation.layout) — shared frame only, no per-theme section CSS.
    width → --iv-w (above); background → the backdrop framing the invitation. */
 .iv[data-bg="solid"] { background-image: none; }

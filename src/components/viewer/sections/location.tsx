@@ -1,5 +1,7 @@
 import { Rich } from "../rich-text";
 import { Icon } from "@/components/ui/icon";
+import { LocationMap } from "../location-map";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function LocationSection({ content }: { content: LocationContent }) {
@@ -17,7 +19,7 @@ export function LocationSection({ content }: { content: LocationContent }) {
       <div className="iv-body">
         <Rich lines={content.body} />
       </div>
-      <div className="iv-map" />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="iv-loc-actions">
         {content.mapButtons.map((b, i) => (
           <button key={i} type="button" className={`iv-loc-btn${b.primary ? " primary" : ""}`}>
