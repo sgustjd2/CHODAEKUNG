@@ -5,6 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
+import { TypeMenu } from "./type-menu";
 import { ACCENTS, COVER_LAYOUTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
@@ -266,17 +267,12 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 <Icon name={m.icon} />
               </span>
               <div className="m-sec-info">
-                <select
-                  className="m-sec-type-select"
-                  value={s.type}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
-                  title="섹션 종류 변경"
-                >
-                  {Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type])).map((t) => (
-                    <option key={t} value={t}>{metaFor(t).label}</option>
-                  ))}
-                </select>
+                <TypeMenu
+                  current={s.type}
+                  options={Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type]))}
+                  onChange={(t) => changeSectionType(s.id, t)}
+                  triggerClassName="m-sec-type-select"
+                />
                 <div className="m-sec-type">{s.type}</div>
               </div>
               {active && <span className="m-sec-badge">ACTIVE</span>}

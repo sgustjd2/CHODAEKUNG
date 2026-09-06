@@ -51,8 +51,9 @@
   .sec-item.active .sec-icon { background: var(--wax); color: var(--paper); border-color: transparent; }
   .sec-info { flex: 1; min-width: 0; }
   .sec-name { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  /* Non-cover sections: the name doubles as the "change section type" control. */
-  .sec-type-select { display: block; width: 100%; max-width: 100%; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); background: transparent; border: none; cursor: pointer; padding: 0; margin: 0; }
+  /* The section name doubles as the "change section type" control (opens .type-menu). */
+  .sec-type-select { display: block; width: 100%; max-width: 100%; text-align: left; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); background: transparent; border: none; cursor: pointer; padding: 0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sec-type-select:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
   .sec-type { font-family: var(--font-en); font-size: 9px; color: var(--muted); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* Actions overlay the row's right edge on hover/active instead of reserving width (keeps names readable in the narrow column). */
   .sec-actions { position: absolute; top: 1px; bottom: 1px; right: 1px; display: flex; align-items: center; gap: 4px; padding: 0 8px 0 14px; background: var(--paper); border-radius: 0 var(--r-sm) var(--r-sm) 0; opacity: 0; pointer-events: none; transition: opacity 150ms; }
@@ -333,7 +334,8 @@
   .m-sec.active .m-sec-icon { background: var(--wax); color: var(--paper); border-color: transparent; }
   .m-sec-info { flex: 1; min-width: 0; }
   .m-sec-name { font-size: 12px; font-weight: 700; color: var(--ink); }
-  .m-sec-type-select { display: block; max-width: 100%; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink); background: transparent; border: none; cursor: pointer; padding: 0; margin: 0; }
+  .m-sec-type-select { display: block; max-width: 100%; text-align: left; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink); background: transparent; border: none; cursor: pointer; padding: 0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .m-sec-type-select:active { opacity: 0.6; }
   .m-sec-type { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
   .m-sec-badge { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.2em; color: var(--wax-deep); font-weight: 700; }
   .m-sec-move { display: flex; gap: 4px; flex-shrink: 0; }
@@ -374,3 +376,12 @@
   .insp-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .insp-photo button { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(42,42,62,0.75); color: #fff; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 }
+
+/* Section type-change dropdown — portalled to <body>, so defined at top level (not under .editor-page).
+   Mirrors the "+" add-section menu look for a consistent editor design. */
+.type-menu { min-width: 168px; max-height: 320px; overflow-y: auto; background: var(--card, #fff); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(26,26,46,0.16); padding: 6px; display: flex; flex-direction: column; gap: 1px; }
+.type-menu-item { display: flex; align-items: center; gap: 8px; text-align: left; background: none; border: none; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); padding: 9px 10px; border-radius: 8px; white-space: nowrap; }
+.type-menu-item:hover { background: var(--paper-2); }
+.type-menu-item.active { background: var(--wax-tint); color: var(--wax-deep); }
+.type-menu-item svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--fg-2, #4a4a5a); }
+.type-menu-item.active svg { color: var(--wax-deep); }

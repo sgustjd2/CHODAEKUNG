@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
+import { TypeMenu } from "@/components/editor/type-menu";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
@@ -363,17 +364,12 @@ export function EditorClient() {
                     <Icon name={m.icon} />
                   </span>
                   <div className="sec-info">
-                    <select
-                      className="sec-type-select"
-                      value={s.type}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
-                      title="섹션 종류 변경"
-                    >
-                      {Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type])).map((t) => (
-                        <option key={t} value={t}>{metaFor(t).label}</option>
-                      ))}
-                    </select>
+                    <TypeMenu
+                      current={s.type}
+                      options={Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type]))}
+                      onChange={(t) => changeSectionType(s.id, t)}
+                      triggerClassName="sec-type-select"
+                    />
                     <div className="sec-type">{s.type}</div>
                   </div>
                   <div className="sec-actions">
