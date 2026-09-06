@@ -8,6 +8,7 @@ export const cuteSample: Invitation = {
   slug: "cozy-home",
   theme: "cute",
   shareCta: "참석 답장",
+  eventStart: "2027-04-04T15:00",
   sections: [
     {
       id: "c-cover",
@@ -25,7 +26,7 @@ export const cuteSample: Invitation = {
       type: "date",
       content: {
         eyebrow: "When · 일시",
-        title: ["2026. 04. 05", [{ text: "일요일", em: true }, " 오후 3시"]],
+        title: ["2027. 04. 04", [{ text: "일요일", em: true }, " 오후 3시"]],
         pill: { en: "D-42", text: "· 남았어요" },
         countdown: { days: 42, hrs: 8, min: 15, sec: 0 },
       },

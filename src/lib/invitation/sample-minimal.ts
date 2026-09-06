@@ -4,6 +4,7 @@ export const minimalSample: Invitation = {
   slug: "appa-60",
   theme: "minimal",
   shareCta: "참석 답장",
+  eventStart: "2027-06-15T12:00",
   sections: [
     {
       id: "cover",

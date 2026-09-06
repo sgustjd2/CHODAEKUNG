@@ -8,6 +8,7 @@ export const editorialSample: Invitation = {
   slug: "after-hours",
   theme: "editorial",
   shareCta: "RSVP",
+  eventStart: "2027-03-27T20:00",
   sections: [
     {
       id: "e-cover",
@@ -15,7 +16,7 @@ export const editorialSample: Invitation = {
       content: {
         image: "editorial_party",
         headerLeft: "Issue No. 03 · Party",
-        headerRightLines: ["2026 · 03 · 28", "Sat · 20:00"],
+        headerRightLines: ["2027 · 03 · 27", "Sat · 20:00"],
         eyebrow: "The Invitation",
         titleLines: ["After", [{ text: "Hours.", em: true }]],
         coverSub: { l: "A Rooftop Party", r: "Vol. 03 · Spring" },
@@ -44,7 +45,7 @@ export const editorialSample: Invitation = {
         title: [["언제 · 어디서 · ", { text: "어떻게", em: true }]],
         tint: true,
         info: [
-          { k: "Date", v: "2026. 03. 28 · Sat" },
+          { k: "Date", v: "2027. 03. 27 · Sat" },
           { k: "Time", v: "저녁 8시 — 자정" },
           { k: "Venue", v: "한남동 · Rooftop Bar HAZE" },
           { k: "Dress", v: "Cocktail · Smart Casual" },
@@ -106,7 +107,7 @@ export const editorialSample: Invitation = {
       type: "ending",
       content: {
         huge: ["SEE YOU", [{ text: "after hours.", em: true }]],
-        colophon: ["CHODAEKUNG · VOL 03 · 2026", "A ROOFTOP PARTY · SPRING EDITION", "MADE WITH LOVE IN SEOUL"],
+        colophon: ["CHODAEKUNG · VOL 03 · 2027", "A ROOFTOP PARTY · SPRING EDITION", "MADE WITH LOVE IN SEOUL"],
       },
     },
   ],
