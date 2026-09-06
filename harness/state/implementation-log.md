@@ -688,3 +688,12 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Editor: content editor (add/edit/remove accounts) mirroring the rules-list pattern; SECTION_META entry
   (마음 전하기 / ic-heart) so it shows in the add menu + type-change for every theme. blankSection covers it.
 - Verified: offered in add menu, adds, editor edits, viewer renders the card + copy button with correct text.
+
+## D-Day countdown (dday) section
+- New `dday` section: a live countdown (일/시/분/초, 1s tick) to the invitation's canonical eventStart.
+  Theme-agnostic renderer (src/components/viewer/sections/dday.tsx), registered via the `common` spread.
+- Target comes from invitation.eventStart (set by the wizard's date/time or the editor "행사 일시"), so it
+  reuses the single canonical datetime (also used by add-to-calendar). InvitationViewer special-cases the
+  dday render to inject target (registry renderers only receive `content`).
+- State starts null → no SSR/hydration mismatch; renders nothing when eventStart is unset (editor hints to
+  set 행사 일시). SECTION_META + blankSection cover it. Verified: ticks live, correct numbers, graceful when unset.

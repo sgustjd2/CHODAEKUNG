@@ -10,6 +10,7 @@ import type {
   AcceptContent,
   AccountContent,
   ChecklistContent,
+  DdayContent,
   CostContent,
   CountdownContent,
   CoverContent,
@@ -74,6 +75,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
   const menu = find("menu");
   const dayPlan = find("dayPlan");
   const account = find("account");
+  const dday = find("dday");
 
   return (
     <>
@@ -267,6 +269,16 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
             </div>
           ))}
           <button type="button" className="insp-add" onClick={() => patch(account.id, { accounts: [...account.content.accounts, { side: "", bank: "", number: "", holder: "" }] })}>+ 계좌 추가</button>
+        </div>
+      )}
+      {dday && (
+        <div className="insp-group">
+          <h5>D-Day 카운트다운</h5>
+          <Field label="Eyebrow" value={dday.content.eyebrow ?? ""} onChange={(v) => patch(dday.id, { eyebrow: v } satisfies Partial<DdayContent>)} />
+          <Field label="제목" value={plainTitle(dday.content.title ?? [[""]])} onChange={(v) => patch(dday.id, { title: [[v]] } satisfies Partial<DdayContent>)} />
+          <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+            카운트다운은 “내용” 탭 하단의 <b>행사 일시</b>를 기준으로 자동 계산돼요. 행사 일시를 설정해 주세요.
+          </div>
         </div>
       )}
       {accept && (

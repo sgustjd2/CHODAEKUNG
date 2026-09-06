@@ -1,8 +1,9 @@
 import { Fragment } from "react";
 import type { ComponentType, CSSProperties } from "react";
-import type { CoverContent, Invitation } from "@/lib/invitation/types";
+import type { CoverContent, DdayContent, Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { GenericCover } from "./sections/generic-cover";
+import { DdaySection } from "./sections/dday";
 import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
@@ -65,6 +66,9 @@ export function InvitationViewer({
           const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }> | undefined;
           const node = useGeneric ? (
             <GenericCover content={s.content as CoverContent} />
+          ) : s.type === "dday" ? (
+            // Live countdown needs the invitation's canonical datetime, which the registry render can't pass.
+            <DdaySection content={s.content as DdayContent} target={invitation.eventStart} />
           ) : Renderer ? (
             <Renderer content={s.content} index={i} />
           ) : null;

@@ -98,6 +98,8 @@ export function blankSection(type: SectionType): Section {
       return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
     case "account":
       return { id, type, content: { eyebrow: "", title: [[""]], note: "", accounts: [] } };
+    case "dday":
+      return { id, type, content: { eyebrow: "", title: [[""]] } };
     default:
       return { id, type: "message", content: { eyebrow: "", title: [[""]], body: [""] } };
   }

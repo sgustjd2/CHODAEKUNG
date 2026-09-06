@@ -140,6 +140,16 @@
 .acc-copy { flex-shrink: 0; padding: 9px 16px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .acc-copy:hover { background: var(--wax-deep, #c96a6a); }
 
+/* D-Day countdown (theme-agnostic; ticks from the invitation's eventStart) */
+.iv-dday { padding: 44px 28px; text-align: center; }
+.dday-eb { font-family: var(--font-en); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.dday-title { font-family: var(--font-serif); font-size: 22px; font-weight: 700; color: #1a1a2e; margin: 0 0 20px; letter-spacing: -0.02em; }
+.dday-grid { display: flex; justify-content: center; gap: 10px; }
+.dday-cell { min-width: 62px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.dday-n { font-family: var(--font-en); font-size: 30px; font-weight: 800; color: var(--wax-deep, #a04547); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.dday-l { font-size: 11px; color: #888; margin-top: 6px; font-weight: 600; }
+.dday-now { font-family: var(--font-serif); font-size: 28px; font-weight: 800; color: var(--wax-deep, #a04547); }
+
 /* ============================================================
    THEME · ROMANTIC WEDDING
    ============================================================ */
