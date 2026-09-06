@@ -208,7 +208,9 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <Button variant="outline">가이드 보기</Button>
+            <Link href="/guide" style={{ textDecoration: "none" }}>
+              <Button variant="outline">가이드 보기</Button>
+            </Link>
             <Link href="/new" style={{ textDecoration: "none" }}>
               <Button variant="primary">+ 새 초대장</Button>
             </Link>
