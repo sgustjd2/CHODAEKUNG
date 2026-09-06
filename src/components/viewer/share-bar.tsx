@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
 import { ensureKakao } from "@/lib/kakao";
+import { downloadIcs } from "@/lib/calendar";
 
 export type ShareMeta = { title: string; description: string; image: string };
 
@@ -17,12 +18,17 @@ export function ShareBar({
   options,
   preview,
   share,
+  eventStart,
+  eventLocation,
 }: {
   slug: string;
   shareCta: string;
   options: string[];
   preview?: boolean;
   share?: ShareMeta;
+  /** Canonical event start (ISO) → shows an "add to calendar" (.ics) button when present. */
+  eventStart?: string;
+  eventLocation?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -87,6 +93,11 @@ export function ShareBar({
         <button type="button" onClick={copyLink}>
           <Icon name="ic-link" /> {copied ? "복사됨!" : "링크"}
         </button>
+        {eventStart && (
+          <button type="button" onClick={() => downloadIcs(eventStart, share?.title || "초대", eventLocation || "", typeof window !== "undefined" ? window.location.href : "")} title="캘린더에 추가">
+            <Icon name="ic-clock" /> 캘린더
+          </button>
+        )}
         <button type="button" className="primary" onClick={() => { setState("idle"); setOpen(true); }}>
           {shareCta}
         </button>

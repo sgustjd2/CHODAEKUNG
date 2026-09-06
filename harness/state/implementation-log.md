@@ -668,3 +668,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   (WizardSeed gained theme/accent); the editor applies them on a blank start. Verified: custom + a mood
   opens the editor in that theme with the accent and the theme's section set.
 - blankSection ids gained a random suffix (batch-built sections can't collide).
+
+## Add to calendar (.ics)
+- Invitation gained a canonical `eventStart` (ISO YYYY-MM-DD all-day, or YYYY-MM-DDTHH:mm), separate
+  from the cover's decorative dateLabel. src/lib/calendar.ts builds a universal .ics (iOS/Android/
+  Apple/Outlook native, Google-importable) via downloadIcs(eventStart, title, location, details).
+- Set from the /new wizard (native date/time → eventStart in the seed) and from an editor field
+  ("행사 일시 (캘린더 추가용)", datetime-local, Content tab) so template-started invitations get it too.
+- ShareBar shows a "캘린더" button (in the pill) only when eventStart exists; InvitationViewer passes
+  eventStart + the location section's title. Verified: preview shows the button, .ics has correct
+  DTSTART/SUMMARY, pill doesn't overflow.

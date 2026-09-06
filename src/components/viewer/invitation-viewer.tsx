@@ -3,10 +3,16 @@ import type { ComponentType, CSSProperties } from "react";
 import type { CoverContent, Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
 import { GenericCover } from "./sections/generic-cover";
-import { invitationMeta } from "@/lib/invitation/meta";
+import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
+
+/** Venue name for the calendar entry, from the first location section's title (else empty). */
+function eventLocationOf(inv: Invitation): string {
+  const loc = inv.sections.find((s) => s.type === "location");
+  return loc && "title" in loc.content ? lineText(loc.content.title) : "";
+}
 
 /** RSVP response options: from the rsvp section, else the accept CTA, else a sensible default. */
 function rsvpOptions(inv: Invitation): string[] {
@@ -73,7 +79,15 @@ export function InvitationViewer({
         })}
       </div>
 
-      <ShareBar slug={invitation.slug} shareCta={invitation.shareCta} options={rsvpOptions(invitation)} preview={preview} share={invitationMeta(invitation)} />
+      <ShareBar
+        slug={invitation.slug}
+        shareCta={invitation.shareCta}
+        options={rsvpOptions(invitation)}
+        preview={preview}
+        share={invitationMeta(invitation)}
+        eventStart={invitation.eventStart}
+        eventLocation={eventLocationOf(invitation)}
+      />
       {!contained && !preview && <ViewPing slug={invitation.slug} />}
     </div>
   );

@@ -28,7 +28,7 @@ const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
 /** Basics handed over from the /new wizard (one-shot, via sessionStorage). */
-type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string; theme?: ThemeId; accent?: string };
+type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string; theme?: ThemeId; accent?: string; eventStart?: string };
 function readWizardSeed(): WizardSeed | null {
   try {
     const raw = sessionStorage.getItem("chodaekung:wizard");
@@ -125,6 +125,7 @@ export function EditorClient() {
     if (freshFromWizard) {
       applyWizardSeed(d, wiz!);
       if (wiz!.accent) setAccent(wiz!.accent);
+      if (wiz!.eventStart) d.eventStart = wiz!.eventStart;
     }
     let loadedTitle: string | null = null;
     let hadLocalDraft = false;
@@ -421,7 +422,26 @@ export function EditorClient() {
           </div>
 
           <div className="inspector-body">
-            {tab === "content" && <ContentEditors draft={draft} patch={patch} />}
+            {tab === "content" && (
+              <>
+                <ContentEditors draft={draft} patch={patch} />
+                <div className="insp-group">
+                  <h5>캘린더</h5>
+                  <div className="insp-field">
+                    <div className="insp-label">행사 일시 (캘린더 추가용)</div>
+                    <input
+                      className="insp-input"
+                      type="datetime-local"
+                      value={draft.eventStart ?? ""}
+                      onChange={(e) => setDraft((d) => ({ ...d, eventStart: e.target.value || undefined }))}
+                    />
+                    <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+                      방문객이 “캘린더에 추가”로 저장할 실제 일시예요. 커버에 보이는 날짜 문구와는 별개로 설정돼요.
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
             {tab === "style" && (
               <>

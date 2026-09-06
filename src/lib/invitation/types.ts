@@ -321,5 +321,8 @@ export type Invitation = {
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */
   layout?: LayoutConfig;
+  /** Canonical event start for "add to calendar" — ISO `YYYY-MM-DD` (all-day) or `YYYY-MM-DDTHH:mm`.
+   * Separate from the cover's decorative dateLabel, which is styled free text. */
+  eventStart?: string;
   sections: Section[];
 };

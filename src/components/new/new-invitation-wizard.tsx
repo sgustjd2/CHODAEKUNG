@@ -162,10 +162,12 @@ export function NewInvitationWizard() {
     const eventName = event === "custom" ? customName : selectedEvent?.name ?? "";
     // Custom events start blank; apply the picked mood as the starting theme + accent.
     const moodStyle = event === "custom" ? MOOD_THEME[customMoods[0]] : undefined;
+    // Canonical event datetime for "add to calendar" (ISO from the native date/time pickers).
+    const eventStart = date ? (time ? `${date}T${time}` : date) : undefined;
     try {
       sessionStorage.setItem(
         "chodaekung:wizard",
-        JSON.stringify({ title, subtitle, date, time, location, eventName, theme: moodStyle?.theme, accent: moodStyle?.accent }),
+        JSON.stringify({ title, subtitle, date, time, location, eventName, theme: moodStyle?.theme, accent: moodStyle?.accent, eventStart }),
       );
     } catch {
       /* ignore */
