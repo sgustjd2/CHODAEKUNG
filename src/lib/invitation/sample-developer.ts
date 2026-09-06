@@ -9,6 +9,7 @@ export const developerSample: Invitation = {
   slug: "dev-meetup",
   theme: "developer",
   shareCta: "rsvp",
+  eventStart: "2027-04-11T19:00",
   sections: [
     {
       id: "d-cover",
@@ -18,9 +19,9 @@ export const developerSample: Invitation = {
         eyebrow: "",
         from: "jisu",
         json: [
-          { k: "event", v: "Spring Dev Meetup 2026", t: "str" },
+          { k: "event", v: "Spring Dev Meetup 2027", t: "str" },
           { k: "host", v: "@jisu · Frontend Guild", t: "str" },
-          { k: "date", v: "2026-04-12T19:00+09:00", t: "date" },
+          { k: "date", v: "2027-04-11T19:00+09:00", t: "date" },
           { k: "venue", v: "성수동 스타트업 캠퍼스", t: "str" },
           { k: "topic", v: "React 19 · Server Components", t: "str" },
           { k: "capacity", v: "42", t: "num" },
@@ -35,7 +36,7 @@ export const developerSample: Invitation = {
         eyebrow: "datetime",
         title: [],
         countdown: { days: 32, hrs: 0, min: 0, sec: 0 },
-        bigDate: ["04", "12"],
+        bigDate: ["04", "11"],
         subLabel: "SUN · 19:00 KST",
         dataGrid: [
           { k: "day", v: "Sunday" },

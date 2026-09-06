@@ -4,6 +4,7 @@ export const battleSample: Invitation = {
   slug: "jogi-battle",
   theme: "battle",
   shareCta: "도전 응답",
+  eventStart: "2027-04-18T07:00",
   sections: [
     {
       id: "cover",
@@ -12,7 +13,7 @@ export const battleSample: Invitation = {
         image: "battle_sports",
         eyebrow: "Official Challenge",
         headerLeft: "Match 003 · Battle",
-        headerRightLines: ["2026 · 04 · 20", "SUN · 07:00 AM"],
+        headerRightLines: ["2027 · 04 · 18", "SUN · 07:00 AM"],
         titleLines: [["조기축구"], [{ text: "배틀", em: true }]],
         subtitle: "2팀 · 90분 · 서울숲 축구장",
       },
@@ -108,7 +109,7 @@ export const battleSample: Invitation = {
       type: "accept",
       content: {
         title: [["받으시겠어요"], [{ text: "이 도전을?", em: true }]],
-        sub: "참석 여부를 4월 15일까지 알려주세요",
+        sub: "참석 여부를 4월 13일까지 알려주세요",
         accept: "도전 받는다",
         decline: "다음에",
       },

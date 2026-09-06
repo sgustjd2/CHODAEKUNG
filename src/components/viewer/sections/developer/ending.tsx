@@ -24,7 +24,7 @@ export function DevEnding({ content }: { content: EndingContent }) {
           CHODAEKUNG · <span className="accent">v0.1.0</span> · MIT License
         </div>
         <div className="d-made">
-          Made in Seoul · <Icon name="ic-heart-fill" className="d-heart" width={10} height={10} /> · 2026
+          Made in Seoul · <Icon name="ic-heart-fill" className="d-heart" width={10} height={10} /> · {new Date().getFullYear()}
         </div>
       </div>
     </>
