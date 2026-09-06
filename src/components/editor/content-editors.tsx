@@ -5,6 +5,7 @@ import { coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-s
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
+import { listMyMediaAction } from "@/lib/invitation/actions";
 import type {
   AcceptContent,
   ChecklistContent,
@@ -502,31 +503,80 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
   );
 }
 
-export function PhotoUpload({ onUploaded, label }: { onUploaded: (url: string) => void; label?: string }) {
+export function PhotoUpload({ onUploaded, label, showLibrary = true }: { onUploaded: (url: string) => void; label?: string; showLibrary?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [libOpen, setLibOpen] = useState(false);
+  const [lib, setLib] = useState<{ path: string; url: string }[] | null>(null);
+  const [libMsg, setLibMsg] = useState("");
+
+  const toggleLib = async () => {
+    const next = !libOpen;
+    setLibOpen(next);
+    if (!next || lib) return; // already loaded, or closing
+    setLibMsg("불러오는 중…");
+    const res = await listMyMediaAction();
+    if (res.ok) {
+      setLib(res.items);
+      setLibMsg(res.items.length ? "" : "라이브러리에 사진이 없어요.");
+    } else {
+      setLib([]);
+      setLibMsg(res.error);
+    }
+  };
+
   return (
     <div>
-      <label className="insp-add" style={{ display: "block", textAlign: "center", cursor: busy ? "default" : "pointer" }}>
-        {busy ? "업로드 중…" : (label ?? "+ 사진 업로드")}
-        <input
-          type="file"
-          accept="image/*"
-          hidden
-          disabled={busy}
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            setBusy(true);
-            setErr("");
-            const res = await uploadPhoto(file);
-            setBusy(false);
-            e.target.value = "";
-            if ("url" in res) onUploaded(res.url);
-            else setErr(res.error);
-          }}
-        />
-      </label>
+      <div style={{ display: "flex", gap: 6 }}>
+        <label className="insp-add" style={{ flex: 1, textAlign: "center", cursor: busy ? "default" : "pointer" }}>
+          {busy ? "업로드 중…" : (label ?? "+ 사진 업로드")}
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            disabled={busy}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setBusy(true);
+              setErr("");
+              const res = await uploadPhoto(file);
+              setBusy(false);
+              e.target.value = "";
+              if ("url" in res) onUploaded(res.url);
+              else setErr(res.error);
+            }}
+          />
+        </label>
+        {showLibrary && (
+          <button type="button" className="insp-add" style={{ flex: 1, cursor: "pointer" }} onClick={toggleLib} aria-expanded={libOpen}>
+            라이브러리에서 선택
+          </button>
+        )}
+      </div>
+      {libOpen && (
+        <div style={{ marginTop: 6 }}>
+          {lib && lib.length > 0 ? (
+            <div className="insp-photos">
+              {lib.map((it) => (
+                <button
+                  key={it.path}
+                  type="button"
+                  className="insp-photo"
+                  style={{ padding: 0, border: "none", background: "none", cursor: "pointer" }}
+                  onClick={() => { onUploaded(it.url); setLibOpen(false); }}
+                  aria-label="이 사진 사용"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={it.url} alt="" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ fontSize: 11, color: "var(--ink-soft, #888)", padding: "4px 0" }}>{libMsg}</div>
+          )}
+        </div>
+      )}
       {err && <div style={{ fontSize: 11, color: "var(--wax-deep)", marginTop: 4 }}>{err}</div>}
     </div>
   );

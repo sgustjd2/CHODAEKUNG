@@ -66,7 +66,7 @@ export function MediaClient() {
             <p className="med-sub">업로드한 사진을 모아 보고, URL을 복사해 재사용하거나 정리하세요.</p>
           </div>
           <div className="med-upload">
-            <PhotoUpload label="+ 사진 업로드" onUploaded={() => load()} />
+            <PhotoUpload label="+ 사진 업로드" showLibrary={false} onUploaded={() => load()} />
           </div>
         </div>
 
