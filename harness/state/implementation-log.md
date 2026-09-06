@@ -631,3 +631,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   dayPlan/rules/checklist/details/gInfo/notice/route/roster/menu + addSection.
 - Sample invitations (templates) are left as-is. Open question surfaced to user: whether a brand-new
   invitation should also start blank (no romantic sample) vs. as a template.
+
+## Cover layout variants (GenericCover)
+- Added CoverContent.layout ("theme" | photo-bottom | photo-center | split | text). "theme" (default)
+  keeps each theme's own cover renderer untouched; the others render a shared, theme-agnostic
+  GenericCover (src/components/viewer/sections/generic-cover.tsx) intercepted at the single dispatch
+  point in invitation-viewer.tsx (s.type==="cover" && layout && layout!=="theme").
+- Rationale: each of the 8 themes has its own cover root class (.iv-cover/.ivm-cover/.g-cover/…), so a
+  cross-theme CSS modifier isn't possible. GenericCover sits at top level in viewer.css and inherits the
+  enclosing .iv.t-<theme> tokens (--wax accent, --wax-deep panel, --font-serif/-en), so one component
+  themes correctly under any theme (verified romantic + gaming). Labels: 클래식/히어로/스플릿/미니멀.
+- Editor picker (radio-group / m-radios) added to the Cover Section on both desktop (content-editors)
+  and mobile (mobile-editor DesignPanel); live preview updates via InvitationViewer contained.

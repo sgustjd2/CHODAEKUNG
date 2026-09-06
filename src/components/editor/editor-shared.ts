@@ -1,4 +1,4 @@
-import type { Line, RevealAnim, SectionType, ThemeId } from "@/lib/invitation/types";
+import type { CoverLayout, Line, RevealAnim, SectionType, ThemeId } from "@/lib/invitation/types";
 
 /** Shared editor constants + helpers used by both the desktop and mobile layouts. */
 
@@ -60,6 +60,15 @@ export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] =
   { id: "battle", label: "Battle", enabled: true },
   { id: "gaming", label: "Gaming", enabled: true },
   { id: "developer", label: "Developer", enabled: true },
+];
+
+/** Cover layout variants offered in the editor. `theme` keeps the theme's own cover. */
+export const COVER_LAYOUTS: { id: CoverLayout; label: string }[] = [
+  { id: "theme", label: "테마 기본" },
+  { id: "photo-bottom", label: "클래식" },
+  { id: "photo-center", label: "히어로" },
+  { id: "split", label: "스플릿" },
+  { id: "text", label: "미니멀" },
 ];
 
 export const REVEALS: { id: RevealAnim; label: string }[] = [

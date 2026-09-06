@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
+import { COVER_LAYOUTS, coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
@@ -83,6 +83,18 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
             <Field key={i} label={`이름 ${i + 1}`} value={n} onChange={(v) => patch(cover.id, { names: cover.content.names!.map((x, j) => (j === i ? v : x)) })} />
           ))}
           <Field label="날짜 표기" value={cover.content.dateLabel ?? ""} onChange={(v) => patch(cover.id, { dateLabel: v })} />
+          <div style={{ fontSize: 12, fontWeight: 600, color: "var(--fg-2, #4a4a5a)", margin: "14px 0 8px" }}>커버 레이아웃</div>
+          <div className="radio-group">
+            {COVER_LAYOUTS.map((l) => (
+              <button
+                key={l.id}
+                className={`radio-btn${(cover.content.layout ?? "theme") === l.id ? " active" : ""}`}
+                onClick={() => patch(cover.id, { layout: l.id } satisfies Partial<CoverContent>)}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
           <div style={{ fontSize: 12, fontWeight: 600, color: "var(--fg-2, #4a4a5a)", margin: "14px 0 8px" }}>커버 사진</div>
           <div className="cover-thumbs">
             {/^https?:\/\//.test(cover.content.image) && (

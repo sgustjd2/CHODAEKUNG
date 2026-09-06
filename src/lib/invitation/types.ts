@@ -22,9 +22,15 @@ export type ThemeId =
   | "timeline"
   | "gaming";
 
+/** Cover arrangement. `theme` (default) uses each theme's own cover renderer;
+ * the rest use a shared, theme-tokenized GenericCover in the named layout. */
+export type CoverLayout = "theme" | "photo-bottom" | "photo-center" | "split" | "text";
+
 export type CoverContent = {
   image: string;
   eyebrow: string;
+  /** Cover layout variant (undefined = theme default). */
+  layout?: CoverLayout;
   /** Couple/stacked names, rendered with `connector` between (romantic). */
   names?: string[];
   connector?: string;

@@ -82,6 +82,49 @@
 .share-pill svg { width: 12px; height: 12px; }
 
 /* ============================================================
+   GENERIC COVER — theme-agnostic layout variants
+   Used when cover.layout !== "theme". Sits at top level so it inherits the
+   enclosing theme's --wax accent, --wax-deep, and fonts (any .iv.t-<theme>).
+   ============================================================ */
+.gcover { position: relative; overflow: hidden; height: 660px; display: flex; box-sizing: border-box; color: #fff9f2; }
+.gcover-photo { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; }
+.gcover-photo::after { content: ""; position: absolute; inset: 0; }
+.gcover-body { position: relative; z-index: 2; width: 100%; padding: 44px 34px; display: flex; flex-direction: column; gap: 12px; }
+.gcover-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; opacity: 0.92; }
+.gcover-title { font-family: var(--font-serif); font-weight: 500; margin: 0; font-size: 46px; line-height: 1.06; letter-spacing: -0.01em; }
+.gcover-sub { margin: 0; font-size: 14px; line-height: 1.55; opacity: 0.9; max-width: 32ch; }
+.gcover-date { font-family: var(--font-en); font-size: 12px; font-weight: 700; letter-spacing: 0.28em; margin-top: 8px; opacity: 0.95; }
+
+/* Classic — full photo, text anchored bottom-center */
+.gcover-photo-bottom { align-items: flex-end; text-align: center; }
+.gcover-photo-bottom .gcover-body { align-items: center; }
+.gcover-photo-bottom .gcover-photo::after { background: linear-gradient(180deg, rgba(20,20,30,0.18) 0%, transparent 28%, transparent 46%, rgba(15,15,24,0.78) 100%); }
+.gcover-photo-bottom .gcover-sub { margin-left: auto; margin-right: auto; }
+
+/* Hero — full photo, text centered */
+.gcover-photo-center { align-items: center; justify-content: center; text-align: center; }
+.gcover-photo-center .gcover-body { align-items: center; }
+.gcover-photo-center .gcover-photo::after { background: rgba(16,16,26,0.46); }
+.gcover-photo-center .gcover-title { font-size: 52px; }
+.gcover-photo-center .gcover-sub { margin-left: auto; margin-right: auto; }
+
+/* Minimal — heavy scrim, editorial centered text with accent eyebrow */
+.gcover-text { align-items: center; justify-content: center; text-align: center; }
+.gcover-text .gcover-body { align-items: center; gap: 20px; }
+.gcover-text .gcover-photo::after { background: rgba(14,14,22,0.74); }
+.gcover-text .gcover-eb { color: var(--wax); opacity: 1; }
+.gcover-text .gcover-title { font-size: 40px; letter-spacing: 0.01em; }
+.gcover-text .gcover-date { margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.28); }
+
+/* Split — photo top, accent (--wax-deep) panel bottom */
+.gcover-split { flex-direction: column; }
+.gcover-split .gcover-photo { position: relative; inset: auto; flex: 0 0 56%; }
+.gcover-split .gcover-photo::after { background: linear-gradient(180deg, transparent 65%, rgba(0,0,0,0.12)); }
+.gcover-split .gcover-body { flex: 1; background: var(--wax-deep); align-items: center; justify-content: center; text-align: center; }
+.gcover-split .gcover-title { font-size: 40px; }
+.gcover-split .gcover-sub { margin-left: auto; margin-right: auto; }
+
+/* ============================================================
    THEME · ROMANTIC WEDDING
    ============================================================ */
 .iv.t-romantic {

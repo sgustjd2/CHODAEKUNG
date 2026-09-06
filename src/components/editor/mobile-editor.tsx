@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, COVER_LAYOUTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -169,6 +169,23 @@ function DesignPanel({ api }: { api: EditorApi }) {
           ))}
         </div>
       </div>
+      {cover && (
+        <div className="m-group">
+          <h6>커버 레이아웃</h6>
+          <div className="m-radios">
+            {COVER_LAYOUTS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className={`m-radio${(cover.content.layout ?? "theme") === l.id ? " active" : ""}`}
+                onClick={() => patch(cover.id, { layout: l.id })}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="m-group">
         <h6>Cover Background</h6>
         <div className="m-thumbs">

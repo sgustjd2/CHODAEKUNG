@@ -1,6 +1,8 @@
+import { Fragment } from "react";
 import type { ComponentType, CSSProperties } from "react";
-import type { Invitation } from "@/lib/invitation/types";
+import type { CoverContent, Invitation } from "@/lib/invitation/types";
 import { themeRegistry } from "./section-registry";
+import { GenericCover } from "./sections/generic-cover";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
@@ -52,16 +54,22 @@ export function InvitationViewer({
       )}
       <div className="iv-doc">
         {invitation.sections.map((s, i) => {
+          // Cover with a non-theme layout uses the shared GenericCover; everything else the theme renderer.
+          const useGeneric = s.type === "cover" && !!(s.content as CoverContent).layout && (s.content as CoverContent).layout !== "theme";
           const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }> | undefined;
-          if (!Renderer) return null;
-          if (animate) {
-            return (
-              <Reveal key={s.id} anim={reveal} index={i}>
-                <Renderer content={s.content} index={i} />
-              </Reveal>
-            );
-          }
-          return <Renderer key={s.id} content={s.content} index={i} />;
+          const node = useGeneric ? (
+            <GenericCover content={s.content as CoverContent} />
+          ) : Renderer ? (
+            <Renderer content={s.content} index={i} />
+          ) : null;
+          if (!node) return null;
+          return animate ? (
+            <Reveal key={s.id} anim={reveal} index={i}>
+              {node}
+            </Reveal>
+          ) : (
+            <Fragment key={s.id}>{node}</Fragment>
+          );
         })}
       </div>
 
