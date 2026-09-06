@@ -387,11 +387,11 @@ export function NewInvitationWizard() {
             </div>
             <div>
               <label className="input-label">날짜</label>
-              <input className="input" type="text" placeholder="YYYY.MM.DD" value={date} onChange={(e) => setDate(e.target.value)} />
+              <input className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
             <div>
               <label className="input-label">시간</label>
-              <input className="input" type="text" placeholder="HH:MM" value={time} onChange={(e) => setTime(e.target.value)} />
+              <input className="input" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
             </div>
             <div className="full">
               <label className="input-label">장소</label>
@@ -466,7 +466,7 @@ export function NewInvitationWizard() {
               </span>
             </div>
             <div className="row"><span className="k">제목</span><span className="v">{title || "—"}</span></div>
-            <div className="row"><span className="k">일시</span><span className="v">{date || time ? [date, time].filter(Boolean).join(" · ") : "—"}</span></div>
+            <div className="row"><span className="k">일시</span><span className="v">{date || time ? [date.replace(/-/g, "."), time].filter(Boolean).join(" · ") : "—"}</span></div>
             <div className="row"><span className="k">장소</span><span className="v">{location.split(" · ")[0] || "—"}</span></div>
             <div className="row"><span className="k">템플릿</span><span className="v">{selectedStyle?.nameText} · {selectedStyle?.cat.split(" · ")[0]}</span></div>
             <div className="row"><span className="k">공개 상태</span><span className="v" style={{ color: "var(--sage-deep)" }}>Draft · 나만 볼 수 있음</span></div>

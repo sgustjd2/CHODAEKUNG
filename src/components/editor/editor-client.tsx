@@ -50,7 +50,9 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
   else if (c.titleLines) c.titleLines = [[t]];
   else c.title = t;
   // Cover date label, where the theme's cover carries one (plain text — safe across themes).
-  const dl = [w.date, w.time].filter((x) => x?.trim()).join(" · ");
+  // Native date input hands over ISO (YYYY-MM-DD); show it as YYYY.MM.DD.
+  const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
+  const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
   if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
 }
 
