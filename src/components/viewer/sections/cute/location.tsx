@@ -10,7 +10,7 @@ export function CuteLocation({ content }: { content: LocationContent }) {
     <CCard eb={content.eyebrow} ebVariant="sage" title={content.title}>
       {content.photo && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className="c-photo" src={photoUrl(content.photo)} alt="" />
+        <img className="c-photo" src={photoUrl(content.photo)} alt="" loading="lazy" decoding="async" />
       )}
       {content.address && (
         <div className="c-addr">

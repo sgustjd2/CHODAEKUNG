@@ -8,7 +8,7 @@ export function CuteGallery({ content }: { content: GalleryContent }) {
       <div className="c-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={photoUrl(img.src)} alt="" />
+          <img key={i} src={photoUrl(img.src)} alt="" loading="lazy" decoding="async" />
         ))}
       </div>
     </CCard>

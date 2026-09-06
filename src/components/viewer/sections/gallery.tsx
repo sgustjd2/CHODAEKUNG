@@ -12,7 +12,7 @@ export function GallerySection({ content }: { content: GalleryContent }) {
       <div className="iv-gallery-grid">
         {content.images.map((im, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={photoUrl(im.src)} alt="" className={im.tall ? "tall" : undefined} />
+          <img key={i} src={photoUrl(im.src)} alt="" loading="lazy" decoding="async" className={im.tall ? "tall" : undefined} />
         ))}
       </div>
     </div>

@@ -11,7 +11,7 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
       {content.photo && (
         <div className="e-photo-wrap">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photoUrl(content.photo)} alt="" />
+          <img src={photoUrl(content.photo)} alt="" loading="lazy" decoding="async" />
           {content.photoCap && (
             <div className="e-photo-cap">
               <span>{content.photoCap.l}</span>

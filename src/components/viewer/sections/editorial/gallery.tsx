@@ -8,7 +8,7 @@ export function EditorialGallery({ content }: { content: GalleryContent }) {
       <div className="e-mag-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} className={`p${i + 1}`} src={photoUrl(img.src)} alt="" />
+          <img key={i} className={`p${i + 1}`} src={photoUrl(img.src)} alt="" loading="lazy" decoding="async" />
         ))}
       </div>
       {content.caption && (

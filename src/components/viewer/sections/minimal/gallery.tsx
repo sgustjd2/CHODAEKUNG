@@ -13,11 +13,11 @@ export function MinimalGallery({ content, index }: { content: GalleryContent; in
       </div>
       <div className="ivm-gallery">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {big && <img className="big" src={photoUrl(big.src)} alt="" />}
+        {big && <img className="big" src={photoUrl(big.src)} alt="" loading="lazy" decoding="async" />}
         <div className="col-r">
           {rest.map((im, i) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={i} src={photoUrl(im.src)} alt="" />
+            <img key={i} src={photoUrl(im.src)} alt="" loading="lazy" decoding="async" />
           ))}
         </div>
       </div>

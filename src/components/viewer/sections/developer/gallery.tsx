@@ -9,7 +9,7 @@ export function DevGallery({ content }: { content: GalleryContent }) {
         {content.images.map((img, i) => (
           <div className="d-gallery-item" key={i}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photoUrl(img.src)} alt="" />
+            <img src={photoUrl(img.src)} alt="" loading="lazy" decoding="async" />
             <div className="cap">v0{i + 1}.jpg</div>
           </div>
         ))}
