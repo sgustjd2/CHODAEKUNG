@@ -220,16 +220,21 @@ export function EditorClient() {
     setTitle(defaultTitleFor(base));
     setHidden(new Set());
   };
-  const reorder = (to: number) => {
-    const from = dragIndex.current;
-    dragIndex.current = null;
-    if (from == null || from === to) return;
+  // Move a section from one index to another. Backs both drag-and-drop (desktop)
+  // and the ▲/▼ buttons (touch/keyboard, since HTML5 drag doesn't fire on touch).
+  const move = (from: number, to: number) => {
     setDraft((d) => {
+      if (from === to || to < 0 || to >= d.sections.length) return d;
       const s = [...d.sections];
       const [m] = s.splice(from, 1);
       s.splice(to, 0, m);
       return { ...d, sections: s };
     });
+  };
+  const reorder = (to: number) => {
+    const from = dragIndex.current;
+    dragIndex.current = null;
+    if (from != null) move(from, to);
   };
 
   const cover = find("cover"); // still needed for the Style tab (cover background + accent)
@@ -260,6 +265,7 @@ export function EditorClient() {
     patch,
     addSection,
     reorder,
+    move,
     dragIndex,
     cover,
     openPublish: () => setPubOpen(true),
@@ -372,6 +378,12 @@ export function EditorClient() {
                     )}
                   </div>
                   <div className="sec-actions">
+                    <button title="위로" disabled={i === 0} onClick={(e) => { e.stopPropagation(); move(i, i - 1); }}>
+                      <Icon name="ic-chevron-up" />
+                    </button>
+                    <button title="아래로" disabled={i === draft.sections.length - 1} onClick={(e) => { e.stopPropagation(); move(i, i + 1); }}>
+                      <Icon name="ic-chevron-down" />
+                    </button>
                     <button title="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
                       <Icon name={hidden.has(s.id) ? "ic-eye" : "ic-eye-off"} />
                     </button>

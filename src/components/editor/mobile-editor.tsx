@@ -26,6 +26,7 @@ export type EditorApi = {
   addSection: (type: SectionType) => void;
   applyTemplate: (sampleSlug: string) => void;
   reorder: (to: number) => void;
+  move: (from: number, to: number) => void;
   dragIndex: { current: number | null };
   cover?: Extract<Section, { type: "cover" }>;
   openPublish: () => void;
@@ -200,7 +201,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
 }
 
 function SectionsPanel({ api }: { api: EditorApi }) {
-  const { draft, selectedId, setSelectedId, addSection, reorder, dragIndex } = api;
+  const { draft, selectedId, setSelectedId, addSection, reorder, move, dragIndex } = api;
   const [pick, setPick] = useState(false);
   const addableTypes = ADDABLE_SECTIONS.filter((t) => themeRegistry[draft.theme]?.[t]);
   return (
@@ -250,6 +251,14 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 <div className="m-sec-type">{s.type}</div>
               </div>
               {active && <span className="m-sec-badge">ACTIVE</span>}
+              <div className="m-sec-move">
+                <button type="button" title="위로" aria-label="위로 이동" disabled={i === 0} onClick={(e) => { e.stopPropagation(); move(i, i - 1); }}>
+                  <Icon name="ic-chevron-up" />
+                </button>
+                <button type="button" title="아래로" aria-label="아래로 이동" disabled={i === draft.sections.length - 1} onClick={(e) => { e.stopPropagation(); move(i, i + 1); }}>
+                  <Icon name="ic-chevron-down" />
+                </button>
+              </div>
             </div>
           );
         })}
