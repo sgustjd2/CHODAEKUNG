@@ -190,7 +190,8 @@
   .kakao-preview .kc-cta .a { color: var(--wax); }
 
   .qr-block { display: flex; justify-content: center; padding: 32px 20px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-md); text-align: center; }
-  .qr-img { width: 160px; height: 160px; margin: 0 auto 12px; border: 8px solid var(--card); border-radius: 12px; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--card) 0% 50%) 0 0 / 22px 22px; position: relative; }
+  .qr-img { width: 160px; height: 160px; margin: 0 auto 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; position: relative; padding: 12px; box-sizing: border-box; }
+  .qr-img .qr-svg { display: block; width: 100%; height: 100%; }
   .qr-img .qr-mid { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 44px; height: 44px; background: var(--card); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .qr-img .qr-mid svg { width: 24px; height: 24px; }
   .qr-cap { font-size: 13px; font-weight: 700; margin-bottom: 3px; color: var(--ink); }

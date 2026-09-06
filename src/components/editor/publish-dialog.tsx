@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { QrCode } from "@/components/ui/qr-code";
 import { publishInvitationAction } from "@/lib/invitation/actions";
 import type { Invitation, Line } from "@/lib/invitation/types";
 
@@ -171,6 +172,7 @@ export function PublishDialog({
             <div className="qr-block">
               <div>
                 <div className="qr-img">
+                  <QrCode value={shareUrl} className="qr-svg" />
                   <div className="qr-mid">
                     <Icon name="moi-mark" viewBox="0 0 48 48" />
                   </div>
