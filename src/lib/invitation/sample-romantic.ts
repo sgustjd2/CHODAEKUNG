@@ -1,19 +1,25 @@
 import type { CalendarDay, Invitation } from "./types";
 
-// May 2026 grid (Sun-first); 24th marked today. (Static demo — real countdown/calendar later.)
-const may2026: CalendarDay[] = [
-  { n: 26, dim: true }, { n: 27, dim: true }, { n: 28, dim: true }, { n: 29, dim: true }, { n: 30, dim: true }, { n: 1 }, { n: 2 },
-  { n: 3 }, { n: 4 }, { n: 5 }, { n: 6 }, { n: 7 }, { n: 8 }, { n: 9 },
-  { n: 10 }, { n: 11 }, { n: 12 }, { n: 13 }, { n: 14 }, { n: 15 }, { n: 16 },
-  { n: 17 }, { n: 18 }, { n: 19 }, { n: 20 }, { n: 21 }, { n: 22 }, { n: 23 },
-  { n: 24, today: true }, { n: 25 }, { n: 26 }, { n: 27 }, { n: 28 }, { n: 29 }, { n: 30 },
-  { n: 31 }, { n: 1, dim: true }, { n: 2, dim: true }, { n: 3, dim: true }, { n: 4, dim: true }, { n: 5, dim: true }, { n: 6, dim: true },
-];
+/** Sun-first month grid: leading/trailing days dimmed, `highlight` marked as the event day. */
+function monthGrid(year: number, month0: number, highlight: number): CalendarDay[] {
+  const lead = new Date(year, month0, 1).getDay();
+  const daysInMonth = new Date(year, month0 + 1, 0).getDate();
+  const prevMonthDays = new Date(year, month0, 0).getDate();
+  const cells: CalendarDay[] = [];
+  for (let i = lead - 1; i >= 0; i--) cells.push({ n: prevMonthDays - i, dim: true });
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d === highlight ? { n: d, today: true } : { n: d });
+  let next = 1;
+  while (cells.length % 7 !== 0) cells.push({ n: next++, dim: true });
+  return cells;
+}
+// Wedding: Saturday, 15 May 2027 (fixed future date so the demo/countdown stays fresh).
+const may2027: CalendarDay[] = monthGrid(2027, 4, 15);
 
 export const romanticSample: Invitation = {
   slug: "jisoo-minjun",
   theme: "romantic",
   shareCta: "참석 답장",
+  eventStart: "2027-05-15T12:00",
   sections: [
     {
       id: "cover",
@@ -25,7 +31,7 @@ export const romanticSample: Invitation = {
         eyebrow: "Save the Date",
         names: ["지수", "민준"],
         connector: "&",
-        dateLabel: "2026 · 05 · 24 · SAT",
+        dateLabel: "2027 · 05 · 15 · SAT",
       },
     },
     {
@@ -48,15 +54,20 @@ export const romanticSample: Invitation = {
       type: "date",
       content: {
         eyebrow: "The Date",
-        title: [["2026. 05. 24"], ["Saturday ", { text: "12:00", em: true }]],
+        title: [["2027. 05. 15"], ["Saturday ", { text: "12:00", em: true }]],
         calendar: {
-          monthLabel: ["May ", { text: "2026", em: true }],
+          monthLabel: ["May ", { text: "2027", em: true }],
           weekdays: ["S", "M", "T", "W", "T", "F", "S"],
-          days: may2026,
+          days: may2027,
         },
         countdown: { days: 92, hrs: 14, min: 32, sec: 8 },
         tint: true,
       },
+    },
+    {
+      id: "dday",
+      type: "dday",
+      content: { eyebrow: "Countdown", title: [["결혼식", { text: "까지", em: true }]] },
     },
     {
       id: "location",
