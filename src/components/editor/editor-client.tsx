@@ -10,7 +10,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -204,6 +204,18 @@ export function EditorClient() {
     });
   const addSection = (type: SectionType) =>
     setDraft((d) => ({ ...d, sections: [...d.sections, blankSection(type)] }));
+
+  // Change event type after creation: re-apply the chosen event's template (theme + sections),
+  // keeping the current slug. Replaces content, so confirm first.
+  const applyTemplate = (sampleSlug: string) => {
+    if (typeof window !== "undefined" && !window.confirm("현재 초대장 내용이 선택한 이벤트 템플릿으로 교체돼요. 계속할까요?")) return;
+    const base = structuredClone(getInvitation(sampleSlug));
+    base.slug = slug;
+    setDraft(base);
+    setSelectedId(base.sections[0]?.id ?? "");
+    setTitle(defaultTitleFor(base));
+    setHidden(new Set());
+  };
   const reorder = (to: number) => {
     const from = dragIndex.current;
     dragIndex.current = null;
@@ -248,6 +260,7 @@ export function EditorClient() {
     cover,
     openPublish: () => setPubOpen(true),
     openPreview,
+    applyTemplate,
   };
 
   return (
@@ -387,6 +400,19 @@ export function EditorClient() {
 
             {tab === "style" && (
               <>
+                <div className="insp-group">
+                  <h5>이벤트 종류</h5>
+                  <div className="radio-group">
+                    {EVENT_TEMPLATES.map((e) => (
+                      <button key={e.slug} className="radio-btn" onClick={() => applyTemplate(e.slug)}>
+                        {e.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    이벤트에 맞는 템플릿(테마·섹션 구성)으로 바꿔요. 지금 입력한 내용은 새 템플릿으로 교체돼요.
+                  </p>
+                </div>
                 <div className="insp-group">
                   <h5>Theme Preset</h5>
                   <div className="radio-group">

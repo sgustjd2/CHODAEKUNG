@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -24,6 +24,7 @@ export type EditorApi = {
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
+  applyTemplate: (sampleSlug: string) => void;
   reorder: (to: number) => void;
   dragIndex: { current: number | null };
   cover?: Extract<Section, { type: "cover" }>;
@@ -127,11 +128,22 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, cover, patch } = api;
+  const { draft, setDraft, accent, setAccent, cover, patch, applyTemplate } = api;
   const [overlay, setOverlay] = useState(65);
   return (
     <>
-      <DecorTabs tabs={["Theme", "Color", "Font", "Cover"]} />
+      <DecorTabs tabs={["Event", "Theme", "Color", "Cover"]} />
+      <div className="m-group">
+        <h6>이벤트 종류</h6>
+        <div className="m-radios">
+          {EVENT_TEMPLATES.map((e) => (
+            <button key={e.slug} type="button" className="m-radio" onClick={() => applyTemplate(e.slug)}>
+              {e.label}
+            </button>
+          ))}
+        </div>
+        <p className="m-note" style={{ marginTop: 8 }}>선택한 이벤트 템플릿(테마·섹션)으로 교체돼요.</p>
+      </div>
       <div className="m-group">
         <h6>Theme Preset</h6>
         <div className="m-radios">

@@ -59,6 +59,18 @@ export const REVEALS: { id: RevealAnim; label: string }[] = [
 /** Section types offered by the editor's "add section" picker (filtered by theme support at use). */
 export const ADDABLE_SECTIONS: SectionType[] = ["message", "date", "location", "gallery", "schedule", "rsvp", "ending"];
 
+/** Event types → the representative template (sample) the editor re-applies when the user switches. */
+export const EVENT_TEMPLATES: { label: string; slug: string }[] = [
+  { label: "웨딩", slug: "jisoo-minjun" },
+  { label: "생일·돌", slug: "appa-60" },
+  { label: "집들이", slug: "cozy-home" },
+  { label: "파티", slug: "after-hours" },
+  { label: "모임·MT", slug: "jibdeuli" },
+  { label: "스포츠", slug: "jogi-battle" },
+  { label: "게이밍", slug: "lol-quick" },
+  { label: "개발자", slug: "dev-meetup" },
+];
+
 export type Mode = "scroll" | "story" | "magazine";
 
 // --- Line[] <-> plain text helpers (edits lose emphasis; acceptable for the first cut) ---
