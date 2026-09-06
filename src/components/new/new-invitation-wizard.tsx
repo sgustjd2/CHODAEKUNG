@@ -116,7 +116,7 @@ export function NewInvitationWizard() {
   const [step, setStep] = useState(1);
   const [event, setEvent] = useState("wedding");
   const [quick, setQuick] = useState(true);
-  const [customName, setCustomName] = useState("캠핑장 봄맞이 모임");
+  const [customName, setCustomName] = useState("");
   const [customIcon, setCustomIcon] = useState("ic-sparkle");
   const [customMoods, setCustomMoods] = useState<string[]>([]);
   const [template, setTemplate] = useState("1");
@@ -181,7 +181,7 @@ export function NewInvitationWizard() {
 
   const selectedEvent = EVENTS.find((e) => e.id === event);
   const selectedStyle = STYLES.find((s) => s.id === template);
-  const summaryEventName = event === "custom" ? customName : selectedEvent?.name ?? "—";
+  const summaryEventName = event === "custom" ? customName.trim() || "—" : selectedEvent?.name ?? "—";
   const summaryEventIcon = event === "custom" ? customIcon : selectedEvent?.icon ?? "ic-sparkle";
 
   return (
