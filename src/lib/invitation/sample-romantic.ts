@@ -115,6 +115,15 @@ export const romanticSample: Invitation = {
       },
     },
     {
+      id: "guestbook",
+      type: "guestbook",
+      content: {
+        eyebrow: "Guestbook",
+        title: [["축하 ", { text: "메시지", em: true }]],
+        note: "두 사람에게 따뜻한 한마디를 남겨주세요.",
+      },
+    },
+    {
       id: "ending",
       type: "ending",
       content: { flourish: "✻", signature: "with love,", names: "지수 & 민준" },
