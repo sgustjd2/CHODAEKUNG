@@ -52,30 +52,37 @@ function loadKakaoMaps(): Promise<KakaoMaps | null> {
   return loader;
 }
 
-export function LocationMap({ address, className }: { address: string; className?: string }) {
+export function LocationMap({ address, lat, lng, className }: { address?: string; lat?: number; lng?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [ok, setOk] = useState(false);
+  const hasCoords = typeof lat === "number" && typeof lng === "number" && !Number.isNaN(lat) && !Number.isNaN(lng);
+  const query = address?.trim();
 
   useEffect(() => {
-    const query = address?.trim();
-    if (!KEY || !query || !ref.current) return;
+    if (!KEY || (!hasCoords && !query) || !ref.current) return;
     let cancelled = false;
     loadKakaoMaps().then((maps) => {
-      if (cancelled || !maps?.services || !ref.current) return;
-      new maps.services.Geocoder().addressSearch(query, (result, status) => {
-        if (cancelled || status !== maps.services.Status.OK || !result[0] || !ref.current) return;
-        const pos = new maps.LatLng(Number(result[0].y), Number(result[0].x));
-        const map = new maps.Map(ref.current, { center: pos, level: 3 });
+      if (cancelled || !maps || !ref.current) return;
+      const el = ref.current;
+      const drop = (y: number, x: number) => {
+        const pos = new maps.LatLng(y, x);
+        const map = new maps.Map(el, { center: pos, level: 3 });
         new maps.Marker({ position: pos, map });
         setOk(true);
+      };
+      if (hasCoords) return drop(lat as number, lng as number); // exact coords → no geocoding
+      if (!maps.services || !query) return;
+      new maps.services.Geocoder().addressSearch(query, (result, status) => {
+        if (cancelled || status !== maps.services.Status.OK || !result[0] || !ref.current) return;
+        drop(Number(result[0].y), Number(result[0].x));
       });
     });
     return () => {
       cancelled = true;
     };
-  }, [address]);
+  }, [query, hasCoords, lat, lng]);
 
-  if (!KEY || !address?.trim()) return null;
+  if (!KEY || (!hasCoords && !query)) return null;
   // Keep layout size so the map can render into it; invisible until the pin resolves.
   return <div ref={ref} className={className} style={{ visibility: ok ? "visible" : "hidden" }} aria-label="지도" />;
 }
