@@ -126,6 +126,21 @@ function ContentPanel({ api }: { api: EditorApi }) {
     <>
       <DecorTabs tabs={chips} />
       <ContentEditors draft={api.draft} patch={api.patch} />
+      <div className="insp-group">
+        <h5>캘린더</h5>
+        <div className="insp-field">
+          <div className="insp-label">행사 일시 (캘린더 추가용)</div>
+          <input
+            className="insp-input"
+            type="datetime-local"
+            value={api.draft.eventStart ?? ""}
+            onChange={(e) => api.setDraft((d) => ({ ...d, eventStart: e.target.value || undefined }))}
+          />
+          <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+            “캘린더에 추가”와 D-Day 카운트다운의 기준 일시예요.
+          </div>
+        </div>
+      </div>
     </>
   );
 }
