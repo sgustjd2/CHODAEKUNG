@@ -97,6 +97,7 @@ const scrim: Invitation = {
   slug: "lol-scrim",
   theme: "gaming",
   shareCta: "참전",
+  eventStart: "2027-04-24T20:00",
   sections: [
     {
       id: "s-cover",
@@ -105,7 +106,7 @@ const scrim: Invitation = {
         image: "tmpl_gaming",
         imgFilter: "hue-rotate(-30deg) saturate(1.1)",
         headerLeft: "Custom Game · Scrim",
-        headerRightLines: ["2026.04.20 · SAT", "20:00 KST"],
+        headerRightLines: ["2027.04.24 · SAT", "20:00 KST"],
         eyebrow: "Internal Match",
         titleLines: [[{ text: "10인", em: true }, " 내전"]],
         subtitleLines: ["Blue Team vs Red Team · 드래프트 픽"],
@@ -118,7 +119,7 @@ const scrim: Invitation = {
         eyebrow: "Match Format",
         title: [["내전 ", { text: "규정", em: true }]],
         cells: [
-          { k: "Date", v: "04. 20", u: "SAT" },
+          { k: "Date", v: "04. 24", u: "SAT" },
           { k: "Time", v: "20:00", u: "- 23:00" },
           { k: "Games", v: "Best of", u: " 3" },
           { k: "Draft", v: "Fearless", u: " · 밴/픽" },
@@ -174,7 +175,7 @@ const scrim: Invitation = {
       type: "accept",
       content: {
         title: [["내전 ", { text: "참전?", em: true }]],
-        sub: "2자리 남음 · 4월 18일까지 답장",
+        sub: "2자리 남음 · 4월 22일까지 답장",
         accept: "참전한다",
         decline: "패스",
       },

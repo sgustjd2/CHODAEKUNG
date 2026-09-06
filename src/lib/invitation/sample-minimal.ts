@@ -13,7 +13,7 @@ export const minimalSample: Invitation = {
         image: "minimal_birthday",
         eyebrow: "",
         headerLeft: "#001 · Birthday",
-        headerRight: "MOI · 2026",
+        headerRight: "MOI · 2027",
         titleLines: [["아빠의"], ["60번째"], ["생신."]],
         subtitle: "6월 15일 · 저녁 6시 30분",
       },
