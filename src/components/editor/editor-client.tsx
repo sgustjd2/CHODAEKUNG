@@ -401,8 +401,8 @@ export function EditorClient() {
                       </button>
                     ))}
                   </div>
-                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8 }}>
-                    같은 데이터가 테마만 바꿔 즉시 다시 렌더돼요.
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    같은 내용을 테마만 바꿔 즉시 다시 렌더해요. 게이밍·개발자 테마는 섹션 구성이 달라 일부 섹션이 숨겨질 수 있어요.
                   </p>
                 </div>
                 <div className="insp-group">

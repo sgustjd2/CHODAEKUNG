@@ -38,8 +38,12 @@ export const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "
 export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [
   { id: "romantic", label: "Romantic", enabled: true },
   { id: "minimal", label: "Minimal", enabled: true },
-  { id: "editorial", label: "Editorial", enabled: false },
-  { id: "cute", label: "Cute", enabled: false },
+  { id: "cute", label: "Cute", enabled: true },
+  { id: "editorial", label: "Editorial", enabled: true },
+  { id: "timeline", label: "Timeline", enabled: true },
+  { id: "battle", label: "Battle", enabled: true },
+  { id: "gaming", label: "Gaming", enabled: true },
+  { id: "developer", label: "Developer", enabled: true },
 ];
 
 export const REVEALS: { id: RevealAnim; label: string }[] = [
