@@ -145,7 +145,7 @@
   .pub-modal {
     position: relative; width: 100%; max-width: 900px; max-height: 90vh;
     background: var(--card); border-radius: var(--r-2xl); box-shadow: var(--shadow-xl);
-    overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr;
+    overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; grid-template-rows: minmax(0, 1fr);
     transform: scale(0.98); transition: transform 250ms cubic-bezier(0.34,1.56,0.64,1);
   }
   .pub-close {
@@ -155,7 +155,7 @@
   }
   .pub-close:hover { background: var(--paper-2); }
 
-  .pub-left { padding: 40px 32px; background: var(--wax-tint); display: flex; flex-direction: column; overflow-y: auto; }
+  .pub-left { padding: 40px 32px; background: var(--wax-tint); display: flex; flex-direction: column; overflow-y: auto; min-height: 0; max-height: 90vh; }
   .m-eb { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--wax-deep); margin-bottom: 8px; }
   .m-title { font-family: var(--font-serif); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; color: var(--ink); }
   .m-title em { font-weight: 700; color: var(--wax); }
@@ -205,7 +205,7 @@
   .pub-note-inner .d { width: 8px; height: 8px; border-radius: 50%; background: var(--sage-deep); flex-shrink: 0; }
   .pub-note-inner span { font-size: 12px; color: var(--sage-deep); font-weight: 600; }
 
-  .pub-right { padding: 40px 32px; display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); overflow-y: auto; }
+  .pub-right { padding: 40px 32px; display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); overflow-y: auto; min-height: 0; max-height: 90vh; }
   .r-section { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
   .r-lbl { font-family: var(--font-en); font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
   .r-title { font-size: 15px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 4px; color: var(--ink); }
@@ -242,7 +242,7 @@
   .share-btn.native .ic { background: var(--sage-light); color: var(--sage-deep); }
   .share-btn .sub-t { font-family: var(--font-en); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; font-weight: 600; }
 
-  .pub-foot { display: flex; gap: 8px; padding-top: 24px; border-top: 1px solid var(--line); margin-top: auto; }
+  .pub-foot { display: flex; gap: 8px; padding: 16px 0 4px; border-top: 1px solid var(--line); margin-top: auto; position: sticky; bottom: 0; background: var(--card); }
 
   @media (max-width: 800px) {
     padding: 0;

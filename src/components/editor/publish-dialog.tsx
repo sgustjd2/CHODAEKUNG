@@ -71,12 +71,21 @@ export function PublishDialog({
   const displayHost = (origin || "https://chodaekung.com").replace(/^https?:\/\//, "");
   const shareUrl = `${origin || "https://chodaekung.com"}/i/${slug}`;
 
+  // The share link only exists once published (publishing assigns the real slug).
+  // Guard the share actions so a draft ("/i/new") link is never shared.
+  const requirePublished = () => {
+    if (publishedSlug) return true;
+    setMsg({ ok: false, text: "먼저 아래 ‘발행하기’를 눌러 초대장을 발행해 주세요." });
+    return false;
+  };
   const copy = () => {
+    if (!requirePublished()) return;
     navigator.clipboard?.writeText(shareUrl).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);
   };
   const nativeShare = () => {
+    if (!requirePublished()) return;
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({ title, url: shareUrl }).catch(() => {});
     } else {
@@ -85,6 +94,7 @@ export function PublishDialog({
   };
   // Real KakaoTalk share (falls back to copying the link when the Kakao key isn't set).
   const shareKakao = async () => {
+    if (!requirePublished()) return;
     if (!kakaoEnabled()) {
       copy();
       setMsg({ ok: true, text: "링크를 복사했어요. (카카오 공유는 키 설정 후 동작해요)" });
@@ -111,7 +121,10 @@ export function PublishDialog({
       copy();
     }
   };
-  const saveQrPng = () => downloadQrPng(shareUrl, `chodaekung-${slug}-qr.png`);
+  const saveQrPng = () => {
+    if (!requirePublished()) return;
+    downloadQrPng(shareUrl, `chodaekung-${slug}-qr.png`);
+  };
   const publish = async () => {
     setBusy(true);
     setMsg(null);
@@ -251,9 +264,13 @@ export function PublishDialog({
             <div className="r-title">초대장 링크</div>
             <div className="url-row">
               <div className="u">
-                {displayHost}/i/<b>{slug}</b>
+                {publishedSlug ? (
+                  <>{displayHost}/i/<b>{slug}</b></>
+                ) : (
+                  <span style={{ color: "var(--muted)" }}>발행하면 공유 링크가 생성돼요</span>
+                )}
               </div>
-              <button className={`btn-copy${copied ? " copied" : ""}`} onClick={copy}>
+              <button className={`btn-copy${copied ? " copied" : ""}`} onClick={copy} disabled={!publishedSlug}>
                 <Icon name="ic-copy" /> {copied ? "복사됨" : "복사"}
               </button>
             </div>
