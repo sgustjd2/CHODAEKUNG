@@ -81,9 +81,6 @@ export const REVEALS: { id: RevealAnim; label: string }[] = [
   { id: "scale", label: "Scale Reveal" },
 ];
 
-/** Section types offered by the editor's "add section" picker (filtered by theme support at use). */
-export const ADDABLE_SECTIONS: SectionType[] = ["message", "date", "location", "gallery", "schedule", "rsvp", "ending"];
-
 /** Event types → the representative template (sample) the editor re-applies when the user switches. */
 export const EVENT_TEMPLATES: { label: string; slug: string }[] = [
   { label: "웨딩", slug: "jisoo-minjun" },

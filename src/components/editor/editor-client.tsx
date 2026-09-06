@@ -10,7 +10,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -174,7 +174,9 @@ export function EditorClient() {
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
   // Section types the current theme can actually render (for the add-section picker).
-  const addableTypes = ADDABLE_SECTIONS.filter((t) => themeRegistry[draft.theme]?.[t]);
+  // Every section type the current theme can render (its own palette), minus cover
+  // (you don't "add" a cover). Order follows the theme's natural section flow.
+  const addableTypes = (Object.keys(themeRegistry[draft.theme] ?? {}) as SectionType[]).filter((t) => t !== "cover");
   const find = <T extends SectionType>(t: T) =>
     draft.sections.find((s) => s.type === t) as Extract<Section, { type: T }> | undefined;
 
@@ -264,6 +266,7 @@ export function EditorClient() {
     previewStyle,
     patch,
     addSection,
+    changeSectionType,
     reorder,
     move,
     dragIndex,

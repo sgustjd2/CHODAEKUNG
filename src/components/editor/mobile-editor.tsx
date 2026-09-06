@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, COVER_LAYOUTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, COVER_LAYOUTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -24,6 +24,7 @@ export type EditorApi = {
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
+  changeSectionType: (id: string, type: SectionType) => void;
   applyTemplate: (sampleSlug: string) => void;
   reorder: (to: number) => void;
   move: (from: number, to: number) => void;
@@ -218,9 +219,10 @@ function DesignPanel({ api }: { api: EditorApi }) {
 }
 
 function SectionsPanel({ api }: { api: EditorApi }) {
-  const { draft, selectedId, setSelectedId, addSection, reorder, move, dragIndex } = api;
+  const { draft, selectedId, setSelectedId, addSection, changeSectionType, reorder, move, dragIndex } = api;
   const [pick, setPick] = useState(false);
-  const addableTypes = ADDABLE_SECTIONS.filter((t) => themeRegistry[draft.theme]?.[t]);
+  // The current theme's own section palette, minus cover (order follows the theme flow).
+  const addableTypes = (Object.keys(themeRegistry[draft.theme] ?? {}) as SectionType[]).filter((t) => t !== "cover");
   return (
     <>
       <div className="m-sec-add-row">
@@ -264,7 +266,17 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 <Icon name={m.icon} />
               </span>
               <div className="m-sec-info">
-                <div className="m-sec-name">{m.label}</div>
+                <select
+                  className="m-sec-type-select"
+                  value={s.type}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
+                  title="섹션 종류 변경"
+                >
+                  {Array.from(new Set<SectionType>(["cover", ...addableTypes, s.type])).map((t) => (
+                    <option key={t} value={t}>{metaFor(t).label}</option>
+                  ))}
+                </select>
                 <div className="m-sec-type">{s.type}</div>
               </div>
               {active && <span className="m-sec-badge">ACTIVE</span>}

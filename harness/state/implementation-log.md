@@ -643,3 +643,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   themes correctly under any theme (verified romantic + gaming). Labels: 클래식/히어로/스플릿/미니멀.
 - Editor picker (radio-group / m-radios) added to the Cover Section on both desktop (content-editors)
   and mobile (mobile-editor DesignPanel); live preview updates via InvitationViewer contained.
+
+## Add-section palette = theme's own sections + mobile type-change
+- addableTypes was ADDABLE_SECTIONS (7 generic types) ∩ theme, so theme-specific themes showed almost
+  nothing in the "+" menu (gaming = 장소/엔딩 only). Now addableTypes = Object.keys(themeRegistry[theme])
+  minus "cover" — the theme's full section palette in its natural order (gaming = 9). ADDABLE_SECTIONS
+  removed (dead).
+- blankSection expanded from 7 cases to every SectionType (details/timeline/menu/checklist/cost/route/
+  dayPlan/quote/notice/versus/matchInfo/countdown/rules/roster/accept/gInfo/lanes/tierChart/champions),
+  each an empty shell (empty rows/arrays per "no auto default values"); default still → message.
+- Section type-change added to the MOBILE editor (was desktop-only): each m-sec row is now a
+  m-sec-type-select; EditorApi gained changeSectionType. Type-change options on both editors =
+  ["cover", ...addableTypes] so any section (incl. cover) can convert and it's reversible.
+- Limitation: converting between theme-specific types works only within a theme that renders both;
+  a type the theme doesn't render is simply not offered.

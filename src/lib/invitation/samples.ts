@@ -50,6 +50,45 @@ export function blankSection(type: SectionType): Section {
       return { id, type, content: { eyebrow: "", title: [[""]], body: [""], options: ["참석", "미정", "불참"], defaultSelected: 0 } };
     case "ending":
       return { id, type, content: { signature: "", names: "" } };
+    // --- theme-specific section types (blank shells; user fills the rows) ---
+    case "details":
+      return { id, type, content: { eyebrow: "", title: [[""]], info: [] } };
+    case "timeline":
+      return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
+    case "menu":
+      return { id, type, content: { eyebrow: "", title: [[""]], cards: [] } };
+    case "checklist":
+      return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
+    case "cost":
+      return { id, type, content: { eyebrow: "", title: [[""]], costEb: "", total: "", split: "" } };
+    case "route":
+      return { id, type, content: { eyebrow: "", title: [[""]], stops: [] } };
+    case "dayPlan":
+      return { id, type, content: { eyebrow: "", title: [[""]], days: [] } };
+    case "quote":
+      return { id, type, content: { text: [[""]] } };
+    case "notice":
+      return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
+    case "versus":
+      return { id, type, content: { eyebrow: "", title: [[""]], home: { flag: "", name: "", meta: "" }, away: { flag: "", name: "", meta: "" } } };
+    case "matchInfo":
+      return { id, type, content: { title: "", cells: [] } };
+    case "countdown":
+      return { id, type, content: { label: "", cells: [] } };
+    case "rules":
+      return { id, type, content: { title: "", rules: [] } };
+    case "roster":
+      return { id, type, content: { groups: [] } };
+    case "accept":
+      return { id, type, content: { title: [[""]], sub: "", accept: "참석", decline: "불참" } };
+    case "gInfo":
+      return { id, type, content: { eyebrow: "", title: [[""]], cells: [] } };
+    case "lanes":
+      return { id, type, content: { eyebrow: "", title: [[""]], players: [] } };
+    case "tierChart":
+      return { id, type, content: { eyebrow: "", title: [[""]], cols: [] } };
+    case "champions":
+      return { id, type, content: { eyebrow: "", title: [[""]], items: [] } };
     default:
       return { id, type: "message", content: { eyebrow: "", title: [[""]], body: [""] } };
   }
