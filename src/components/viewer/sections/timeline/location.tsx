@@ -1,5 +1,7 @@
 import { Rich } from "../../rich-text";
 import { TlSection } from "./tl-section";
+import { LocationMap } from "../../location-map";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function TimelineLocation({ content }: { content: LocationContent }) {
@@ -11,7 +13,7 @@ export function TimelineLocation({ content }: { content: LocationContent }) {
           <Rich lines={content.body} />
         </div>
       </div>
-      <div className="tl-map" />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="tl-loc-actions">
         {content.mapButtons.map((b, i) => (
           <div key={i} className={`tl-loc-btn${b.primary ? " primary" : ""}`}>

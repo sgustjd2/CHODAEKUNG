@@ -76,6 +76,7 @@ import { DevEnding } from "./sections/developer/ending";
 // Gaming renderers
 import { GamingCover } from "./sections/gaming/cover";
 import { GamingInfo } from "./sections/gaming/info";
+import { GamingLocation } from "./sections/gaming/location";
 import { GamingCountdown } from "./sections/gaming/countdown";
 import { GamingLanes } from "./sections/gaming/lanes";
 import { GamingRules } from "./sections/gaming/rules";
@@ -177,6 +178,7 @@ const developer: ThemeSet = {
 const gaming: ThemeSet = {
   cover: GamingCover,
   gInfo: GamingInfo,
+  location: GamingLocation,
   countdown: GamingCountdown,
   lanes: GamingLanes,
   rules: GamingRules,

@@ -1,5 +1,7 @@
 import { Rich } from "../../rich-text";
 import { BattleSecTitle } from "./sec-title";
+import { LocationMap } from "../../location-map";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function BattleLocation({ content }: { content: LocationContent }) {
@@ -12,7 +14,7 @@ export function BattleLocation({ content }: { content: LocationContent }) {
       <div className="ivb-loc-addr">
         <Rich lines={content.body} />
       </div>
-      <div className="ivb-map" />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="ivb-loc-actions">
         {content.mapButtons.map((b, i) => (
           <div key={i} className={`ivb-loc-btn${b.primary ? " primary" : ""}`}>
