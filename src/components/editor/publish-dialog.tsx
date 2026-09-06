@@ -66,7 +66,7 @@ export function PublishDialog({
   }, [onClose]);
 
   const slug = publishedSlug ?? invitation.slug;
-  const img = `/assets/photos/${coverImage(invitation)}.jpg`;
+  const img = photoUrl(coverImage(invitation)); // handles uploaded (absolute URL) covers too
   const desc = ogDesc(invitation);
   const displayHost = (origin || "https://chodaekung.com").replace(/^https?:\/\//, "");
   const shareUrl = `${origin || "https://chodaekung.com"}/i/${slug}`;
@@ -95,8 +95,7 @@ export function PublishDialog({
       copy();
       return;
     }
-    const rel = photoUrl(coverImage(invitation));
-    const imageUrl = /^https?:\/\//.test(rel) ? rel : `${origin || "https://chodaekung.com"}${rel}`;
+    const imageUrl = /^https?:\/\//.test(img) ? img : `${origin || "https://chodaekung.com"}${img}`;
     try {
       K.Share.sendDefault({
         objectType: "feed",

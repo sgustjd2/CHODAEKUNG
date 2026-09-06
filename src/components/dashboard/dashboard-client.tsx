@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { photoUrl } from "@/lib/photo";
 import { createBrowserSupabase } from "@/lib/db/supabase-browser";
 import { duplicateInvitationAction, deleteInvitationAction } from "@/lib/invitation/actions";
 import type { MyInvitation } from "@/lib/invitation/store";
@@ -260,7 +261,7 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
               <div className="inv-card" key={c.title}>
                 <div className="inv-cover">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/assets/photos/${c.img}.jpg`} alt="" />
+                  <img src={photoUrl(c.img)} alt="" />
                   <div className={`inv-status ${c.status}`}>
                     {c.status === "published" ? "● Published" : c.status === "unlisted" ? "Unlisted" : c.status === "draft" ? "Draft" : "Past"}
                   </div>
