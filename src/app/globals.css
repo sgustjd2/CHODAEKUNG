@@ -22,3 +22,11 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Accessibility: a clear, consistent keyboard focus ring (CLAUDE.md §10).
+   :focus-visible = keyboard nav only, so mouse clicks don't get a ring.
+   :where() keeps specificity 0 so a component can still override it. */
+:where(a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"]), [role="button"], [role="option"], [role="tab"], [role="link"], [role="switch"], [role="checkbox"], [role="radio"]):focus-visible {
+  outline: 2px solid var(--wax, #e38b8b);
+  outline-offset: 2px;
+}
