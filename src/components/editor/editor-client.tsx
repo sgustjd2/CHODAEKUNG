@@ -10,7 +10,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -205,6 +205,10 @@ export function EditorClient() {
   const addSection = (type: SectionType) =>
     setDraft((d) => ({ ...d, sections: [...d.sections, blankSection(type)] }));
 
+  // Change an existing section's type in place (keeps its id/position; content resets to the new type).
+  const changeSectionType = (id: string, type: SectionType) =>
+    setDraft((d) => ({ ...d, sections: d.sections.map((s) => (s.id === id ? ({ ...blankSection(type), id } as Section) : s)) }));
+
   // Change event type after creation: re-apply the chosen event's template (theme + sections),
   // keeping the current slug. Replaces content, so confirm first.
   const applyTemplate = (sampleSlug: string) => {
@@ -321,7 +325,7 @@ export function EditorClient() {
                           onClick={() => { addSection(t); setAddOpen(false); }}
                           style={{ display: "flex", alignItems: "center", gap: 8, textAlign: "left", background: "none", border: "none", cursor: "pointer", font: "inherit", fontSize: 13, fontWeight: 600, color: "var(--ink)", padding: "9px 10px", borderRadius: 8 }}
                         >
-                          <Icon name={m.icon} /> {m.label}
+                          <Icon name={m.icon} width={16} height={16} style={{ flexShrink: 0 }} /> {m.label}
                         </button>
                       );
                     })}
@@ -351,7 +355,21 @@ export function EditorClient() {
                   </span>
                   <div className="sec-info">
                     <div className="sec-name">{m.label}</div>
-                    <div className="sec-type">{s.type}</div>
+                    {s.type === "cover" ? (
+                      <div className="sec-type">{s.type}</div>
+                    ) : (
+                      <select
+                        value={s.type}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => changeSectionType(s.id, e.target.value as SectionType)}
+                        title="섹션 종류 변경"
+                        style={{ font: "inherit", fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", color: "var(--muted, #9a9aa5)", background: "transparent", border: "none", cursor: "pointer", padding: 0, maxWidth: "100%" }}
+                      >
+                        {(addableTypes.includes(s.type) ? addableTypes : [s.type, ...addableTypes]).map((t) => (
+                          <option key={t} value={t}>{metaFor(t).label}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                   <div className="sec-actions">
                     <button title="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
@@ -452,7 +470,7 @@ export function EditorClient() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={cover.content.image} alt="" className="cover-thumb active" />
                     )}
-                    {COVER_PHOTOS.map((p) => (
+                    {coverPhotosFor(draft.theme).map((p) => (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         key={p}

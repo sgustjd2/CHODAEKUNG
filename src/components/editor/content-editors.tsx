@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { COVER_PHOTOS, linesToText, plainTitle, textToLines } from "./editor-shared";
+import { coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
@@ -88,7 +88,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               // eslint-disable-next-line @next/next/no-img-element
               <img src={cover.content.image} alt="" className="cover-thumb active" />
             )}
-            {COVER_PHOTOS.map((p) => (
+            {coverPhotosFor(draft.theme).map((p) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img key={p} src={`/assets/photos/${p}.jpg`} alt="" className={`cover-thumb${cover.content.image === p ? " active" : ""}`} onClick={() => patch(cover.id, { image: p } satisfies Partial<CoverContent>)} />
             ))}

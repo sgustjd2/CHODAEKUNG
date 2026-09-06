@@ -34,6 +34,22 @@ export const SECTION_META: Partial<Record<SectionType, { label: string; icon: st
 export const metaFor = (t: SectionType) => SECTION_META[t] ?? { label: t, icon: "ic-info" };
 
 export const COVER_PHOTOS = ["romantic_wedding", "wedding_gallery_2", "hero_flatlay", "minimal_birthday"];
+
+/** Cover background presets tailored to each theme/event category. */
+export const COVER_PHOTOS_BY_THEME: Record<ThemeId, string[]> = {
+  romantic: ["romantic_wedding", "wedding_gallery_1", "wedding_gallery_2", "hero_flatlay"],
+  minimal: ["minimal_birthday", "tmpl_doljanchi", "tmpl_bridalshower", "hero_flatlay"],
+  cute: ["cute_housewarming", "tmpl_doljanchi", "tmpl_pet", "minimal_birthday"],
+  editorial: ["editorial_party", "tmpl_yearend", "tmpl_bridalshower", "tmpl_seminar"],
+  timeline: ["timeline_gathering", "tmpl_camping", "tmpl_travel", "tmpl_hiking"],
+  battle: ["battle_sports", "tmpl_badminton", "tmpl_baseball", "tmpl_tennis"],
+  gaming: ["tmpl_gaming", "developer_terminal", "battle_sports", "editorial_party"],
+  developer: ["developer_terminal", "tmpl_gaming", "tmpl_seminar", "tmpl_study"],
+};
+/** Cover presets for a theme, falling back to the default set. */
+export function coverPhotosFor(theme: ThemeId): string[] {
+  return COVER_PHOTOS_BY_THEME[theme] ?? COVER_PHOTOS;
+}
 export const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "#2A2A3E"];
 export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [
   { id: "romantic", label: "Romantic", enabled: true },

@@ -5,7 +5,7 @@ import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
-import { ACCENTS, ADDABLE_SECTIONS, COVER_PHOTOS, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, ADDABLE_SECTIONS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -174,7 +174,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
           {cover && /^https?:\/\//.test(cover.content.image) && (
             <button type="button" className="m-thumb active" style={{ backgroundImage: `url('${cover.content.image}')` }} aria-label="업로드한 커버" />
           )}
-          {COVER_PHOTOS.map((p) => (
+          {coverPhotosFor(draft.theme).map((p) => (
             <button
               key={p}
               type="button"
@@ -221,7 +221,7 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 onClick={() => { addSection(t); setPick(false); }}
                 style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--paper-2, #f0ece4)", border: "1px solid var(--line)", borderRadius: 999, padding: "8px 12px", font: "inherit", fontSize: 13, fontWeight: 600, color: "var(--ink)", cursor: "pointer" }}
               >
-                <Icon name={m.icon} /> {m.label}
+                <Icon name={m.icon} width={15} height={15} style={{ flexShrink: 0 }} /> {m.label}
               </button>
             );
           })}
