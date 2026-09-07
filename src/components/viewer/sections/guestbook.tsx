@@ -22,16 +22,23 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
   // preview/editor, or no slug (rendered outside the viewer): stay optimistic, no DB.
   const noDb = preview || !slug;
 
+  // Live like the attendee roster: load on mount, then poll every 12s so messages other
+  // guests leave show up without a reload. The optimistic row a submitter prepends is
+  // reconciled away by the next poll (server list replaces it — same id, no duplicate).
   useEffect(() => {
     if (noDb || !slug) return; // preview/editor: don't hit the DB
     let alive = true;
-    listGuestbookAction(slug)
-      .then((r) => {
-        if (alive && r.ok) setRows(r.rows);
-      })
-      .catch(() => {});
+    const load = () =>
+      listGuestbookAction(slug)
+        .then((r) => {
+          if (alive && r.ok) setRows(r.rows);
+        })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 12000);
     return () => {
       alive = false;
+      clearInterval(id);
     };
   }, [slug, noDb]);
 
