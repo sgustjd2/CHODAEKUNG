@@ -55,16 +55,19 @@ tables, no fixes needed.
     imageUrl + its OG/Kakao *previews* from the raw cover, not this route. Point its share at the
     route and/or update the preview thumbnails for full consistency (owner-facing, low urgency).
 
-## Phase C — Creation-flow depth
+## Phase C — Creation-flow depth ✅ DONE (verified 2026-09-07, chose blank-start-only)
 
-- **C1 · Wizard basics → content sections.** `applyWizardSeed` (editor-client.tsx) now fills the cover
-  (title/subtitle/dateLabel), the location section's title, and `eventStart` — but NOT the date /
-  schedule / detail SECTIONS. So a *template* start shows the user's date on the cover while the date
-  section still shows the template's sample date. Mapping the wizard date into each theme's date
-  section is fiddly (bigDate `["05","15"]`, dataGrid day-of-week, etc. vary per theme). Decide first
-  whether a *named-template* start should overlay basics at all (the user chose that template to
-  customize) or whether full overlay should be blank-start only — this is a small product call; if
-  unsure, SURFACE it (CLAUDE.md §15) rather than inventing per-theme mappings.
+- **C1 · Wizard basics → date section.** ✅ Decision (user): fill content sections on a BLANK start
+  only; a named-template start keeps the template's own sections (still gets the cover overlay +
+  eventStart). Implemented `fillBlankDateSection` (editor-client.tsx), called only in the blank
+  branch, setting the fields each theme's date renderer uses — title + calendar month grid
+  (romantic), bigDate + dataGrid (minimal/developer), title (cute). Extracted `monthGrid` to
+  `src/lib/invitation/month-grid.ts` (shared with the romantic sample). Verified blank romantic
+  (title + Sep-2027 grid) + blank minimal (bigDate/dataGrid) + that a template start is NOT
+  overwritten.
+  - NOT DONE (out of scope, low value): the schedule section and the non-`date` themes
+    (editorial/timeline `details`, battle `matchInfo`/`countdown`, gaming `gInfo`) — their date is on
+    the cover + eventStart; add per-section fills later only if needed.
 
 ## Phase D — Product decisions (SURFACE, don't invent — CLAUDE.md §15)
 
