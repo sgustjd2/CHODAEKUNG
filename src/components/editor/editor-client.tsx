@@ -16,6 +16,7 @@ import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
+import { monthGrid } from "@/lib/invitation/month-grid";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
 import type { Invitation, Section, SectionType, ThemeId } from "@/lib/invitation/types";
 
@@ -73,6 +74,41 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
   // Canonical event datetime (D-day countdown + .ics). Prefer the wizard's ISO, else date[+time].
   const iso = w.eventStart?.trim() || (w.date?.trim() ? `${w.date}${w.time?.trim() ? "T" + w.time : ""}` : "");
   if (iso) inv.eventStart = iso;
+}
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Blank-start ONLY: fill the (empty) date section from the wizard date, across the fields the
+ * themes actually render — title (romantic/cute), bigDate + dataGrid (minimal/developer), and the
+ * calendar month grid (romantic). Deliberately NOT called on a template start, so a chosen
+ * template keeps its own date section (the user customizes it). Themes whose blank skeleton has no
+ * date section (editorial/timeline/battle/gaming) are unaffected — their date is on the cover. */
+function fillBlankDateSection(inv: Invitation, w: WizardSeed) {
+  const isoDate = w.date?.trim();
+  if (!isoDate) return;
+  const [y, m, d] = isoDate.split("-").map(Number);
+  if (!y || !m || !d) return;
+  const date = inv.sections.find((s) => s.type === "date") as Extract<Section, { type: "date" }> | undefined;
+  if (!date) return;
+  const time = w.time?.trim() || "";
+  const mm = String(m).padStart(2, "0");
+  const dd = String(d).padStart(2, "0");
+  const wd = WEEKDAYS[new Date(y, m - 1, d).getDay()];
+  const c = date.content;
+  if (!c.eyebrow) c.eyebrow = "The Date";
+  c.title = time ? [[`${y}. ${mm}. ${dd}`], [`${wd} `, { text: time, em: true }]] : [[`${y}. ${mm}. ${dd}`], [wd]];
+  c.bigDate = [mm, dd];
+  c.dataGrid = [
+    { k: "Date", en: `${mm}.${dd}` },
+    { k: "Day", en: wd.slice(0, 3).toUpperCase() },
+    ...(time ? [{ k: "Time", en: time }] : []),
+  ];
+  c.calendar = {
+    monthLabel: [`${MONTHS[m - 1]} `, { text: String(y), em: true }],
+    weekdays: ["S", "M", "T", "W", "T", "F", "S"],
+    days: monthGrid(y, m - 1, d),
+  };
 }
 
 /** A friendly default editor title (cover names/title across themes, else a neutral default). */
@@ -146,6 +182,7 @@ export function EditorClient() {
     const freshFromWizard = !slugParam && !!wiz;
     if (freshFromWizard) {
       applyWizardSeed(d, wiz!); // sets eventStart from the wizard too
+      fillBlankDateSection(d, wiz!); // blank canvas only — populate the empty date section
       if (wiz!.accent) setAccent(wiz!.accent);
     }
     let loadedTitle: string | null = null;
