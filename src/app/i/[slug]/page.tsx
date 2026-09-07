@@ -16,7 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${title} · 초대쿵`,
     description,
     robots: indexable ? undefined : { index: false, follow: true },
-    openGraph: { title, description, images: [{ url: image, width: 1200, height: 630 }], type: "website", siteName: "초대쿵" },
+    // No width/height: cover images vary (portrait samples, landscape hero, arbitrary uploads),
+    // so declaring a fixed 1200×630 misled scrapers. Let them read the real dimensions.
+    openGraph: { title, description, images: [image], type: "website", siteName: "초대쿵" },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
