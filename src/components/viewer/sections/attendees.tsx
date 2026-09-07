@@ -14,6 +14,9 @@ export function AttendeesSection({ content, slug, preview }: { content: Attendee
   const title = lineText(content.title);
   const [names, setNames] = useState<string[]>([]);
   const noDb = preview || !slug;
+  // Gate the empty state on the first fetch: don't flash "be the first attendee" before we
+  // actually know the roster (a slow mobile connection would otherwise show it, then flip).
+  const [loaded, setLoaded] = useState(noDb);
 
   useEffect(() => {
     if (noDb || !slug) return;
@@ -23,7 +26,10 @@ export function AttendeesSection({ content, slug, preview }: { content: Attendee
         .then((r) => {
           if (alive && r.ok) setNames(r.names);
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => {
+          if (alive) setLoaded(true);
+        });
     load();
     const id = setInterval(load, 12000);
     const onRsvp = () => load();
@@ -42,15 +48,13 @@ export function AttendeesSection({ content, slug, preview }: { content: Attendee
       {content.note && <p className="att-note">{content.note}</p>}
       {names.length > 0 && <div className="att-count">{names.length}명 참석</div>}
       <div className="att-list">
-        {names.length === 0 ? (
-          <div className="att-empty">참석을 눌러 첫 번째 참석자가 되어보세요 🙌</div>
-        ) : (
-          names.map((n, i) => (
-            <span className="att-chip" key={`${n}-${i}`}>
-              {n}
-            </span>
-          ))
-        )}
+        {names.length > 0
+          ? names.map((n, i) => (
+              <span className="att-chip" key={`${n}-${i}`}>
+                {n}
+              </span>
+            ))
+          : loaded && <div className="att-empty">참석을 눌러 첫 번째 참석자가 되어보세요 🙌</div>}
       </div>
     </section>
   );

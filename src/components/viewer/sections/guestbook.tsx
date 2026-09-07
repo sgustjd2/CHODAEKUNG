@@ -21,6 +21,9 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
   const [err, setErr] = useState("");
   // preview/editor, or no slug (rendered outside the viewer): stay optimistic, no DB.
   const noDb = preview || !slug;
+  // Gate the empty state on the first fetch, so a slow connection doesn't flash "leave the
+  // first message" before the existing messages arrive.
+  const [loaded, setLoaded] = useState(noDb);
 
   // Live like the attendee roster: load on mount, then poll every 12s so messages other
   // guests leave show up without a reload. The optimistic row a submitter prepends is
@@ -33,7 +36,10 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
         .then((r) => {
           if (alive && r.ok) setRows(r.rows);
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => {
+          if (alive) setLoaded(true);
+        });
     load();
     const id = setInterval(load, 12000);
     return () => {
@@ -85,7 +91,7 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
       </div>
       <div className="gb-list">
         {rows.length === 0 ? (
-          <div className="gb-empty">첫 번째 축하 메시지를 남겨보세요 💌</div>
+          loaded && <div className="gb-empty">첫 번째 축하 메시지를 남겨보세요 💌</div>
         ) : (
           rows.map((r) => (
             <div className="gb-card" key={r.id}>
