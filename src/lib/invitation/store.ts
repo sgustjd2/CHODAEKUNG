@@ -12,6 +12,16 @@ export type Visibility = "draft" | "unlisted" | "published";
 export type RsvpRow = { id: string; name: string; response: string; guests: number; message: string; createdAt: string };
 export type GuestbookRow = { id: string; name: string; message: string; createdAt: string };
 
+/**
+ * A guest-facing DB write failed. Log the real cause server-side and hand the guest a
+ * friendly message — never leak Postgres internals (e.g. a missing-table/schema error)
+ * to an end user filling in an RSVP or guestbook message.
+ */
+function writeFailed(where: string, error: { message: string }): { ok: false; error: string } {
+  console.error(`[chodaekung] ${where} failed:`, error.message);
+  return { ok: false, error: "일시적인 문제로 저장하지 못했어요. 잠시 후 다시 시도해주세요." };
+}
+
 /** Is this invitation live (published/unlisted)? Gates the public guestbook read/write. */
 async function isLiveInvitation(slug: string): Promise<boolean> {
   const { data } = await getServiceClient().from("invitations").select("visibility").eq("slug", slug).maybeSingle();
@@ -24,7 +34,7 @@ export async function submitGuestbookEntry(slug: string, entry: { name: string; 
   if (!entry.message.trim()) return { ok: false, error: "메시지를 입력해주세요" };
   if (!(await isLiveInvitation(slug))) return { ok: false, error: "발행된 초대장에만 남길 수 있어요" };
   const { error } = await getServiceClient().from("guestbook").insert({ invitation_slug: slug, name: entry.name, message: entry.message });
-  return error ? { ok: false, error: error.message } : { ok: true };
+  return error ? writeFailed("guestbook insert", error) : { ok: true };
 }
 
 /** Public: names of people who RSVP'd 참석 to a live invitation (for the on-invite attendee roster).
@@ -183,7 +193,7 @@ export async function submitRsvp(slug: string, entry: { name: string; response: 
     guests: entry.guests ?? 1,
     message: entry.message ?? "",
   });
-  return error ? { ok: false, error: error.message } : { ok: true };
+  return error ? writeFailed("rsvp insert", error) : { ok: true };
 }
 
 /** Fetch an invitation's RSVP rows (call only after an ownership check). */
