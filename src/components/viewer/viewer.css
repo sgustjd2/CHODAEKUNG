@@ -156,7 +156,8 @@
 .gb-title { font-family: var(--font-serif); font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 8px; letter-spacing: -0.02em; }
 .gb-note { font-size: 14px; color: #666; line-height: 1.6; margin: 0 auto 20px; max-width: 30ch; }
 .gb-form { max-width: 400px; margin: 0 auto 24px; display: flex; flex-direction: column; gap: 8px; }
-.gb-input, .gb-textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px; padding: 11px 13px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; background: #fff; color: #1a1a2e; resize: vertical; }
+/* 16px (not 14) so iOS Safari doesn't zoom the page when a guest taps into the field. */
+.gb-input, .gb-textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; padding: 11px 13px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; background: #fff; color: #1a1a2e; resize: vertical; }
 .gb-input:focus, .gb-textarea:focus { outline: none; border-color: var(--wax, #e38b8b); }
 .gb-err { font-size: 12px; color: var(--wax-deep, #a04547); font-weight: 600; text-align: left; }
 .gb-submit { padding: 11px 18px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
@@ -989,7 +990,8 @@
 .rsvp-modal-t { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px; }
 .rsvp-field { display: block; margin-bottom: 16px; }
 .rsvp-field > span { display: block; font-size: 12px; font-weight: 700; color: var(--fg-2); margin-bottom: 6px; }
-.rsvp-field input, .rsvp-field textarea { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; font-family: var(--font-ko); color: var(--ink); background: var(--paper-2); resize: vertical; }
+/* 16px (not 14) so iOS Safari doesn't zoom the page when a guest taps into the field. */
+.rsvp-field input, .rsvp-field textarea { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; font-family: var(--font-ko); color: var(--ink); background: var(--paper-2); resize: vertical; }
 .rsvp-field input:focus, .rsvp-field textarea:focus { outline: none; border-color: var(--wax); background: var(--card); }
 .rsvp-step { display: inline-flex; align-items: center; gap: 6px; }
 .rsvp-step button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
