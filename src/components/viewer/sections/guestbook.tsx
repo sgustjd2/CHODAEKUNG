@@ -89,14 +89,21 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
           {state === "sending" ? "남기는 중…" : "메시지 남기기"}
         </button>
       </div>
-      <div className="gb-list">
-        {rows.length === 0 ? (
-          loaded && <div className="gb-empty">첫 번째 축하 메시지를 남겨보세요 💌</div>
-        ) : (
+      <div className="gb-list" aria-busy={!loaded}>
+        {rows.length > 0 ? (
           rows.map((r) => (
             <div className="gb-card" key={r.id}>
               <div className="gb-card-msg">{r.message}</div>
               <div className="gb-card-name">— {r.name || "익명"}</div>
+            </div>
+          ))
+        ) : loaded ? (
+          <div className="gb-empty">첫 번째 축하 메시지를 남겨보세요 💌</div>
+        ) : (
+          [0, 1].map((i) => (
+            <div className="gb-skel" key={i} aria-hidden="true">
+              <div className="gb-skel-line" style={{ width: "88%" }} />
+              <div className="gb-skel-line" style={{ width: "55%", marginTop: 8 }} />
             </div>
           ))
         )}

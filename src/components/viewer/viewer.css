@@ -179,6 +179,14 @@
 .att-empty { font-size: 13px; color: #999; padding: 12px 0; }
 .att-chip { display: inline-block; padding: 8px 16px; border-radius: 999px; background: var(--wax-tint, #f9e9e9); color: var(--wax-deep, #a04547); font-size: 14px; font-weight: 700; }
 
+/* Loading skeletons for client-fetched sections (attendees/guestbook) — shown until the first
+   fetch resolves, so a slow connection sees a placeholder instead of a blank gap. */
+@keyframes iv-shimmer { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.att-skel { height: 36px; border-radius: 999px; background: rgba(0, 0, 0, 0.06); animation: iv-shimmer 1.3s ease-in-out infinite; }
+.gb-skel { background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); }
+.gb-skel-line { height: 12px; border-radius: 6px; background: rgba(0, 0, 0, 0.07); animation: iv-shimmer 1.3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .att-skel, .gb-skel-line { animation: none; } }
+
 /* ============================================================
    THEME · ROMANTIC WEDDING
    ============================================================ */

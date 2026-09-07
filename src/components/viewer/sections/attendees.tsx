@@ -47,14 +47,18 @@ export function AttendeesSection({ content, slug, preview }: { content: Attendee
       {title && <h3 className="att-title">{title}</h3>}
       {content.note && <p className="att-note">{content.note}</p>}
       {names.length > 0 && <div className="att-count">{names.length}명 참석</div>}
-      <div className="att-list">
-        {names.length > 0
-          ? names.map((n, i) => (
-              <span className="att-chip" key={`${n}-${i}`}>
-                {n}
-              </span>
-            ))
-          : loaded && <div className="att-empty">참석을 눌러 첫 번째 참석자가 되어보세요 🙌</div>}
+      <div className="att-list" aria-busy={!loaded}>
+        {names.length > 0 ? (
+          names.map((n, i) => (
+            <span className="att-chip" key={`${n}-${i}`}>
+              {n}
+            </span>
+          ))
+        ) : loaded ? (
+          <div className="att-empty">참석을 눌러 첫 번째 참석자가 되어보세요 🙌</div>
+        ) : (
+          [72, 56, 84, 64].map((w, i) => <span key={i} className="att-skel" style={{ width: w }} aria-hidden="true" />)
+        )}
       </div>
     </section>
   );
