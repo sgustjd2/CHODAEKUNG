@@ -106,9 +106,10 @@ These are referenced in the UI but unbuilt; each needs the user's product direct
 - **B1 follow-up · Publish dialog share card.** ✅ DONE (2026-09-07). The publish dialog's Kakao share
   imageUrl + its OG/Kakao preview thumbnails now use the opengraph-image card once published (cover
   as the pre-publish approximation).
-- **E3 · Skeleton loading.** (Still open, marginal.) Client-fetched sections (attendees/guestbook)
-  hide their empty state until the first fetch resolves; a subtle skeleton would be nicer than the
-  brief blank. Low value — the sections are small.
+- **E3 · Skeleton loading.** ✅ DONE (2026-09-07). The attendee roster + guestbook render a subtle
+  shimmer skeleton (chip / card shaped) while their first fetch is in flight, with `aria-busy` on the
+  list and a reduced-motion fallback. Verified: skeletons in the SSR/pre-fetch render, replaced by
+  content/empty once loaded. → **Phase E fully complete.**
 
 ## Standing user actions — STATUS
 
