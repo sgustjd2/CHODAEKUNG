@@ -42,8 +42,11 @@ export function ShareBar({
   const [copied, setCopied] = useState(false);
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
+  const [responded, setResponded] = useState(false); // this browser already RSVP'd → edit mode
+  const [doneKind, setDoneKind] = useState<"new" | "edit">("new");
   const attending = resp === (options[0] ?? "참석");
   const modalRef = useRef<HTMLDivElement>(null);
+  const rsvpKey = `chodaekung:rsvp:${slug}`;
   const triggerRef = useRef<HTMLElement | null>(null); // the control that opened the dialog, to restore focus to
 
   // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
@@ -64,6 +67,26 @@ export function ShareBar({
       alive = false;
     };
   }, [preview]);
+
+  // Recognize a returning guest (this browser) and pre-fill their prior RSVP so they can edit it
+  // rather than send a duplicate. Saved per-slug on submit; the backend dedupes by name, so a
+  // resubmit updates their entry. (Cross-device recognition for signed-in guests would need a
+  // server lookup — a future enhancement.)
+  useEffect(() => {
+    if (preview) return;
+    try {
+      const raw = localStorage.getItem(rsvpKey);
+      if (!raw) return;
+      const prev = JSON.parse(raw) as { name?: string; response?: string; guests?: number; message?: string };
+      if (prev.name) setName(prev.name);
+      if (prev.response) setResp(prev.response);
+      if (typeof prev.guests === "number" && prev.guests > 0) setGuests(prev.guests);
+      if (prev.message) setMessage(prev.message);
+      setResponded(true);
+    } catch {
+      /* private mode / corrupt value — ignore */
+    }
+  }, [rsvpKey, preview]);
 
   // A11y (CLAUDE.md §10 dialog focus management): while the RSVP dialog is open, close on
   // Escape, trap Tab focus inside it (so keyboard users can't reach the page behind), and
@@ -143,8 +166,16 @@ export function ShareBar({
     }
     setState("sending");
     setErr("");
-    const res = await submitRsvpAction(slug, { name: name.trim(), response: resp, guests: attending ? guests : 0, message: message.trim() });
+    const payload = { name: name.trim(), response: resp, guests: attending ? guests : 0, message: message.trim() };
+    const res = await submitRsvpAction(slug, payload);
     if (res.ok) {
+      setDoneKind(responded ? "edit" : "new"); // capture before flipping responded
+      try {
+        localStorage.setItem(rsvpKey, JSON.stringify(payload)); // remember for editing on return
+      } catch {
+        /* private mode — non-fatal */
+      }
+      setResponded(true);
       setState("done");
       // Let the on-invite attendee roster refresh immediately.
       if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("chodaekung:rsvp"));
@@ -169,7 +200,7 @@ export function ShareBar({
           </button>
         )}
         <button type="button" className="primary" onClick={(e) => { triggerRef.current = e.currentTarget; setState("idle"); setOpen(true); }}>
-          {shareCta}
+          {responded ? "응답 수정" : shareCta}
         </button>
       </div>
 
@@ -181,13 +212,18 @@ export function ShareBar({
             </button>
             {state === "done" ? (
               <div className="rsvp-done" role="status">
-                <div className="rsvp-done-t">응답 완료 🎉</div>
-                <div className="rsvp-done-s">참석 여부를 보내주셔서 감사해요.</div>
+                <div className="rsvp-done-t">{doneKind === "edit" ? "수정 완료 ✓" : "응답 완료 🎉"}</div>
+                <div className="rsvp-done-s">{doneKind === "edit" ? "응답을 수정했어요. 언제든 다시 바꿀 수 있어요." : "참석 여부를 보내주셔서 감사해요."}</div>
                 <button type="button" className="rsvp-btn" onClick={() => setOpen(false)}>닫기</button>
               </div>
             ) : (
               <>
-                <div className="rsvp-modal-t">{shareCta}</div>
+                <div className="rsvp-modal-t">{responded ? "응답 수정" : shareCta}</div>
+                {responded && (
+                  <div style={{ fontSize: 12, color: "var(--muted, #8a8a95)", lineHeight: 1.5, marginBottom: 6 }}>
+                    이미 응답을 보내셨어요. 내용을 수정하고 다시 저장하면 반영돼요.
+                  </div>
+                )}
                 <label className="rsvp-field">
                   <span>이름</span>
                   {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
@@ -224,7 +260,7 @@ export function ShareBar({
                 )}
                 {state === "error" && <div className="rsvp-err" role="alert">{err}</div>}
                 <button type="button" className="rsvp-btn" onClick={submit} disabled={state === "sending"}>
-                  {state === "sending" ? "보내는 중…" : "보내기"}
+                  {state === "sending" ? "보내는 중…" : responded ? "수정 저장" : "보내기"}
                 </button>
               </>
             )}
