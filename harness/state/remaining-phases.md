@@ -40,16 +40,20 @@ tables, no fixes needed.
   onChange→uploadPhoto→patch wiring is existing code. Follow-up if desired: exercise the editor
   cover/gallery upload + ImageCropper shell with a real file (needs a browser with file upload).
 
-## Phase B — Share-card quality (biggest deferred enhancement)
+## Phase B — Share-card quality ✅ DONE (verified 2026-09-07)
 
-- **B1 · Per-invitation dynamic OG image.** Today the OG/Kakao image is the raw cover photo (portrait
-  covers get center-cropped in the landscape card). Build a composed 1200×630 card (cover + event
-  title + date + 초대쿵 mark) at `src/app/i/[slug]/opengraph-image.tsx` via `next/og` `ImageResponse`
-  (runtime "nodejs"). Korean text needs a font: fetch a **subset** via Google Fonts `?text=<glyphs>`
-  (full CJK fonts are too large) and pass the woff2 as `fonts`. Make it robust (try/catch → fall back
-  to the plain cover so the card never breaks). VERIFY by navigating to the opengraph-image route and
-  screenshotting the PNG (Korean must render, not tofu). NOTE: Kakao feed cards already show
-  title/description as text beside the image, so the main win is aspect ratio + polish, not new info.
+- **B1 · Per-invitation dynamic OG image.** ✅ Built `src/app/i/[slug]/opengraph-image.tsx` (next/og,
+  runtime nodejs): a composed 1200×630 card — cover photo + bottom gradient + title + date + 초대쿵
+  mark. Korean via a Google Fonts `?text=` **TrueType** subset (send NO browser UA → Google returns
+  ttf; this Satori can't decode woff2). Robust: font-fetch failure → image-only card, missing cover →
+  dark bg. generateMetadata no longer sets og/twitter images (that suppressed the file convention);
+  Next now emits og:image + twitter:image → this route at an accurate 1200×630. The Kakao SDK button
+  (share-bar.tsx) points imageUrl at the same route so both share paths match. Verified: card renders
+  locally (Korean OK, clean layout) AND on the deployed production build (og:image = route → HTTP 200
+  image/png, same bytes as local).
+  - FOLLOW-UP (minor): the **publish dialog** (publish-dialog.tsx) still builds its Kakao share
+    imageUrl + its OG/Kakao *previews* from the raw cover, not this route. Point its share at the
+    route and/or update the preview thumbnails for full consistency (owner-facing, low urgency).
 
 ## Phase C — Creation-flow depth
 
