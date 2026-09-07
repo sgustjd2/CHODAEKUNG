@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { QrCode, downloadQrPng } from "@/components/ui/qr-code";
@@ -57,19 +57,60 @@ export function PublishDialog({
   const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setOrigin(window.location.origin);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+  }, []);
+
+  // A11y (CLAUDE.md §10): while open, move focus into the dialog, trap Tab, close on Escape,
+  // and restore focus to whatever opened it on close.
+  useEffect(() => {
+    if (!open) return;
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    modalRef.current?.focus();
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const nodes = Array.from(modal.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (!modal.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      triggerRef.current?.focus?.();
+    };
+  }, [open, onClose]);
 
   const slug = publishedSlug ?? invitation.slug;
   const img = photoUrl(coverImage(invitation)); // handles uploaded (absolute URL) covers too
   const desc = ogDesc(invitation);
   const displayHost = (origin || "https://chodaekung.com").replace(/^https?:\/\//, "");
-  const shareUrl = `${origin || "https://chodaekung.com"}/i/${slug}`;
+  const base = origin || "https://chodaekung.com";
+  const shareUrl = `${base}/i/${slug}`;
+  // Share-card image: the composed 1200×630 OG card once published; the raw cover as a
+  // pre-publish approximation (the card route needs a real published slug to render).
+  const cardImg = publishedSlug ? `${base}/i/${publishedSlug}/opengraph-image` : /^https?:\/\//.test(img) ? img : `${base}${img}`;
 
   // The share link only exists once published (publishing assigns the real slug).
   // Guard the share actions so a draft ("/i/new") link is never shared.
@@ -105,7 +146,7 @@ export function PublishDialog({
       copy();
       return;
     }
-    const imageUrl = /^https?:\/\//.test(img) ? img : `${origin || "https://chodaekung.com"}${img}`;
+    const imageUrl = cardImg; // the composed 1200×630 card (published slug guaranteed by requirePublished)
     try {
       K.Share.sendDefault({
         objectType: "feed",
@@ -149,7 +190,7 @@ export function PublishDialog({
       aria-hidden={!open}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="pub-modal">
+      <div className="pub-modal" ref={modalRef} tabIndex={-1}>
         <button className="pub-close" aria-label="닫기" onClick={onClose}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
             <path d="M18 6 6 18M6 6l12 12" />
@@ -176,7 +217,7 @@ export function PublishDialog({
 
           {plat === "og" && (
             <div className="og-preview">
-              <div className="og-img" style={{ backgroundImage: `url('${img}')` }}>
+              <div className="og-img" style={{ backgroundImage: `url('${cardImg}')` }}>
                 <div className="og-badge">Open Graph · 1200 × 630</div>
               </div>
               <div className="og-body">
@@ -199,7 +240,7 @@ export function PublishDialog({
                 <div className="kb">초대장 나왔어요 :) 꼭 와주세요</div>
               </div>
               <div className="kc">
-                <div className="kc-img" style={{ backgroundImage: `url('${img}')` }} />
+                <div className="kc-img" style={{ backgroundImage: `url('${cardImg}')` }} />
                 <div className="kc-b">
                   <div className="kc-t">{title}</div>
                   <div className="kc-s">{desc}</div>
