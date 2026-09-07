@@ -88,9 +88,12 @@ These are referenced in the UI but unbuilt; each needs the user's product direct
 - **D2 · Public / creator marketplace.** The "Public · 검색 노출" visibility option sets
   visibility=published (now indexable via the SEO work), but there's no discovery/marketplace UI or
   creator-template listing. The copy promises "크리에이터 템플릿으로 마켓 등록" — unbuilt.
-- **D3 · Guest RSVP editing.** A returning guest who RSVPs again is handled correctly (dedup keeps the
-  latest), but there's no explicit "you already responded / edit your response" UX. Decide the desired
-  behavior (recognize the guest? let them see/change their prior answer?).
+- **D3 · Guest RSVP editing.** ✅ DONE (2026-09-07). On submit, the response is saved to
+  `localStorage["chodaekung:rsvp:<slug>"]`; on return this browser enters edit mode — pill "응답 수정",
+  modal pre-filled (name/response/guests/message) with an edit note, "수정 저장" button, "수정 완료"
+  success. Backend dedupe (by name) makes the re-save update the entry (verified: 참석→불참 drops the
+  guest from the roster). FUTURE: cross-device recognition for signed-in guests needs a server
+  lookup (match by user id / prior RSVP), not just localStorage.
 
 ## Phase E — Remaining polish (low priority)
 
