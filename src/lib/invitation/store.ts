@@ -44,13 +44,23 @@ export async function listAttendees(slug: string): Promise<{ name: string }[]> {
   if (!(await isLiveInvitation(slug))) return [];
   const { data, error } = await getServiceClient()
     .from("rsvps")
-    .select("name")
+    .select("name, response, created_at")
     .eq("invitation_slug", slug)
-    .eq("response", "참석")
     .order("created_at", { ascending: false })
-    .limit(300);
+    .limit(1000);
   if (error) return [];
-  return (data ?? []).filter((r) => r.name?.trim()).map((r) => ({ name: r.name }));
+  // A guest may RSVP more than once (resubmit, or change their mind). Rows are newest-first,
+  // so the first one seen per name is their latest answer — dedupe by name and keep a person
+  // only while their most recent response is 참석 (a later 불참/미정 drops them from the roster).
+  const seen = new Set<string>();
+  const attending: { name: string }[] = [];
+  for (const r of data ?? []) {
+    const name = r.name?.trim();
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+    if (r.response === "참석") attending.push({ name });
+  }
+  return attending;
 }
 
 /** Public: read a live invitation's guestbook messages (newest first). */
