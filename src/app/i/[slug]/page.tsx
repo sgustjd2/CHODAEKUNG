@@ -9,17 +9,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const inv = await getPublishedInvitation(slug);
   if (!inv) return { title: "초대장을 찾을 수 없어요 · 초대쿵" };
-  const { title, description, image } = invitationMeta(inv);
+  const { title, description } = invitationMeta(inv);
   // Keep unlisted invitations out of search (privacy); only explicitly-Public ones are indexable.
   const indexable = await isInvitationIndexable(slug);
   return {
     title: `${title} · 초대쿵`,
     description,
     robots: indexable ? undefined : { index: false, follow: true },
-    // No width/height: cover images vary (portrait samples, landscape hero, arbitrary uploads),
-    // so declaring a fixed 1200×630 misled scrapers. Let them read the real dimensions.
-    openGraph: { title, description, images: [image], type: "website", siteName: "초대쿵" },
-    twitter: { card: "summary_large_image", title, description, images: [image] },
+    // og:image / twitter:image come from the sibling opengraph-image route (a composed 1200×630
+    // card) — don't set images here or it suppresses that file convention.
+    openGraph: { title, description, type: "website", siteName: "초대쿵" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

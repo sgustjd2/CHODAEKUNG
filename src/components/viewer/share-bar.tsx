@@ -117,7 +117,9 @@ export function ShareBar({
     const K = await ensureKakao();
     if (!K || !share) return copyLink();
     const url = window.location.href;
-    const imageUrl = /^https?:\/\//.test(share.image) ? share.image : window.location.origin + share.image;
+    // Use the composed 1200×630 share card (the opengraph-image route), so the KakaoTalk button
+    // sends the same landscape card scrapers get — not the raw (often portrait) cover.
+    const imageUrl = `${window.location.origin}/i/${slug}/opengraph-image`;
     try {
       K.Share.sendDefault({
         objectType: "feed",
