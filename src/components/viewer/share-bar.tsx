@@ -149,7 +149,7 @@ export function ShareBar({
               ×
             </button>
             {state === "done" ? (
-              <div className="rsvp-done">
+              <div className="rsvp-done" role="status">
                 <div className="rsvp-done-t">응답 완료 🎉</div>
                 <div className="rsvp-done-s">참석 여부를 보내주셔서 감사해요.</div>
                 <button type="button" className="rsvp-btn" onClick={() => setOpen(false)}>닫기</button>
@@ -191,7 +191,7 @@ export function ShareBar({
                     ‘참석’을 선택하면 이름이 초대장 참석자 명단에 표시돼요.
                   </div>
                 )}
-                {state === "error" && <div className="rsvp-err">{err}</div>}
+                {state === "error" && <div className="rsvp-err" role="alert">{err}</div>}
                 <button type="button" className="rsvp-btn" onClick={submit} disabled={state === "sending"}>
                   {state === "sending" ? "보내는 중…" : "보내기"}
                 </button>

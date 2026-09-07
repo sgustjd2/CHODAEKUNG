@@ -78,7 +78,7 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
       <div className="gb-form">
         <input className="gb-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름 (선택)" maxLength={20} />
         <textarea className="gb-textarea" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="축하 메시지를 남겨주세요" rows={2} maxLength={200} />
-        {state === "error" && <div className="gb-err">{err}</div>}
+        {state === "error" && <div className="gb-err" role="alert">{err}</div>}
         <button type="button" className="gb-submit" onClick={submit} disabled={state === "sending"}>
           {state === "sending" ? "남기는 중…" : "메시지 남기기"}
         </button>

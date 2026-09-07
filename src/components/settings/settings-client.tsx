@@ -100,7 +100,7 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
             <label htmlFor="set-name">표시 이름</label>
             <input id="set-name" className="set-input" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="예: 지수" maxLength={40} />
           </div>
-          {nameNote && <div className={`set-note ${nameNote.kind}`}>{nameNote.text}</div>}
+          {nameNote && <div className={`set-note ${nameNote.kind}`} role={nameNote.kind === "err" ? "alert" : "status"}>{nameNote.text}</div>}
           <div className="set-actions">
             <Button variant="primary" size="sm" onClick={saveName} disabled={nameBusy}>
               {nameBusy ? "저장 중…" : "이름 저장"}
@@ -119,7 +119,7 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
             <label htmlFor="set-pw2">새 비밀번호 확인</label>
             <input id="set-pw2" type="password" className="set-input" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="다시 입력" autoComplete="new-password" />
           </div>
-          {pwNote && <div className={`set-note ${pwNote.kind}`}>{pwNote.text}</div>}
+          {pwNote && <div className={`set-note ${pwNote.kind}`} role={pwNote.kind === "err" ? "alert" : "status"}>{pwNote.text}</div>}
           <div className="set-actions">
             <Button variant="primary" size="sm" onClick={savePassword} disabled={pwBusy}>
               {pwBusy ? "변경 중…" : "비밀번호 변경"}
