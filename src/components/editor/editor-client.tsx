@@ -39,21 +39,40 @@ function readWizardSeed(): WizardSeed | null {
     return null;
   }
 }
-/** Apply the wizard title to the cover heading, whichever field the theme's cover uses. */
+/** Apply the wizard basics onto the seeded invitation. Each field is applied independently
+ * (any subset the user filled carries over) and only into fields the theme's cover actually
+ * uses, so nothing the guest typed is silently dropped and no unused field is invented. */
 function applyWizardSeed(inv: Invitation, w: WizardSeed) {
-  const t = w.title?.trim();
-  if (!t) return;
   const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
-  if (!cover) return;
-  const c = cover.content;
-  if (Array.isArray(c.names) && c.names.length) c.names = [t];
-  else if (c.titleLines) c.titleLines = [[t]];
-  else c.title = t;
-  // Cover date label, where the theme's cover carries one (plain text — safe across themes).
-  // Native date input hands over ISO (YYYY-MM-DD); show it as YYYY.MM.DD.
-  const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
-  const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
-  if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
+  if (cover) {
+    const c = cover.content;
+    const t = w.title?.trim();
+    if (t) {
+      if (Array.isArray(c.names) && c.names.length) c.names = [t];
+      else if (c.titleLines) c.titleLines = [[t]];
+      else c.title = t;
+    }
+    // Subtitle → whichever field the theme's cover uses (multi-line vs single); don't invent one.
+    const sub = w.subtitle?.trim();
+    if (sub) {
+      if (Array.isArray(c.subtitleLines)) c.subtitleLines = [sub];
+      else if (typeof c.subtitle === "string") c.subtitle = sub;
+    }
+    // Cover date label (plain text — safe across themes). Native date input hands over ISO.
+    const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
+    const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
+    if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
+  }
+  // Venue → the location section's title line (its header). Body/address stay template-provided
+  // (the user edits the rest); on a blank start the section fills in cleanly.
+  const loc = w.location?.trim();
+  if (loc) {
+    const locSec = inv.sections.find((s) => s.type === "location") as Extract<Section, { type: "location" }> | undefined;
+    if (locSec) locSec.content.title = [[loc]];
+  }
+  // Canonical event datetime (D-day countdown + .ics). Prefer the wizard's ISO, else date[+time].
+  const iso = w.eventStart?.trim() || (w.date?.trim() ? `${w.date}${w.time?.trim() ? "T" + w.time : ""}` : "");
+  if (iso) inv.eventStart = iso;
 }
 
 /** A friendly default editor title (cover names/title across themes, else a neutral default). */
@@ -100,7 +119,10 @@ export function EditorClient() {
     if (templateParam && !slugParam) {
       const base = structuredClone(getInvitation(templateParam));
       base.slug = "new";
-      if (wiz) applyWizardSeed(base, wiz);
+      if (wiz) {
+        applyWizardSeed(base, wiz);
+        if (wiz.accent) setAccent(wiz.accent);
+      }
       setDraft(base);
       setSelectedId(base.sections[0]?.id ?? "");
       setTitle(wiz?.title?.trim() || defaultTitleFor(base));
@@ -123,9 +145,8 @@ export function EditorClient() {
     // Wizard "처음부터" (blank) start: seed the typed title fresh; don't restore a prior "new" draft.
     const freshFromWizard = !slugParam && !!wiz;
     if (freshFromWizard) {
-      applyWizardSeed(d, wiz!);
+      applyWizardSeed(d, wiz!); // sets eventStart from the wizard too
       if (wiz!.accent) setAccent(wiz!.accent);
-      if (wiz!.eventStart) d.eventStart = wiz!.eventStart;
     }
     let loadedTitle: string | null = null;
     let hadLocalDraft = false;
