@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
-
-// Absolute base for OG/Twitter image URLs. Set NEXT_PUBLIC_SITE_URL on Vercel for a stable domain;
-// falls back to the deployment URL, then localhost.
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

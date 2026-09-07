@@ -94,6 +94,15 @@ export async function getPublishedInvitation(slug: string): Promise<Invitation |
   return getSampleOrNull(slug);
 }
 
+/** May this invitation appear in search results? Only ones explicitly published as Public
+ * (visibility "published") — unlisted/draft rows, and samples/local-demo, stay out, upholding
+ * the "검색 노출 없음" promise for the recommended (unlisted) sharing mode. */
+export async function isInvitationIndexable(slug: string): Promise<boolean> {
+  if (!isDbEnabled()) return false; // samples / local demo — never index
+  const { data } = await getServiceClient().from("invitations").select("visibility").eq("slug", slug).maybeSingle();
+  return data?.visibility === "published";
+}
+
 /**
  * Create or update an invitation. New slug → creates and returns a fresh `editToken`.
  * Existing slug → requires the matching `editToken` (link-based ownership).

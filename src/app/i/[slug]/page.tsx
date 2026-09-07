@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedInvitation } from "@/lib/invitation/store";
+import { getPublishedInvitation, isInvitationIndexable } from "@/lib/invitation/store";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import "@/components/viewer/viewer.css";
@@ -10,9 +10,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const inv = await getPublishedInvitation(slug);
   if (!inv) return { title: "초대장을 찾을 수 없어요 · 초대쿵" };
   const { title, description, image } = invitationMeta(inv);
+  // Keep unlisted invitations out of search (privacy); only explicitly-Public ones are indexable.
+  const indexable = await isInvitationIndexable(slug);
   return {
     title: `${title} · 초대쿵`,
     description,
+    robots: indexable ? undefined : { index: false, follow: true },
     openGraph: { title, description, images: [{ url: image, width: 1200, height: 630 }], type: "website", siteName: "초대쿵" },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };
