@@ -206,7 +206,10 @@ export async function submitRsvp(slug: string, entry: { name: string; response: 
   return error ? writeFailed("rsvp insert", error) : { ok: true };
 }
 
-/** Fetch an invitation's RSVP rows (call only after an ownership check). */
+/** Fetch an invitation's RSVP rows (call only after an ownership check).
+ * Deduped to one row per guest at their latest response, matching the public roster
+ * (listAttendees): a resubmit or a changed answer updates the guest in place rather than
+ * adding a row, so the dashboard's counts/headcount reflect distinct guests, not raw rows. */
 async function fetchRsvpRows(slug: string): Promise<{ ok: true; rows: RsvpRow[] } | { ok: false; error: string }> {
   const { data, error } = await getServiceClient()
     .from("rsvps")
@@ -214,10 +217,17 @@ async function fetchRsvpRows(slug: string): Promise<{ ok: true; rows: RsvpRow[] 
     .eq("invitation_slug", slug)
     .order("created_at", { ascending: false });
   if (error) return { ok: false, error: error.message };
-  return {
-    ok: true,
-    rows: (data ?? []).map((r) => ({ id: r.id, name: r.name, response: r.response, guests: r.guests, message: r.message, createdAt: r.created_at })),
-  };
+  // Rows are newest-first, so the first one seen per name is that guest's latest answer.
+  // Blank-name rows (shouldn't happen — the form requires a name) are never collapsed together.
+  const seen = new Set<string>();
+  const rows: RsvpRow[] = [];
+  for (const r of data ?? []) {
+    const key = (r.name ?? "").trim();
+    if (key && seen.has(key)) continue;
+    if (key) seen.add(key);
+    rows.push({ id: r.id, name: r.name, response: r.response, guests: r.guests, message: r.message, createdAt: r.created_at });
+  }
+  return { ok: true, rows };
 }
 
 /** Owner-only RSVP list via the invitation's editToken (link-based ownership). */
