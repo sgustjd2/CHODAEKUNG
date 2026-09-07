@@ -6,6 +6,8 @@ import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
 import { listMyMediaAction } from "@/lib/invitation/actions";
+import { canAddGalleryPhoto, FREE_LIMITS } from "@/lib/invitation/entitlements";
+import { UpgradeCta } from "@/components/premium/upgrade-cta";
 import type {
   AcceptContent,
   AccountContent,
@@ -203,7 +205,11 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
               </div>
             ))}
           </div>
-          <PhotoUpload onUploaded={(url) => patch(gallery.id, { images: [...gallery.content.images, { src: url }] })} />
+          {canAddGalleryPhoto(draft, gallery.content.images.length) ? (
+            <PhotoUpload onUploaded={(url) => patch(gallery.id, { images: [...gallery.content.images, { src: url }] })} />
+          ) : (
+            <UpgradeCta compact feature="capacity" title={`갤러리 사진은 무료 ${FREE_LIMITS.galleryPhotos}장까지예요`} />
+          )}
         </div>
       )}
       {rsvp && (

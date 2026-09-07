@@ -345,5 +345,9 @@ export type Invitation = {
   /** Canonical event start for "add to calendar" — ISO `YYYY-MM-DD` (all-day) or `YYYY-MM-DDTHH:mm`.
    * Separate from the cover's decorative dateLabel, which is styled free text. */
   eventStart?: string;
+  /** Monetization tier (per-invitation, one-time unlock). Absent/"free" = free tier.
+   * SCAFFOLD: lives in data for now; when real payments land this must become a
+   * server-authoritative flag (a DB column set by the payment webhook), not client data. */
+  tier?: "free" | "premium";
   sections: Section[];
 };
