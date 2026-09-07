@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
 import { ensureKakao } from "@/lib/kakao";
@@ -43,6 +43,8 @@ export function ShareBar({
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
   const attending = resp === (options[0] ?? "참석");
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null); // the control that opened the dialog, to restore focus to
 
   // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
   useEffect(() => {
@@ -63,14 +65,41 @@ export function ShareBar({
     };
   }, [preview]);
 
-  // A11y: close the RSVP dialog on Escape while it's open (CLAUDE.md §10).
+  // A11y (CLAUDE.md §10 dialog focus management): while the RSVP dialog is open, close on
+  // Escape, trap Tab focus inside it (so keyboard users can't reach the page behind), and
+  // return focus to whatever opened it on close.
   useEffect(() => {
     if (!open) return;
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const nodes = Array.from(modal.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (!modal.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      triggerRef.current?.focus?.(); // restore focus to the control that opened the dialog
+    };
   }, [open]);
 
   const copyLink = () => {
@@ -137,14 +166,14 @@ export function ShareBar({
             <Icon name="ic-clock" /> 캘린더
           </button>
         )}
-        <button type="button" className="primary" onClick={() => { setState("idle"); setOpen(true); }}>
+        <button type="button" className="primary" onClick={(e) => { triggerRef.current = e.currentTarget; setState("idle"); setOpen(true); }}>
           {shareCta}
         </button>
       </div>
 
       {open && (
         <div className="rsvp-modal-overlay" onClick={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div className="rsvp-modal" role="dialog" aria-modal="true">
+          <div className="rsvp-modal" role="dialog" aria-modal="true" ref={modalRef}>
             <button className="rsvp-modal-close" aria-label="닫기" onClick={() => setOpen(false)}>
               ×
             </button>
