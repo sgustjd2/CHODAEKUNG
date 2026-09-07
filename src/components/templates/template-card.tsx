@@ -47,7 +47,7 @@ export function TemplateCard({ img, imgFilter, badge, catTag, name, meta, fav = 
     <div className="tpl" role="link" tabIndex={0} onClick={go} onKeyDown={onKey} style={{ cursor: "pointer" }} aria-label={`${catTag} 템플릿으로 시작`}>
       <div className="thumb">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/assets/photos/${img}.jpg`} alt="" style={imgStyle} />
+        <img src={`/assets/photos/${img}.jpg`} alt="" style={imgStyle} loading="lazy" decoding="async" />
         {badge && (
           <div className={["badge", badge.kind].filter(Boolean).join(" ")}>{badge.text}</div>
         )}

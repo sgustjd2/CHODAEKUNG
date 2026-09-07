@@ -274,7 +274,7 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
               <div className="inv-card" key={c.title}>
                 <div className="inv-cover">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photoUrl(c.img)} alt="" />
+                  <img src={photoUrl(c.img)} alt="" loading="lazy" decoding="async" />
                   <div className={`inv-status ${c.status}`}>
                     {c.status === "published" ? "● Published" : c.status === "unlisted" ? "Unlisted" : c.status === "draft" ? "Draft" : "Past"}
                   </div>

@@ -176,7 +176,7 @@ export default function LandingPage() {
             {templates.map((t) => (
               <div className="tpl-card" key={t.img}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/assets/photos/${t.img}.jpg`} alt="" />
+                <img src={`/assets/photos/${t.img}.jpg`} alt="" loading="lazy" decoding="async" />
                 <div className="over">
                   <div className="tpl-cat">{t.cat}</div>
                   <div className="tpl-name">{t.name}</div>
