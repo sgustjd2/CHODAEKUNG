@@ -76,16 +76,34 @@ export function RsvpClient() {
     } catch {
       /* ignore */
     }
-    (async () => {
+    let alive = true;
+    let pollId: ReturnType<typeof setInterval> | undefined;
+    // Owner-first (works on any device), else the link edit-token.
+    const fetchRows = async (): Promise<Row[] | null> => {
       let res = await listMyRsvpsAction(s);
       if (!res.ok && token) res = await listRsvpsAction(s, token);
-      if (res.ok) {
-        setLiveRows(res.rows.map(toRow));
+      return res.ok ? res.rows.map(toRow) : null;
+    };
+    (async () => {
+      const rows = await fetchRows();
+      if (!alive) return;
+      if (rows) {
+        setLiveRows(rows);
         setAccess("live");
+        // The header says "LIVE / 실시간 집계" — make it true: poll so new responses appear
+        // without a reload. A transient failure keeps the last good data (never downgrades access).
+        pollId = setInterval(async () => {
+          const next = await fetchRows();
+          if (alive && next) setLiveRows(next);
+        }, 15000);
       } else {
         setAccess("denied");
       }
     })();
+    return () => {
+      alive = false;
+      if (pollId) clearInterval(pollId);
+    };
   }, []);
 
   const isLive = access === "live";
