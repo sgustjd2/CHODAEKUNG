@@ -51,9 +51,8 @@ tables, no fixes needed.
   (share-bar.tsx) points imageUrl at the same route so both share paths match. Verified: card renders
   locally (Korean OK, clean layout) AND on the deployed production build (og:image = route → HTTP 200
   image/png, same bytes as local).
-  - FOLLOW-UP (minor): the **publish dialog** (publish-dialog.tsx) still builds its Kakao share
-    imageUrl + its OG/Kakao *previews* from the raw cover, not this route. Point its share at the
-    route and/or update the preview thumbnails for full consistency (owner-facing, low urgency).
+  - FOLLOW-UP ✅ DONE (2026-09-07): the publish dialog's Kakao share imageUrl + OG/Kakao preview
+    thumbnails now use the opengraph-image card (once published; cover pre-publish).
 
 ## Phase C — Creation-flow depth ✅ DONE (verified 2026-09-07, chose blank-start-only)
 
@@ -97,13 +96,19 @@ These are referenced in the UI but unbuilt; each needs the user's product direct
 
 ## Phase E — Remaining polish (low priority)
 
-- **E1 · Publish dialog focus trap.** The publish dialog has Escape-close but no focus trap /
-  focus-return. Apply the same pattern as the RSVP modal (share-bar.tsx: trap Tab, restore focus to
-  the trigger).
-- **E2 · Twitter card for portrait covers.** `twitter:card` is `summary_large_image` (landscape); a
-  portrait cover crops. Consider `summary` when the cover is portrait, or wait for B1.
-- **E3 · Skeleton loading.** Client-fetched sections (attendees/guestbook) now hide their empty state
-  until the first fetch resolves; a subtle skeleton would be nicer than the brief blank.
+- **E1 · Publish dialog focus trap.** ✅ DONE (2026-09-07). Focus moves into the dialog on open, Tab
+  is trapped, Escape closes, focus returns to the trigger (capture-on-open pattern). Verified
+  focus-in + Tab-wrap + Escape; focus-return not re-verified live (programmatic focus is flaky in the
+  automation pane) but is the standard pattern.
+- **E2 · Twitter card for portrait covers.** ✅ RESOLVED by B1 — og/twitter images now point to the
+  1200×630 opengraph-image card (landscape), so `summary_large_image` gets the right ratio; no
+  portrait crop. No separate work needed.
+- **B1 follow-up · Publish dialog share card.** ✅ DONE (2026-09-07). The publish dialog's Kakao share
+  imageUrl + its OG/Kakao preview thumbnails now use the opengraph-image card once published (cover
+  as the pre-publish approximation).
+- **E3 · Skeleton loading.** (Still open, marginal.) Client-fetched sections (attendees/guestbook)
+  hide their empty state until the first fetch resolves; a subtle skeleton would be nicer than the
+  brief blank. Low value — the sections are small.
 
 ## Standing user actions — STATUS
 
