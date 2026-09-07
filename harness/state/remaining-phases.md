@@ -73,8 +73,18 @@ tables, no fixes needed.
 
 These are referenced in the UI but unbuilt; each needs the user's product direction before coding.
 
-- **D1 · Monetization.** The publish dialog mentions a "Pro 플랜" and custom domain ("yourname.moi").
-  No plans/billing/entitlements exist. Needs direction (what's gated, pricing, provider).
+- **D1 · Monetization.** 🟡 SCAFFOLD DONE (2026-09-07). Decisions (user): per-invitation one-time
+  unlock; premium = advanced analytics + capacity; scaffold-first, no real payments. Built
+  `src/lib/invitation/entitlements.ts` (Tier/isPremium/FREE_LIMITS/PREMIUM_FEATURES/canAddGalleryPhoto),
+  `tier` on the Invitation type, `UpgradeCta` (components/premium), and a wired+safe capacity gate
+  (editor gallery photo-add past the free cap → CTA; premium unlimited). REMAINING:
+  - Real checkout — a payment provider (KR: Toss Payments / PortOne; intl: Stripe). User must set
+    provider keys in the console; a webhook flips the tier. **Make `tier` server-authoritative** (a DB
+    column set by the webhook), NOT the client-editable data field the scaffold uses.
+  - Enforce the advanced-analytics gate on the RSVP dashboard (charts/CSV) — needs the invitation
+    tier plumbed to rsvp-client; do it WITH checkout so free owners aren't locked out beforehand.
+  - Custom domain (yourname.moi) was NOT chosen as a premium gate; leave the publish-dialog copy or
+    revisit if the model changes.
 - **D2 · Public / creator marketplace.** The "Public · 검색 노출" visibility option sets
   visibility=published (now indexable via the SEO work), but there's no discovery/marketplace UI or
   creator-template listing. The copy promises "크리에이터 템플릿으로 마켓 등록" — unbuilt.
