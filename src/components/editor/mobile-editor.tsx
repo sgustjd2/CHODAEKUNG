@@ -34,6 +34,7 @@ export type EditorApi = {
   setLineHeight: (n: number) => void;
   bgColor: string | null;
   setBgColor: (c: string | null) => void;
+  resetDesign: () => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -158,7 +159,10 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, cover, patch, applyTemplate } = api;
+  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, resetDesign, cover, patch, applyTemplate } = api;
+  const hasCustomDesign =
+    !!(draft.accent || draft.font || draft.textColor || draft.fontScale || draft.letterSpacing || draft.lineHeight || draft.bgColor) ||
+    draft.sections.some((s) => s.style);
   const applyPalette = (p: (typeof PALETTES)[number]) =>
     setDraft((d) => ({ ...d, accent: p.accent ?? undefined, bgColor: p.bg ?? undefined, textColor: p.text ?? undefined }));
   const paletteActive = (p: (typeof PALETTES)[number]) => (p.accent ?? null) === accent && (p.bg ?? null) === bgColor && (p.text ?? null) === textColor;
@@ -330,6 +334,12 @@ function DesignPanel({ api }: { api: EditorApi }) {
           </div>
           <input type="range" className="m-slider" min={0} max={100} value={overlay} onChange={(e) => setOverlay(+e.target.value)} />
         </div>
+      </div>
+      <div className="m-group">
+        <button type="button" className="design-reset" onClick={resetDesign} disabled={!hasCustomDesign}>
+          색상·글씨 초기화
+        </button>
+        <p className="m-note" style={{ marginTop: 8 }}>색상·글씨 커스터마이즈만 테마 기본값으로 되돌려요. 내용·섹션은 그대로예요.</p>
       </div>
     </>
   );

@@ -156,6 +156,27 @@ export function EditorClient() {
   const applyPalette = (p: (typeof PALETTES)[number]) =>
     setDraft((d) => ({ ...d, accent: p.accent ?? undefined, bgColor: p.bg ?? undefined, textColor: p.text ?? undefined }));
   const paletteActive = (p: (typeof PALETTES)[number]) => (p.accent ?? null) === accent && (p.bg ?? null) === bgColor && (p.text ?? null) === textColor;
+  // True when any color/typography customization is set (so the reset button can disable itself).
+  const hasCustomDesign =
+    !!(draft.accent || draft.font || draft.textColor || draft.fontScale || draft.letterSpacing || draft.lineHeight || draft.bgColor) ||
+    draft.sections.some((s) => s.style);
+  // Reset color/typography customizations to the theme defaults, keeping content, sections and theme.
+  const resetDesign = () =>
+    setDraft((d) => ({
+      ...d,
+      accent: undefined,
+      font: undefined,
+      textColor: undefined,
+      fontScale: undefined,
+      letterSpacing: undefined,
+      lineHeight: undefined,
+      bgColor: undefined,
+      sections: d.sections.map((s) => {
+        if (!s.style) return s;
+        const { style: _drop, ...rest } = s;
+        return rest as Section;
+      }),
+    }));
   // Per-section color override for the currently-selected section (on top of the invitation-wide vars).
   const selSec = draft.sections.find((s) => s.id === selectedId);
   const setSecStyle = (key: "accent" | "bg", val: string | null) =>
@@ -421,6 +442,7 @@ export function EditorClient() {
     setLineHeight,
     bgColor,
     setBgColor,
+    resetDesign,
     previewStyle,
     patch,
     addSection,
@@ -825,6 +847,14 @@ export function EditorClient() {
                   <div style={{ marginTop: 8 }}>
                     <PhotoUpload onUploaded={(url) => cover && patch(cover.id, { image: url })} label="+ 커버 사진 업로드" />
                   </div>
+                </div>
+                <div className="insp-group">
+                  <button type="button" className="design-reset" onClick={resetDesign} disabled={!hasCustomDesign}>
+                    색상·글씨 초기화
+                  </button>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    색상·글씨 커스터마이즈를 테마 기본값으로 되돌려요. 내용·섹션·테마는 그대로예요.
+                  </p>
                 </div>
               </>
             )}
