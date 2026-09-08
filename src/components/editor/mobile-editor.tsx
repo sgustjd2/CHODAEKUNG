@@ -21,7 +21,7 @@ export type EditorApi = {
   mode: Mode;
   setMode: (m: Mode) => void;
   accent: string | null;
-  setAccent: (c: string) => void;
+  setAccent: (c: string | null) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -181,9 +181,13 @@ function DesignPanel({ api }: { api: EditorApi }) {
       <div className="m-group">
         <h6>Accent Color</h6>
         <div className="m-colors">
+          <button type="button" className={`m-color m-color-none${accent === null ? " active" : ""}`} aria-label="테마 기본색" onClick={() => setAccent(null)} />
           {ACCENTS.map((c) => (
             <button key={c} type="button" className={`m-color${accent === c ? " active" : ""}`} style={{ background: c }} aria-label={c} onClick={() => setAccent(c)} />
           ))}
+          <label className="m-color m-color-custom" style={accent && !ACCENTS.includes(accent) ? { background: accent } : undefined}>
+            <input type="color" value={accent ?? "#E38B8B"} onChange={(e) => setAccent(e.target.value)} aria-label="직접 색상 선택" />
+          </label>
         </div>
       </div>
       {cover && (

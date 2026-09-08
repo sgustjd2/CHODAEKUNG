@@ -36,6 +36,7 @@ export function InvitationViewer({
   contained,
   preview,
   onEdit,
+  onSelectSection,
 }: {
   invitation: Invitation;
   contained?: boolean;
@@ -44,6 +45,8 @@ export function InvitationViewer({
   /** Editor-only: enables inline WYSIWYG editing of tagged text (commits field edits to the draft).
    * `asLines` marks a rich Line[] field (title/body) vs a plain string. */
   onEdit?: (secId: string, path: string, value: string, asLines: boolean) => void;
+  /** Editor-only: focusing an inline field selects its section, so the side panel follows the preview. */
+  onSelectSection?: (secId: string) => void;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
@@ -55,11 +58,17 @@ export function InvitationViewer({
   const layoutStyle: CSSProperties | undefined =
     lw === "narrow" ? ({ ["--iv-w"]: "392px" } as CSSProperties) : lw === "wide" ? ({ ["--iv-w"]: "512px" } as CSSProperties) : undefined;
   const bg = invitation.layout?.background;
+  // User-picked accent overrides the theme's primary color everywhere (--wax is the accent every
+  // theme's CSS references). Applies in the contained editor preview and the published page alike.
+  // ponytail: --wax-deep uses the same hue as --wax (matches the editor); derive a darker shade if hover depth matters.
+  const accentVars = invitation.accent ? ({ ["--wax"]: invitation.accent, ["--wax-deep"]: invitation.accent } as CSSProperties) : null;
+  const rootStyle: CSSProperties | undefined =
+    contained ? (accentVars ?? undefined) : (layoutStyle || accentVars ? { ...layoutStyle, ...accentVars } : undefined);
   return (
     <div
       className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}
       data-bg={!contained && bg && bg !== "soft" ? bg : undefined}
-      style={contained ? undefined : layoutStyle}
+      style={rootStyle}
     >
       {animate && (
         <noscript>
@@ -90,7 +99,7 @@ export function InvitationViewer({
           if (contained) {
             return (
               <div key={s.id} data-sec-id={s.id} className="iv-secwrap">
-                {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit }}>{node}</EditContext.Provider> : node}
+                {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection }}>{node}</EditContext.Provider> : node}
               </div>
             );
           }

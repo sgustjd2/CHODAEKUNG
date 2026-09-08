@@ -136,7 +136,10 @@ export function EditorClient() {
   const [tab, setTab] = useState<Tab>("content");
   const [mode, setMode] = useState<Mode>("scroll");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
-  const [accent, setAccent] = useState<string | null>(null);
+  // Accent lives in the draft (single source), so it autosaves, publishes, previews and renders
+  // via the viewer without separate plumbing. setAccent writes it; reads derive from the draft.
+  const accent = draft.accent ?? null;
+  const setAccent = (c: string | null) => setDraft((d) => ({ ...d, accent: c ?? undefined }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -164,7 +167,7 @@ export function EditorClient() {
       base.slug = "new";
       if (wiz) {
         applyWizardSeed(base, wiz);
-        if (wiz.accent) setAccent(wiz.accent);
+        if (wiz.accent) base.accent = wiz.accent;
       }
       setDraft(base);
       setSelectedId(base.sections[0]?.id ?? "");
@@ -190,7 +193,7 @@ export function EditorClient() {
     if (freshFromWizard) {
       applyWizardSeed(d, wiz!); // sets eventStart from the wizard too
       fillBlankDateSection(d, wiz!); // blank canvas only — populate the empty date section
-      if (wiz!.accent) setAccent(wiz!.accent);
+      if (wiz!.accent) d.accent = wiz!.accent;
     }
     let loadedTitle: string | null = null;
     let hadLocalDraft = false;
@@ -202,7 +205,8 @@ export function EditorClient() {
           if (saved.draft) { d = saved.draft; hadLocalDraft = true; }
           if (typeof saved.title === "string") loadedTitle = saved.title;
           if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
-          if (saved.accent !== undefined) setAccent(saved.accent);
+          // Migrate a legacy top-level saved accent into the draft (new saves keep it in draft.accent).
+          if (saved.accent != null && d.accent == null) d.accent = saved.accent;
         }
       } catch {
         /* private mode / corrupt value — fall back to the sample */
@@ -510,7 +514,7 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} />
               </div>
             </div>
           </div>
@@ -584,6 +588,12 @@ export function EditorClient() {
                 <div className="insp-group">
                   <h5>Accent Color</h5>
                   <div className="color-row">
+                    <button
+                      className={`color-swatch color-swatch-none${accent === null ? " active" : ""}`}
+                      aria-label="테마 기본색"
+                      title="테마 기본색"
+                      onClick={() => setAccent(null)}
+                    />
                     {ACCENTS.map((c) => (
                       <button
                         key={c}
@@ -593,7 +603,13 @@ export function EditorClient() {
                         onClick={() => setAccent(c)}
                       />
                     ))}
+                    <label className="color-swatch color-swatch-custom" title="직접 고르기" style={accent && !ACCENTS.includes(accent) ? { background: accent } : undefined}>
+                      <input type="color" value={accent ?? "#E38B8B"} onChange={(e) => setAccent(e.target.value)} aria-label="직접 색상 선택" />
+                    </label>
                   </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    초대장 전체의 강조색(버튼·포인트)을 바꿔요. 발행된 초대장에도 그대로 적용돼요.
+                  </p>
                 </div>
                 <div className="insp-group">
                   <h5>Cover Background</h5>

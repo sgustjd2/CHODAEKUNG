@@ -338,6 +338,9 @@ export type Invitation = {
   theme: ThemeId;
   /** Used for share/OG and the share-pill CTA. */
   shareCta: string;
+  /** User-picked accent color (hex). Overrides the theme's primary --wax/--wax-deep across
+   * every section on the published page and in the editor preview. Absent = theme default. */
+  accent?: string;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */
