@@ -192,6 +192,8 @@ export function EditorClient() {
     }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  // Two-step guard for the destructive full reset ("되돌리기"): first click arms, second confirms.
+  const [resetArmed, setResetArmed] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
   const [editToken, setEditToken] = useState<string | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
@@ -923,15 +925,22 @@ export function EditorClient() {
               variant="ghost"
               size="sm"
               onClick={() => {
+                if (!resetArmed) {
+                  // Arm; auto-disarm after 3s so a stray earlier click can't silently confirm later.
+                  setResetArmed(true);
+                  setTimeout(() => setResetArmed(false), 3000);
+                  return;
+                }
                 const base = slug === "new" ? blankInvitation() : getInvitation(slug);
-                setDraft(structuredClone(base));
+                setDraft(structuredClone(base)); // full replace clears accent/font/colors/per-section too
                 setSelectedId(base.sections[0]?.id ?? "");
                 setTitle(slug === "new" ? "" : defaultTitleFor(base));
                 setHidden(new Set());
-                setAccent(null);
+                setResetArmed(false);
               }}
+              title="내용·디자인을 처음 상태로 되돌려요"
             >
-              되돌리기
+              {resetArmed ? "정말 되돌릴까요?" : "되돌리기"}
             </Button>
             <Button
               variant="primary"
