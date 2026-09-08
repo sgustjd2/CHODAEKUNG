@@ -31,10 +31,14 @@ export default function LoginPage() {
   // Arriving from the create/edit gate → a first-time visitor with no account. Default to signup
   // (not login), and explain why they're here.
   useEffect(() => {
-    const n = new URLSearchParams(window.location.search).get("next");
+    const params = new URLSearchParams(window.location.search);
+    const n = params.get("next");
     if (n && (n.startsWith("/new") || n.startsWith("/editor"))) {
       setGatedCreate(true);
       setMode("signup");
+    }
+    if (params.get("err") === "confirm") {
+      setMsg({ ok: false, text: "확인 링크가 만료되었거나 유효하지 않아요. 다시 로그인하거나 가입해 주세요." });
     }
   }, []);
 
@@ -65,7 +69,14 @@ export default function LoginPage() {
     const dest = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
     try {
       if (mode === "signup") {
-        const { data, error } = await sb.auth.signUp({ email, password: pw });
+        const { data, error } = await sb.auth.signUp({
+          email,
+          password: pw,
+          // Confirmation link returns to THIS origin's callback (prod on prod, localhost on localhost),
+          // not Supabase's Site URL — so prod signups don't get a localhost link. Must be allowlisted
+          // in Supabase → Authentication → URL Configuration → Redirect URLs.
+          options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(dest)}` },
+        });
         if (error) setMsg({ ok: false, text: friendlyAuthError(error.message) });
         else if (data.session) {
           router.push(dest);
