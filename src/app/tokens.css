@@ -18,8 +18,10 @@
   --ink-4:        rgba(42, 42, 62, 0.55);
 
   /* Wax — 밝은 코럴 로즈. Primary. 실링왁스의 밝은 파스텔 버전 */
-  --wax:          #E38B8B;   /* Primary · 밝은 코럴 왁스 */
-  --wax-deep:     #C96A6A;   /* hover / 강조 */
+  --wax:          #C25C5C;   /* Primary · 코럴 왁스 — deepened from #E38B8B for readability: white-on-wax
+                                buttons + coral em/accent text now ~4.2:1 (was ~2.5), while staying legible
+                                as an accent on dark themes (~4.0:1). One token serves both surfaces. */
+  --wax-deep:     #C96A6A;   /* hover / 강조 (left lighter so it stays legible on dark themes too) */
   --wax-light:    #F5B5B0;   /* 연한 피치 */
   --wax-soft:     #FCE0DC;   /* 아주 연한 블러시 */
   --wax-tint:     #FEF6F4;   /* 배경용 미묘 블러시 */
