@@ -77,7 +77,10 @@ export function Editable({
         }
       }}
     >
-      <Frozen>{children}</Frozen>
+      {/* Key on the text so a programmatic change (e.g. syncing the cover date from 행사 일시)
+          remounts with the new value. During typing `children` is stable (it only commits on blur),
+          so the key doesn't change and the user's contentEditable DOM is left untouched. */}
+      <Frozen key={typeof children === "string" ? children : undefined}>{children}</Frozen>
     </span>
   );
 }

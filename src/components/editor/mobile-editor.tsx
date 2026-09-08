@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -144,15 +144,15 @@ function ContentPanel({ api }: { api: EditorApi }) {
       <div className="insp-group">
         <h5>캘린더</h5>
         <div className="insp-field">
-          <div className="insp-label">행사 일시 (캘린더 추가용)</div>
+          <div className="insp-label">행사 일시</div>
           <input
             className="insp-input"
             type="datetime-local"
             value={api.draft.eventStart ?? ""}
-            onChange={(e) => api.setDraft((d) => ({ ...d, eventStart: e.target.value || undefined }))}
+            onChange={(e) => { const iso = e.target.value || undefined; api.setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso)); }}
           />
           <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
-            “캘린더에 추가”와 D-Day 카운트다운의 기준 일시예요.
+            카운트다운·“캘린더에 추가”의 기준이에요. 배틀·게이밍 테마는 커버 날짜도 이 일시를 따라가요.
           </div>
         </div>
       </div>

@@ -1,6 +1,37 @@
-import type { CoverLayout, Line, RevealAnim, SectionType, ThemeId } from "@/lib/invitation/types";
+import type { CoverLayout, Invitation, Line, RevealAnim, Section, SectionType, ThemeId } from "@/lib/invitation/types";
 
 /** Shared editor constants + helpers used by both the desktop and mobile layouts. */
+
+/** Format an ISO datetime (or bare date) into the battle/gaming cover header's two lines:
+ *  ["YYYY · MM · DD", "WKD · hh:mm AM/PM"]. */
+export function coverDateLines(iso: string): [string, string] {
+  const [datePart, timePart] = iso.split("T");
+  const [y, mo, dd] = datePart.split("-");
+  const d = new Date(iso.includes("T") ? iso : `${iso}T00:00`);
+  const wd = Number.isNaN(d.getTime()) ? "" : ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][d.getDay()];
+  let timeLine = "";
+  if (timePart) {
+    const [hh, mm] = timePart.split(":").map(Number);
+    const h12 = ((hh + 11) % 12) + 1;
+    timeLine = `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`;
+  }
+  return [`${y} · ${mo} · ${dd}`, [wd, timeLine].filter(Boolean).join(" · ")];
+}
+
+/** Mirror the event datetime onto the cover for themes that show it on the cover header
+ *  (battle/gaming `headerRightLines`); other covers keep their own date fields untouched. */
+export function syncCoverDate(inv: Invitation, iso?: string): Invitation {
+  if (!iso?.trim()) return inv;
+  const lines = coverDateLines(iso);
+  return {
+    ...inv,
+    sections: inv.sections.map((s: Section) => {
+      if (s.type !== "cover") return s;
+      const c = s.content;
+      return Array.isArray(c.headerRightLines) ? { ...s, content: { ...c, headerRightLines: lines } } : s;
+    }),
+  };
+}
 
 export const SECTION_META: Partial<Record<SectionType, { label: string; icon: string }>> = {
   cover: { label: "커버", icon: "ic-cover" },

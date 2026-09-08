@@ -11,7 +11,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -66,16 +66,7 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
     // Battle/gaming covers show the date on the cover header (headerRightLines), not a dateLabel —
     // update those too so a wizard-entered date actually reflects on the cover.
     if (Array.isArray(c.headerRightLines) && w.date?.trim()) {
-      const [y, mo, dd] = w.date.split("-");
-      const dObj = new Date(`${w.date}T${w.time?.trim() || "00:00"}`);
-      const wd = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][dObj.getDay()] ?? "";
-      let timeLine = "";
-      if (w.time?.trim()) {
-        const [hh, mm] = w.time.split(":").map(Number);
-        const h12 = ((hh + 11) % 12) + 1;
-        timeLine = `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`;
-      }
-      c.headerRightLines = [`${y} · ${mo} · ${dd}`, [wd, timeLine].filter(Boolean).join(" · ")];
+      c.headerRightLines = coverDateLines(`${w.date}${w.time?.trim() ? "T" + w.time : "T00:00"}`);
     }
   }
   // Venue → the location section's title line (its header). Body/address stay template-provided
@@ -627,15 +618,15 @@ export function EditorClient() {
                 <div className="insp-group">
                   <h5>캘린더</h5>
                   <div className="insp-field">
-                    <div className="insp-label">행사 일시 (캘린더 추가용)</div>
+                    <div className="insp-label">행사 일시</div>
                     <input
                       className="insp-input"
                       type="datetime-local"
                       value={draft.eventStart ?? ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, eventStart: e.target.value || undefined }))}
+                      onChange={(e) => { const iso = e.target.value || undefined; setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso)); }}
                     />
                     <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
-                      방문객이 “캘린더에 추가”로 저장할 실제 일시예요. 커버에 보이는 날짜 문구와는 별개로 설정돼요.
+                      카운트다운·“캘린더에 추가”의 기준이에요. 배틀·게이밍 테마는 커버 날짜도 이 일시를 따라가요.
                     </div>
                   </div>
                 </div>
