@@ -443,6 +443,7 @@ export function EditorClient() {
     bgColor,
     setBgColor,
     resetDesign,
+    handleInlineEdit,
     previewStyle,
     patch,
     addSection,

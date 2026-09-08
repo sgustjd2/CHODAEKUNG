@@ -35,6 +35,7 @@ export type EditorApi = {
   bgColor: string | null;
   setBgColor: (c: string | null) => void;
   resetDesign: () => void;
+  handleInlineEdit: (secId: string, path: string, value: string, asLines: boolean) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -94,7 +95,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
       </div>
 
       <div className="m-preview" style={previewStyle}>
-        <InvitationViewer invitation={visibleDraft} contained />
+        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} />
       </div>
 
       <div className="m-tabs">
