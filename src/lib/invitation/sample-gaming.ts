@@ -295,4 +295,79 @@ const rank: Invitation = {
   ],
 };
 
-export const gamingSamples: Invitation[] = [quick, scrim, rank];
+// 마인크래프트 서버 파티 — gaming theme, block-world flavor.
+const minecraft: Invitation = {
+  slug: "mc-party",
+  theme: "gaming",
+  shareCta: "참여",
+  eventStart: "2027-05-16T20:00",
+  sections: [
+    {
+      id: "mc-cover",
+      type: "cover",
+      content: {
+        image: "minecraft_party",
+        headerLeft: "Block World · Server",
+        headerRightLines: ["이번 주 토요일", "20:00 KST"],
+        eyebrow: "Party Invitation",
+        titleLines: [["블록 월드 ", { text: "파티", em: true }]],
+        subtitleLines: ["서버 오픈 · 같이 짓고 같이 놀자"],
+      },
+    },
+    {
+      id: "mc-info",
+      type: "gInfo",
+      content: {
+        eyebrow: "Server Info",
+        title: [["접속 ", { text: "정보", em: true }]],
+        cells: [
+          { k: "서버", v: "play.blockparty", u: ".kr" },
+          { k: "버전", v: "1.21", u: " Java" },
+          { k: "모드", v: "생존", u: " · 멀티" },
+          { k: "정원", v: "8", u: "명" },
+        ],
+      },
+    },
+    {
+      id: "mc-countdown",
+      type: "countdown",
+      content: {
+        label: "",
+        eyebrow: "Server Opens In",
+        title: [["오픈 ", { text: "카운트다운", em: true }]],
+        cells: [
+          { n: "02", l: "Days", warn: true },
+          { n: "18", l: "Hrs" },
+          { n: "42", l: "Min" },
+        ],
+      },
+    },
+    {
+      id: "mc-rules",
+      type: "rules",
+      content: {
+        title: "",
+        eyebrow: "Server Rules",
+        titleLine: [[{ text: "즐겁게", em: true }, " 짓자"]],
+        rules: [
+          { t: "그리핑 금지", d: "남의 건축물 파괴·도둑질 금지 · 걸리면 강퇴" },
+          { t: "디스코드 소통", d: "보이스 채널에서 같이 · #마크방 자동 초대" },
+          { t: "존중 & 협동", d: "초보 환영 · 서로 도와서 마을 짓기" },
+        ],
+      },
+    },
+    {
+      id: "mc-accept",
+      type: "accept",
+      content: {
+        title: ["같이", [{ text: "하실래요?", em: true }]],
+        sub: "토요일 저녁 7시 전까지 답장",
+        accept: "참여한다",
+        decline: "다음에",
+      },
+    },
+    { id: "mc-ending", type: "ending", content: { signature: "SEE YOU IN GAME", names: "주최 · 블록마스터" } },
+  ],
+};
+
+export const gamingSamples: Invitation[] = [quick, scrim, rank, minecraft];

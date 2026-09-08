@@ -76,6 +76,7 @@ const EVENT_GROUPS: EventGroup[] = [
     items: [
       { id: "duel", icon: "ic-swords", name: "1대1 맞짱", hint: "1v1 duel" },
       { id: "game-battle", icon: "ic-controller", name: "게임 도전장", hint: "e-sports" },
+      { id: "minecraft", icon: "ic-grid", name: "마인크래프트", hint: "block party" },
       { id: "tournament", icon: "ic-trophy", name: "토너먼트", hint: "championship" },
     ],
   },
@@ -93,7 +94,7 @@ const EVENT_SAMPLE: Record<string, string> = {
   basketball: "jogi-battle", tennis: "jogi-battle", golf: "jogi-battle", cycling: "beongae",
   swim: "beongae", yoga: "beongae", study: "beongae", camping: "yangyang-mt", picnic: "beongae",
   travel: "yangyang-mt", cafe: "beongae", foodie: "beongae", music: "after-hours", photo: "after-hours",
-  pet: "cozy-home", duel: "matjjang", "game-battle": "lol-quick", tournament: "lol-rank",
+  pet: "cozy-home", duel: "matjjang", "game-battle": "lol-quick", minecraft: "mc-party", tournament: "lol-rank",
 };
 
 const CUSTOM_SUGGESTIONS: { name: string; label: string }[] = [
@@ -143,8 +144,10 @@ const BLANK_STYLE: StyleDef = { id: "blank", blank: true, cat: "Blank · Custom"
 const SAMPLE_THEME: Record<string, ThemeId> = {
   "jisoo-minjun": "romantic", "appa-60": "minimal", "cozy-home": "cute", "after-hours": "editorial",
   beongae: "timeline", "yangyang-mt": "timeline", "jogi-battle": "battle", matjjang: "battle",
-  "lol-quick": "gaming", "lol-rank": "gaming",
+  "lol-quick": "gaming", "lol-rank": "gaming", "mc-party": "gaming",
 };
+/** Per-event cover override for the Step 3 recommended thumbnail (else the theme's default cover). */
+const EVENT_COVER: Record<string, string> = { minecraft: "minecraft_party" };
 const THEME_COVER: Record<ThemeId, string> = {
   romantic: "romantic_wedding", minimal: "minimal_birthday", cute: "cute_housewarming", editorial: "editorial_party",
   timeline: "timeline_gathering", battle: "battle_sports", gaming: "game_lol_rank", developer: "developer_terminal",
@@ -215,7 +218,7 @@ export function NewInvitationWizard() {
     event === "custom"
       ? [BLANK_STYLE]
       : [
-          { id: "rec", img: THEME_COVER[evTheme], cat: `${THEME_LABEL[evTheme]} · 추천`, name: <>{THEME_LABEL[evTheme]} <em>템플릿</em></>, nameText: `${THEME_LABEL[evTheme]} 템플릿` },
+          { id: "rec", img: EVENT_COVER[event] ?? THEME_COVER[evTheme], cat: `${THEME_LABEL[evTheme]} · 추천`, name: <>{THEME_LABEL[evTheme]} <em>템플릿</em></>, nameText: `${THEME_LABEL[evTheme]} 템플릿` },
           BLANK_STYLE,
         ];
   const activeTemplate = styleList.some((s) => s.id === template) ? template : styleList[0].id;
