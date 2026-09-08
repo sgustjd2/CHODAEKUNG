@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Rich } from "../../rich-text";
 import { MinimalHead } from "./section-head";
+import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { RsvpContent } from "@/lib/invitation/types";
 
 export function MinimalRsvp({ content, index }: { content: RsvpContent; index?: number }) {
@@ -23,7 +24,7 @@ export function MinimalRsvp({ content, index }: { content: RsvpContent; index?: 
             type="button"
             className={`ivm-rsvp-block${selected === i ? " selected" : ""}`}
             aria-pressed={selected === i}
-            onClick={() => setSelected(i)}
+            onClick={() => { setSelected(i); openRsvpModal(o); }}
           >
             {content.optionSubs?.[i] && <div className="lbl">{content.optionSubs[i]}</div>}
             <div className="val">{o}</div>

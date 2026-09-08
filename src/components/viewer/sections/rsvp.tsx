@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Rich } from "../rich-text";
 import { Editable } from "../editable";
+import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { RsvpContent } from "@/lib/invitation/types";
 
 export function RsvpSection({ content }: { content: RsvpContent }) {
@@ -23,7 +24,7 @@ export function RsvpSection({ content }: { content: RsvpContent }) {
             type="button"
             className={`iv-rsvp-btn${selected === i ? " selected" : ""}`}
             aria-pressed={selected === i}
-            onClick={() => setSelected(i)}
+            onClick={() => { setSelected(i); openRsvpModal(o); }}
           >
             {o}
           </button>

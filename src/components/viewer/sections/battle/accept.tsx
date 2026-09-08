@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Rich } from "../../rich-text";
+import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { AcceptContent } from "@/lib/invitation/types";
 
 export function BattleAccept({ content }: { content: AcceptContent }) {
@@ -17,7 +18,7 @@ export function BattleAccept({ content }: { content: AcceptContent }) {
           type="button"
           className={`ivb-accept-btn accept${selected === "accept" ? " on" : ""}`}
           aria-pressed={selected === "accept"}
-          onClick={() => setSelected("accept")}
+          onClick={() => { setSelected("accept"); openRsvpModal(content.accept); }}
         >
           {content.accept}
         </button>
@@ -25,7 +26,7 @@ export function BattleAccept({ content }: { content: AcceptContent }) {
           type="button"
           className={`ivb-accept-btn decline${selected === "decline" ? " on" : ""}`}
           aria-pressed={selected === "decline"}
-          onClick={() => setSelected("decline")}
+          onClick={() => { setSelected("decline"); openRsvpModal(content.decline); }}
         >
           {content.decline}
         </button>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CCard } from "./c-card";
 import { Rich } from "../../rich-text";
 import { Icon } from "@/components/ui/icon";
+import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { RsvpContent } from "@/lib/invitation/types";
 
 export function CuteRsvp({ content }: { content: RsvpContent }) {
@@ -22,7 +23,7 @@ export function CuteRsvp({ content }: { content: RsvpContent }) {
             key={i}
             className={`c-rsvp-btn${sel === i ? " selected" : ""}`}
             aria-pressed={sel === i}
-            onClick={() => setSel(i)}
+            onClick={() => { setSel(i); openRsvpModal(o); }}
           >
             {i === 0 && <Icon name="ic-heart-fill" className="c-heart-sm" width={14} height={14} />}
             {o}

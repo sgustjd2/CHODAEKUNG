@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Rich } from "../../rich-text";
+import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { AcceptContent } from "@/lib/invitation/types";
 
 /** Timeline yes/no RSVP CTA (reuses the `accept` content shape). */
@@ -18,7 +19,7 @@ export function TimelineCta({ content }: { content: AcceptContent }) {
           type="button"
           className={`tl-cta-btn yes${selected === "yes" ? " on" : ""}`}
           aria-pressed={selected === "yes"}
-          onClick={() => setSelected("yes")}
+          onClick={() => { setSelected("yes"); openRsvpModal(content.accept); }}
         >
           {content.accept}
         </button>
@@ -26,7 +27,7 @@ export function TimelineCta({ content }: { content: AcceptContent }) {
           type="button"
           className={`tl-cta-btn no${selected === "no" ? " on" : ""}`}
           aria-pressed={selected === "no"}
-          onClick={() => setSelected("no")}
+          onClick={() => { setSelected("no"); openRsvpModal(content.decline); }}
         >
           {content.decline}
         </button>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
+import { RSVP_OPEN_EVENT } from "@/lib/invitation/rsvp-open";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
 import { createBrowserSupabase } from "@/lib/db/supabase-browser";
@@ -18,6 +19,7 @@ export function ShareBar({
   shareCta,
   options,
   preview,
+  contained,
   share,
   eventStart,
   eventLocation,
@@ -27,6 +29,8 @@ export function ShareBar({
   shareCta: string;
   options: string[];
   preview?: boolean;
+  /** In the editor preview — RSVP-section buttons must NOT open the modal (you're editing, not RSVPing). */
+  contained?: boolean;
   share?: ShareMeta;
   /** Canonical event start (ISO) → shows an "add to calendar" (.ics) button when present. */
   eventStart?: string;
@@ -87,6 +91,22 @@ export function ShareBar({
       /* private mode / corrupt value — ignore */
     }
   }, [rsvpKey, preview]);
+
+  // RSVP sections (참석/불참 buttons, accept/decline CTAs) open this same modal via an event, so a
+  // tap there leads to a real submission instead of just a visual toggle. Preselects the tapped
+  // choice when it matches an option; returns focus to the section button on close.
+  useEffect(() => {
+    if (contained) return; // editor preview: section taps shouldn't open the RSVP modal
+    const onOpen = (e: Event) => {
+      const choice = (e as CustomEvent<{ choice?: string }>).detail?.choice;
+      if (typeof choice === "string" && options.includes(choice)) setResp(choice);
+      triggerRef.current = (document.activeElement as HTMLElement) ?? null;
+      setState("idle");
+      setOpen(true);
+    };
+    window.addEventListener(RSVP_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(RSVP_OPEN_EVENT, onOpen);
+  }, [contained, options]);
 
   // A11y (CLAUDE.md §10 dialog focus management): while the RSVP dialog is open, close on
   // Escape, trap Tab focus inside it (so keyboard users can't reach the page behind), and

@@ -153,6 +153,7 @@ export function InvitationViewer({
         shareCta={invitation.shareCta}
         options={rsvpOptions(invitation)}
         preview={preview}
+        contained={contained}
         share={invitationMeta(invitation)}
         eventStart={invitation.eventStart}
         eventLocation={eventLocationOf(invitation)}
