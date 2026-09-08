@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { CategoryNav } from "@/components/templates/category-nav";
 import { CustomEvent } from "@/components/templates/custom-event";
 import { TemplateCard, type Template } from "@/components/templates/template-card";
+import { hasSession } from "@/lib/db/supabase-server";
 import "./templates.css";
 
 export const metadata: Metadata = {
@@ -157,7 +158,8 @@ const categories: Category[] = [
 
 const navItems = categories.map((c) => ({ id: c.id, label: c.navLabel, iconName: c.iconName }));
 
-export default function TemplateGalleryPage() {
+export default async function TemplateGalleryPage() {
+  const authed = await hasSession();
   return (
     <div className="gallery">
       {/* NAV */}
@@ -170,8 +172,8 @@ export default function TemplateGalleryPage() {
             HOME · <span className="cur">TEMPLATES</span>
           </div>
           <div style={{ display: "flex", gap: 10 }}>
-            <Link href="/login" style={{ textDecoration: "none" }}>
-              <Button variant="ghost" size="sm">로그인</Button>
+            <Link href={authed ? "/dashboard" : "/login"} style={{ textDecoration: "none" }}>
+              <Button variant="ghost" size="sm">{authed ? "대시보드" : "로그인"}</Button>
             </Link>
             <Link href="/new" style={{ textDecoration: "none" }}>
               <Button variant="primary" size="sm">무료로 시작하기</Button>

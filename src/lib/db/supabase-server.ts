@@ -26,6 +26,21 @@ export async function createServerSupabase() {
   });
 }
 
+/**
+ * Cheap "is someone signed in?" check for UI decisions (e.g. the nav CTA). Reads the session from
+ * the cookie without a network round-trip — use getCurrentUser() for anything that gates access.
+ */
+export async function hasSession(): Promise<boolean> {
+  if (!url || !anonKey) return false;
+  try {
+    const sb = await createServerSupabase();
+    const { data } = await sb.auth.getSession();
+    return Boolean(data.session);
+  } catch {
+    return false;
+  }
+}
+
 /** The currently signed-in user, or null (also null when auth is unconfigured). */
 export async function getCurrentUser() {
   if (!url || !anonKey) return null;

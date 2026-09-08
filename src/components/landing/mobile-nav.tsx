@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 /** Compact nav menu for narrow widths (the inline links hide ≤900px). */
-export function MobileNav() {
+export function MobileNav({ authed = false }: { authed?: boolean }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   return (
@@ -29,7 +29,11 @@ export function MobileNav() {
             <a href="#kakao" onClick={close}>카카오톡 공유</a>
             <a href="#faq" onClick={close}>자주 묻는 질문</a>
             <div className="mnav-div" />
-            <Link href="/login" onClick={close}>로그인</Link>
+            {authed ? (
+              <Link href="/dashboard" onClick={close}>대시보드</Link>
+            ) : (
+              <Link href="/login" onClick={close}>로그인</Link>
+            )}
             <Link className="btn btn-primary" href="/new" onClick={close}>무료로 만들기</Link>
           </div>
         </>

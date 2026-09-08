@@ -4,6 +4,7 @@ import { Logo } from "@/components/ui/logo";
 import { Seal } from "@/components/ui/seal";
 import { Icon } from "@/components/ui/icon";
 import { MobileNav } from "@/components/landing/mobile-nav";
+import { hasSession } from "@/lib/db/supabase-server";
 import "./landing.css";
 
 const templates: { img: string; cat: string; name: ReactNode }[] = [
@@ -72,7 +73,8 @@ const footerCols: { title: string; links: { label: string; href: string }[] }[] 
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const authed = await hasSession();
   return (
     <div className="landing">
       {/* NAV */}
@@ -88,10 +90,14 @@ export default function LandingPage() {
             <a href="#faq">자주 묻는 질문</a>
           </div>
           <div className="nav-cta">
-            <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
+            {authed ? (
+              <Link className="btn btn-ghost btn-sm" href="/dashboard">대시보드</Link>
+            ) : (
+              <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
+            )}
             <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
           </div>
-          <MobileNav />
+          <MobileNav authed={authed} />
         </div>
       </nav>
 
