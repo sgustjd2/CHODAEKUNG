@@ -2,7 +2,7 @@
  * instead of shipping dead buttons — ShareBar owns the Kakao/clipboard/.ics logic + the invitation data. */
 export const SHARE_EVENT = "chodaekung:share";
 
-export type ShareAction = "kakao" | "copy" | "cal";
+export type ShareAction = "kakao" | "copy" | "cal" | "qr";
 
 export function triggerShare(action: ShareAction) {
   if (typeof window === "undefined") return;

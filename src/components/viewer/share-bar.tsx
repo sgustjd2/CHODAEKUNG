@@ -7,6 +7,7 @@ import { RSVP_OPEN_EVENT } from "@/lib/invitation/rsvp-open";
 import { SHARE_EVENT, type ShareAction } from "@/lib/invitation/share-actions";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
+import { downloadQrPng } from "@/components/ui/qr-code";
 import { createBrowserSupabase } from "@/lib/db/supabase-browser";
 
 export type ShareMeta = { title: string; description: string; image: string };
@@ -224,6 +225,7 @@ export function ShareBar({
     kakao: shareKakao,
     copy: copyLink,
     cal: () => downloadIcs(eventStart || "", share?.title || "초대", eventLocation || "", typeof window !== "undefined" ? window.location.href : ""),
+    qr: () => { if (typeof window !== "undefined") downloadQrPng(window.location.href, `${slug}-qr.png`); },
   };
 
   return (

@@ -9,9 +9,10 @@ export function DevEnding({ content }: { content: EndingContent }) {
     <>
       <div className="d-section">
         <div className="d-sec-head">share</div>
-        <div className="d-btns">
+        <div className="d-btns d-btns-4">
           <button type="button" className="d-btn" onClick={() => triggerShare("kakao")}>$ share --kakao</button>
           <button type="button" className="d-btn" onClick={() => triggerShare("copy")}>$ copy-url</button>
+          <button type="button" className="d-btn" onClick={() => triggerShare("qr")}>$ gen-qr</button>
           <button type="button" className="d-btn primary" onClick={() => triggerShare("cal")}>$ export-cal</button>
         </div>
       </div>
