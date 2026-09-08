@@ -146,6 +146,10 @@ export function EditorClient() {
   const setTextColor = (c: string | null) => setDraft((d) => ({ ...d, textColor: c ?? undefined }));
   const fontScale = draft.fontScale ?? 1;
   const setFontScale = (n: number) => setDraft((d) => ({ ...d, fontScale: n === 1 ? undefined : n }));
+  const letterSpacing = draft.letterSpacing ?? 0;
+  const setLetterSpacing = (n: number) => setDraft((d) => ({ ...d, letterSpacing: n === 0 ? undefined : n }));
+  const lineHeight = draft.lineHeight ?? 1;
+  const setLineHeight = (n: number) => setDraft((d) => ({ ...d, lineHeight: n === 1 ? undefined : n }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -392,6 +396,10 @@ export function EditorClient() {
     setTextColor,
     fontScale,
     setFontScale,
+    letterSpacing,
+    setLetterSpacing,
+    lineHeight,
+    setLineHeight,
     previewStyle,
     patch,
     addSection,
@@ -653,6 +661,26 @@ export function EditorClient() {
                   <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
                     글씨만 커지고 여백·레이아웃은 그대로예요.
                   </p>
+                </div>
+                <div className="insp-group">
+                  <h5>자간</h5>
+                  <div className="radio-group">
+                    {([["좁게", -0.02], ["기본", 0], ["넓게", 0.04]] as const).map(([label, n]) => (
+                      <button key={label} className={`radio-btn${letterSpacing === n ? " active" : ""}`} onClick={() => setLetterSpacing(n)}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="insp-group">
+                  <h5>줄 간격</h5>
+                  <div className="radio-group">
+                    {([["좁게", 0.92], ["기본", 1], ["넓게", 1.12]] as const).map(([label, n]) => (
+                      <button key={label} className={`radio-btn${lineHeight === n ? " active" : ""}`} onClick={() => setLineHeight(n)}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="insp-group">
                   <h5>글씨색</h5>

@@ -28,6 +28,10 @@ export type EditorApi = {
   setTextColor: (c: string | null) => void;
   fontScale: number;
   setFontScale: (n: number) => void;
+  letterSpacing: number;
+  setLetterSpacing: (n: number) => void;
+  lineHeight: number;
+  setLineHeight: (n: number) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -152,7 +156,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, cover, patch, applyTemplate } = api;
+  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, cover, patch, applyTemplate } = api;
   const [overlay, setOverlay] = useState(65);
   return (
     <>
@@ -211,6 +215,26 @@ function DesignPanel({ api }: { api: EditorApi }) {
         <div className="m-radios">
           {([["작게", 0.9], ["기본", 1], ["크게", 1.15]] as const).map(([label, n]) => (
             <button key={label} type="button" className={`m-radio${fontScale === n ? " active" : ""}`} onClick={() => setFontScale(n)}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>자간</h6>
+        <div className="m-radios">
+          {([["좁게", -0.02], ["기본", 0], ["넓게", 0.04]] as const).map(([label, n]) => (
+            <button key={label} type="button" className={`m-radio${letterSpacing === n ? " active" : ""}`} onClick={() => setLetterSpacing(n)}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>줄 간격</h6>
+        <div className="m-radios">
+          {([["좁게", 0.92], ["기본", 1], ["넓게", 1.12]] as const).map(([label, n]) => (
+            <button key={label} type="button" className={`m-radio${lineHeight === n ? " active" : ""}`} onClick={() => setLineHeight(n)}>
               {label}
             </button>
           ))}

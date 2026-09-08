@@ -79,6 +79,8 @@ export function InvitationViewer({
   }
   if (invitation.textColor) vars["--ink"] = invitation.textColor;
   if (invitation.fontScale && invitation.fontScale !== 1) vars["--iv-fs"] = String(invitation.fontScale);
+  if (invitation.letterSpacing) vars["--iv-ls"] = `${invitation.letterSpacing}em`;
+  if (invitation.lineHeight && invitation.lineHeight !== 1) vars["--iv-lh"] = String(invitation.lineHeight);
   const base = contained ? undefined : layoutStyle;
   const rootStyle: CSSProperties | undefined =
     base || Object.keys(vars).length ? ({ ...base, ...vars } as CSSProperties) : undefined;

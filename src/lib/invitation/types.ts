@@ -349,6 +349,12 @@ export type Invitation = {
   /** Global text-size multiplier (--iv-fs). Scales every font-size uniformly; layout/spacing
    * stay fixed. Absent/1 = default. */
   fontScale?: number;
+  /** Global letter-spacing delta in em (--iv-ls), added to every tracking value so each theme's
+   * relative spacing is preserved. Absent/0 = default. */
+  letterSpacing?: number;
+  /** Global line-height multiplier (--iv-lh), scaling every line-height so ratios are preserved.
+   * Absent/1 = default. */
+  lineHeight?: number;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */
