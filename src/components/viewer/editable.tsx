@@ -12,7 +12,7 @@ const Frozen = memo(function Frozen({ children }: { children: ReactNode }) {
 
 /** Provided by the editor preview only. The public viewer never sets this, so <Editable> renders
  * plain text there (no contentEditable, no handlers) — editing stays an editor concern (§7.2). */
-export type EditCtx = { secId: string; onEdit: (secId: string, path: string, value: string) => void };
+export type EditCtx = { secId: string; onEdit: (secId: string, path: string, value: string, asLines: boolean) => void };
 export const EditContext = createContext<EditCtx | null>(null);
 
 /**
@@ -31,7 +31,7 @@ export function Editable({ path, multiline, children }: { path: string; multilin
       suppressContentEditableWarning
       spellCheck={false}
       // multiline (e.g. titleLines) keeps <br>/line breaks via innerText; single-line uses textContent.
-      onBlur={(e) => ctx.onEdit(ctx.secId, path, multiline ? e.currentTarget.innerText : e.currentTarget.textContent ?? "")}
+      onBlur={(e) => ctx.onEdit(ctx.secId, path, multiline ? e.currentTarget.innerText : e.currentTarget.textContent ?? "", !!multiline)}
       onKeyDown={(e) => {
         if (e.key === "Enter" && !multiline) {
           e.preventDefault();

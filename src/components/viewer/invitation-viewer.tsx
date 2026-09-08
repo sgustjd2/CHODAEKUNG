@@ -41,8 +41,9 @@ export function InvitationViewer({
   contained?: boolean;
   /** Full preview (new-tab, pre-publish): animations play, but no view-count ping or real RSVP write. */
   preview?: boolean;
-  /** Editor-only: enables inline WYSIWYG editing of tagged text (commits field edits to the draft). */
-  onEdit?: (secId: string, path: string, value: string) => void;
+  /** Editor-only: enables inline WYSIWYG editing of tagged text (commits field edits to the draft).
+   * `asLines` marks a rich Line[] field (title/body) vs a plain string. */
+  onEdit?: (secId: string, path: string, value: string, asLines: boolean) => void;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.

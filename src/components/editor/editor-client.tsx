@@ -249,20 +249,20 @@ export function EditorClient() {
 
   // Inline WYSIWYG edit from the center preview: commit a tagged text field to the draft.
   // `path` is a field within the section content, e.g. "eyebrow", "dateLabel", "names.0".
-  const handleInlineEdit = (secId: string, path: string, value: string) => {
+  const handleInlineEdit = (secId: string, path: string, value: string, asLines: boolean) => {
     setDraft((d) => ({
       ...d,
       sections: d.sections.map((s) => {
         if (s.id !== secId) return s;
         const content = { ...(s.content as Record<string, unknown>) };
         const dot = path.indexOf(".");
-        if (path === "titleLines") {
-          // Multi-line rich title: split the edited text into plain-string lines. Guard on change so
-          // a no-op click (text identical) preserves the original Line[] and its em runs.
-          const cur = Array.isArray(content.titleLines) ? (content.titleLines as unknown[]).map(lineToText).join("\n") : "";
-          if (value !== cur) content.titleLines = value.split("\n");
+        if (asLines) {
+          // A rich Line[] field (title/body/titleLines): split the edited text into plain-string
+          // lines. Guard on change so a no-op click preserves the original Line[] and its em runs.
+          const cur = Array.isArray(content[path]) ? (content[path] as unknown[]).map(lineToText).join("\n") : "";
+          if (value !== cur) content[path] = value.split("\n");
         } else if (dot >= 0) {
-          // Array field by index: names[i], subtitleLines[i], headerRightLines[i].
+          // A string in an array by index: names[i], subtitleLines[i], headerRightLines[i].
           const field = path.slice(0, dot);
           const idx = Number(path.slice(dot + 1));
           const arr = Array.isArray(content[field]) ? [...(content[field] as unknown[])] : [];
