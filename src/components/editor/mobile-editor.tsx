@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, COVER_LAYOUTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -32,6 +32,8 @@ export type EditorApi = {
   setLetterSpacing: (n: number) => void;
   lineHeight: number;
   setLineHeight: (n: number) => void;
+  bgColor: string | null;
+  setBgColor: (c: string | null) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -156,7 +158,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, cover, patch, applyTemplate } = api;
+  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, cover, patch, applyTemplate } = api;
   const [overlay, setOverlay] = useState(65);
   return (
     <>
@@ -249,6 +251,18 @@ function DesignPanel({ api }: { api: EditorApi }) {
           ))}
           <label className="m-color m-color-custom" style={textColor && !TEXT_COLORS.includes(textColor) ? { background: textColor } : undefined}>
             <input type="color" value={textColor ?? "#2A2A3E"} onChange={(e) => setTextColor(e.target.value)} aria-label="직접 글씨색 선택" />
+          </label>
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>배경색</h6>
+        <div className="m-colors">
+          <button type="button" className={`m-color m-color-none${bgColor === null ? " active" : ""}`} aria-label="테마 기본색" onClick={() => setBgColor(null)} />
+          {BG_COLORS.map((c) => (
+            <button key={c} type="button" className={`m-color${bgColor === c ? " active" : ""}`} style={{ background: c, borderColor: "var(--line)" }} aria-label={c} onClick={() => setBgColor(c)} />
+          ))}
+          <label className="m-color m-color-custom" style={bgColor && !BG_COLORS.includes(bgColor) ? { background: bgColor } : undefined}>
+            <input type="color" value={bgColor ?? "#FFFFFF"} onChange={(e) => setBgColor(e.target.value)} aria-label="직접 배경색 선택" />
           </label>
         </div>
       </div>

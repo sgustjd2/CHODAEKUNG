@@ -20,7 +20,7 @@
 .iv-doc {
   width: 100%;
   max-width: var(--iv-w, 430px);
-  background: #fff;
+  background: var(--iv-bg, #fff);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
   position: relative;
@@ -382,7 +382,7 @@
   color: var(--paper);
   font-family: var(--font-ko);
 
-  .iv-doc { background: #1A1A2E; }
+  .iv-doc { background: var(--iv-bg, #1A1A2E); }
 
   .ivb-cover {
     height: 620px; background-size: cover; background-position: center;
@@ -635,7 +635,7 @@
   color: var(--paper);
   font-family: var(--font-ko);
 
-  .iv-doc { background: #14101E; }
+  .iv-doc { background: var(--iv-bg, #14101E); }
 
   .g-cover { height: 620px; position: relative; overflow: hidden; padding: 32px 24px 28px; display: flex; flex-direction: column; justify-content: space-between; }
   .g-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
@@ -742,7 +742,7 @@
   background: var(--paper-2);
   background-image: none;
 
-  .iv-doc { background: linear-gradient(180deg, #FFF8EF 0%, #FEF6F4 50%, #FFF8EF 100%); }
+  .iv-doc { background: var(--iv-bg, linear-gradient(180deg, #FFF8EF 0%, #FEF6F4 50%, #FFF8EF 100%)); }
 
   /* Cover */
   .c-cover { padding: 40px 32px 60px; text-align: center; background: radial-gradient(circle at 50% 30%, rgba(227,139,139,0.08), transparent 60%); position: relative; }
@@ -824,7 +824,7 @@
   background: var(--paper-2);
   background-image: none;
 
-  .iv-doc { background: #F2EFE9; }
+  .iv-doc { background: var(--iv-bg, #F2EFE9); }
 
   /* Cover — full-bleed film photo */
   .e-cover { height: 720px; background-size: cover; background-position: center; position: relative; color: var(--paper); padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; }
@@ -910,7 +910,7 @@
   background: var(--paper-2);
   background-image: none;
 
-  .iv-doc { background: #0D0F0A; font-family: var(--font-mono); font-size: calc(12px * var(--iv-fs, 1)); line-height: calc(1.6 * var(--iv-lh, 1)); padding: 20px 16px 40px; position: relative; }
+  .iv-doc { background: var(--iv-bg, #0D0F0A); font-family: var(--font-mono); font-size: calc(12px * var(--iv-fs, 1)); line-height: calc(1.6 * var(--iv-lh, 1)); padding: 20px 16px 40px; position: relative; }
   .iv-doc::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(126,215,126,0.03) 0, rgba(126,215,126,0.03) 1px, transparent 1px, transparent 3px); pointer-events: none; z-index: 1; }
   .iv-doc > * { position: relative; z-index: 2; }
 

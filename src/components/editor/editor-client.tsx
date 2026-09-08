@@ -11,7 +11,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, BG_COLORS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -150,6 +150,8 @@ export function EditorClient() {
   const setLetterSpacing = (n: number) => setDraft((d) => ({ ...d, letterSpacing: n === 0 ? undefined : n }));
   const lineHeight = draft.lineHeight ?? 1;
   const setLineHeight = (n: number) => setDraft((d) => ({ ...d, lineHeight: n === 1 ? undefined : n }));
+  const bgColor = draft.bgColor ?? null;
+  const setBgColor = (c: string | null) => setDraft((d) => ({ ...d, bgColor: c ?? undefined }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -400,6 +402,8 @@ export function EditorClient() {
     setLetterSpacing,
     lineHeight,
     setLineHeight,
+    bgColor,
+    setBgColor,
     previewStyle,
     patch,
     addSection,
@@ -706,6 +710,32 @@ export function EditorClient() {
                   </div>
                   <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
                     본문 글씨색을 바꿔요. 커버(사진 위 글씨)는 그대로예요.
+                  </p>
+                </div>
+                <div className="insp-group">
+                  <h5>배경색</h5>
+                  <div className="color-row">
+                    <button
+                      className={`color-swatch color-swatch-none${bgColor === null ? " active" : ""}`}
+                      aria-label="테마 기본색"
+                      title="테마 기본색"
+                      onClick={() => setBgColor(null)}
+                    />
+                    {BG_COLORS.map((c) => (
+                      <button
+                        key={c}
+                        className={`color-swatch${bgColor === c ? " active" : ""}`}
+                        style={{ background: c, borderColor: "var(--line)" }}
+                        aria-label={c}
+                        onClick={() => setBgColor(c)}
+                      />
+                    ))}
+                    <label className="color-swatch color-swatch-custom" title="직접 고르기" style={bgColor && !BG_COLORS.includes(bgColor) ? { background: bgColor } : undefined}>
+                      <input type="color" value={bgColor ?? "#FFFFFF"} onChange={(e) => setBgColor(e.target.value)} aria-label="직접 배경색 선택" />
+                    </label>
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    초대장 페이지 배경색이에요. 커버 사진 영역은 그대로예요.
                   </p>
                 </div>
                 <div className="insp-group">

@@ -59,6 +59,9 @@ export const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "
 /** Text-color presets for the invitation body (--ink override). Dark, readable inks. */
 export const TEXT_COLORS = ["#2A2A3E", "#1A1A1A", "#3A2E2E", "#2E3A34", "#4A4A5E"];
 
+/** Background-color presets for the invitation page (--iv-bg override). Soft light tints. */
+export const BG_COLORS = ["#FFFFFF", "#FDF8F2", "#FCE0DC", "#F1F5F0", "#EEF4F8", "#F3F0F7"];
+
 // Font registry lives in lib (shared with the viewer without pulling editor code into its bundle).
 export { FONTS, fontById, googleFontHref } from "@/lib/invitation/fonts";
 export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [

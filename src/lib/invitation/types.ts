@@ -355,6 +355,9 @@ export type Invitation = {
   /** Global line-height multiplier (--iv-lh), scaling every line-height so ratios are preserved.
    * Absent/1 = default. */
   lineHeight?: number;
+  /** User-picked invitation page background color (hex) — overrides the theme's --iv-bg on the
+   * card (behind the sections; the cover photo still covers its own area). Absent = theme default. */
+  bgColor?: string;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */
