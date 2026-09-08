@@ -97,8 +97,9 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
             <p className="set-hint">이메일은 변경할 수 없어요{joined ? ` · 가입일 ${joined}` : ""}.</p>
           </div>
           <div className="set-field">
-            <label htmlFor="set-name">표시 이름</label>
+            <label htmlFor="set-name">표시 이름 (닉네임)</label>
             <input id="set-name" className="set-input" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="예: 지수" maxLength={40} />
+            <p className="set-hint">대시보드와 인사말에 이 이름으로 표시돼요. 비워두면 이메일 아이디가 보여요.</p>
           </div>
           {nameNote && <div className={`set-note ${nameNote.kind}`} role={nameNote.kind === "err" ? "alert" : "status"}>{nameNote.text}</div>}
           <div className="set-actions">

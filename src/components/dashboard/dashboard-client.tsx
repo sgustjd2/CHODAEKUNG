@@ -61,13 +61,13 @@ const TABS: { key: "all" | Status; label: string }[] = [
   { key: "published", label: "Published" },
 ];
 
-export function DashboardClient({ userEmail, myInvitations }: { userEmail: string; myInvitations: MyInvitation[] }) {
+export function DashboardClient({ userEmail, displayName, myInvitations }: { userEmail: string; displayName: string; myInvitations: MyInvitation[] }) {
   const router = useRouter();
   const [tab, setTab] = useState<"all" | Status>("all");
   const [q, setQ] = useState("");
 
   const cards = useMemo(() => myInvitations.map(toCard), [myInvitations]);
-  const name = userEmail.split("@")[0] || "회원";
+  const name = displayName || "회원";
   const nav = [
     { label: "내 초대장", icon: "ic-grid", count: String(cards.length), active: true },
     { label: "RSVP 응답", icon: "ic-users" as string | undefined },
@@ -156,7 +156,7 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
           <Link href="/new" style={{ textDecoration: "none" }}>
             <Button variant="primary" size="sm">+ 새 초대장</Button>
           </Link>
-          <div className="sb-avatar" style={{ width: 32, height: 32, fontSize: 14 }}>{name.charAt(0).toUpperCase()}</div>
+          <Link href="/settings" aria-label="내 정보" title="내 정보" className="sb-avatar" style={{ width: 32, height: 32, fontSize: 14, textDecoration: "none" }}>{name.charAt(0).toUpperCase()}</Link>
         </div>
 
         <div className="sb-group">Workspace</div>
@@ -193,6 +193,12 @@ export function DashboardClient({ userEmail, myInvitations }: { userEmail: strin
           </svg>
           설정
         </Link>
+        <button type="button" className="sb-item" onClick={logout}>
+          <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
+          로그아웃
+        </button>
 
         <div className="sb-footer">
           <div className="sb-avatar">{name.charAt(0).toUpperCase()}</div>
