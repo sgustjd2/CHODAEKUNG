@@ -1030,3 +1030,15 @@
    invisible. Force legible light text for those headers here (inner white cards keep their dark --ink). */
 :is(.iv.t-battle, .iv.t-gaming, .iv.t-developer) :is(.acc-title, .dday-title, .gb-title, .att-title) { color: rgba(255, 255, 255, 0.92); }
 :is(.iv.t-battle, .iv.t-gaming, .iv.t-developer) :is(.acc-note, .gb-note, .att-note, .att-empty) { color: rgba(255, 255, 255, 0.62); }
+
+/* Gallery lightbox — tap a photo to view it full-screen (see lightbox.tsx). */
+.iv-lb-src { cursor: zoom-in; }
+.iv-lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.iv-lb-img { max-width: 94vw; max-height: 90vh; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+.iv-lb-btn { position: absolute; background: rgba(255, 255, 255, 0.14); color: #fff; border: none; border-radius: 999px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); padding: 0; }
+.iv-lb-btn:hover { background: rgba(255, 255, 255, 0.26); }
+.iv-lb-close { top: 16px; right: 16px; width: 40px; height: 40px; font-size: 26px; line-height: 1; }
+.iv-lb-nav { top: 50%; transform: translateY(-50%); width: 44px; height: 44px; font-size: 30px; line-height: 1; }
+.iv-lb-nav.prev { left: 12px; }
+.iv-lb-nav.next { right: 12px; }
+.iv-lb-count { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.9); font-family: var(--font-en); font-size: 13px; letter-spacing: 0.1em; }

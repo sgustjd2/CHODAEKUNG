@@ -1,14 +1,18 @@
+"use client";
+
 import { ESection } from "./e-section";
 import { photoUrl } from "@/lib/photo";
+import { openLightbox } from "../../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function EditorialGallery({ content }: { content: GalleryContent }) {
+  const srcs = content.images.map((im) => photoUrl(im.src));
   return (
     <ESection num={content.num} label={content.eyebrow} headline={content.title}>
       <div className="e-mag-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} className={`p${i + 1}`} src={photoUrl(img.src)} alt="" loading="lazy" decoding="async" />
+          <img key={i} className={`iv-lb-src p${i + 1}`} src={srcs[i]} alt="" loading="lazy" decoding="async" onClick={() => openLightbox(srcs, i)} />
         ))}
       </div>
       {content.caption && (

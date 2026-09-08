@@ -12,6 +12,7 @@ import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
 import { EditContext } from "./editable";
 import { FontLink } from "./font-link";
+import { LightboxRoot } from "./lightbox";
 import { fontById } from "@/lib/invitation/fonts";
 import { waxInk, waxDeep } from "@/lib/invitation/contrast";
 
@@ -160,6 +161,7 @@ export function InvitationViewer({
         hasAttendees={invitation.sections.some((s) => s.type === "attendees")}
       />
       {!contained && !preview && <ViewPing slug={invitation.slug} />}
+      <LightboxRoot />
     </div>
   );
 }
