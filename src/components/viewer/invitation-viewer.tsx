@@ -78,6 +78,7 @@ export function InvitationViewer({
     vars["--font-body"] = font.stack;
   }
   if (invitation.textColor) vars["--ink"] = invitation.textColor;
+  if (invitation.fontScale && invitation.fontScale !== 1) vars["--iv-fs"] = String(invitation.fontScale);
   const base = contained ? undefined : layoutStyle;
   const rootStyle: CSSProperties | undefined =
     base || Object.keys(vars).length ? ({ ...base, ...vars } as CSSProperties) : undefined;

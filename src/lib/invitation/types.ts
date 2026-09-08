@@ -346,6 +346,9 @@ export type Invitation = {
   font?: string;
   /** User-picked body text color (hex). Overrides --ink across sections. Absent = theme default. */
   textColor?: string;
+  /** Global text-size multiplier (--iv-fs). Scales every font-size uniformly; layout/spacing
+   * stay fixed. Absent/1 = default. */
+  fontScale?: number;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */

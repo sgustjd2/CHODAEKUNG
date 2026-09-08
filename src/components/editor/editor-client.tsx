@@ -144,6 +144,8 @@ export function EditorClient() {
   const setFont = (id: string) => setDraft((d) => ({ ...d, font: id === "pretendard" ? undefined : id }));
   const textColor = draft.textColor ?? null;
   const setTextColor = (c: string | null) => setDraft((d) => ({ ...d, textColor: c ?? undefined }));
+  const fontScale = draft.fontScale ?? 1;
+  const setFontScale = (n: number) => setDraft((d) => ({ ...d, fontScale: n === 1 ? undefined : n }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -388,6 +390,8 @@ export function EditorClient() {
     setFont,
     textColor,
     setTextColor,
+    fontScale,
+    setFontScale,
     previewStyle,
     patch,
     addSection,
@@ -635,6 +639,19 @@ export function EditorClient() {
                   </div>
                   <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
                     초대장 본문·제목 글씨체를 바꿔요. 선택한 글씨체만 불러와요.
+                  </p>
+                </div>
+                <div className="insp-group">
+                  <h5>글씨 크기</h5>
+                  <div className="radio-group">
+                    {([["작게", 0.9], ["기본", 1], ["크게", 1.15]] as const).map(([label, n]) => (
+                      <button key={label} className={`radio-btn${fontScale === n ? " active" : ""}`} onClick={() => setFontScale(n)}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    글씨만 커지고 여백·레이아웃은 그대로예요.
                   </p>
                 </div>
                 <div className="insp-group">
