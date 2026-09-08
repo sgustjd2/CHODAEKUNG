@@ -36,6 +36,7 @@ export type EditorApi = {
   setBgColor: (c: string | null) => void;
   resetDesign: () => void;
   handleInlineEdit: (secId: string, path: string, value: string, asLines: boolean) => void;
+  setSecStyle: (key: "accent" | "bg", val: string | null) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -160,7 +161,8 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, resetDesign, cover, patch, applyTemplate } = api;
+  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, resetDesign, selectedId, setSecStyle, cover, patch, applyTemplate } = api;
+  const selSec = draft.sections.find((s) => s.id === selectedId);
   const hasCustomDesign =
     !!(draft.accent || draft.font || draft.textColor || draft.fontScale || draft.letterSpacing || draft.lineHeight || draft.bgColor) ||
     draft.sections.some((s) => s.style);
@@ -292,6 +294,32 @@ function DesignPanel({ api }: { api: EditorApi }) {
           </label>
         </div>
       </div>
+      {selSec && (
+        <div className="m-group">
+          <h6>선택한 섹션 · {metaFor(selSec.type).label}</h6>
+          <div className="m-lbl" style={{ marginBottom: 6 }}>강조색</div>
+          <div className="m-colors">
+            <button type="button" className={`m-color m-color-none${!selSec.style?.accent ? " active" : ""}`} aria-label="기본" onClick={() => setSecStyle("accent", null)} />
+            {ACCENTS.map((c) => (
+              <button key={c} type="button" className={`m-color${selSec.style?.accent === c ? " active" : ""}`} style={{ background: c }} aria-label={c} onClick={() => setSecStyle("accent", c)} />
+            ))}
+            <label className="m-color m-color-custom" style={selSec.style?.accent && !ACCENTS.includes(selSec.style.accent) ? { background: selSec.style.accent } : undefined}>
+              <input type="color" value={selSec.style?.accent ?? "#E38B8B"} onChange={(e) => setSecStyle("accent", e.target.value)} aria-label="직접 강조색 선택" />
+            </label>
+          </div>
+          <div className="m-lbl" style={{ margin: "12px 0 6px" }}>배경색</div>
+          <div className="m-colors">
+            <button type="button" className={`m-color m-color-none${!selSec.style?.bg ? " active" : ""}`} aria-label="기본" onClick={() => setSecStyle("bg", null)} />
+            {BG_COLORS.map((c) => (
+              <button key={c} type="button" className={`m-color${selSec.style?.bg === c ? " active" : ""}`} style={{ background: c, borderColor: "var(--line)" }} aria-label={c} onClick={() => setSecStyle("bg", c)} />
+            ))}
+            <label className="m-color m-color-custom" style={selSec.style?.bg && !BG_COLORS.includes(selSec.style.bg) ? { background: selSec.style.bg } : undefined}>
+              <input type="color" value={selSec.style?.bg ?? "#FFFFFF"} onChange={(e) => setSecStyle("bg", e.target.value)} aria-label="직접 배경색 선택" />
+            </label>
+          </div>
+          <p className="m-note" style={{ marginTop: 8 }}>프리뷰에서 섹션 글씨를 탭해 고른 뒤, 그 섹션만 색을 바꿔요.</p>
+        </div>
+      )}
       {cover && (
         <div className="m-group">
           <h6>커버 레이아웃</h6>

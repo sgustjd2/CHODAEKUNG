@@ -444,6 +444,7 @@ export function EditorClient() {
     setBgColor,
     resetDesign,
     handleInlineEdit,
+    setSecStyle,
     previewStyle,
     patch,
     addSection,
