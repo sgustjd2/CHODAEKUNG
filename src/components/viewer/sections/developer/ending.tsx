@@ -1,4 +1,7 @@
+"use client";
+
 import { Icon } from "@/components/ui/icon";
+import { triggerShare } from "@/lib/invitation/share-actions";
 import type { EndingContent } from "@/lib/invitation/types";
 
 export function DevEnding({ content }: { content: EndingContent }) {
@@ -6,11 +9,10 @@ export function DevEnding({ content }: { content: EndingContent }) {
     <>
       <div className="d-section">
         <div className="d-sec-head">share</div>
-        <div className="d-btns d-btns-4">
-          <button type="button" className="d-btn">$ share --kakao</button>
-          <button type="button" className="d-btn">$ copy-url</button>
-          <button type="button" className="d-btn">$ gen-qr</button>
-          <button type="button" className="d-btn primary">$ export-cal</button>
+        <div className="d-btns">
+          <button type="button" className="d-btn" onClick={() => triggerShare("kakao")}>$ share --kakao</button>
+          <button type="button" className="d-btn" onClick={() => triggerShare("copy")}>$ copy-url</button>
+          <button type="button" className="d-btn primary" onClick={() => triggerShare("cal")}>$ export-cal</button>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction } from "@/lib/invitation/actions";
 import { RSVP_OPEN_EVENT } from "@/lib/invitation/rsvp-open";
+import { SHARE_EVENT, type ShareAction } from "@/lib/invitation/share-actions";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
 import { createBrowserSupabase } from "@/lib/db/supabase-browser";
@@ -52,6 +53,7 @@ export function ShareBar({
   const modalRef = useRef<HTMLDivElement>(null);
   const rsvpKey = `chodaekung:rsvp:${slug}`;
   const triggerRef = useRef<HTMLElement | null>(null); // the control that opened the dialog, to restore focus to
+  const shareActionsRef = useRef<Record<ShareAction, () => void>>(null as never); // latest kakao/copy/cal, for the SHARE_EVENT bridge
 
   // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
   useEffect(() => {
@@ -107,6 +109,18 @@ export function ShareBar({
     window.addEventListener(RSVP_OPEN_EVENT, onOpen);
     return () => window.removeEventListener(RSVP_OPEN_EVENT, onOpen);
   }, [contained, options]);
+
+  // Section share buttons (e.g. developer-theme ending) trigger the same share actions via an event,
+  // so they reuse this bar's Kakao/clipboard/.ics logic instead of being dead. Off in the editor.
+  useEffect(() => {
+    if (contained) return;
+    const onShare = (e: Event) => {
+      const a = (e as CustomEvent<{ action?: ShareAction }>).detail?.action;
+      if (a && shareActionsRef.current?.[a]) shareActionsRef.current[a]();
+    };
+    window.addEventListener(SHARE_EVENT, onShare);
+    return () => window.removeEventListener(SHARE_EVENT, onShare);
+  }, [contained]);
 
   // A11y (CLAUDE.md §10 dialog focus management): while the RSVP dialog is open, close on
   // Escape, trap Tab focus inside it (so keyboard users can't reach the page behind), and
@@ -203,6 +217,13 @@ export function ShareBar({
       setErr(res.error || "전송에 실패했어요.");
       setState("error");
     }
+  };
+
+  // Keep the bridge pointing at the current share handlers (they close over stable props).
+  shareActionsRef.current = {
+    kakao: shareKakao,
+    copy: copyLink,
+    cal: () => downloadIcs(eventStart || "", share?.title || "초대", eventLocation || "", typeof window !== "undefined" ? window.location.href : ""),
   };
 
   return (
