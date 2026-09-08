@@ -34,7 +34,8 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
             buttons={content.mapButtons}
             query={locationQuery(content)}
             address={locationAddress(content)}
-            classFor={(b) => `btn ${b.primary ? "btn-primary" : "btn-outline"}`}
+            primaryClass="btn btn-primary"
+            normalClass="btn btn-outline"
           />
         </div>
       )}

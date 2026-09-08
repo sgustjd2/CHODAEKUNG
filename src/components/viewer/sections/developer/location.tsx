@@ -28,7 +28,8 @@ export function DevLocation({ content }: { content: LocationContent }) {
             buttons={content.mapButtons}
             query={locationQuery(content)}
             address={locationAddress(content)}
-            classFor={(b) => `d-btn${b.primary ? " primary" : ""}`}
+            primaryClass="d-btn primary"
+            normalClass="d-btn"
           />
         </div>
       )}

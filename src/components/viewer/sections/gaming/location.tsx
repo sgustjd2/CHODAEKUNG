@@ -25,7 +25,8 @@ export function GamingLocation({ content }: { content: LocationContent }) {
             buttons={content.mapButtons}
             query={locationQuery(content)}
             address={locationAddress(content)}
-            classFor={() => "g-cta-btn no"}
+            primaryClass="g-cta-btn no"
+            normalClass="g-cta-btn no"
           />
         </div>
       )}

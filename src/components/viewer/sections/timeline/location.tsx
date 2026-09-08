@@ -21,7 +21,8 @@ export function TimelineLocation({ content }: { content: LocationContent }) {
           buttons={content.mapButtons}
           query={locationQuery(content)}
           address={locationAddress(content)}
-          classFor={(b) => `tl-loc-btn${b.primary ? " primary" : ""}`}
+          primaryClass="tl-loc-btn primary"
+          normalClass="tl-loc-btn"
         />
       </div>
     </TlSection>

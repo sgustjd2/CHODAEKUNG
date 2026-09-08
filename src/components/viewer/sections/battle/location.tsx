@@ -22,7 +22,8 @@ export function BattleLocation({ content }: { content: LocationContent }) {
           buttons={content.mapButtons}
           query={locationQuery(content)}
           address={locationAddress(content)}
-          classFor={(b) => `ivb-loc-btn${b.primary ? " primary" : ""}`}
+          primaryClass="ivb-loc-btn primary"
+          normalClass="ivb-loc-btn"
         />
       </div>
     </div>

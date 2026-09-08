@@ -28,7 +28,8 @@ export function LocationSection({ content }: { content: LocationContent }) {
           buttons={content.mapButtons}
           query={locationQuery(content)}
           address={locationAddress(content)}
-          classFor={(b) => `iv-loc-btn${b.primary ? " primary" : ""}`}
+          primaryClass="iv-loc-btn primary"
+          normalClass="iv-loc-btn"
         />
       </div>
     </div>

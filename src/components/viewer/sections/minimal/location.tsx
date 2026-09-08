@@ -22,7 +22,8 @@ export function MinimalLocation({ content, index }: { content: LocationContent; 
           buttons={content.mapButtons}
           query={locationQuery(content)}
           address={locationAddress(content)}
-          classFor={(b) => `ivm-loc-btn${b.primary ? " primary" : ""}`}
+          primaryClass="ivm-loc-btn primary"
+          normalClass="ivm-loc-btn"
         />
       </div>
     </div>
