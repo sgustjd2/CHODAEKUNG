@@ -20,6 +20,25 @@ export type EditCtx = {
 };
 export const EditContext = createContext<EditCtx | null>(null);
 
+/** Ghost text for an empty field, by content field name — guides a blank-canvas start
+ * ("제목"/"이름"/"날짜" instead of a generic "입력"). Falls back to "입력". */
+const PH_LABELS: Record<string, string> = {
+  title: "제목",
+  titleLines: "제목",
+  eyebrow: "문구",
+  names: "이름",
+  body: "내용",
+  subtitle: "부제",
+  subtitleLines: "부제",
+  dateLabel: "날짜",
+  signature: "맺음말",
+  note: "안내",
+  headerLeft: "머리말",
+  headerRight: "머리말",
+  headerRightLines: "머리말",
+};
+const placeholderForPath = (path: string) => PH_LABELS[path.split(".")[0]] ?? "입력";
+
 /**
  * Inline-editable text. In the editor preview it's contentEditable and commits to the draft on blur
  * (Enter also commits); everywhere else it's just its children. `path` is the field within the
@@ -43,7 +62,7 @@ export function Editable({
     <span
       className="iv-editable"
       data-edit={path}
-      data-ph={placeholder ?? "입력"}
+      data-ph={placeholder ?? placeholderForPath(path)}
       contentEditable
       suppressContentEditableWarning
       spellCheck={false}
