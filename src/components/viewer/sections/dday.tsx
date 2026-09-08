@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { DdayContent } from "@/lib/invitation/types";
 import { lineText } from "@/lib/invitation/meta";
+import { Editable } from "../editable";
 
 type Diff = { d: number; h: number; m: number; s: number };
 
@@ -53,8 +54,8 @@ export function DdaySection({ content, target }: { content: DdayContent; target?
 
   return (
     <section className="iv-dday">
-      {content.eyebrow && <div className="dday-eb">{content.eyebrow}</div>}
-      {title && <h3 className="dday-title">{title}</h3>}
+      {content.eyebrow && <div className="dday-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
+      {title && <h3 className="dday-title"><Editable path="title" multiline>{title}</Editable></h3>}
       {reached ? (
         <div className="dday-now">D-DAY 🎉</div>
       ) : (

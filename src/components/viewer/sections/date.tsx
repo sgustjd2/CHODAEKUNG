@@ -1,4 +1,5 @@
 import { Rich } from "../rich-text";
+import { Editable } from "../editable";
 import type { DateContent } from "@/lib/invitation/types";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -15,9 +16,9 @@ export function DateSection({ content }: { content: DateContent }) {
     : [];
   return (
     <div className={`iv-section${tint ? " iv-tint" : ""}`}>
-      <div className="iv-eb">{eyebrow}</div>
+      <div className="iv-eb"><Editable path="eyebrow">{eyebrow}</Editable></div>
       <div className="iv-title">
-        <Rich lines={title} />
+        <Editable path="title" multiline><Rich lines={title} /></Editable>
       </div>
 
       {calendar && (

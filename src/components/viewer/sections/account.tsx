@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { AccountContent } from "@/lib/invitation/types";
 import { lineText } from "@/lib/invitation/meta";
+import { Editable } from "../editable";
 
 /**
  * "마음 전하기" — gift/congratulatory bank accounts with copy-to-clipboard.
@@ -24,9 +25,9 @@ export function AccountSection({ content }: { content: AccountContent }) {
 
   return (
     <section className="iv-account">
-      {content.eyebrow && <div className="acc-eb">{content.eyebrow}</div>}
-      {title && <h3 className="acc-title">{title}</h3>}
-      {content.note && <p className="acc-note">{content.note}</p>}
+      {content.eyebrow && <div className="acc-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
+      {title && <h3 className="acc-title"><Editable path="title" multiline>{title}</Editable></h3>}
+      {content.note && <p className="acc-note"><Editable path="note">{content.note}</Editable></p>}
       <div className="acc-list">
         {content.accounts.map((a, i) => (
           <div className="acc-card" key={i}>

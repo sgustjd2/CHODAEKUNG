@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { AttendeesContent } from "@/lib/invitation/types";
 import { lineText } from "@/lib/invitation/meta";
 import { listAttendeesAction } from "@/lib/invitation/actions";
+import { Editable } from "../editable";
 
 /**
  * Live 참석자 roster — fills with the names of people who RSVP'd 참석. Fetches on the
@@ -43,9 +44,9 @@ export function AttendeesSection({ content, slug, preview }: { content: Attendee
 
   return (
     <section className="iv-attendees">
-      {content.eyebrow && <div className="att-eb">{content.eyebrow}</div>}
-      {title && <h3 className="att-title">{title}</h3>}
-      {content.note && <p className="att-note">{content.note}</p>}
+      {content.eyebrow && <div className="att-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
+      {title && <h3 className="att-title"><Editable path="title" multiline>{title}</Editable></h3>}
+      {content.note && <p className="att-note"><Editable path="note">{content.note}</Editable></p>}
       {names.length > 0 && <div className="att-count">{names.length}명 참석</div>}
       <div className="att-list" aria-busy={!loaded}>
         {names.length > 0 ? (

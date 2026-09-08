@@ -1,4 +1,5 @@
 import { Rich } from "../rich-text";
+import { Editable } from "../editable";
 import { Icon } from "@/components/ui/icon";
 import { LocationMap } from "../location-map";
 import { lineText } from "@/lib/invitation/meta";
@@ -12,12 +13,12 @@ export function LocationSection({ content }: { content: LocationContent }) {
           <Icon name={content.flourishIcon} />
         </div>
       )}
-      <div className="iv-eb">{content.eyebrow}</div>
+      <div className="iv-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>
       <div className="iv-title">
-        <Rich lines={content.title} />
+        <Editable path="title" multiline><Rich lines={content.title} /></Editable>
       </div>
       <div className="iv-body">
-        <Rich lines={content.body} />
+        <Editable path="body" multiline><Rich lines={content.body} /></Editable>
       </div>
       <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="iv-loc-actions">
