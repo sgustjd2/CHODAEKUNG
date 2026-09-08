@@ -63,6 +63,20 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
     const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
     const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
     if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
+    // Battle/gaming covers show the date on the cover header (headerRightLines), not a dateLabel —
+    // update those too so a wizard-entered date actually reflects on the cover.
+    if (Array.isArray(c.headerRightLines) && w.date?.trim()) {
+      const [y, mo, dd] = w.date.split("-");
+      const dObj = new Date(`${w.date}T${w.time?.trim() || "00:00"}`);
+      const wd = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][dObj.getDay()] ?? "";
+      let timeLine = "";
+      if (w.time?.trim()) {
+        const [hh, mm] = w.time.split(":").map(Number);
+        const h12 = ((hh + 11) % 12) + 1;
+        timeLine = `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`;
+      }
+      c.headerRightLines = [`${y} · ${mo} · ${dd}`, [wd, timeLine].filter(Boolean).join(" · ")];
+    }
   }
   // Venue → the location section's title line (its header). Body/address stay template-provided
   // (the user edits the rest); on a blank start the section fills in cleanly.
@@ -194,6 +208,10 @@ export function EditorClient() {
   const [addOpen, setAddOpen] = useState(false);
   // Two-step guard for the destructive full reset ("되돌리기"): first click arms, second confirms.
   const [resetArmed, setResetArmed] = useState(false);
+  // Snapshot of the invitation as first loaded, so "되돌리기" reverts to *this* invitation's starting
+  // point — not getInvitation(slug)/blankInvitation(), which fall back to the romantic sample for any
+  // non-bundled slug and turned a 맞짱 (or any real invitation) into the wedding template.
+  const initialRef = useRef<{ draft: Invitation; title: string; hidden: string[] } | null>(null);
   const [slug, setSlug] = useState(romanticSample.slug);
   const [editToken, setEditToken] = useState<string | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
@@ -221,10 +239,12 @@ export function EditorClient() {
         applyWizardSeed(base, wiz);
         if (wiz.accent) base.accent = wiz.accent;
       }
+      const initTitle = wiz?.title?.trim() || defaultTitleFor(base);
       setDraft(base);
       setSelectedId(base.sections[0]?.id ?? "");
-      setTitle(wiz?.title?.trim() || defaultTitleFor(base));
+      setTitle(initTitle);
       setSlug("new");
+      initialRef.current = { draft: structuredClone(base), title: initTitle, hidden: [] };
       try {
         const t = localStorage.getItem(tokenKeyFor("new"));
         if (t) localStorage.removeItem(tokenKeyFor("new")); // a fresh template start owns no prior token
@@ -248,6 +268,7 @@ export function EditorClient() {
       if (wiz!.accent) d.accent = wiz!.accent;
     }
     let loadedTitle: string | null = null;
+    let loadedHidden: string[] = [];
     let hadLocalDraft = false;
     if (!freshFromWizard) {
       try {
@@ -256,7 +277,7 @@ export function EditorClient() {
           const saved = JSON.parse(raw) as SavedEditor;
           if (saved.draft) { d = saved.draft; hadLocalDraft = true; }
           if (typeof saved.title === "string") loadedTitle = saved.title;
-          if (Array.isArray(saved.hidden)) setHidden(new Set(saved.hidden));
+          if (Array.isArray(saved.hidden)) { setHidden(new Set(saved.hidden)); loadedHidden = saved.hidden; }
           // Migrate a legacy top-level saved accent into the draft (new saves keep it in draft.accent).
           if (saved.accent != null && d.accent == null) d.accent = saved.accent;
         }
@@ -283,10 +304,12 @@ export function EditorClient() {
         /* offline / not owned — keep the sample fallback */
       }
     }
+    const initTitle = loadedTitle ?? wiz?.title?.trim() ?? (slugParam ? defaultTitleFor(d) : "");
     setDraft(d);
     setSelectedId(d.sections[0]?.id ?? "");
-    setTitle(loadedTitle ?? wiz?.title?.trim() ?? (slugParam ? defaultTitleFor(d) : ""));
+    setTitle(initTitle);
     setSlug(s);
+    initialRef.current = { draft: structuredClone(d), title: initTitle, hidden: loadedHidden };
     setHydrated(true);
     })();
   }, []);
@@ -931,11 +954,15 @@ export function EditorClient() {
                   setTimeout(() => setResetArmed(false), 3000);
                   return;
                 }
-                const base = slug === "new" ? blankInvitation() : getInvitation(slug);
-                setDraft(structuredClone(base)); // full replace clears accent/font/colors/per-section too
-                setSelectedId(base.sections[0]?.id ?? "");
-                setTitle(slug === "new" ? "" : defaultTitleFor(base));
-                setHidden(new Set());
+                // Revert to this invitation's own starting point (template/DB/blank as first loaded),
+                // clearing edits + accent/font/colors — never to the romantic sample.
+                const init = initialRef.current;
+                if (init) {
+                  setDraft(structuredClone(init.draft));
+                  setSelectedId(init.draft.sections[0]?.id ?? "");
+                  setTitle(init.title);
+                  setHidden(new Set(init.hidden));
+                }
                 setResetArmed(false);
               }}
               title="내용·디자인을 처음 상태로 되돌려요"
