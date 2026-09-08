@@ -341,6 +341,11 @@ export type Invitation = {
   /** User-picked accent color (hex). Overrides the theme's primary --wax/--wax-deep across
    * every section on the published page and in the editor preview. Absent = theme default. */
   accent?: string;
+  /** User-picked font family id (see FONTS registry). Overrides the Korean text font
+   * (--font-ko/-serif/-display/-body) across the invitation. Absent = theme default (Pretendard). */
+  font?: string;
+  /** User-picked body text color (hex). Overrides --ink across sections. Absent = theme default. */
+  textColor?: string;
   /** Reveal animation played as each section scrolls into view (public page only). */
   reveal?: RevealAnim;
   /** Shared-frame layout (width + backdrop); does not touch per-theme section styling. */

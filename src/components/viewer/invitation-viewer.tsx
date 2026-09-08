@@ -11,6 +11,8 @@ import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
 import { EditContext } from "./editable";
+import { FontLink } from "./font-link";
+import { fontById } from "@/lib/invitation/fonts";
 
 /** Venue name for the calendar entry, from the first location section's title (else empty). */
 function eventLocationOf(inv: Invitation): string {
@@ -58,18 +60,34 @@ export function InvitationViewer({
   const layoutStyle: CSSProperties | undefined =
     lw === "narrow" ? ({ ["--iv-w"]: "392px" } as CSSProperties) : lw === "wide" ? ({ ["--iv-w"]: "512px" } as CSSProperties) : undefined;
   const bg = invitation.layout?.background;
-  // User-picked accent overrides the theme's primary color everywhere (--wax is the accent every
-  // theme's CSS references). Applies in the contained editor preview and the published page alike.
+  // User customizations, applied as CSS-var overrides on the invitation root — one place that
+  // covers the contained editor preview, the full preview and the published page. Every theme's
+  // CSS reads these vars (--wax = accent, --font-* = Korean text font, --ink = body text color).
   // ponytail: --wax-deep uses the same hue as --wax (matches the editor); derive a darker shade if hover depth matters.
-  const accentVars = invitation.accent ? ({ ["--wax"]: invitation.accent, ["--wax-deep"]: invitation.accent } as CSSProperties) : null;
+  const font = fontById(invitation.font);
+  const vars: Record<string, string> = {};
+  if (invitation.accent) {
+    vars["--wax"] = invitation.accent;
+    vars["--wax-deep"] = invitation.accent;
+  }
+  if (font?.google) {
+    // Only override for non-default fonts (default Pretendard needs no change / no load).
+    vars["--font-ko"] = font.stack;
+    vars["--font-serif"] = font.stack;
+    vars["--font-display"] = font.stack;
+    vars["--font-body"] = font.stack;
+  }
+  if (invitation.textColor) vars["--ink"] = invitation.textColor;
+  const base = contained ? undefined : layoutStyle;
   const rootStyle: CSSProperties | undefined =
-    contained ? (accentVars ?? undefined) : (layoutStyle || accentVars ? { ...layoutStyle, ...accentVars } : undefined);
+    base || Object.keys(vars).length ? ({ ...base, ...vars } as CSSProperties) : undefined;
   return (
     <div
       className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}
       data-bg={!contained && bg && bg !== "soft" ? bg : undefined}
       style={rootStyle}
     >
+      <FontLink google={font?.google} />
       {animate && (
         <noscript>
           <style>{`.iv-reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>

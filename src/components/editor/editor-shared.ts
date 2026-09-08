@@ -55,6 +55,12 @@ export function coverPhotosFor(theme: ThemeId): string[] {
   return COVER_PHOTOS_BY_THEME[theme] ?? COVER_PHOTOS;
 }
 export const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "#2A2A3E"];
+
+/** Text-color presets for the invitation body (--ink override). Dark, readable inks. */
+export const TEXT_COLORS = ["#2A2A3E", "#1A1A1A", "#3A2E2E", "#2E3A34", "#4A4A5E"];
+
+// Font registry lives in lib (shared with the viewer without pulling editor code into its bundle).
+export { FONTS, fontById, googleFontHref } from "@/lib/invitation/fonts";
 export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [
   { id: "romantic", label: "Romantic", enabled: true },
   { id: "minimal", label: "Minimal", enabled: true },

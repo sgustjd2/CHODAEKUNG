@@ -11,7 +11,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -136,10 +136,14 @@ export function EditorClient() {
   const [tab, setTab] = useState<Tab>("content");
   const [mode, setMode] = useState<Mode>("scroll");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
-  // Accent lives in the draft (single source), so it autosaves, publishes, previews and renders
-  // via the viewer without separate plumbing. setAccent writes it; reads derive from the draft.
+  // Accent/font/text-color live in the draft (single source), so they autosave, publish, preview
+  // and render via the viewer without separate plumbing. Setters write; reads derive from the draft.
   const accent = draft.accent ?? null;
   const setAccent = (c: string | null) => setDraft((d) => ({ ...d, accent: c ?? undefined }));
+  const font = draft.font ?? "pretendard";
+  const setFont = (id: string) => setDraft((d) => ({ ...d, font: id === "pretendard" ? undefined : id }));
+  const textColor = draft.textColor ?? null;
+  const setTextColor = (c: string | null) => setDraft((d) => ({ ...d, textColor: c ?? undefined }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -380,6 +384,10 @@ export function EditorClient() {
     setMode,
     accent,
     setAccent,
+    font,
+    setFont,
+    textColor,
+    setTextColor,
     previewStyle,
     patch,
     addSection,
@@ -609,6 +617,50 @@ export function EditorClient() {
                   </div>
                   <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
                     초대장 전체의 강조색(버튼·포인트)을 바꿔요. 발행된 초대장에도 그대로 적용돼요.
+                  </p>
+                </div>
+                <div className="insp-group">
+                  <h5>글씨체</h5>
+                  <div className="radio-group">
+                    {FONTS.map((f) => (
+                      <button
+                        key={f.id}
+                        className={`radio-btn${font === f.id ? " active" : ""}`}
+                        style={{ fontFamily: f.stack }}
+                        onClick={() => setFont(f.id)}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    초대장 본문·제목 글씨체를 바꿔요. 선택한 글씨체만 불러와요.
+                  </p>
+                </div>
+                <div className="insp-group">
+                  <h5>글씨색</h5>
+                  <div className="color-row">
+                    <button
+                      className={`color-swatch color-swatch-none${textColor === null ? " active" : ""}`}
+                      aria-label="테마 기본색"
+                      title="테마 기본색"
+                      onClick={() => setTextColor(null)}
+                    />
+                    {TEXT_COLORS.map((c) => (
+                      <button
+                        key={c}
+                        className={`color-swatch${textColor === c ? " active" : ""}`}
+                        style={{ background: c }}
+                        aria-label={c}
+                        onClick={() => setTextColor(c)}
+                      />
+                    ))}
+                    <label className="color-swatch color-swatch-custom" title="직접 고르기" style={textColor && !TEXT_COLORS.includes(textColor) ? { background: textColor } : undefined}>
+                      <input type="color" value={textColor ?? "#2A2A3E"} onChange={(e) => setTextColor(e.target.value)} aria-label="직접 글씨색 선택" />
+                    </label>
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    본문 글씨색을 바꿔요. 커버(사진 위 글씨)는 그대로예요.
                   </p>
                 </div>
                 <div className="insp-group">

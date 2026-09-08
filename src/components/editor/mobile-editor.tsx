@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, COVER_LAYOUTS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, COVER_LAYOUTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -22,6 +22,10 @@ export type EditorApi = {
   setMode: (m: Mode) => void;
   accent: string | null;
   setAccent: (c: string | null) => void;
+  font: string;
+  setFont: (id: string) => void;
+  textColor: string | null;
+  setTextColor: (c: string | null) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -146,7 +150,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
 }
 
 function DesignPanel({ api }: { api: EditorApi }) {
-  const { draft, setDraft, accent, setAccent, cover, patch, applyTemplate } = api;
+  const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, cover, patch, applyTemplate } = api;
   const [overlay, setOverlay] = useState(65);
   return (
     <>
@@ -187,6 +191,28 @@ function DesignPanel({ api }: { api: EditorApi }) {
           ))}
           <label className="m-color m-color-custom" style={accent && !ACCENTS.includes(accent) ? { background: accent } : undefined}>
             <input type="color" value={accent ?? "#E38B8B"} onChange={(e) => setAccent(e.target.value)} aria-label="직접 색상 선택" />
+          </label>
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>글씨체</h6>
+        <div className="m-radios">
+          {FONTS.map((f) => (
+            <button key={f.id} type="button" className={`m-radio${font === f.id ? " active" : ""}`} style={{ fontFamily: f.stack }} onClick={() => setFont(f.id)}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>글씨색</h6>
+        <div className="m-colors">
+          <button type="button" className={`m-color m-color-none${textColor === null ? " active" : ""}`} aria-label="테마 기본색" onClick={() => setTextColor(null)} />
+          {TEXT_COLORS.map((c) => (
+            <button key={c} type="button" className={`m-color${textColor === c ? " active" : ""}`} style={{ background: c }} aria-label={c} onClick={() => setTextColor(c)} />
+          ))}
+          <label className="m-color m-color-custom" style={textColor && !TEXT_COLORS.includes(textColor) ? { background: textColor } : undefined}>
+            <input type="color" value={textColor ?? "#2A2A3E"} onChange={(e) => setTextColor(e.target.value)} aria-label="직접 글씨색 선택" />
           </label>
         </div>
       </div>
