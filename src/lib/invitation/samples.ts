@@ -110,6 +110,23 @@ export function blankSection(type: SectionType): Section {
   }
 }
 
+/** A theme's representative bundled sample (first match), for sourcing example content. */
+function sampleForTheme(theme: ThemeId): Invitation | undefined {
+  return Object.values(sampleInvitations).find((s) => s.theme === theme);
+}
+
+/**
+ * A section pre-filled with the theme's example content — cloned from that theme's sample section of
+ * the same type (with a fresh id), so an added or blank-canvas section shows theme-appropriate
+ * examples instead of empty fields. Falls back to an empty shell when the sample has no such type.
+ */
+export function exampleSection(type: SectionType, theme: ThemeId): Section {
+  const src = sampleForTheme(theme)?.sections.find((s) => s.type === type);
+  if (!src) return blankSection(type);
+  const id = `${type}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  return { ...structuredClone(src), id } as Section;
+}
+
 /** A sensible starter section flow per theme (only types that theme actually renders). */
 const THEME_DEFAULT_SECTIONS: Record<ThemeId, SectionType[]> = {
   romantic: ["cover", "message", "date", "location", "gallery", "schedule", "rsvp", "ending"],
@@ -140,7 +157,8 @@ const THEME_COVER: Record<ThemeId, string> = {
  */
 export function blankInvitation(theme: ThemeId = "romantic"): Invitation {
   const types = THEME_DEFAULT_SECTIONS[theme] ?? THEME_DEFAULT_SECTIONS.romantic;
-  const sections = types.map((t) => blankSection(t));
+  // Theme-appropriate example content (from the theme's sample) rather than empty fields.
+  const sections = types.map((t) => exampleSection(t, theme));
   const cover = sections.find((s) => s.type === "cover");
   if (cover && cover.type === "cover") cover.content.image = THEME_COVER[theme] ?? "romantic_wedding";
   return { slug: "new", theme, shareCta: "참석 여부 전하기", sections };

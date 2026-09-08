@@ -14,7 +14,7 @@ import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors
 import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
-import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
+import { blankInvitation, exampleSection, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { monthGrid } from "@/lib/invitation/month-grid";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
@@ -389,11 +389,12 @@ export function EditorClient() {
       return { ...d, sections: s };
     });
   const addSection = (type: SectionType) =>
-    setDraft((d) => ({ ...d, sections: [...d.sections, blankSection(type)] }));
+    setDraft((d) => ({ ...d, sections: [...d.sections, exampleSection(type, d.theme)] }));
 
-  // Change an existing section's type in place (keeps its id/position; content resets to the new type).
+  // Change an existing section's type in place (keeps its id/position; content resets to a
+  // theme-appropriate example for the new type).
   const changeSectionType = (id: string, type: SectionType) =>
-    setDraft((d) => ({ ...d, sections: d.sections.map((s) => (s.id === id ? ({ ...blankSection(type), id } as Section) : s)) }));
+    setDraft((d) => ({ ...d, sections: d.sections.map((s) => (s.id === id ? ({ ...exampleSection(type, d.theme), id } as Section) : s)) }));
 
   // Change event type after creation: re-apply the chosen event's template (theme + sections),
   // keeping the current slug. Replaces content, so confirm first.
