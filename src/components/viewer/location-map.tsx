@@ -18,6 +18,7 @@ type KakaoMaps = {
   LatLng: new (lat: number, lng: number) => unknown;
   services: {
     Geocoder: new () => { addressSearch: (addr: string, cb: (result: { x: string; y: string }[], status: string) => void) => void };
+    Places: new () => { keywordSearch: (keyword: string, cb: (result: { x: string; y: string }[], status: string) => void) => void };
     Status: { OK: string };
   };
 };
@@ -74,17 +75,21 @@ export function LocationMap({ address, lat, lng, fallback, className }: { addres
       if (hasCoords) return drop(lat as number, lng as number); // exact coords → no geocoding
       if (!maps.services) return;
       const geo = new maps.services.Geocoder();
-      // Geocode the address; if it doesn't resolve (e.g. the address was typed into the title/venue
-      // line rather than the body), retry with the fallback so the pin still drops.
-      const search = (addr: string | undefined, next: () => void) => {
-        if (!addr) return next();
-        geo.addressSearch(addr, (result, status) => {
-          if (cancelled || !ref.current) return;
-          if (status === maps.services.Status.OK && result[0]) drop(Number(result[0].y), Number(result[0].x));
-          else next();
-        });
+      const places = maps.services.Places ? new maps.services.Places() : null;
+      const okStatus = maps.services.Status.OK;
+      const hit = (result: { x: string; y: string }[], status: string, next: () => void) => {
+        if (cancelled || !ref.current) return;
+        if (status === okStatus && result[0]) drop(Number(result[0].y), Number(result[0].x));
+        else next();
       };
-      search(query, () => search(fb && fb !== query ? fb : undefined, () => {}));
+      // Resolve the pin in order of precision: exact address on the body, then the title (the address
+      // can live in either), then fuzzy place/landmark search so venue names ("광안리해수욕장",
+      // "스타벅스 강남점") resolve too — addressSearch only handles road/lot addresses.
+      const byAddress = (q?: string) => (next: () => void) => (q ? geo.addressSearch(q, (r, s) => hit(r, s, next)) : next());
+      const byKeyword = (q?: string) => (next: () => void) => (q && places ? places.keywordSearch(q, (r, s) => hit(r, s, next)) : next());
+      const chain = [byAddress(query), byAddress(fb), byKeyword(query), byKeyword(fb)];
+      const run = (i: number) => { if (i < chain.length) chain[i](() => run(i + 1)); };
+      run(0);
     });
     return () => {
       cancelled = true;
