@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/logo";
 import { AddressSearch } from "@/components/ui/address-search";
+import type { ThemeId } from "@/lib/invitation/types";
 
 type EventDef = { id: string; icon: string; name: string; hint: string };
 type EventGroup = { key: string; label: string; sub: string; items: EventDef[] };
@@ -134,14 +135,28 @@ const MOOD_THEME: Record<string, { theme: string; accent: string }> = {
 };
 
 type StyleDef = { id: string; img?: string; blank?: boolean; cat: string; name: ReactNode; nameText: string };
-const STYLES: StyleDef[] = [
-  { id: "1", img: "romantic_wedding", cat: "Romantic · Featured", name: <>Meadow <em>Love</em></>, nameText: "Meadow Love" },
-  { id: "2", img: "hero_flatlay", cat: "Handwritten · Classic", name: <>Wax <em>Seal</em></>, nameText: "Wax Seal" },
-  { id: "3", img: "wedding_gallery_1", cat: "Fine Art · Serif", name: <>Hands <em>Together</em></>, nameText: "Hands Together" },
-  { id: "4", img: "wedding_gallery_2", cat: "Editorial · Trending", name: <>Golden <em>Trail</em></>, nameText: "Golden Trail" },
-  { id: "5", img: "minimal_birthday", cat: "Minimal · Editorial", name: <>Quiet <em>Day</em></>, nameText: "Quiet Day" },
-  { id: "6", blank: true, cat: "Blank · Custom", name: <>처음<em>부터</em></>, nameText: "처음부터" },
-];
+const BLANK_STYLE: StyleDef = { id: "blank", blank: true, cat: "Blank · Custom", name: <>처음<em>부터</em></>, nameText: "처음부터" };
+
+// Each sample's theme (only the slugs EVENT_SAMPLE points at) → lets the wizard show
+// event-appropriate styles and start a blank editor in the right theme, without importing
+// the (large) sample data into this client bundle.
+const SAMPLE_THEME: Record<string, ThemeId> = {
+  "jisoo-minjun": "romantic", "appa-60": "minimal", "cozy-home": "cute", "after-hours": "editorial",
+  beongae: "timeline", "yangyang-mt": "timeline", "jogi-battle": "battle", matjjang: "battle",
+  "lol-quick": "gaming", "lol-rank": "gaming",
+};
+const THEME_COVER: Record<ThemeId, string> = {
+  romantic: "romantic_wedding", minimal: "minimal_birthday", cute: "cute_housewarming", editorial: "editorial_party",
+  timeline: "timeline_gathering", battle: "battle_sports", gaming: "game_lol_rank", developer: "developer_terminal",
+};
+const THEME_LABEL: Record<ThemeId, string> = {
+  romantic: "로맨틱", minimal: "미니멀", cute: "큐트", editorial: "에디토리얼",
+  timeline: "타임라인", battle: "배틀", gaming: "게이밍", developer: "디벨로퍼",
+};
+/** The theme a chosen event starts from (via its curated sample); unknown/custom → romantic. */
+function themeForEvent(eventId: string): ThemeId {
+  return SAMPLE_THEME[EVENT_SAMPLE[eventId]] ?? "romantic";
+}
 
 const STEP_LABELS = ["이벤트 선택", "기본 정보", "템플릿", "완료"];
 const STEP_NAMES = ["Event Type", "Basic Info", "Template", "Ready"];
@@ -155,7 +170,7 @@ export function NewInvitationWizard() {
   const [customName, setCustomName] = useState("");
   const [customIcon, setCustomIcon] = useState("ic-sparkle");
   const [customMoods, setCustomMoods] = useState<string[]>([]);
-  const [template, setTemplate] = useState("1");
+  const [template, setTemplate] = useState("rec");
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -192,6 +207,19 @@ export function NewInvitationWizard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Step 3 styles follow the chosen event's theme (recommended template + blank), so a 맞짱 shows
+  // battle styles — not the old hardcoded wedding set. `activeTemplate` falls back to the first
+  // valid style when the event changes, so no stale selection carries over.
+  const evTheme = themeForEvent(event);
+  const styleList: StyleDef[] =
+    event === "custom"
+      ? [BLANK_STYLE]
+      : [
+          { id: "rec", img: THEME_COVER[evTheme], cat: `${THEME_LABEL[evTheme]} · 추천`, name: <>{THEME_LABEL[evTheme]} <em>템플릿</em></>, nameText: `${THEME_LABEL[evTheme]} 템플릿` },
+          BLANK_STYLE,
+        ];
+  const activeTemplate = styleList.some((s) => s.id === template) ? template : styleList[0].id;
+
   // Open the editor: seed the chosen theme's template (or blank for "처음부터"/custom),
   // and hand the typed basics to the editor via sessionStorage.
   const startEditor = () => {
@@ -200,15 +228,19 @@ export function NewInvitationWizard() {
     const moodStyle = event === "custom" ? MOOD_THEME[customMoods[0]] : undefined;
     // Canonical event datetime for "add to calendar" (ISO from the native date/time pickers).
     const eventStart = date ? (time ? `${date}T${time}` : date) : undefined;
+    const blank = activeTemplate === "blank" || event === "custom";
+    // A blank start needs a theme: custom uses the picked mood, otherwise the event's own theme —
+    // so a blank 맞짱 opens as battle, not the romantic default. Template starts get their theme
+    // (and cover) from the sample itself.
+    const blankTheme = event === "custom" ? moodStyle?.theme : themeForEvent(event);
     try {
       sessionStorage.setItem(
         "chodaekung:wizard",
-        JSON.stringify({ title, subtitle, date, time, location, eventName, theme: moodStyle?.theme, accent: moodStyle?.accent, eventStart }),
+        JSON.stringify({ title, subtitle, date, time, location, eventName, theme: blank ? blankTheme : undefined, accent: moodStyle?.accent, eventStart }),
       );
     } catch {
       /* ignore */
     }
-    const blank = template === "6" || event === "custom";
     const sample = blank ? "" : EVENT_SAMPLE[event] ?? "";
     router.push(sample ? `/editor?template=${sample}` : "/editor");
   };
@@ -216,7 +248,7 @@ export function NewInvitationWizard() {
     setCustomMoods((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
 
   const selectedEvent = EVENTS.find((e) => e.id === event);
-  const selectedStyle = STYLES.find((s) => s.id === template);
+  const selectedStyle = styleList.find((s) => s.id === activeTemplate);
   const summaryEventName = event === "custom" ? customName.trim() || "—" : selectedEvent?.name ?? "—";
   const summaryEventIcon = event === "custom" ? customIcon : selectedEvent?.icon ?? "ic-sparkle";
 
@@ -482,11 +514,11 @@ export function NewInvitationWizard() {
           <p className="step-desc">추천 템플릿이에요. 나중에 언제든 변경 가능해요.</p>
 
           <div className="style-grid">
-            {STYLES.map((s) => (
+            {styleList.map((s) => (
               <button
                 key={s.id}
                 type="button"
-                className={`style-card${template === s.id ? " selected" : ""}`}
+                className={`style-card${activeTemplate === s.id ? " selected" : ""}`}
                 onClick={() => setTemplate(s.id)}
               >
                 {s.blank ? (
