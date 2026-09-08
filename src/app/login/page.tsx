@@ -38,6 +38,19 @@ export default function LoginPage() {
     }
   }, []);
 
+  // Already signed in? Don't show the login form — bounce to where they were headed (or the dashboard).
+  useEffect(() => {
+    if (!authEnabled()) return;
+    createBrowserSupabase()
+      .auth.getUser()
+      .then(({ data }) => {
+        if (!data.user) return;
+        const n = new URLSearchParams(window.location.search).get("next");
+        router.replace(n && n.startsWith("/") && !n.startsWith("//") ? n : "/dashboard");
+      })
+      .catch(() => {});
+  }, [router]);
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!authEnabled()) {
