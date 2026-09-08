@@ -1,7 +1,9 @@
 import { Rich } from "../../rich-text";
 import { MinimalHead } from "./section-head";
 import { LocationMap } from "../../location-map";
+import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
+import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function MinimalLocation({ content, index }: { content: LocationContent; index?: number }) {
@@ -16,11 +18,12 @@ export function MinimalLocation({ content, index }: { content: LocationContent; 
       </p>
       <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="ivm-map-actions">
-        {content.mapButtons.map((b, i) => (
-          <div key={i} className={`ivm-loc-btn${b.primary ? " primary" : ""}`}>
-            {b.label}
-          </div>
-        ))}
+        <LocationButtons
+          buttons={content.mapButtons}
+          query={locationQuery(content)}
+          address={locationAddress(content)}
+          classFor={(b) => `ivm-loc-btn${b.primary ? " primary" : ""}`}
+        />
       </div>
     </div>
   );

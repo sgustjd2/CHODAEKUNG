@@ -1,7 +1,9 @@
 import { Rich } from "../../rich-text";
 import { TlSection } from "./tl-section";
 import { LocationMap } from "../../location-map";
+import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
+import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function TimelineLocation({ content }: { content: LocationContent }) {
@@ -15,11 +17,12 @@ export function TimelineLocation({ content }: { content: LocationContent }) {
       </div>
       <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="tl-loc-actions">
-        {content.mapButtons.map((b, i) => (
-          <div key={i} className={`tl-loc-btn${b.primary ? " primary" : ""}`}>
-            {b.label}
-          </div>
-        ))}
+        <LocationButtons
+          buttons={content.mapButtons}
+          query={locationQuery(content)}
+          address={locationAddress(content)}
+          classFor={(b) => `tl-loc-btn${b.primary ? " primary" : ""}`}
+        />
       </div>
     </TlSection>
   );

@@ -2,7 +2,9 @@ import { ESection } from "./e-section";
 import { Rich } from "../../rich-text";
 import { photoUrl } from "@/lib/photo";
 import { LocationMap } from "../../location-map";
+import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
+import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function EditorialLocation({ content }: { content: LocationContent }) {
@@ -28,11 +30,12 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
       <LocationMap className="iv-locmap" address={lineText(content.body)} />
       {content.mapButtons.length > 0 && (
         <div className="e-loc-actions">
-          {content.mapButtons.map((b, i) => (
-            <button type="button" key={i} className={`btn ${b.primary ? "btn-primary" : "btn-outline"}`}>
-              {b.label}
-            </button>
-          ))}
+          <LocationButtons
+            buttons={content.mapButtons}
+            query={locationQuery(content)}
+            address={locationAddress(content)}
+            classFor={(b) => `btn ${b.primary ? "btn-primary" : "btn-outline"}`}
+          />
         </div>
       )}
     </ESection>

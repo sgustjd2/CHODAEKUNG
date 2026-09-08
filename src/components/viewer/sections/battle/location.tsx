@@ -1,7 +1,9 @@
 import { Rich } from "../../rich-text";
 import { BattleSecTitle } from "./sec-title";
 import { LocationMap } from "../../location-map";
+import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
+import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function BattleLocation({ content }: { content: LocationContent }) {
@@ -16,11 +18,12 @@ export function BattleLocation({ content }: { content: LocationContent }) {
       </div>
       <LocationMap className="iv-locmap" address={lineText(content.body)} />
       <div className="ivb-loc-actions">
-        {content.mapButtons.map((b, i) => (
-          <div key={i} className={`ivb-loc-btn${b.primary ? " primary" : ""}`}>
-            {b.label}
-          </div>
-        ))}
+        <LocationButtons
+          buttons={content.mapButtons}
+          query={locationQuery(content)}
+          address={locationAddress(content)}
+          classFor={(b) => `ivb-loc-btn${b.primary ? " primary" : ""}`}
+        />
       </div>
     </div>
   );

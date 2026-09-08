@@ -2,7 +2,9 @@ import { CCard } from "./c-card";
 import { Icon } from "@/components/ui/icon";
 import { photoUrl } from "@/lib/photo";
 import { LocationMap } from "../../location-map";
+import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
+import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function CuteLocation({ content }: { content: LocationContent }) {
@@ -26,11 +28,12 @@ export function CuteLocation({ content }: { content: LocationContent }) {
       <LocationMap className="iv-locmap" address={content.address?.a || lineText(content.body)} />
       {content.mapButtons.length > 0 && (
         <div className="c-loc-actions">
-          {content.mapButtons.map((b, i) => (
-            <div className={`c-loc-btn${b.primary ? " primary" : ""}`} key={i}>
-              {b.label}
-            </div>
-          ))}
+          <LocationButtons
+            buttons={content.mapButtons}
+            query={locationQuery(content)}
+            address={locationAddress(content)}
+            classFor={(b) => `c-loc-btn${b.primary ? " primary" : ""}`}
+          />
         </div>
       )}
     </CCard>
