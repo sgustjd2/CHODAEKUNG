@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
@@ -26,6 +26,17 @@ export default function LoginPage() {
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [gatedCreate, setGatedCreate] = useState(false);
+
+  // Arriving from the create/edit gate → a first-time visitor with no account. Default to signup
+  // (not login), and explain why they're here.
+  useEffect(() => {
+    const n = new URLSearchParams(window.location.search).get("next");
+    if (n && (n.startsWith("/new") || n.startsWith("/editor"))) {
+      setGatedCreate(true);
+      setMode("signup");
+    }
+  }, []);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -71,7 +82,7 @@ export default function LoginPage() {
         </Link>
         <div className="auth-eb">{mode === "login" ? "Welcome back" : "Create account"}</div>
         <h1 className="auth-title">{mode === "login" ? "로그인" : "회원가입"}</h1>
-        <p className="auth-sub">{mode === "login" ? "내 초대장을 관리하려면 로그인하세요." : "가입하면 만든 초대장을 계정에서 관리할 수 있어요."}</p>
+        <p className="auth-sub">{gatedCreate ? "초대장을 만들려면 먼저 가입해 주세요 — 이메일만 있으면 돼요." : mode === "login" ? "내 초대장을 관리하려면 로그인하세요." : "가입하면 만든 초대장을 계정에서 관리할 수 있어요."}</p>
 
         <form onSubmit={submit}>
           <label className="auth-field">

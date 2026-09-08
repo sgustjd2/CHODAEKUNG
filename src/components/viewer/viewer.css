@@ -174,7 +174,7 @@
 .gb-submit:hover { background: var(--wax-deep, #c96a6a); }
 .gb-submit:disabled { opacity: 0.6; cursor: default; }
 .gb-list { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-.gb-empty { font-size: calc(13px * var(--iv-fs, 1)); color: #999; padding: 20px 0; }
+.gb-empty { font-size: calc(13px * var(--iv-fs, 1)); color: #767676; padding: 20px 0; }
 .gb-card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 16px; text-align: left; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
 .gb-card-msg { font-size: calc(14px * var(--iv-fs, 1)); color: #2a2a3e; line-height: calc(1.6 * var(--iv-lh, 1)); white-space: pre-wrap; word-break: break-word; }
 .gb-card-name { font-size: calc(12px * var(--iv-fs, 1)); color: #888; margin-top: 8px; font-weight: 600; text-align: right; }
@@ -186,7 +186,7 @@
 .att-note { font-size: calc(14px * var(--iv-fs, 1)); color: #666; line-height: calc(1.6 * var(--iv-lh, 1)); margin: 0 auto 12px; max-width: 30ch; }
 .att-count { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.1em + var(--iv-ls, 0em)); color: var(--wax-deep, #a04547); margin-bottom: 16px; }
 .att-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 420px; margin: 0 auto; }
-.att-empty { font-size: calc(13px * var(--iv-fs, 1)); color: #999; padding: 12px 0; }
+.att-empty { font-size: calc(13px * var(--iv-fs, 1)); color: #767676; padding: 12px 0; }
 .att-chip { display: inline-block; padding: 8px 16px; border-radius: 999px; background: var(--wax-tint, #f9e9e9); color: var(--wax-deep, #a04547); font-size: calc(14px * var(--iv-fs, 1)); font-weight: 700; }
 
 /* Loading skeletons for client-fetched sections (attendees/guestbook) — shown until the first
@@ -759,9 +759,11 @@
   .c-card + .c-card { margin-top: 16px; }
   .c-card-tint { background: var(--rose-tint); }
   .c-eb { display: inline-block; padding: 5px 12px; background: rgba(227,139,139,0.12); color: var(--rose-deep); border-radius: 100px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.24em + var(--iv-ls, 0em)); text-transform: uppercase; margin-bottom: 12px; }
-  .c-eb.sage { background: rgba(181,202,178,0.2); color: var(--sage-deep); }
-  .c-eb.lav { background: rgba(110,122,147,0.2); color: var(--lavender-deep); }
-  .c-eb.butter { background: rgba(245,216,150,0.25); color: var(--butter-deep); }
+  /* Eyebrow text must clear the light pill — the -deep accent tokens (sage/gold/lav) are too light
+     on a light background (~1.4:1). Use darker shades of the same hue for legibility. */
+  .c-eb.sage { background: rgba(181,202,178,0.2); color: #3f5a3b; }
+  .c-eb.lav { background: rgba(110,122,147,0.2); color: #454f6b; }
+  .c-eb.butter { background: rgba(245,216,150,0.25); color: #7d6012; }
   .c-title { font-family: var(--font-ko); font-size: calc(26px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(-0.025em + var(--iv-ls, 0em)); line-height: calc(1.15 * var(--iv-lh, 1)); color: var(--ink); margin-bottom: 12px; }
   .c-title em { font-weight: 500; color: var(--rose); }
   .c-body { font-size: calc(13px * var(--iv-fs, 1)); color: var(--fg-2); line-height: calc(1.8 * var(--iv-lh, 1)); }
