@@ -225,6 +225,7 @@ export function DashboardClient({ userEmail, displayName, myInvitations }: { use
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
+            <Button variant="ghost" onClick={logout}>로그아웃</Button>
             <Link href="/guide" style={{ textDecoration: "none" }}>
               <Button variant="outline">가이드 보기</Button>
             </Link>
