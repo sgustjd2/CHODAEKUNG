@@ -25,7 +25,7 @@ export function CuteLocation({ content }: { content: LocationContent }) {
           </div>
         </div>
       )}
-      <LocationMap className="iv-locmap" address={content.address?.a || lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={content.address?.a || lineText(content.body)} fallback={lineText(content.title)} />
       {content.mapButtons.length > 0 && (
         <div className="c-loc-actions">
           <LocationButtons

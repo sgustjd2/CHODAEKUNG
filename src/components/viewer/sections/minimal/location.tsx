@@ -16,7 +16,7 @@ export function MinimalLocation({ content, index }: { content: LocationContent; 
       <p className="ivm-body">
         <Rich lines={content.body} />
       </p>
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       <div className="ivm-map-actions">
         <LocationButtons
           buttons={content.mapButtons}

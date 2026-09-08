@@ -22,7 +22,7 @@ export function LocationSection({ content }: { content: LocationContent }) {
       <div className="iv-body">
         <Editable path="body" multiline><Rich lines={content.body} /></Editable>
       </div>
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       <div className="iv-loc-actions">
         <LocationButtons
           buttons={content.mapButtons}

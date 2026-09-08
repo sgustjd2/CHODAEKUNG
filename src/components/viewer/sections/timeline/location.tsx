@@ -15,7 +15,7 @@ export function TimelineLocation({ content }: { content: LocationContent }) {
           <Rich lines={content.body} />
         </div>
       </div>
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       <div className="tl-loc-actions">
         <LocationButtons
           buttons={content.mapButtons}

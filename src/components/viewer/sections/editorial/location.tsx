@@ -27,7 +27,7 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
           <Rich lines={content.body} />
         </div>
       )}
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       {content.mapButtons.length > 0 && (
         <div className="e-loc-actions">
           <LocationButtons

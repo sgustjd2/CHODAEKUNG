@@ -16,7 +16,7 @@ export function BattleLocation({ content }: { content: LocationContent }) {
       <div className="ivb-loc-addr">
         <Rich lines={content.body} />
       </div>
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       <div className="ivb-loc-actions">
         <LocationButtons
           buttons={content.mapButtons}

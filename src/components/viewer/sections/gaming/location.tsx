@@ -18,7 +18,7 @@ export function GamingLocation({ content }: { content: LocationContent }) {
           </div>
         </div>
       )}
-      <LocationMap className="iv-locmap" address={lineText(content.body)} />
+      <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />
       {content.mapButtons.length > 0 && (
         <div className="g-cta-btns" style={{ marginTop: 12, maxWidth: "none" }}>
           <LocationButtons

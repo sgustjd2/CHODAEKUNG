@@ -2,6 +2,7 @@ import { DSection } from "./d-section";
 import { LocationMap } from "../../location-map";
 import { LocationButtons } from "../../location-buttons";
 import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
+import { lineText } from "@/lib/invitation/meta";
 import type { LocationContent } from "@/lib/invitation/types";
 
 export function DevLocation({ content }: { content: LocationContent }) {
@@ -21,7 +22,7 @@ export function DevLocation({ content }: { content: LocationContent }) {
           </div>
         );
       })}
-      <LocationMap className="iv-locmap" address={addr} lat={Number.isNaN(lat) ? undefined : lat} lng={Number.isNaN(lng) ? undefined : lng} />
+      <LocationMap className="iv-locmap" address={addr} fallback={lineText(content.title)} lat={Number.isNaN(lat) ? undefined : lat} lng={Number.isNaN(lng) ? undefined : lng} />
       {content.mapButtons.length > 0 && (
         <div className="d-btns">
           <LocationButtons

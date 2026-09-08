@@ -52,14 +52,15 @@ function loadKakaoMaps(): Promise<KakaoMaps | null> {
   return loader;
 }
 
-export function LocationMap({ address, lat, lng, className }: { address?: string; lat?: number; lng?: number; className?: string }) {
+export function LocationMap({ address, lat, lng, fallback, className }: { address?: string; lat?: number; lng?: number; fallback?: string; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [ok, setOk] = useState(false);
   const hasCoords = typeof lat === "number" && typeof lng === "number" && !Number.isNaN(lat) && !Number.isNaN(lng);
   const query = address?.trim();
+  const fb = fallback?.trim();
 
   useEffect(() => {
-    if (!KEY || (!hasCoords && !query) || !ref.current) return;
+    if (!KEY || (!hasCoords && !query && !fb) || !ref.current) return;
     let cancelled = false;
     loadKakaoMaps().then((maps) => {
       if (cancelled || !maps || !ref.current) return;
@@ -71,18 +72,26 @@ export function LocationMap({ address, lat, lng, className }: { address?: string
         setOk(true);
       };
       if (hasCoords) return drop(lat as number, lng as number); // exact coords → no geocoding
-      if (!maps.services || !query) return;
-      new maps.services.Geocoder().addressSearch(query, (result, status) => {
-        if (cancelled || status !== maps.services.Status.OK || !result[0] || !ref.current) return;
-        drop(Number(result[0].y), Number(result[0].x));
-      });
+      if (!maps.services) return;
+      const geo = new maps.services.Geocoder();
+      // Geocode the address; if it doesn't resolve (e.g. the address was typed into the title/venue
+      // line rather than the body), retry with the fallback so the pin still drops.
+      const search = (addr: string | undefined, next: () => void) => {
+        if (!addr) return next();
+        geo.addressSearch(addr, (result, status) => {
+          if (cancelled || !ref.current) return;
+          if (status === maps.services.Status.OK && result[0]) drop(Number(result[0].y), Number(result[0].x));
+          else next();
+        });
+      };
+      search(query, () => search(fb && fb !== query ? fb : undefined, () => {}));
     });
     return () => {
       cancelled = true;
     };
-  }, [query, hasCoords, lat, lng]);
+  }, [query, fb, hasCoords, lat, lng]);
 
-  if (!KEY || (!hasCoords && !query)) return null;
+  if (!KEY || (!hasCoords && !query && !fb)) return null;
   // Keep layout size so the map can render into it; invisible until the pin resolves.
   return <div ref={ref} className={className} style={{ visibility: ok ? "visible" : "hidden" }} aria-label="지도" />;
 }
