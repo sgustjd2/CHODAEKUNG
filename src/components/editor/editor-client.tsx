@@ -983,7 +983,7 @@ export function EditorClient() {
       <PublishDialog
         open={pubOpen}
         onClose={() => setPubOpen(false)}
-        invitation={draft}
+        invitation={visibleDraft}
         title={title}
         editToken={editToken}
         onPublished={(r) => {
