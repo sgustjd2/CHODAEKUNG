@@ -353,8 +353,9 @@ export function EditorClient() {
     const el = scroller?.querySelector<HTMLElement>(`[data-sec-id="${CSS.escape(id)}"]`);
     if (!scroller || !el) return;
     const top = scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    scroller.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+    // scrollTo({behavior:"smooth"}) silently no-ops on this scroll container in some browsers; set
+    // scrollTop directly (always works). The focus ring makes the jump obvious.
+    scroller.scrollTop = Math.max(0, top);
   };
   // Section types the current theme can actually render (for the add-section picker).
   // Every section type the current theme can render (its own palette), minus cover
@@ -595,7 +596,7 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} selectedId={selectedId} />
               </div>
             </div>
           </div>

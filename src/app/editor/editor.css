@@ -76,6 +76,13 @@
   .device .notch { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 100px; height: 26px; background: var(--ink); border-radius: 14px; z-index: 10; }
   .phone-scroll { width: 100%; height: 100%; overflow-y: auto; position: relative; }
   .phone-scroll::-webkit-scrollbar { display: none; }
+  /* Selecting a section (left list) scrolls here + highlights it, so the focus is obvious. */
+  .phone-scroll .iv-secwrap { position: relative; scroll-margin-top: 8px; transition: box-shadow 200ms ease-out; }
+  .phone-scroll .iv-secwrap.selected::after {
+    content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none;
+    box-shadow: inset 0 0 0 2px var(--wax), inset 0 0 0 4px rgba(255,255,255,0.4);
+    border-radius: 8px;
+  }
 
   /* Column: inspector */
   .col-inspector { background: var(--card); border-left: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; }

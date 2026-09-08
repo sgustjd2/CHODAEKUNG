@@ -41,6 +41,7 @@ export function InvitationViewer({
   preview,
   onEdit,
   onSelectSection,
+  selectedId,
 }: {
   invitation: Invitation;
   contained?: boolean;
@@ -51,6 +52,8 @@ export function InvitationViewer({
   onEdit?: (secId: string, path: string, value: string, asLines: boolean) => void;
   /** Editor-only: focusing an inline field selects its section, so the side panel follows the preview. */
   onSelectSection?: (secId: string) => void;
+  /** Editor-only: the currently selected section id — highlights that section in the contained preview. */
+  selectedId?: string;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
@@ -136,7 +139,7 @@ export function InvitationViewer({
           // unless the section carries a per-section override (then it gets a vars wrapper).
           if (contained) {
             return (
-              <div key={s.id} data-sec-id={s.id} className="iv-secwrap" style={secVars}>
+              <div key={s.id} data-sec-id={s.id} className={`iv-secwrap${selectedId === s.id ? " selected" : ""}`} style={secVars}>
                 {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection }}>{node}</EditContext.Provider> : node}
               </div>
             );

@@ -96,7 +96,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
       </div>
 
       <div className="m-preview" style={previewStyle}>
-        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} />
+        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} selectedId={api.selectedId} />
       </div>
 
       <div className="m-tabs">
