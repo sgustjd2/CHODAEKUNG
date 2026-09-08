@@ -1024,3 +1024,9 @@
 .rsvp-done { text-align: center; padding: 12px 0; }
 .rsvp-done-t { font-size: calc(22px * var(--iv-fs, 1)); font-weight: 800; color: var(--ink); margin-bottom: 8px; }
 .rsvp-done-s { font-size: calc(14px * var(--iv-fs, 1)); color: var(--fg-2); margin-bottom: 20px; }
+
+/* Dark themes: the theme-agnostic "common" sections (account/dday/guestbook/attendees) render their
+   headers directly on the dark .iv-doc, but their base color is the dark --ink → dark-on-dark and
+   invisible. Force legible light text for those headers here (inner white cards keep their dark --ink). */
+:is(.iv.t-battle, .iv.t-gaming, .iv.t-developer) :is(.acc-title, .dday-title, .gb-title, .att-title) { color: rgba(255, 255, 255, 0.92); }
+:is(.iv.t-battle, .iv.t-gaming, .iv.t-developer) :is(.acc-note, .gb-note, .att-note, .att-empty) { color: rgba(255, 255, 255, 0.62); }
