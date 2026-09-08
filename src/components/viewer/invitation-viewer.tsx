@@ -116,21 +116,30 @@ export function InvitationViewer({
             <Renderer content={s.content} index={i} />
           ) : null;
           if (!node) return null;
+          // Per-section color overrides (on top of the invitation-wide vars): same CSS vars,
+          // scoped to this one section's wrapper.
+          const st = s.style;
+          const secVars: CSSProperties | undefined =
+            st && (st.accent || st.bg)
+              ? ({ ...(st.accent ? { ["--wax"]: st.accent, ["--wax-deep"]: st.accent } : null), ...(st.bg ? { background: st.bg } : null) } as CSSProperties)
+              : undefined;
           // In the editor preview (contained), wrap each section so the editor can scroll to it
-          // (section-list click) and target inline edits. Public viewer DOM stays unchanged.
+          // (section-list click) and target inline edits. Public viewer DOM stays unchanged
+          // unless the section carries a per-section override (then it gets a vars wrapper).
           if (contained) {
             return (
-              <div key={s.id} data-sec-id={s.id} className="iv-secwrap">
+              <div key={s.id} data-sec-id={s.id} className="iv-secwrap" style={secVars}>
                 {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection }}>{node}</EditContext.Provider> : node}
               </div>
             );
           }
+          const inner = secVars ? <div className="iv-secvars" style={secVars}>{node}</div> : node;
           return animate ? (
             <Reveal key={s.id} anim={reveal} index={i}>
-              {node}
+              {inner}
             </Reveal>
           ) : (
-            <Fragment key={s.id}>{node}</Fragment>
+            <Fragment key={s.id}>{inner}</Fragment>
           );
         })}
       </div>

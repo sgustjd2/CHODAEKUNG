@@ -285,7 +285,10 @@ export type AccountContent = {
   accounts: { side?: string; bank: string; number: string; holder: string }[];
 };
 
-export type Section =
+/** Per-section color overrides (on top of the invitation-wide accent/bg). Absent = inherit. */
+export type SectionStyle = { accent?: string; bg?: string };
+
+export type SectionBody =
   | { id: string; type: "cover"; content: CoverContent }
   | { id: string; type: "message"; content: MessageContent }
   | { id: string; type: "date"; content: DateContent }
@@ -318,7 +321,11 @@ export type Section =
   | { id: string; type: "attendees"; content: AttendeesContent }
   | { id: string; type: "ending"; content: EndingContent };
 
-export type SectionType = Section["type"];
+/** A section plus its optional per-section style override (intersection distributes over the union,
+ * so each variant keeps its discriminated `type`/`content` and gains an optional `style`). */
+export type Section = SectionBody & { style?: SectionStyle };
+
+export type SectionType = SectionBody["type"];
 
 /** Section reveal-on-scroll animation for the public viewer (CLAUDE.md §4.4). */
 export type RevealAnim = "none" | "fade" | "fade-up" | "slide" | "zoom" | "blur" | "scale";

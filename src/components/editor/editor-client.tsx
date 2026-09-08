@@ -152,6 +152,19 @@ export function EditorClient() {
   const setLineHeight = (n: number) => setDraft((d) => ({ ...d, lineHeight: n === 1 ? undefined : n }));
   const bgColor = draft.bgColor ?? null;
   const setBgColor = (c: string | null) => setDraft((d) => ({ ...d, bgColor: c ?? undefined }));
+  // Per-section color override for the currently-selected section (on top of the invitation-wide vars).
+  const selSec = draft.sections.find((s) => s.id === selectedId);
+  const setSecStyle = (key: "accent" | "bg", val: string | null) =>
+    setDraft((d) => ({
+      ...d,
+      sections: d.sections.map((s) => {
+        if (s.id !== selectedId) return s;
+        const style = { ...s.style };
+        if (val == null) delete style[key];
+        else style[key] = val;
+        return { ...s, style: Object.keys(style).length ? style : undefined };
+      }),
+    }));
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [slug, setSlug] = useState(romanticSample.slug);
@@ -738,6 +751,34 @@ export function EditorClient() {
                     초대장 페이지 배경색이에요. 커버 사진 영역은 그대로예요.
                   </p>
                 </div>
+                {selSec && (
+                  <div className="insp-group">
+                    <h5>선택한 섹션 · {metaFor(selSec.type).label}</h5>
+                    <div className="insp-label" style={{ marginBottom: 6 }}>강조색</div>
+                    <div className="color-row">
+                      <button className={`color-swatch color-swatch-none${!selSec.style?.accent ? " active" : ""}`} aria-label="기본" title="기본" onClick={() => setSecStyle("accent", null)} />
+                      {ACCENTS.map((c) => (
+                        <button key={c} className={`color-swatch${selSec.style?.accent === c ? " active" : ""}`} style={{ background: c }} aria-label={c} onClick={() => setSecStyle("accent", c)} />
+                      ))}
+                      <label className="color-swatch color-swatch-custom" title="직접 고르기" style={selSec.style?.accent && !ACCENTS.includes(selSec.style.accent) ? { background: selSec.style.accent } : undefined}>
+                        <input type="color" value={selSec.style?.accent ?? "#E38B8B"} onChange={(e) => setSecStyle("accent", e.target.value)} aria-label="직접 강조색 선택" />
+                      </label>
+                    </div>
+                    <div className="insp-label" style={{ margin: "12px 0 6px" }}>배경색</div>
+                    <div className="color-row">
+                      <button className={`color-swatch color-swatch-none${!selSec.style?.bg ? " active" : ""}`} aria-label="기본" title="기본" onClick={() => setSecStyle("bg", null)} />
+                      {BG_COLORS.map((c) => (
+                        <button key={c} className={`color-swatch${selSec.style?.bg === c ? " active" : ""}`} style={{ background: c, borderColor: "var(--line)" }} aria-label={c} onClick={() => setSecStyle("bg", c)} />
+                      ))}
+                      <label className="color-swatch color-swatch-custom" title="직접 고르기" style={selSec.style?.bg && !BG_COLORS.includes(selSec.style.bg) ? { background: selSec.style.bg } : undefined}>
+                        <input type="color" value={selSec.style?.bg ?? "#FFFFFF"} onChange={(e) => setSecStyle("bg", e.target.value)} aria-label="직접 배경색 선택" />
+                      </label>
+                    </div>
+                    <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                      왼쪽 목록이나 프리뷰에서 섹션을 고르면 그 섹션만 색이 바뀌어요.
+                    </p>
+                  </div>
+                )}
                 <div className="insp-group">
                   <h5>Cover Background</h5>
                   <div className="cover-thumbs">
