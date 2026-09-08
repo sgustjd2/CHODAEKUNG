@@ -80,6 +80,15 @@ export function InvitationViewer({
             <Renderer content={s.content} index={i} />
           ) : null;
           if (!node) return null;
+          // In the editor preview (contained), wrap each section so the editor can scroll to it
+          // (section-list click) and target inline edits. Public viewer DOM stays unchanged.
+          if (contained) {
+            return (
+              <div key={s.id} data-sec-id={s.id} className="iv-secwrap">
+                {node}
+              </div>
+            );
+          }
           return animate ? (
             <Reveal key={s.id} anim={reveal} index={i}>
               {node}

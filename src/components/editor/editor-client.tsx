@@ -239,6 +239,17 @@ export function EditorClient() {
   }, [hydrated, slug, draft, title, hidden, accent]);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
+
+  // Select a section AND scroll the center preview to it (section-list click → jump to that page).
+  const selectSection = (id: string) => {
+    setSelectedId(id);
+    const scroller = document.querySelector<HTMLElement>(".phone-scroll");
+    const el = scroller?.querySelector<HTMLElement>(`[data-sec-id="${CSS.escape(id)}"]`);
+    if (!scroller || !el) return;
+    const top = scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    scroller.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+  };
   // Section types the current theme can actually render (for the add-section picker).
   // Every section type the current theme can render (its own palette), minus cover
   // (you don't "add" a cover). Order follows the theme's natural section flow.
@@ -416,7 +427,7 @@ export function EditorClient() {
                 <div
                   key={s.id}
                   className={`sec-item${selectedId === s.id ? " active" : ""}${hidden.has(s.id) ? " hidden-sec" : ""}`}
-                  onClick={() => setSelectedId(s.id)}
+                  onClick={() => selectSection(s.id)}
                   draggable
                   onDragStart={() => (dragIndex.current = i)}
                   onDragOver={(e) => e.preventDefault()}
