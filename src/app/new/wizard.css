@@ -104,7 +104,15 @@
     line-height: 1.6;
   }
 
-  /* Event grid */
+  /* Event grid, grouped into labeled sections */
+  .event-groups { display: flex; flex-direction: column; gap: 30px; }
+  .event-group-head {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .egh-label { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .egh-sub { font-family: var(--font-en); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   .event-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .event-card {
     background: var(--card);
