@@ -735,7 +735,7 @@ export function EditorClient() {
                 <div className="insp-group">
                   <h5>글씨 크기</h5>
                   <div className="radio-group">
-                    {([["작게", 0.9], ["기본", 1], ["크게", 1.15]] as const).map(([label, n]) => (
+                    {([["아주 작게", 0.85], ["작게", 0.92], ["기본", 1], ["크게", 1.12], ["아주 크게", 1.25]] as const).map(([label, n]) => (
                       <button key={label} className={`radio-btn${fontScale === n ? " active" : ""}`} onClick={() => setFontScale(n)}>
                         {label}
                       </button>

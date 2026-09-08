@@ -85,7 +85,7 @@ export const COVER_PHOTOS_BY_THEME: Record<ThemeId, string[]> = {
 export function coverPhotosFor(theme: ThemeId): string[] {
   return COVER_PHOTOS_BY_THEME[theme] ?? COVER_PHOTOS;
 }
-export const ACCENTS = ["#E38B8B", "#C96A6A", "#B5CAB2", "#A0A8B8", "#F5D896", "#2A2A3E"];
+export const ACCENTS = ["#E38B8B", "#C96A6A", "#E29F76", "#D9B96A", "#F5D896", "#8AA588", "#B5CAB2", "#8AB2C6", "#A0A8B8", "#B097CC", "#C97AA0", "#2A2A3E"];
 
 /** Text-color presets for the invitation body (--ink override). Dark, readable inks. */
 export const TEXT_COLORS = ["#2A2A3E", "#1A1A1A", "#3A2E2E", "#2E3A34", "#4A4A5E"];

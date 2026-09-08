@@ -243,7 +243,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
       <div className="m-group">
         <h6>글씨 크기</h6>
         <div className="m-radios">
-          {([["작게", 0.9], ["기본", 1], ["크게", 1.15]] as const).map(([label, n]) => (
+          {([["아주 작게", 0.85], ["작게", 0.92], ["기본", 1], ["크게", 1.12], ["아주 크게", 1.25]] as const).map(([label, n]) => (
             <button key={label} type="button" className={`m-radio${fontScale === n ? " active" : ""}`} onClick={() => setFontScale(n)}>
               {label}
             </button>
