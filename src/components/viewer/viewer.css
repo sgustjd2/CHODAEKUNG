@@ -52,6 +52,12 @@
   .iv-reveal { transition: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
 }
 
+/* Inline WYSIWYG editing affordance — the .iv-editable class is only rendered in the editor preview
+   (public viewer renders plain text), so this never affects the published page. */
+.iv-editable { cursor: text; border-radius: 4px; outline: none; transition: background 0.12s, box-shadow 0.12s; }
+.iv-editable:hover { background: rgba(227, 139, 139, 0.14); box-shadow: 0 0 0 3px rgba(227, 139, 139, 0.14); }
+.iv-editable:focus { background: rgba(227, 139, 139, 0.16); box-shadow: 0 0 0 2px var(--wax, #e38b8b); }
+
 /* Contained (editor preview): fill the host box, share pill sticks to that box */
 .iv.iv-contained { min-height: 100%; padding: 0; background: none; }
 .iv.iv-contained .iv-doc { max-width: 100%; box-shadow: none; }

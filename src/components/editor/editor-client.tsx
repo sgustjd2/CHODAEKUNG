@@ -240,6 +240,27 @@ export function EditorClient() {
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
 
+  // Inline WYSIWYG edit from the center preview: commit a tagged text field to the draft.
+  // `path` is a field within the section content, e.g. "eyebrow", "dateLabel", "names.0".
+  const handleInlineEdit = (secId: string, path: string, value: string) => {
+    setDraft((d) => ({
+      ...d,
+      sections: d.sections.map((s) => {
+        if (s.id !== secId) return s;
+        const content = { ...(s.content as Record<string, unknown>) };
+        if (path.startsWith("names.")) {
+          const idx = Number(path.slice(6));
+          const names = Array.isArray(content.names) ? [...(content.names as unknown[])] : [];
+          names[idx] = value;
+          content.names = names;
+        } else {
+          content[path] = value;
+        }
+        return { ...s, content } as Section;
+      }),
+    }));
+  };
+
   // Select a section AND scroll the center preview to it (section-list click → jump to that page).
   const selectSection = (id: string) => {
     setSelectedId(id);
@@ -474,7 +495,7 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} />
               </div>
             </div>
           </div>

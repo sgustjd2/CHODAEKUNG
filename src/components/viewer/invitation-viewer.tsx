@@ -10,6 +10,7 @@ import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
+import { EditContext } from "./editable";
 
 /** Venue name for the calendar entry, from the first location section's title (else empty). */
 function eventLocationOf(inv: Invitation): string {
@@ -34,11 +35,14 @@ export function InvitationViewer({
   invitation,
   contained,
   preview,
+  onEdit,
 }: {
   invitation: Invitation;
   contained?: boolean;
   /** Full preview (new-tab, pre-publish): animations play, but no view-count ping or real RSVP write. */
   preview?: boolean;
+  /** Editor-only: enables inline WYSIWYG editing of tagged text (commits field edits to the draft). */
+  onEdit?: (secId: string, path: string, value: string) => void;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
@@ -85,7 +89,7 @@ export function InvitationViewer({
           if (contained) {
             return (
               <div key={s.id} data-sec-id={s.id} className="iv-secwrap">
-                {node}
+                {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit }}>{node}</EditContext.Provider> : node}
               </div>
             );
           }
