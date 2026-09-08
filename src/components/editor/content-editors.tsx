@@ -87,7 +87,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
     <>
       {cover && (
         <div className="insp-group">
-          <h5>Cover Section</h5>
+          <h5>커버</h5>
           <Field label="Eyebrow" value={cover.content.eyebrow} onChange={(v) => patch(cover.id, { eyebrow: v } satisfies Partial<CoverContent>)} />
           {cover.content.names?.map((n, i) => (
             <Field key={i} label={`이름 ${i + 1}`} value={n} onChange={(v) => patch(cover.id, { names: cover.content.names!.map((x, j) => (j === i ? v : x)) })} />
@@ -121,14 +121,14 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {message && (
         <div className="insp-group">
-          <h5>Message</h5>
+          <h5>초대 문구</h5>
           <Field label="제목" value={plainTitle(message.content.title)} onChange={(v) => patch(message.id, { title: [[v]] } satisfies Partial<MessageContent>)} />
           <Field label="본문" textarea value={linesToText(message.content.body)} onChange={(v) => patch(message.id, { body: textToLines(v) } satisfies Partial<MessageContent>)} />
         </div>
       )}
       {location && (
         <div className="insp-group">
-          <h5>Location</h5>
+          <h5>장소</h5>
           <Field label="장소명" value={plainTitle(location.content.title)} onChange={(v) => patch(location.id, { title: [[v]] } satisfies Partial<LocationContent>)} />
           <Field label="주소 · 설명" textarea value={linesToText(location.content.body)} onChange={(v) => patch(location.id, { body: textToLines(v) })} />
           <AddressSearch
@@ -156,7 +156,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {date && (
         <div className="insp-group">
-          <h5>Date</h5>
+          <h5>날짜 · 시간</h5>
           <Field label="Eyebrow" value={date.content.eyebrow} onChange={(v) => patch(date.id, { eyebrow: v } satisfies Partial<DateContent>)} />
           <Field label="제목" value={plainTitle(date.content.title)} onChange={(v) => patch(date.id, { title: [[v]] } satisfies Partial<DateContent>)} />
           {date.content.countdown && (
@@ -170,7 +170,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {schedule && (
         <div className="insp-group">
-          <h5>Schedule</h5>
+          <h5>일정</h5>
           <Field label="Eyebrow" value={schedule.content.eyebrow} onChange={(v) => patch(schedule.id, { eyebrow: v } satisfies Partial<ScheduleContent>)} />
           <Field label="제목" value={plainTitle(schedule.content.title)} onChange={(v) => patch(schedule.id, { title: [[v]] } satisfies Partial<ScheduleContent>)} />
           {schedule.content.items.map((it, i) => (
@@ -191,7 +191,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {gallery && (
         <div className="insp-group">
-          <h5>Gallery</h5>
+          <h5>갤러리</h5>
           <Field label="Eyebrow" value={gallery.content.eyebrow} onChange={(v) => patch(gallery.id, { eyebrow: v } satisfies Partial<GalleryContent>)} />
           <Field label="제목" value={plainTitle(gallery.content.title)} onChange={(v) => patch(gallery.id, { title: [[v]] } satisfies Partial<GalleryContent>)} />
           <div className="insp-photos">
@@ -231,7 +231,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {countdown && (
         <div className="insp-group">
-          <h5>Countdown</h5>
+          <h5>카운트다운</h5>
           {countdown.content.cells.map((c, i) => (
             <div key={i} className="insp-subitem">
               <div className="insp-subitem-head">
@@ -245,7 +245,7 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {rules && (
         <div className="insp-group">
-          <h5>Rules</h5>
+          <h5>규칙</h5>
           <Field label="제목" value={rules.content.title} onChange={(v) => patch(rules.id, { title: v } satisfies Partial<RulesContent>)} />
           {rules.content.rules.map((r, i) => (
             <div key={i} className="insp-subitem">
@@ -554,14 +554,14 @@ export function ContentEditors({ draft, patch }: { draft: Invitation; patch: (id
       )}
       {ending && (
         <div className="insp-group">
-          <h5>Ending</h5>
+          <h5>엔딩</h5>
           <Field label="맺음말" value={ending.content.signature ?? ""} onChange={(v) => patch(ending.id, { signature: v } satisfies Partial<EndingContent>)} />
           <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
         </div>
       )}
       {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !cost && !route && !roster && !menu && !dayPlan && (
         <div className="insp-group">
-          <h5>Content</h5>
+          <h5>내용</h5>
           <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>
         </div>
       )}

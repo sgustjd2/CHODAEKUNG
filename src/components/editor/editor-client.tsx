@@ -592,7 +592,7 @@ export function EditorClient() {
           <div className="inspector-tabs">
             {(["content", "style", "layout", "anim"] as Tab[]).map((t) => (
               <button key={t} className={`insp-tab${tab === t ? " active" : ""}`} onClick={() => setTab(t)}>
-                {t === "content" ? "Content" : t === "style" ? "Style" : t === "layout" ? "Layout" : "Animation"}
+                {t === "content" ? "내용" : t === "style" ? "스타일" : t === "layout" ? "레이아웃" : "애니메이션"}
               </button>
             ))}
           </div>
@@ -635,7 +635,7 @@ export function EditorClient() {
                   </p>
                 </div>
                 <div className="insp-group">
-                  <h5>Theme Preset</h5>
+                  <h5>테마</h5>
                   <div className="radio-group">
                     {THEME_PRESETS.map((p) => (
                       <button
@@ -674,7 +674,7 @@ export function EditorClient() {
                   </p>
                 </div>
                 <div className="insp-group">
-                  <h5>Accent Color</h5>
+                  <h5>강조색</h5>
                   <div className="color-row">
                     <button
                       className={`color-swatch color-swatch-none${accent === null ? " active" : ""}`}
@@ -831,7 +831,7 @@ export function EditorClient() {
                   </div>
                 )}
                 <div className="insp-group">
-                  <h5>Cover Background</h5>
+                  <h5>커버 배경</h5>
                   <div className="cover-thumbs">
                     {cover && /^https?:\/\//.test(cover.content.image) && (
                       // eslint-disable-next-line @next/next/no-img-element

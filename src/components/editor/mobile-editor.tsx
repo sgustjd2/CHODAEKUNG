@@ -172,7 +172,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
   const [overlay, setOverlay] = useState(65);
   return (
     <>
-      <DecorTabs tabs={["Event", "Theme", "Color", "Cover"]} />
+      <DecorTabs tabs={["이벤트", "테마", "색상", "커버"]} />
       <div className="m-group">
         <h6>이벤트 종류</h6>
         <div className="m-radios">
@@ -185,7 +185,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
         <p className="m-note" style={{ marginTop: 8 }}>선택한 이벤트 템플릿(테마·섹션)으로 교체돼요.</p>
       </div>
       <div className="m-group">
-        <h6>Theme Preset</h6>
+        <h6>테마</h6>
         <div className="m-radios">
           {THEME_PRESETS.map((p) => (
             <button
@@ -219,7 +219,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
         </div>
       </div>
       <div className="m-group">
-        <h6>Accent Color</h6>
+        <h6>강조색</h6>
         <div className="m-colors">
           <button type="button" className={`m-color m-color-none${accent === null ? " active" : ""}`} aria-label="테마 기본색" onClick={() => setAccent(null)} />
           {ACCENTS.map((c) => (
@@ -338,7 +338,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
         </div>
       )}
       <div className="m-group">
-        <h6>Cover Background</h6>
+        <h6>커버 배경</h6>
         <div className="m-thumbs">
           {cover && /^https?:\/\//.test(cover.content.image) && (
             <button type="button" className="m-thumb active" style={{ backgroundImage: `url('${cover.content.image}')` }} aria-label="업로드한 커버" />
