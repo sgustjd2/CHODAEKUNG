@@ -13,6 +13,7 @@ import { Reveal } from "./reveal";
 import { EditContext } from "./editable";
 import { FontLink } from "./font-link";
 import { fontById } from "@/lib/invitation/fonts";
+import { waxInk } from "@/lib/invitation/contrast";
 
 /** Venue name for the calendar entry, from the first location section's title (else empty). */
 function eventLocationOf(inv: Invitation): string {
@@ -69,6 +70,8 @@ export function InvitationViewer({
   if (invitation.accent) {
     vars["--wax"] = invitation.accent;
     vars["--wax-deep"] = invitation.accent;
+    // Keep text on accent-colored buttons legible whether the accent is light or dark.
+    vars["--wax-ink"] = waxInk(invitation.accent);
   }
   if (font?.google) {
     // Only override for non-default fonts (default Pretendard needs no change / no load).
@@ -121,7 +124,7 @@ export function InvitationViewer({
           const st = s.style;
           const secVars: CSSProperties | undefined =
             st && (st.accent || st.bg)
-              ? ({ ...(st.accent ? { ["--wax"]: st.accent, ["--wax-deep"]: st.accent } : null), ...(st.bg ? { background: st.bg } : null) } as CSSProperties)
+              ? ({ ...(st.accent ? { ["--wax"]: st.accent, ["--wax-deep"]: st.accent, ["--wax-ink"]: waxInk(st.accent) } : null), ...(st.bg ? { background: st.bg } : null) } as CSSProperties)
               : undefined;
           // In the editor preview (contained), wrap each section so the editor can scroll to it
           // (section-list click) and target inline edits. Public viewer DOM stays unchanged
