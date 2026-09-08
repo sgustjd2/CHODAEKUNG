@@ -106,12 +106,15 @@ export function InvitationViewer({
         {invitation.sections.map((s, i) => {
           // Cover with a non-theme layout uses the shared GenericCover; everything else the theme renderer.
           const useGeneric = s.type === "cover" && !!(s.content as CoverContent).layout && (s.content as CoverContent).layout !== "theme";
-          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number }> | undefined;
+          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number; target?: string }> | undefined;
           const node = useGeneric ? (
             <GenericCover content={s.content as CoverContent} />
           ) : s.type === "dday" ? (
             // Live countdown needs the invitation's canonical datetime, which the registry render can't pass.
             <DdaySection content={s.content as DdayContent} target={invitation.eventStart} />
+          ) : s.type === "countdown" ? (
+            // Same: the battle/gaming countdown ticks from the invitation's eventStart.
+            Renderer ? <Renderer content={s.content} index={i} target={invitation.eventStart} /> : null
           ) : s.type === "guestbook" ? (
             // Guestbook needs the slug (DB reads/writes) + preview flag, which the registry render can't pass.
             <GuestbookSection content={s.content as GuestbookContent} slug={invitation.slug} preview={preview || contained} />
