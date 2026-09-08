@@ -38,6 +38,7 @@ type Stat = { dark: boolean; lbl: string; val: string; sub: ReactNode; barW: str
 export function RsvpClient() {
   const [chip, setChip] = useState("all");
   const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
   const [slug, setSlug] = useState("");
   const [liveRows, setLiveRows] = useState<Row[]>([]);
   const [access, setAccess] = useState<"loading" | "live" | "denied" | "none">("loading");
@@ -88,6 +89,11 @@ export function RsvpClient() {
     };
   }, []);
 
+  // Back to page 1 whenever the filter or search changes, so results aren't hidden on a stale page.
+  useEffect(() => {
+    setPage(1);
+  }, [chip, q]);
+
   const rows = liveRows;
   const total = rows.length;
   const nYes = rows.filter((r) => r.response === "yes").length;
@@ -100,6 +106,14 @@ export function RsvpClient() {
   const countFor = (key: string) => (key === "all" ? rows.length : rows.filter((r) => r.response === key).length);
 
   const filtered = rows.filter((r) => (chip === "all" || chip === r.response) && (q.trim() === "" || r.name.includes(q.trim())));
+
+  // Pagination: 20 rows per page. clampedPage keeps us in range when the filter shrinks the list.
+  const PER_PAGE = 20;
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const clampedPage = Math.min(page, pageCount);
+  const pageRows = filtered.slice((clampedPage - 1) * PER_PAGE, clampedPage * PER_PAGE);
+  const rangeFrom = filtered.length === 0 ? 0 : (clampedPage - 1) * PER_PAGE + 1;
+  const rangeTo = Math.min(clampedPage * PER_PAGE, filtered.length);
 
   const stats: Stat[] = [
     { dark: true, lbl: "Total Responses", val: String(total), sub: <>실시간 집계</>, barW: "100%", barC: "var(--gold)" },
@@ -275,8 +289,8 @@ export function RsvpClient() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.name}>
+                {pageRows.map((r, i) => (
+                  <tr key={`${r.name}-${i}`}>
                     <td><input type="checkbox" /></td>
                     <td className="name">{r.name}</td>
                     <td><span className={`badge-tag ${r.response}`}><span className="d" />{RESP_LABEL[r.response]}</span></td>
@@ -292,10 +306,11 @@ export function RsvpClient() {
             </table>
           </div>
           <div className="table-foot">
-            <div>SHOWING {filtered.length} OF {rows.length}</div>
-            <div style={{ display: "flex", gap: 4 }}>
-              <Button variant="ghost" size="sm">← 이전</Button>
-              <Button variant="ghost" size="sm">다음 →</Button>
+            <div>SHOWING {rangeFrom}–{rangeTo} OF {filtered.length}</div>
+            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+              <Button variant="ghost" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={clampedPage <= 1}>← 이전</Button>
+              <span style={{ fontSize: 12, color: "var(--muted)", minWidth: 48, textAlign: "center" }}>{clampedPage} / {pageCount}</span>
+              <Button variant="ghost" size="sm" onClick={() => setPage((p) => Math.min(pageCount, p + 1))} disabled={clampedPage >= pageCount}>다음 →</Button>
             </div>
           </div>
         </div>
