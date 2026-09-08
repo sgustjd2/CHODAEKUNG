@@ -485,12 +485,15 @@
   .ivb-ending { padding: 60px 24px 100px; text-align: center; background: var(--wax-deep); color: var(--wax-ink, var(--paper)); }
   .ivb-ending .stamp { display: inline-block; padding: 12px 20px; border: 3px solid var(--paper); border-radius: 6px; transform: rotate(-4deg); margin-bottom: 20px; font-family: var(--font-en); font-weight: 900; font-size: calc(22px * var(--iv-fs, 1)); letter-spacing: calc(0.16em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--paper); }
   .ivb-ending .kung-signature { font-weight: 900; font-size: calc(40px * var(--iv-fs, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); color: var(--paper); }
+  /* Match the brand 쿵 seal (base .seal-kung) so 맞짱쿵 reads like 초대쿵; only a faint outer
+     ring is added for separation on the dark ending background. */
   .ivb-ending .kung-signature .seal-kung {
-    background:
-      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35) 0%, transparent 35%),
-      radial-gradient(circle at 65% 68%, rgba(0,0,0,0.4) 0%, transparent 55%),
-      radial-gradient(circle at 45% 45%, var(--wax-light) 0%, var(--wax) 45%, var(--wax-deep) 100%);
-    box-shadow: 0 0.08em 0.15em rgba(0,0,0,0.4), inset 0 -0.08em 0.15em rgba(0,0,0,0.4), inset 0 0.04em 0.08em rgba(255,255,255,0.25), 0 0 0 0.06em rgba(255,255,255,0.9);
+    box-shadow:
+      0 3px 6px rgba(0,0,0,0.45),
+      inset 0 -3px 6px rgba(60,10,15,0.4),
+      inset 0 3px 4px rgba(255,255,255,0.35),
+      inset 0 0 0 2px rgba(60,10,15,0.5),
+      0 0 0 1px rgba(255,255,255,0.18);
   }
   .ivb-ending .brand-tiny { margin-top: 30px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(255,255,255,0.65); }
 
