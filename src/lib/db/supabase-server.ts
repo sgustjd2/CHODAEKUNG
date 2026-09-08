@@ -4,6 +4,10 @@ import { createServerClient } from "@supabase/ssr";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+/** Whether Supabase auth is configured. When false (e.g. local without keys), login gates are
+ * skipped so the app still runs anonymously in dev. */
+export const authConfigured = Boolean(url && anonKey);
+
 /** Server Supabase client bound to the request cookies (reads the logged-in user's session). */
 export async function createServerSupabase() {
   if (!url || !anonKey) throw new Error("Supabase auth is not configured");

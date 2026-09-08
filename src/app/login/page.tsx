@@ -24,12 +24,15 @@ export default function LoginPage() {
     setBusy(true);
     setMsg(null);
     const sb = createBrowserSupabase();
+    // Return to the page that sent us here (?next=), guarding against open redirects.
+    const rawNext = new URLSearchParams(window.location.search).get("next");
+    const dest = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
     try {
       if (mode === "signup") {
         const { data, error } = await sb.auth.signUp({ email, password: pw });
         if (error) setMsg({ ok: false, text: error.message });
         else if (data.session) {
-          router.push("/dashboard");
+          router.push(dest);
           router.refresh();
         } else {
           setMsg({ ok: true, text: "확인 메일을 보냈어요. 메일의 링크를 눌러 가입을 완료한 뒤 로그인하세요." });
@@ -39,7 +42,7 @@ export default function LoginPage() {
         const { error } = await sb.auth.signInWithPassword({ email, password: pw });
         if (error) setMsg({ ok: false, text: error.message });
         else {
-          router.push("/dashboard");
+          router.push(dest);
           router.refresh();
         }
       }
