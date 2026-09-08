@@ -135,7 +135,6 @@ export const duelSample: Invitation = {
       content: {
         image: "battle_sports",
         eyebrow: "선전포고 · 맞짱 신청서",
-        headerLeft: "Duel No. 001",
         headerRightLines: ["2027 · 05 · 09", "SAT · 07:00 PM"],
         titleLines: [["피할 수 없는"], [{ text: "1대1 맞짱", em: true }]],
         subtitle: "변명·뒤끝·도망 전부 금지 — 자신 없으면 지금 꼬리 내려.",
