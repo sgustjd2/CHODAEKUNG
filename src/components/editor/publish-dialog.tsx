@@ -146,18 +146,10 @@ export function PublishDialog({
       copy();
       return;
     }
-    const imageUrl = cardImg; // the composed 1200×630 card (published slug guaranteed by requirePublished)
     try {
-      K.Share.sendDefault({
-        objectType: "feed",
-        content: {
-          title: title || "초대합니다",
-          description: desc,
-          imageUrl,
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
-        },
-        buttons: [{ title: "초대장 열기", link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
-      });
+      // Scrap the published URL (uses its OG tags / 1200×630 card) instead of a custom feed template:
+      // scrap cards open on both PC and mobile KakaoTalk, whereas feed templates are mobile-only.
+      K.Share.sendScrap({ requestUrl: shareUrl });
     } catch {
       copy();
     }

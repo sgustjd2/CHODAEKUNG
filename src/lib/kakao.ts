@@ -18,7 +18,12 @@ type KakaoShareArg = {
 type KakaoNS = {
   isInitialized: () => boolean;
   init: (key: string) => void;
-  Share: { sendDefault: (arg: KakaoShareArg) => void };
+  Share: {
+    sendDefault: (arg: KakaoShareArg) => void;
+    /** Scrape a URL's OG tags into a link card — clickable on PC *and* mobile, unlike feed
+     *  templates (which show "모바일에서 확인해 주세요" and don't open on desktop). */
+    sendScrap: (arg: { requestUrl: string }) => void;
+  };
 };
 
 export function kakaoEnabled(): boolean {

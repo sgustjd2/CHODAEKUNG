@@ -174,16 +174,10 @@ export function ShareBar({
   const shareKakao = async () => {
     const K = await ensureKakao();
     if (!K || !share) return copyLink();
-    const url = window.location.href;
-    // Use the composed 1200×630 share card (the opengraph-image route), so the KakaoTalk button
-    // sends the same landscape card scrapers get — not the raw (often portrait) cover.
-    const imageUrl = `${window.location.origin}/i/${slug}/opengraph-image`;
     try {
-      K.Share.sendDefault({
-        objectType: "feed",
-        content: { title: share.title, description: share.description, imageUrl, link: { mobileWebUrl: url, webUrl: url } },
-        buttons: [{ title: "초대장 보기", link: { mobileWebUrl: url, webUrl: url } }],
-      });
+      // Scrap the current URL (its OG tags / 1200×630 card): a scrap card opens on both PC and
+      // mobile KakaoTalk, unlike feed templates (mobile-only, PC shows "모바일에서 확인해 주세요").
+      K.Share.sendScrap({ requestUrl: window.location.href });
     } catch {
       copyLink();
     }
