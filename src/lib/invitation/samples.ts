@@ -4,7 +4,7 @@ import { minimalSample } from "./sample-minimal";
 import { cuteSample } from "./sample-cute";
 import { editorialSample } from "./sample-editorial";
 import { developerSample } from "./sample-developer";
-import { battleSample } from "./sample-battle";
+import { battleSample, duelSample } from "./sample-battle";
 import { timelineSamples } from "./sample-timeline";
 import { gamingSamples } from "./sample-gaming";
 
@@ -16,6 +16,7 @@ export const sampleInvitations: Record<string, Invitation> = {
   [editorialSample.slug]: editorialSample,
   [developerSample.slug]: developerSample,
   [battleSample.slug]: battleSample,
+  [duelSample.slug]: duelSample,
   ...Object.fromEntries(timelineSamples.map((s) => [s.slug, s])),
   ...Object.fromEntries(gamingSamples.map((s) => [s.slug, s])),
 };

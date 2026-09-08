@@ -73,6 +73,7 @@ const EVENT_GROUPS: EventGroup[] = [
   {
     key: "battle", label: "경쟁 · 배틀", sub: "Competition",
     items: [
+      { id: "duel", icon: "ic-swords", name: "1대1 맞짱", hint: "1v1 duel" },
       { id: "game-battle", icon: "ic-controller", name: "게임 도전장", hint: "e-sports" },
       { id: "tournament", icon: "ic-trophy", name: "토너먼트", hint: "championship" },
     ],
@@ -91,7 +92,7 @@ const EVENT_SAMPLE: Record<string, string> = {
   basketball: "jogi-battle", tennis: "jogi-battle", golf: "jogi-battle", cycling: "beongae",
   swim: "beongae", yoga: "beongae", study: "beongae", camping: "yangyang-mt", picnic: "beongae",
   travel: "yangyang-mt", cafe: "beongae", foodie: "beongae", music: "after-hours", photo: "after-hours",
-  pet: "cozy-home", "game-battle": "lol-quick", tournament: "lol-rank",
+  pet: "cozy-home", duel: "matjjang", "game-battle": "lol-quick", tournament: "lol-rank",
 };
 
 const CUSTOM_SUGGESTIONS: { name: string; label: string }[] = [
