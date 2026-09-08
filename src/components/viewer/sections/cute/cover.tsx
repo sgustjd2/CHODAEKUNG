@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { Icon } from "@/components/ui/icon";
 import type { CoverContent } from "@/lib/invitation/types";
 
@@ -7,10 +8,10 @@ export function CuteCover({ content }: { content: CoverContent }) {
   return (
     <div className="c-cover">
       <Icon name={content.mascot ?? "momo-party"} className="c-momo" viewBox="0 0 200 260" />
-      {content.eyebrow && <div className="c-cover-eb">{content.eyebrow}</div>}
+      {content.eyebrow && <div className="c-cover-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
       {content.titleLines && (
         <div className="c-title-cute">
-          <Rich lines={content.titleLines} />
+          <Editable path="titleLines" multiline><Rich lines={content.titleLines} /></Editable>
         </div>
       )}
       {content.subtitleLines && (
@@ -18,7 +19,7 @@ export function CuteCover({ content }: { content: CoverContent }) {
           {content.subtitleLines.map((l, i) => (
             <Fragment key={i}>
               {i > 0 && <br />}
-              {l}
+              <Editable path={`subtitleLines.${i}`}>{l}</Editable>
             </Fragment>
           ))}
         </div>

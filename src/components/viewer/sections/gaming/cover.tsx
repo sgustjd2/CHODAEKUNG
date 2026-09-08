@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
@@ -9,23 +10,23 @@ export function GamingCover({ content }: { content: CoverContent }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="g-bg" src={photoUrl(content.image)} alt="" style={content.imgFilter ? { filter: content.imgFilter } : undefined} />
       <div className="g-cover-top">
-        {content.headerLeft && <div className="g-tag">{content.headerLeft}</div>}
+        {content.headerLeft && <div className="g-tag"><Editable path="headerLeft">{content.headerLeft}</Editable></div>}
         {content.headerRightLines && (
           <div className="g-time-tag">
             {content.headerRightLines.map((l, i) => (
               <Fragment key={i}>
                 {i > 0 && <br />}
-                {l}
+                <Editable path={`headerRightLines.${i}`}>{l}</Editable>
               </Fragment>
             ))}
           </div>
         )}
       </div>
       <div className="g-cover-bot">
-        {content.eyebrow && <div className="g-eb">{content.eyebrow}</div>}
+        {content.eyebrow && <div className="g-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
         {content.titleLines && (
           <h1 className="g-title">
-            <Rich lines={content.titleLines} />
+            <Editable path="titleLines" multiline><Rich lines={content.titleLines} /></Editable>
           </h1>
         )}
         {content.subtitleLines && <div className="g-title-sub">{content.subtitleLines.join(" ")}</div>}

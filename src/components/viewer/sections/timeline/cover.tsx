@@ -1,15 +1,16 @@
 import { Fragment } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { Icon } from "@/components/ui/icon";
 import type { CoverContent } from "@/lib/invitation/types";
 
 export function TimelineCover({ content }: { content: CoverContent }) {
   return (
     <div className={`tl-cover${content.bg ? ` tl-cover-${content.bg}` : ""}`}>
-      {content.eyebrow && <div className="tl-brand-line">{content.eyebrow}</div>}
+      {content.eyebrow && <div className="tl-brand-line"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
       {content.titleLines && (
         <h1>
-          <Rich lines={content.titleLines} />
+          <Editable path="titleLines" multiline><Rich lines={content.titleLines} /></Editable>
         </h1>
       )}
       {content.subtitleLines && (
@@ -17,7 +18,7 @@ export function TimelineCover({ content }: { content: CoverContent }) {
           {content.subtitleLines.map((l, i) => (
             <Fragment key={i}>
               {i > 0 && <br />}
-              {l}
+              <Editable path={`subtitleLines.${i}`}>{l}</Editable>
             </Fragment>
           ))}
         </div>

@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, memo, useContext } from "react";
 import type { ReactNode } from "react";
+
+/** Renders children once and never re-renders. Inside a contentEditable this stops React from
+ * reconciling inner nodes the user has edited (which otherwise throws removeChild) — the DOM is
+ * user-owned after mount; edits are read back on blur. */
+const Frozen = memo(function Frozen({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}, () => true);
 
 /** Provided by the editor preview only. The public viewer never sets this, so <Editable> renders
  * plain text there (no contentEditable, no handlers) — editing stays an editor concern (§7.2). */
@@ -13,7 +20,7 @@ export const EditContext = createContext<EditCtx | null>(null);
  * (Enter also commits); everywhere else it's just its children. `path` is the field within the
  * section's content, e.g. "dateLabel", "eyebrow", "names.0".
  */
-export function Editable({ path, children }: { path: string; children: ReactNode }) {
+export function Editable({ path, multiline, children }: { path: string; multiline?: boolean; children: ReactNode }) {
   const ctx = useContext(EditContext);
   if (!ctx) return <>{children}</>;
   return (
@@ -23,15 +30,16 @@ export function Editable({ path, children }: { path: string; children: ReactNode
       contentEditable
       suppressContentEditableWarning
       spellCheck={false}
-      onBlur={(e) => ctx.onEdit(ctx.secId, path, e.currentTarget.textContent ?? "")}
+      // multiline (e.g. titleLines) keeps <br>/line breaks via innerText; single-line uses textContent.
+      onBlur={(e) => ctx.onEdit(ctx.secId, path, multiline ? e.currentTarget.innerText : e.currentTarget.textContent ?? "")}
       onKeyDown={(e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !multiline) {
           e.preventDefault();
           (e.currentTarget as HTMLElement).blur();
         }
       }}
     >
-      {children}
+      <Frozen>{children}</Frozen>
     </span>
   );
 }

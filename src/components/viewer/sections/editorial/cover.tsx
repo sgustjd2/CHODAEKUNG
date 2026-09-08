@@ -1,4 +1,5 @@
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { photoUrl } from "@/lib/photo";
 import type { CoverContent } from "@/lib/invitation/types";
 
@@ -6,20 +7,20 @@ export function EditorialCover({ content }: { content: CoverContent }) {
   return (
     <div className="e-cover" style={{ backgroundImage: `url('${photoUrl(content.image)}')` }}>
       <div className="e-cover-top">
-        {content.headerLeft && <div className="e-issue">{content.headerLeft}</div>}
+        {content.headerLeft && <div className="e-issue"><Editable path="headerLeft">{content.headerLeft}</Editable></div>}
         {content.headerRightLines && (
           <div className="e-date-strip">
             {content.headerRightLines.map((l, i) => (
-              <span key={i}>{l}</span>
+              <span key={i}><Editable path={`headerRightLines.${i}`}>{l}</Editable></span>
             ))}
           </div>
         )}
       </div>
       <div className="e-cover-bot">
-        {content.eyebrow && <div className="e-cover-eb">{content.eyebrow}</div>}
+        {content.eyebrow && <div className="e-cover-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
         {content.titleLines && (
           <div className="e-cover-title">
-            <Rich lines={content.titleLines} />
+            <Editable path="titleLines" multiline><Rich lines={content.titleLines} /></Editable>
           </div>
         )}
         {content.coverSub && (

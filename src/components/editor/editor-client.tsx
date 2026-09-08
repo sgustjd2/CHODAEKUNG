@@ -79,6 +79,13 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+/** Flatten a rich Line (string | Run[]) to plain text — for the inline-edit titleLines guard. */
+function lineToText(line: unknown): string {
+  if (typeof line === "string") return line;
+  if (Array.isArray(line)) return line.map((r) => (typeof r === "string" ? r : (r as { text?: string })?.text ?? "")).join("");
+  return "";
+}
+
 /** Blank-start ONLY: fill the (empty) date section from the wizard date, across the fields the
  * themes actually render — title (romantic/cute), bigDate + dataGrid (minimal/developer), and the
  * calendar month grid (romantic). Deliberately NOT called on a template start, so a chosen
@@ -248,11 +255,19 @@ export function EditorClient() {
       sections: d.sections.map((s) => {
         if (s.id !== secId) return s;
         const content = { ...(s.content as Record<string, unknown>) };
-        if (path.startsWith("names.")) {
-          const idx = Number(path.slice(6));
-          const names = Array.isArray(content.names) ? [...(content.names as unknown[])] : [];
-          names[idx] = value;
-          content.names = names;
+        const dot = path.indexOf(".");
+        if (path === "titleLines") {
+          // Multi-line rich title: split the edited text into plain-string lines. Guard on change so
+          // a no-op click (text identical) preserves the original Line[] and its em runs.
+          const cur = Array.isArray(content.titleLines) ? (content.titleLines as unknown[]).map(lineToText).join("\n") : "";
+          if (value !== cur) content.titleLines = value.split("\n");
+        } else if (dot >= 0) {
+          // Array field by index: names[i], subtitleLines[i], headerRightLines[i].
+          const field = path.slice(0, dot);
+          const idx = Number(path.slice(dot + 1));
+          const arr = Array.isArray(content[field]) ? [...(content[field] as unknown[])] : [];
+          arr[idx] = value;
+          content[field] = arr;
         } else {
           content[path] = value;
         }

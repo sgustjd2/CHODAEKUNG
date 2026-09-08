@@ -1,5 +1,6 @@
 import type { CoverContent, Line } from "@/lib/invitation/types";
 import { photoUrl } from "@/lib/photo";
+import { Editable } from "../editable";
 
 /** Flatten Line[] (string | Rich[]) to plain text for the generic cover title. */
 function flatten(lines?: Line[]): string {
@@ -27,10 +28,10 @@ export function GenericCover({ content }: { content: CoverContent }) {
         style={{ backgroundImage: `url('${photoUrl(content.image)}')`, filter: content.imgFilter || undefined }}
       />
       <div className="gcover-body">
-        {content.eyebrow && <div className="gcover-eb">{content.eyebrow}</div>}
+        {content.eyebrow && <div className="gcover-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
         {title && <h1 className="gcover-title">{title}</h1>}
         {subtitle && <p className="gcover-sub">{subtitle}</p>}
-        {content.dateLabel && <div className="gcover-date">{content.dateLabel}</div>}
+        {content.dateLabel && <div className="gcover-date"><Editable path="dateLabel">{content.dateLabel}</Editable></div>}
       </div>
     </div>
   );
