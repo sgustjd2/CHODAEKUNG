@@ -62,6 +62,19 @@ export const TEXT_COLORS = ["#2A2A3E", "#1A1A1A", "#3A2E2E", "#2E3A34", "#4A4A5E
 /** Background-color presets for the invitation page (--iv-bg override). Soft light tints. */
 export const BG_COLORS = ["#FFFFFF", "#FDF8F2", "#FCE0DC", "#F1F5F0", "#EEF4F8", "#F3F0F7"];
 
+/** One-click color palettes: a harmonious accent + background + text combo applied together,
+ * so a non-designer gets a coherent look without hand-picking each. `null` = theme default. */
+export const PALETTES: { id: string; label: string; accent: string | null; bg: string | null; text: string | null }[] = [
+  { id: "default", label: "기본", accent: null, bg: null, text: null },
+  { id: "blush", label: "블러시", accent: "#E38B8B", bg: "#FDF8F2", text: "#3A2E2E" },
+  { id: "peach", label: "피치", accent: "#E29F76", bg: "#FCE7D5", text: "#3A2E2E" },
+  { id: "sage", label: "세이지", accent: "#8AA588", bg: "#F1F5F0", text: "#2E3A34" },
+  { id: "sky", label: "스카이", accent: "#8AB2C6", bg: "#EEF4F8", text: "#25323A" },
+  { id: "lilac", label: "라일락", accent: "#B097CC", bg: "#F3F0F7", text: "#2E2838" },
+  { id: "gold", label: "골드", accent: "#D9B96A", bg: "#FFFDF5", text: "#2A2A3E" },
+  { id: "mono", label: "모노", accent: "#2A2A3E", bg: "#F5F3F0", text: "#1A1A1A" },
+];
+
 // Font registry lives in lib (shared with the viewer without pulling editor code into its bundle).
 export { FONTS, fontById, googleFontHref } from "@/lib/invitation/fonts";
 export const THEME_PRESETS: { id: ThemeId; label: string; enabled: boolean }[] = [

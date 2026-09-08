@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -159,6 +159,9 @@ function ContentPanel({ api }: { api: EditorApi }) {
 
 function DesignPanel({ api }: { api: EditorApi }) {
   const { draft, setDraft, accent, setAccent, font, setFont, textColor, setTextColor, fontScale, setFontScale, letterSpacing, setLetterSpacing, lineHeight, setLineHeight, bgColor, setBgColor, cover, patch, applyTemplate } = api;
+  const applyPalette = (p: (typeof PALETTES)[number]) =>
+    setDraft((d) => ({ ...d, accent: p.accent ?? undefined, bgColor: p.bg ?? undefined, textColor: p.text ?? undefined }));
+  const paletteActive = (p: (typeof PALETTES)[number]) => (p.accent ?? null) === accent && (p.bg ?? null) === bgColor && (p.text ?? null) === textColor;
   const [overlay, setOverlay] = useState(65);
   return (
     <>
@@ -185,6 +188,24 @@ function DesignPanel({ api }: { api: EditorApi }) {
               disabled={!p.enabled}
               onClick={() => p.enabled && setDraft((d) => ({ ...d, theme: p.id }))}
             >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>색상 팔레트</h6>
+        <div className="palette-row">
+          {PALETTES.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={`palette-chip${paletteActive(p) ? " active" : ""}`}
+              style={{ background: p.bg ?? "var(--card)", color: p.text ?? "var(--ink)" }}
+              onClick={() => applyPalette(p)}
+              title={p.label}
+            >
+              <span className="palette-dot" style={{ background: p.accent ?? "var(--muted)" }} />
               {p.label}
             </button>
           ))}

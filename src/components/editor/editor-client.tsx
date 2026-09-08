@@ -11,7 +11,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
-import { ACCENTS, BG_COLORS, FONTS, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, blankSection, getInvitation } from "@/lib/invitation/samples";
@@ -152,6 +152,10 @@ export function EditorClient() {
   const setLineHeight = (n: number) => setDraft((d) => ({ ...d, lineHeight: n === 1 ? undefined : n }));
   const bgColor = draft.bgColor ?? null;
   const setBgColor = (c: string | null) => setDraft((d) => ({ ...d, bgColor: c ?? undefined }));
+  // One-click palette: sets accent + background + text color together (a coherent combo).
+  const applyPalette = (p: (typeof PALETTES)[number]) =>
+    setDraft((d) => ({ ...d, accent: p.accent ?? undefined, bgColor: p.bg ?? undefined, textColor: p.text ?? undefined }));
+  const paletteActive = (p: (typeof PALETTES)[number]) => (p.accent ?? null) === accent && (p.bg ?? null) === bgColor && (p.text ?? null) === textColor;
   // Per-section color override for the currently-selected section (on top of the invitation-wide vars).
   const selSec = draft.sections.find((s) => s.id === selectedId);
   const setSecStyle = (key: "accent" | "bg", val: string | null) =>
@@ -620,6 +624,27 @@ export function EditorClient() {
                   </div>
                   <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
                     같은 내용을 테마만 바꿔 즉시 다시 렌더해요. 게이밍·개발자 테마는 섹션 구성이 달라 일부 섹션이 숨겨질 수 있어요.
+                  </p>
+                </div>
+                <div className="insp-group">
+                  <h5>색상 팔레트</h5>
+                  <div className="palette-row">
+                    {PALETTES.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className={`palette-chip${paletteActive(p) ? " active" : ""}`}
+                        style={{ background: p.bg ?? "var(--card)", color: p.text ?? "var(--ink)" }}
+                        onClick={() => applyPalette(p)}
+                        title={p.label}
+                      >
+                        <span className="palette-dot" style={{ background: p.accent ?? "var(--muted)" }} />
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 8, lineHeight: 1.6 }}>
+                    강조색·배경·글씨색을 한 번에 어울리는 조합으로 바꿔요. 아래에서 개별로 더 다듬을 수 있어요.
                   </p>
                 </div>
                 <div className="insp-group">
