@@ -11,6 +11,8 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { PublishDialog } from "@/components/editor/publish-dialog";
 import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor";
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
+import { TextStyleControls } from "@/components/editor/text-style-controls";
+import { mergeTextStyle } from "@/lib/invitation/text-style";
 import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
@@ -18,7 +20,7 @@ import { blankInvitation, exampleSection, getInvitation } from "@/lib/invitation
 import { invitationMeta } from "@/lib/invitation/meta";
 import { monthGrid } from "@/lib/invitation/month-grid";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
-import type { Invitation, Section, SectionType, ThemeId } from "@/lib/invitation/types";
+import type { Invitation, Section, SectionType, TextStyle, ThemeId } from "@/lib/invitation/types";
 
 type Tab = "content" | "style" | "layout" | "anim";
 
@@ -204,6 +206,31 @@ export function EditorClient() {
         return { ...s, style: Object.keys(style).length ? style : undefined };
       }),
     }));
+  // Per-field text styling: the currently-focused editable text field (from the preview) + a writer
+  // that merges a style override into that field, keyed by the field's Editable path.
+  const [selectedField, setSelectedField] = useState<{ secId: string; path: string } | null>(null);
+  const patchTextStyle = (secId: string, path: string, partial: Partial<TextStyle> | null) =>
+    setDraft((d) => ({
+      ...d,
+      sections: d.sections.map((s) => {
+        if (s.id !== secId) return s;
+        const style = { ...s.style };
+        const text = { ...(style.text ?? {}) };
+        const next = mergeTextStyle(text[path], partial);
+        if (next) text[path] = next;
+        else delete text[path];
+        if (Object.keys(text).length) style.text = text;
+        else delete style.text;
+        return { ...s, style: Object.keys(style).length ? style : undefined };
+      }),
+    }));
+  const selFieldStyle: TextStyle | undefined = selectedField
+    ? draft.sections.find((s) => s.id === selectedField.secId)?.style?.text?.[selectedField.path]
+    : undefined;
+  // Floating style toolbar: anchor it above the selected editable in the preview, following scroll.
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [ftPos, setFtPos] = useState<{ top: number; left: number } | null>(null);
+
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   // Two-step guard for the destructive full reset ("되돌리기"): first click arms, second confirms.
@@ -325,6 +352,27 @@ export function EditorClient() {
   }, [hydrated, slug, draft, title, hidden, accent]);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
+
+  // Keep the floating style toolbar anchored above the selected editable field as the preview scrolls
+  // or the layout changes (a style edit can resize the text). Cleared when no field is selected.
+  useEffect(() => {
+    if (!selectedField) { setFtPos(null); return; }
+    const preview = previewRef.current;
+    if (!preview) return;
+    // Fixed positioning (viewport coords) so the panel is never clipped by the preview's overflow;
+    // recomputed on any scroll/resize so it tracks the field.
+    const compute = () => {
+      const sel = `[data-sec-id="${CSS.escape(selectedField.secId)}"] [data-edit="${CSS.escape(selectedField.path)}"]`;
+      const el = preview.querySelector<HTMLElement>(sel);
+      if (!el) { setFtPos(null); return; }
+      const er = el.getBoundingClientRect();
+      setFtPos({ top: er.bottom + 6, left: Math.max(150, Math.min(er.left + er.width / 2, window.innerWidth - 150)) });
+    };
+    compute();
+    window.addEventListener("scroll", compute, true);
+    window.addEventListener("resize", compute);
+    return () => { window.removeEventListener("scroll", compute, true); window.removeEventListener("resize", compute); };
+  }, [selectedField, visibleDraft]);
 
   // Inline WYSIWYG edit from the center preview: commit a tagged text field to the draft.
   // `path` is a field within the section content, e.g. "eyebrow", "dateLabel", "names.0".
@@ -610,7 +658,7 @@ export function EditorClient() {
         </aside>
 
         {/* CENTER: preview */}
-        <div className="col-preview">
+        <div className="col-preview" ref={previewRef}>
           <div className="preview-toolbar">
             <span className="d" /> LIVE PREVIEW · 390 × 844 · {mode.toUpperCase()} MODE
           </div>
@@ -618,10 +666,23 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} selectedId={selectedId} />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} onSelectField={(secId, path) => setSelectedField({ secId, path })} selectedId={selectedId} />
               </div>
             </div>
           </div>
+          {selectedField && ftPos && (
+            <div className="ts-float" style={{ top: ftPos.top, left: ftPos.left }}>
+              <div className="ts-float-head">
+                <span>문구 스타일</span>
+                <button type="button" aria-label="닫기" onClick={() => setSelectedField(null)}>✕</button>
+              </div>
+              <TextStyleControls
+                value={selFieldStyle}
+                onChange={(p) => patchTextStyle(selectedField.secId, selectedField.path, p)}
+                onReset={() => patchTextStyle(selectedField.secId, selectedField.path, null)}
+              />
+            </div>
+          )}
         </div>
 
         {/* RIGHT: inspector */}
@@ -637,6 +698,18 @@ export function EditorClient() {
           <div className="inspector-body">
             {tab === "content" && (
               <>
+                <div className="insp-group">
+                  <h5>문구 스타일</h5>
+                  {selectedField ? (
+                    <TextStyleControls
+                      value={selFieldStyle}
+                      onChange={(p) => patchTextStyle(selectedField.secId, selectedField.path, p)}
+                      onReset={() => patchTextStyle(selectedField.secId, selectedField.path, null)}
+                    />
+                  ) : (
+                    <div className="ts-hint">프리뷰에서 바꾸고 싶은 문구를 클릭하면 크기·색·글꼴·굵기·기울임을 지정할 수 있어요.</div>
+                  )}
+                </div>
                 <ContentEditors draft={draft} patch={patch} onEventStart={(iso) => setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
                 <div className="insp-group">
                   <h5>캘린더</h5>

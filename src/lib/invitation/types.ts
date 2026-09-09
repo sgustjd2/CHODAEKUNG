@@ -285,8 +285,14 @@ export type AccountContent = {
   accounts: { side?: string; bank: string; number: string; holder: string }[];
 };
 
-/** Per-section color overrides (on top of the invitation-wide accent/bg). Absent = inherit. */
-export type SectionStyle = { accent?: string; bg?: string };
+/** Per-text-field style override (on top of the theme). Keyed by the field's Editable `path`.
+ * All fields optional; absent = inherit the theme. `size` is a font-size multiplier applied as `em`
+ * (theme-relative, so it scales with each theme's base size); `font` is a FONTS registry id. */
+export type TextStyle = { size?: number; color?: string; font?: string; bold?: boolean; italic?: boolean };
+
+/** Per-section overrides (on top of the invitation-wide settings). Absent = inherit.
+ * `text` maps an Editable field path (e.g. "eyebrow", "names.0") to its per-field style. */
+export type SectionStyle = { accent?: string; bg?: string; text?: Record<string, TextStyle> };
 
 export type SectionBody =
   | { id: string; type: "cover"; content: CoverContent }

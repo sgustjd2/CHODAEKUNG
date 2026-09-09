@@ -759,3 +759,27 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - **P3 product decisions (user, 2026-09-09):** D1 monetization → **defer real checkout, keep scaffold**
   (no provider chosen). RSVP capacity (정원/마감) → **stays FREE**. D2 creator marketplace → **status quo**
   (leave copy + unbuilt). No code changed for P3; see `remaining-phases.md`.
+
+### 2026-09-09 — Per-field text styling + inspector section cards (user request)
+
+- **Inspector section separation** (`editor.css` `.insp-group`): each section's editor is now its own
+  card (white surface, `--line-strong` border, `--r-md` radius, wax accent bar on the `h5` header)
+  instead of a thin divider — sections read as clearly separated blocks in the right panel.
+- **Per-field text styling** (문구마다 크기·색·글꼴·굵기·기울임). Granularity + placement chosen by user:
+  **per-field** (not per-run rich text), controls in **both** the inspector and a preview floating toolbar.
+  - Data model: `TextStyle` + `SectionStyle.text?: Record<path, TextStyle>` (`types.ts`), keyed by the
+    field's `Editable` `path`. `size` is a theme-relative `em` multiplier (scales with each theme's base).
+  - Pure logic in `src/lib/invitation/text-style.ts`: `textStyleCss` (style → CSS), `mergeTextStyle`
+    (merge + normalize away no-ops, single source of truth for an edit), `isEmptyTextStyle`, `TEXT_SIZE_STEPS`.
+  - Rendering: `<Editable>` reads a new `TextStyleContext` and applies the style — in the editor AND on the
+    public page (public wraps a section only when it has styles → zero overhead otherwise). `invitation-viewer`
+    provides the context per section and loads any per-field Google fonts via extra `<FontLink>`s.
+  - Editor: `selectedField {secId,path}` set on field focus (via `onSelectField` through the viewer →
+    EditContext). Shared `TextStyleControls` drives both surfaces; `patchTextStyle` writes via `mergeTextStyle`.
+    Floating toolbar (`.ts-float`) is `position:fixed` (viewport coords, recomputed on scroll/resize) so the
+    preview's `overflow:hidden` never clips it.
+  - SCOPE (v1): desktop editor only for EDITING styles; mobile bottom-sheet editor keeps working (styles still
+    RENDER in its preview + public page) but has no per-field style UI yet — follow-up if wanted.
+- Verified: `tsc --noEmit` clean, `eslint` 0 errors (only the repo's existing set-state-in-effect warnings),
+  `next build --webpack` passes (all routes). Interactive editor is login-gated → the WYSIWYG toolbar/inspector
+  UX needs a hands-on check on a logged-in session (project norm; see next-session.md).

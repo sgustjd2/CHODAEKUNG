@@ -2,6 +2,8 @@
 
 import { createContext, memo, useContext } from "react";
 import type { ReactNode } from "react";
+import type { TextStyle } from "@/lib/invitation/types";
+import { textStyleCss } from "@/lib/invitation/text-style";
 
 /** Renders children once and never re-renders. Inside a contentEditable this stops React from
  * reconciling inner nodes the user has edited (which otherwise throws removeChild) — the DOM is
@@ -17,8 +19,16 @@ export type EditCtx = {
   onEdit: (secId: string, path: string, value: string, asLines: boolean) => void;
   /** Focusing an editable selects its section, so the side panel follows the preview. */
   onSelect?: (secId: string) => void;
+  /** Focusing an editable also reports which text field it is, so the per-field style controls
+   * (inspector panel + floating toolbar) target it. */
+  onSelectField?: (secId: string, path: string) => void;
 };
 export const EditContext = createContext<EditCtx | null>(null);
+
+/** Per-field text-style overrides for the current section, keyed by Editable `path`. Provided by the
+ * viewer around each section (in the editor always; on the public page only when styles exist), so
+ * <Editable> can apply them in BOTH the editor and the published page. */
+export const TextStyleContext = createContext<Record<string, TextStyle> | null>(null);
 
 /** Ghost text for an empty field, by content field name — guides a blank-canvas start
  * ("제목"/"이름"/"날짜" instead of a generic "입력"). Falls back to "입력". */
@@ -57,17 +67,22 @@ export function Editable({
   children: ReactNode;
 }) {
   const ctx = useContext(EditContext);
-  if (!ctx) return <>{children}</>;
+  const styleMap = useContext(TextStyleContext);
+  const inlineStyle = textStyleCss(styleMap?.[path]);
+  // Public page (no editor context): render a styled span only when this field carries an override,
+  // otherwise stay a zero-overhead plain text node (unchanged behavior).
+  if (!ctx) return inlineStyle ? <span style={inlineStyle}>{children}</span> : <>{children}</>;
   return (
     <span
       className="iv-editable"
       data-edit={path}
       data-ph={placeholder ?? placeholderForPath(path)}
+      style={inlineStyle}
       contentEditable
       suppressContentEditableWarning
       spellCheck={false}
-      // Focusing an inline field selects its section so the side panel follows the preview.
-      onFocus={() => ctx.onSelect?.(ctx.secId)}
+      // Focusing an inline field selects its section (side panel follows) and targets it for styling.
+      onFocus={() => { ctx.onSelect?.(ctx.secId); ctx.onSelectField?.(ctx.secId, path); }}
       // multiline (e.g. titleLines) keeps <br>/line breaks via innerText; single-line uses textContent.
       onBlur={(e) => ctx.onEdit(ctx.secId, path, multiline ? e.currentTarget.innerText : e.currentTarget.textContent ?? "", !!multiline)}
       onKeyDown={(e) => {

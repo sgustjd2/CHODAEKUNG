@@ -10,7 +10,7 @@ import { invitationMeta, lineText } from "@/lib/invitation/meta";
 import { ShareBar } from "./share-bar";
 import { ViewPing } from "./view-ping";
 import { Reveal } from "./reveal";
-import { EditContext } from "./editable";
+import { EditContext, TextStyleContext } from "./editable";
 import { FontLink } from "./font-link";
 import { LightboxRoot } from "./lightbox";
 import { fontById } from "@/lib/invitation/fonts";
@@ -45,6 +45,7 @@ export function InvitationViewer({
   preview,
   onEdit,
   onSelectSection,
+  onSelectField,
   selectedId,
 }: {
   invitation: Invitation;
@@ -56,6 +57,8 @@ export function InvitationViewer({
   onEdit?: (secId: string, path: string, value: string, asLines: boolean) => void;
   /** Editor-only: focusing an inline field selects its section, so the side panel follows the preview. */
   onSelectSection?: (secId: string) => void;
+  /** Editor-only: focusing an inline field reports (secId, path) so the per-field style controls target it. */
+  onSelectField?: (secId: string, path: string) => void;
   /** Editor-only: the currently selected section id — highlights that section in the contained preview. */
   selectedId?: string;
 }) {
@@ -74,6 +77,16 @@ export function InvitationViewer({
   // CSS reads these vars (--wax = accent, --font-* = Korean text font, --ink = body text color).
   // ponytail: --wax-deep uses the same hue as --wax (matches the editor); derive a darker shade if hover depth matters.
   const font = fontById(invitation.font);
+  // Per-field font overrides (section.style.text[*].font) each need their Google font loaded too.
+  const fieldFonts = new Set<string>();
+  for (const s of invitation.sections) {
+    const text = s.style?.text;
+    if (!text) continue;
+    for (const ts of Object.values(text)) {
+      const g = ts.font ? fontById(ts.font)?.google : undefined;
+      if (g && g !== font?.google) fieldFonts.add(g);
+    }
+  }
   const vars: Record<string, string> = {};
   if (invitation.accent) {
     vars["--wax"] = invitation.accent;
@@ -108,6 +121,9 @@ export function InvitationViewer({
       style={rootStyle}
     >
       <FontLink google={font?.google} />
+      {[...fieldFonts].map((g) => (
+        <FontLink key={g} google={g} />
+      ))}
       {animate && (
         <noscript>
           <style>{`.iv-reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>
@@ -145,14 +161,19 @@ export function InvitationViewer({
           // In the editor preview (contained), wrap each section so the editor can scroll to it
           // (section-list click) and target inline edits. Public viewer DOM stays unchanged
           // unless the section carries a per-section override (then it gets a vars wrapper).
+          const textStyles = s.style?.text ?? null;
           if (contained) {
             return (
               <div key={s.id} data-sec-id={s.id} className={`iv-secwrap${selectedId === s.id ? " selected" : ""}`} style={secVars}>
-                {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection }}>{node}</EditContext.Provider> : node}
+                <TextStyleContext.Provider value={textStyles}>
+                  {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection, onSelectField }}>{node}</EditContext.Provider> : node}
+                </TextStyleContext.Provider>
               </div>
             );
           }
-          const inner = secVars ? <div className="iv-secvars" style={secVars}>{node}</div> : node;
+          // Public page: only wrap in a style provider when this section actually carries field styles.
+          const styled = textStyles ? <TextStyleContext.Provider value={textStyles}>{node}</TextStyleContext.Provider> : node;
+          const inner = secVars ? <div className="iv-secvars" style={secVars}>{styled}</div> : styled;
           return animate ? (
             <Reveal key={s.id} anim={reveal} index={i}>
               {inner}

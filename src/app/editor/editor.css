@@ -90,9 +90,10 @@
   .insp-tab { flex: 1; padding: 14px 8px; background: transparent; border: none; font-family: var(--font-ko); font-size: 12px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 150ms; }
   .insp-tab.active { color: var(--wax-deep); border-bottom-color: var(--wax); }
   .inspector-body { flex: 1; overflow-y: auto; padding: 20px; }
-  .insp-group { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
-  .insp-group:last-child { border-bottom: none; margin-bottom: 0; }
-  .insp-group h5 { font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  /* Each section's editor is its own card, so sections read as clearly-separated blocks in the inspector. */
+  .insp-group { background: var(--card); border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 16px; margin-bottom: 12px; }
+  .insp-group:last-child { margin-bottom: 0; }
+  .insp-group h5 { font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--wax-deep); margin: 0 0 12px; padding-left: 8px; border-left: 2px solid var(--wax); line-height: 1.2; }
   .insp-field { margin-bottom: 14px; }
   .insp-field:last-child { margin-bottom: 0; }
   .insp-label { font-size: 11px; font-weight: 600; color: var(--fg-2); margin-bottom: 5px; display: flex; justify-content: space-between; }
@@ -133,6 +134,22 @@
   .radio-btn:hover { border-color: var(--line-strong); }
   .radio-btn.active { background: var(--ink); color: var(--paper); border-color: transparent; }
   .radio-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  /* Per-field text-style controls — shared by the inspector "문구 스타일" panel and the floating toolbar */
+  .ts-hint { font-size: 12px; color: var(--fg-3, #8a8a99); line-height: 1.6; }
+  .ts-controls { display: flex; flex-direction: column; gap: 12px; }
+  .ts-row { display: flex; align-items: center; gap: 10px; }
+  .ts-lbl { flex-shrink: 0; width: 34px; font-size: 11px; font-weight: 600; color: var(--fg-2); }
+  .ts-row .radio-group { flex: 1; }
+  .ts-color { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .ts-color input[type=color] { width: 34px; height: 30px; padding: 0; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: none; cursor: pointer; }
+  .ts-mini { padding: 6px 10px; background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-pill); font-family: var(--font-ko); font-size: 11px; font-weight: 600; color: var(--fg-2); cursor: pointer; }
+  .ts-mini:hover { border-color: var(--line-strong); }
+  .ts-font { flex: 1; }
+  .ts-reset { align-self: flex-start; margin-top: 2px; background: none; border: none; padding: 0; font-family: var(--font-ko); font-size: 11px; font-weight: 600; color: var(--wax-deep); cursor: pointer; text-decoration: underline; }
+  .ts-float { position: fixed; transform: translateX(-50%); z-index: 60; width: 260px; max-width: calc(100vw - 24px); background: var(--card, #fff); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: var(--shadow-lg, 0 16px 40px -12px rgba(42,42,62,0.28)); padding: 12px; }
+  .ts-float-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .ts-float-head button { background: none; border: none; font-size: 13px; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 2px; }
+  .ts-float-head button:hover { color: var(--ink); }
   .cover-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .cover-thumb { aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; width: 100%; }
   .cover-thumb.active { border-color: var(--wax); }
