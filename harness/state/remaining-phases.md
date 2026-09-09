@@ -72,7 +72,11 @@ tables, no fixes needed.
 
 These are referenced in the UI but unbuilt; each needs the user's product direction before coding.
 
-- **D1 · Monetization.** 🟡 SCAFFOLD DONE (2026-09-07). Decisions (user): per-invitation one-time
+- **D1 · Monetization.** 🟡 SCAFFOLD DONE (2026-09-07); **real checkout DEFERRED (user, 2026-09-09)** —
+  keep the scaffold, do not build payment infra until there's real traffic/demand; no provider chosen yet.
+  Also decided 2026-09-09: **RSVP capacity (정원/마감) stays FREE** (it's a baseline expectation for the
+  small-meetup use cases; premium stays gallery/storage + advanced analytics, per `entitlements.ts`).
+  Decisions (user): per-invitation one-time
   unlock; premium = advanced analytics + capacity; scaffold-first, no real payments. Built
   `src/lib/invitation/entitlements.ts` (Tier/isPremium/FREE_LIMITS/PREMIUM_FEATURES/canAddGalleryPhoto),
   `tier` on the Invitation type, `UpgradeCta` (components/premium), and a wired+safe capacity gate
@@ -87,6 +91,8 @@ These are referenced in the UI but unbuilt; each needs the user's product direct
 - **D2 · Public / creator marketplace.** The "Public · 검색 노출" visibility option sets
   visibility=published (now indexable via the SEO work), but there's no discovery/marketplace UI or
   creator-template listing. The copy promises "크리에이터 템플릿으로 마켓 등록" — unbuilt.
+  **Decision (user, 2026-09-09): STATUS QUO** — leave the copy and the unbuilt state as-is for now; revisit
+  discovery/marketplace direction later. No action this session.
 - **D3 · Guest RSVP editing.** ✅ DONE (2026-09-07). On submit, the response is saved to
   `localStorage["chodaekung:rsvp:<slug>"]`; on return this browser enters edit mode — pill "응답 수정",
   modal pre-filled (name/response/guests/message) with an edit note, "수정 저장" button, "수정 완료"

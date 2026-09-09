@@ -721,3 +721,41 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   consent note ("'참석' 선택 시 이름이 명단에 표시돼요") when the invitation has an attendees section (hasAttendees).
 - Editor: header content editor + SECTION_META (참석자 명단 / ic-users). Verified: addable, renders, empty
   state, consent note appears in the preview RSVP form.
+
+### 2026-09-09 — P2 UI/UX audit (untouched surfaces) + P3 product decisions
+
+- Scope: extended the `improve-ui` audit to the four surfaces never given a dedicated pass — `/new` wizard,
+  `/rsvp`, `/settings`, `/media` (prior passes covered landing/login/viewer/editor/dashboard). Source-based
+  (all login-gated). Ran 4 parallel audit agents; then validated every candidate against the authoritative
+  Genspark mockups (`design/09_rsvp_dashboard.html`, `design/05_...`, `design/assets/tokens.css`) before acting.
+- Audit yield: `/settings` clean. `/media` 1, `/rsvp` 3, `/new` 2 candidates. Plans in `design-plans/`
+  (each carries a RESOLUTION header).
+- Applied (3):
+  - **`/media` PhotoUpload unstyled — FIXED (root cause).** `PhotoUpload` renders `.insp-add`/`.insp-photos`/
+    `.insp-photo`, defined only inside `editor.css`'s `.editor-page {}` nesting — but `editor.css` is imported
+    only by `src/app/editor/page.tsx`, so it never loads on `/media`. Moved those 6 rules (verbatim, un-nested)
+    from `editor.css` → `globals.css` (root-layout-loaded, global) and removed from `editor.css`. Single
+    definition; editor + `/media` both styled. (The audit's own "de-nest inside editor.css" remedy was wrong —
+    would not have loaded on `/media`.)
+  - **`/new` (+ app-wide) `.input:focus` ring — FIXED.** `tokens.css:311` hardcoded `rgba(123,45,46,0.15)`
+    (=#7B2D2E burgundy), orphaned by the coral `--wax` rework (UX-04, precedence #1): matches neither current
+    `--wax` #C25C5C nor Genspark `--wax` #E38B8B. → `rgba(227,139,139,0.15)`, the app's live wax-tint-ring idiom
+    (10+ uses; identical spec at `templates.css:268`). Vendored `design/assets/tokens.css` still carries the
+    stale burgundy — live token file is deliberately ahead of it.
+  - **`/rsvp` breadcrumb — FIXED.** Non-live branch showed `DASHBOARD · RSVP`, live branch `DASHBOARD ·
+    INVITATIONS · RSVP` (same element flickers across load states). Unified to the fuller text
+    (`rsvp-client.tsx:152`), confirmed by mockup `design/09` line 319.
+- Rejected/skipped (3) — recorded to prevent re-work:
+  - **`/rsvp` CSV label "unify":** REJECTED. Mockup uses two labels ON PURPOSE — `CSV 내보내기` top bar
+    (design/09:322) vs `CSV 다운로드` at the table (design/09:476). Code matches the mockup; unifying = deviation.
+  - **`/rsvp` maybe-badge color:** REJECTED. Mockup `.badge-tag.maybe` uses the same slate `rgba(110,122,147,…)`
+    (design/09:262); the slate "pending/neutral" tint is deliberate, not drift.
+  - **`/new` event-card checkmark SVG→glyph:** SKIPPED. Both render a checkmark; SVG is font-independent, a
+    `content:'✓'` glyph could regress cross-platform. Low value.
+- Verified: `eslint` 0 errors (pre-existing set-state-in-effect warnings only); **production build passes**
+  (`next build --webpack`, all routes incl. /media,/new,/rsvp,/editor). Note: `next build` (Turbopack default)
+  cannot run in a git worktree — Turbopack rejects a node_modules symlink pointing outside the worktree root;
+  used the `--webpack` builder against a temporary junction to main's node_modules (removed after).
+- **P3 product decisions (user, 2026-09-09):** D1 monetization → **defer real checkout, keep scaffold**
+  (no provider chosen). RSVP capacity (정원/마감) → **stays FREE**. D2 creator marketplace → **status quo**
+  (leave copy + unbuilt). No code changed for P3; see `remaining-phases.md`.

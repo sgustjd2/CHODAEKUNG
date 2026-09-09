@@ -149,7 +149,7 @@ export function RsvpClient() {
           <Link className="top-logo" href="/dashboard">
             <Logo />
           </Link>
-          <div className="top-crumb">DASHBOARD · <b>RSVP</b></div>
+          <div className="top-crumb">DASHBOARD · INVITATIONS · <b>RSVP</b></div>
           <Link href="/dashboard" style={{ textDecoration: "none" }}>
             <Button variant="ghost" size="sm">← 대시보드</Button>
           </Link>

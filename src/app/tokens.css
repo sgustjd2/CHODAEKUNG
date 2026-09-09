@@ -308,7 +308,7 @@ p, .t-body { font-size: var(--t-body-size); font-weight: var(--t-body-weight); l
 .input:focus {
   outline: none;
   border-color: var(--wax);
-  box-shadow: 0 0 0 3px rgba(123,45,46,0.15);
+  box-shadow: 0 0 0 3px rgba(227,139,139,0.15);
 }
 .input-label {
   display: block;

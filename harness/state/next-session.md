@@ -19,21 +19,28 @@
 - [ ] **게이밍·개발자·큐트·에디토리얼 뷰어** — 이번 감사에서 배틀·로맨틱만 렌더 확인. 나머지 테마 뷰어/에디터 프리뷰 육안 확인.
 - [ ] **에디터 실파일 업로드** — 커버/갤러리 파일 피커 + ImageCropper (Phase A2 잔여, 실브라우저 파일 업로드 필요).
 
-## P2 · UI/UX 감사 더 하기 (개발 가능, 스킬 활용)
-improve-ui는 한 번에 top-3만 뽑음 — 이번엔 **에디터 표면**만 감사했음. 남은 표면:
-- [ ] 대시보드(`/dashboard`), /new 마법사, 랜딩(`/`), `/rsvp`, `/settings`, `/media` 각각 `/improve-ui`.
-- [ ] `/baseline-ui`로 전반 슬롭 점검(간격·타이포·계층).
-- [ ] `/fixing-accessibility` (이번 감사에서 a11y는 스킬 규칙상 제외했음 — 별도로 필요).
-- [ ] `/fixing-motion-performance` (뷰어 애니메이션/리빌).
-- 참고: 라이트 테마(로맨틱/큐트/에디토리얼/미니멀/타임라인)는 이번에 소스+렌더로 깨끗하다고 판단.
+## P2 · UI/UX 감사 (진행 상황)
+- ✅ **2026-09-09 감사 완료**: `/new` 마법사·`/rsvp`·`/settings`·`/media` improve-ui(소스 기반, 병렬).
+  - `/settings` 깨끗. 수정 3건 배포: `/media` PhotoUpload 미스타일(→globals.css로 이전), `.input:focus`
+    구 버건디 링(→코럴), `/rsvp` 브레드크럼 통일. 상세·거짓양성 근거는 `implementation-log.md`(2026-09-09)
+    + `design-plans/{media,rsvp,new-wizard}.md`(각 RESOLUTION 헤더).
+  - ⚠️ 교훈: 감사 에이전트에 **Genspark 목업 경로(`design/NN_*.html`, `design/assets/tokens.css`)를 꼭 주기.**
+    이번에 안 줬더니 rsvp 2건(CSV 라벨/뱃지색)이 목업과 일치하는데 "불일치"로 잡힘(거짓양성). copy/색 findings는
+    반드시 목업 대조 후 적용.
+- [ ] 남은 표면: **대시보드(`/dashboard`) populated 상태**(빈 상태만 감사됨 — 실데이터 필요), 랜딩(`/`)은
+      UX-06(푸터 터치타깃 <44px)만 열림.
+- [ ] `/baseline-ui` 전반 슬롭 점검, `/fixing-accessibility`(a11y는 improve-ui 규칙상 제외됨), 
+      `/fixing-motion-performance`(뷰어 애니메이션).
+- 참고: 라이트 테마(로맨틱/큐트/에디토리얼/미니멀/타임라인)는 이전에 소스+렌더로 깨끗 판단.
 
-## P3 · 제품 방향 결정 필요 (사용자 입력 먼저 — CLAUDE.md §15, 임의로 만들지 말 것)
-- [ ] **D1 결제(수익화)** — 현재 scaffold만(`entitlements.ts`, 실결제 없음). 남은 것:
-  - 실제 체크아웃(국내 Toss Payments/PortOne, 해외 Stripe) — 사용자가 콘솔에 키 등록, 웹훅이 tier 전환.
-  - **tier를 서버 권위(DB 컬럼)로** — 지금은 클라 편집 가능한 data 필드(scaffold용). 웹훅에서만 세팅되게.
-  - 대시보드 고급 분석 게이트(차트/CSV) 실제 적용 — 체크아웃과 함께(그 전엔 무료 사용자 잠기지 않게).
-  - **결정 필요: 참석 정원(마감) 기능을 무료로 둘지 프리미엄으로 올릴지.** 이번 세션에 정원(마감)을 무료로 출시함. 로드맵 D1의 "premium=capacity"는 사실 갤러리/저장 용량을 가리킴(`entitlements.ts:29`)이라 직접 충돌은 아님 — 그래도 RSVP 정원 관리를 유료로 할지 결정.
-- [ ] **D2 마켓플레이스** — "크리에이터 템플릿 마켓 등록" 문구는 있으나 미구현. 발견/마켓 UI 방향 필요.
+## P3 · 제품 방향 결정 (2026-09-09 결정됨 — 지금은 코드 작업 없음)
+- ✅ **D1 결제(수익화) → 실결제 보류.** 스캐폴드(`entitlements.ts`) 유지, 트래픽/수요 생기기 전엔 결제 인프라
+  안 만듦. 프로바이더 미정. (착수 시 남는 것: 실체크아웃 국내 Toss/PortOne·해외 Stripe → 웹훅이 tier 전환,
+  **tier를 서버 권위 DB 컬럼으로**(지금은 클라 편집 가능 data 필드), 대시보드 고급분석 게이트 실적용 — 체크아웃과
+  함께 해서 무료 사용자 안 잠기게.)
+- ✅ **RSVP 참석 정원(마감) → 무료 유지.** 소규모 모임 기본 기대 기능. 프리미엄은 갤러리/저장 용량 + 고급분석.
+- ✅ **D2 마켓플레이스 → 현상 유지.** "크리에이터 템플릿 마켓 등록" 문구·미구현 상태 그대로 두기. 발견/마켓 UI
+  방향은 나중에 재검토.
 
 ## P4 · 소소한 정리 / 기술 부채
 - [ ] **카운트다운 편집 중복** — 카운트다운 섹션 편집기와 '캘린더' 그룹이 둘 다 `eventStart`(행사 일시)를 편집(동일 값). 하나로 합치거나 안내만 정리.
@@ -47,10 +54,15 @@ improve-ui는 한 번에 top-3만 뽑음 — 이번엔 **에디터 표면**만 �
 
 ---
 
-## 직전 세션 요약 (이 핸드오프 직전에 배포된 것)
-- 참석 정원(마감): `capacity` + 에디터 입력 + 뷰어 마감 CTA + 서버 초과 차단.
-- 템플릿 갤러리 게이밍에 마인크래프트(Block Party) 카드.
-- 에디터: 카운트다운 날짜 선택화, 섹션 클릭 시 인스펙터 스크롤.
-- 헤더 계정 버튼 닉네임 표시, /templates 전면 한글화.
-- ui-skills 설치 + improve-ui 감사 → 다크 테마 액센트 가독성 수정(`--wax-onpage`) + 빈 방명록 문구 다크 대응. 플랜은 `design-plans/`.
-- 모두 `main`에 푸시됨(최신: 감사 플랜 상태 기록 커밋).
+## 직전 세션 요약 (2026-09-09 — 이 핸드오프 직전)
+- P2 감사(미감사 표면 4종) + 수정 3건: `/media` 업로드 컨트롤 미스타일 루트원인 수정(공유 CSS를 editor.css
+  → globals.css로 이전, 단일 정의), 앱 전역 `.input:focus` 구 버건디 링 → 코럴 tint-ring, `/rsvp` 브레드크럼
+  통일. rsvp CSV라벨·뱃지색 2건은 목업과 일치라 거짓양성으로 반려.
+- P3 제품 결정 3건 받음: D1 결제 보류, RSVP 정원 무료 유지, D2 마켓 현상 유지(위 P3 참조).
+- 검증: eslint 0 errors, `next build --webpack` 통과(worktree라 Turbopack 빌드 불가 — 아래 환경 주의 참고).
+- 이 브랜치(`claude/p2-uiux-audit-p3-review-f0c7a4`)에 커밋. main 병합/푸시는 사용자 확인 후.
+
+### 환경 주의 (worktree 빌드)
+- 이 worktree엔 `node_modules`가 없음(공유 안 됨). `next build`(Turbopack 기본)는 worktree 밖을 가리키는
+  node_modules 심링크를 거부함. 검증 시: 메인(`E:\workspace\moiletter\node_modules`)로 junction 걸고
+  `npx next build --webpack`(webpack은 심링크 따라감) → 끝나면 junction/`.next` 제거.
