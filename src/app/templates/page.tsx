@@ -105,6 +105,7 @@ const categories: Category[] = [
       { img: "game_fifa", badge: { text: "FC · Football" }, catTag: "EA Sports FC · 피파", name: <>Kick <em>Off</em></>, meta: ["토너먼트", "포메이션"] },
       { img: "game_battleroyale", badge: { text: "Battle Royale", kind: "pro" }, catTag: "배그 · 서든어택", name: <>Last <em>Squad</em></>, meta: ["스쿼드 4인", "매치 시간"] },
       { img: "game_rts", badge: { text: "RTS · Classic" }, catTag: "Starcraft · RTS", name: <>GG <em>Night</em></>, meta: ["1v1 · 팀플", "맵 로테이션"] },
+      { img: "minecraft_party", badge: { text: "New · 마크", kind: "new" }, catTag: "Minecraft · 블록월드", name: <>Block <em>Party</em></>, meta: ["생존 · 멀티", "정원 8명"] },
       { img: "developer_terminal", badge: { text: "Dev · Terminal", kind: "pro" }, catTag: "Game · e-Sports", name: <>$ moi <em>--invite</em></>, meta: ["Dark · Mono", "Tournament"] },
     ],
   },
