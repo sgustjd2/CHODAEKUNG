@@ -2,6 +2,14 @@
 
 Written against: c42c1b0
 
+> **Status: PARTIALLY REJECTED after verification (2a1a928).** The card-darkening proposed below was
+> NOT applied: `viewer.css:1033-1035` documents that the white inner cards are deliberate ("inner white
+> cards keep their dark --ink"), and the text inside them is dark-on-white = legible. Overriding that
+> would invent intent against a documented decision. What WAS fixed: the accent text ON the dark page
+> (eyebrows/counts) via `--wax-onpage` (see `dark-theme-accent-contrast.md`), and one genuine gap —
+> `.gb-empty` muted text was missing from the dark-theme override, so it was added to viewer.css:1037.
+> Remaining below is kept as the record of what was considered and why it was declined.
+
 ## Evidence chain
 
 - Surface: the four theme-agnostic sections — `.iv-dday`, `.iv-guestbook`, `.iv-attendees`, and the account block — when they appear on the dark themes `.iv.t-battle` / `.iv.t-gaming` / `.iv.t-developer` (published `/i/[slug]` and the editor preview).

@@ -2,6 +2,12 @@
 
 Written against: c42c1b0
 
+> **Status: IMPLEMENTED (f4e07fb).** Chosen correction = the `--wax-onpage` variable split (not the
+> accent-palette gating alternative), because `--wax-deep` is dual-purposed (accent-BG panels pair it
+> with white text and must stay dark). New `--wax-onpage` = accent text on the page: `--wax-deep` on
+> light themes, `accentOn(accent, bg)` (lightened) on dark themes. Verified live: `#2A2A3E` accent →
+> `.dday-eb` 1.2:1 → 5.75:1; panels + default themes unchanged.
+
 ## Evidence chain
 
 - Surface: the invitation viewer/editor preview for the dark themes — `/i/[slug]` and the editor center preview — when the invitation carries a user-selected `accent`. Concretely `.iv.t-battle`, `.iv.t-gaming`, `.iv.t-developer`.
