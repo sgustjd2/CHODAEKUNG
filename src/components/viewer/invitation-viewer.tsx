@@ -14,7 +14,11 @@ import { EditContext } from "./editable";
 import { FontLink } from "./font-link";
 import { LightboxRoot } from "./lightbox";
 import { fontById } from "@/lib/invitation/fonts";
-import { waxInk, waxDeep } from "@/lib/invitation/contrast";
+import { waxInk, waxDeep, accentOn } from "@/lib/invitation/contrast";
+
+/** Themes whose page background is dark → accent-colored TEXT must be lightened (not darkened) to stay
+ * legible. Value is each theme's base --iv-bg (see viewer.css). */
+const DARK_THEME_BG: Partial<Record<string, string>> = { battle: "#1A1A2E", gaming: "#14101E", developer: "#0D0F0A" };
 
 /** Venue name for the calendar entry, from the first location section's title (else empty). */
 function eventLocationOf(inv: Invitation): string {
@@ -73,10 +77,14 @@ export function InvitationViewer({
   const vars: Record<string, string> = {};
   if (invitation.accent) {
     vars["--wax"] = invitation.accent;
-    // --wax-deep drives accent-colored TEXT (eyebrows, dates, D-day numbers) → darken so it stays
-    // legible on the light page even for a light accent. --wax-ink keeps text on accent-BG buttons legible.
+    // --wax-deep drives accent-BG panels (accept/ending) + accent text on light surfaces → darken so
+    // white text on it and it-as-text-on-white both stay legible. --wax-ink keeps text on accent-BG legible.
     vars["--wax-deep"] = waxDeep(invitation.accent);
     vars["--wax-ink"] = waxInk(invitation.accent);
+    // --wax-onpage is accent TEXT on the page background. On light themes it equals --wax-deep (via the
+    // token default), but on dark themes darkening makes it vanish — lighten against the dark page instead.
+    const darkBg = DARK_THEME_BG[invitation.theme];
+    if (darkBg) vars["--wax-onpage"] = accentOn(invitation.accent, darkBg);
   }
   if (font?.google) {
     // Only override for non-default fonts (default Pretendard needs no change / no load).

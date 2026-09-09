@@ -138,13 +138,13 @@
    ACCOUNT — "마음 전하기" (theme-agnostic neutral card, copy-to-clipboard)
    ============================================================ */
 .iv-account { padding: 48px 28px; text-align: center; }
-.acc-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.acc-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 700; margin-bottom: 10px; }
 .acc-title { font-family: var(--font-serif); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); margin: 0 0 8px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
 .acc-note { font-size: calc(14px * var(--iv-fs, 1)); color: #666; line-height: calc(1.6 * var(--iv-lh, 1)); margin: 0 auto 24px; max-width: 30ch; }
 .acc-list { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
 .acc-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 16px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 .acc-info { min-width: 0; }
-.acc-side { display: inline-block; font-size: calc(11px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-deep, #a04547); margin-bottom: 4px; }
+.acc-side { display: inline-block; font-size: calc(11px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-onpage, var(--wax-deep, #a04547)); margin-bottom: 4px; }
 .acc-bank { font-size: calc(15px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); word-break: break-all; }
 .acc-holder { font-size: calc(13px * var(--iv-fs, 1)); color: #777; margin-top: 2px; }
 .acc-copy { flex-shrink: 0; padding: 9px 16px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: var(--wax-ink, #fff); font: inherit; font-size: calc(13px * var(--iv-fs, 1)); font-weight: 700; cursor: pointer; }
@@ -152,24 +152,24 @@
 
 /* D-Day countdown (theme-agnostic; ticks from the invitation's eventStart) */
 .iv-dday { padding: 44px 28px; text-align: center; }
-.dday-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.dday-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 700; margin-bottom: 10px; }
 .dday-title { font-family: var(--font-serif); font-size: calc(22px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); margin: 0 0 20px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
 .dday-grid { display: flex; justify-content: center; gap: 10px; }
 .dday-cell { min-width: 62px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 .dday-n { font-family: var(--font-en); font-size: calc(30px * var(--iv-fs, 1)); font-weight: 800; color: var(--wax-deep, #a04547); line-height: calc(1 * var(--iv-lh, 1)); letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); font-variant-numeric: tabular-nums; }
 .dday-l { font-size: calc(11px * var(--iv-fs, 1)); color: #888; margin-top: 6px; font-weight: 600; }
-.dday-now { font-family: var(--font-serif); font-size: calc(28px * var(--iv-fs, 1)); font-weight: 800; color: var(--wax-deep, #a04547); }
+.dday-now { font-family: var(--font-serif); font-size: calc(28px * var(--iv-fs, 1)); font-weight: 800; color: var(--wax-onpage, var(--wax-deep, #a04547)); }
 
 /* Guestbook (방명록) — theme-agnostic form + message cards */
 .iv-guestbook { padding: 44px 24px; text-align: center; }
-.gb-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.gb-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 700; margin-bottom: 10px; }
 .gb-title { font-family: var(--font-serif); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); margin: 0 0 8px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
 .gb-note { font-size: calc(14px * var(--iv-fs, 1)); color: #666; line-height: calc(1.6 * var(--iv-lh, 1)); margin: 0 auto 20px; max-width: 30ch; }
 .gb-form { max-width: 400px; margin: 0 auto 24px; display: flex; flex-direction: column; gap: 8px; }
 /* 16px (not 14) so iOS Safari doesn't zoom the page when a guest taps into the field. */
 .gb-input, .gb-textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: calc(16px * var(--iv-fs, 1)); padding: 11px 13px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; background: #fff; color: #1a1a2e; resize: vertical; }
 .gb-input:focus, .gb-textarea:focus { outline: none; border-color: var(--wax, #e38b8b); }
-.gb-err { font-size: calc(12px * var(--iv-fs, 1)); color: var(--wax-deep, #a04547); font-weight: 600; text-align: left; }
+.gb-err { font-size: calc(12px * var(--iv-fs, 1)); color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 600; text-align: left; }
 .gb-submit { padding: 11px 18px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: var(--wax-ink, #fff); font: inherit; font-size: calc(14px * var(--iv-fs, 1)); font-weight: 700; cursor: pointer; }
 .gb-submit:hover { background: var(--wax-deep, #c96a6a); }
 .gb-submit:disabled { opacity: 0.6; cursor: default; }
@@ -181,10 +181,10 @@
 
 /* Attendees roster (참석자 명단) — live name chips from 참석 RSVPs */
 .iv-attendees { padding: 44px 24px; text-align: center; }
-.att-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep, #a04547); font-weight: 700; margin-bottom: 10px; }
+.att-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 700; margin-bottom: 10px; }
 .att-title { font-family: var(--font-serif); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); margin: 0 0 8px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
 .att-note { font-size: calc(14px * var(--iv-fs, 1)); color: #666; line-height: calc(1.6 * var(--iv-lh, 1)); margin: 0 auto 12px; max-width: 30ch; }
-.att-count { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.1em + var(--iv-ls, 0em)); color: var(--wax-deep, #a04547); margin-bottom: 16px; }
+.att-count { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.1em + var(--iv-ls, 0em)); color: var(--wax-onpage, var(--wax-deep, #a04547)); margin-bottom: 16px; }
 .att-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 420px; margin: 0 auto; }
 .att-empty { font-size: calc(13px * var(--iv-fs, 1)); color: #767676; padding: 12px 0; }
 .att-chip { display: inline-block; padding: 8px 16px; border-radius: 999px; background: var(--wax-tint, #f9e9e9); color: var(--wax-deep, #a04547); font-size: calc(14px * var(--iv-fs, 1)); font-weight: 700; }
@@ -404,7 +404,7 @@
   .ivb-challenge-lbl { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.5em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-light); margin-bottom: 16px; display: inline-flex; align-items: center; gap: 14px; }
   .ivb-challenge-lbl::before, .ivb-challenge-lbl::after { content: ''; width: 24px; height: 1px; background: var(--wax-light); }
   .ivb-title-huge { font-family: var(--font-ko); font-weight: 900; font-size: calc(82px * var(--iv-fs, 1)); letter-spacing: calc(-0.05em + var(--iv-ls, 0em)); line-height: calc(0.88 * var(--iv-lh, 1)); color: var(--paper); text-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 40px rgba(227,139,139,0.3); margin-bottom: 6px; }
-  .ivb-title-huge em { font-weight: 900; color: var(--wax); text-shadow: 0 4px 12px rgba(227,139,139,0.6); }
+  .ivb-title-huge em { font-weight: 900; color: var(--wax-onpage, var(--wax)); text-shadow: 0 4px 12px rgba(227,139,139,0.6); }
   .ivb-title-sub { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.4em + var(--iv-ls, 0em)); color: var(--wax-light); margin-top: 12px; text-transform: uppercase; }
 
   .ivb-vs-block { padding: 60px 24px 40px; background: #1E1B32; position: relative; }
@@ -423,7 +423,7 @@
   .ivb-team .record .l { color: var(--wax-light); }
   .ivb-team .record .d { color: rgba(255,255,255,0.6); }
   .ivb-vs-mid { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 4px; }
-  .ivb-vs-word { font-family: var(--font-en); font-weight: 900; font-size: calc(36px * var(--iv-fs, 1)); color: var(--wax); letter-spacing: calc(-0.04em + var(--iv-ls, 0em)); text-shadow: 0 2px 12px rgba(227,139,139,0.5); line-height: calc(1 * var(--iv-lh, 1)); }
+  .ivb-vs-word { font-family: var(--font-en); font-weight: 900; font-size: calc(36px * var(--iv-fs, 1)); color: var(--wax-onpage, var(--wax)); letter-spacing: calc(-0.04em + var(--iv-ls, 0em)); text-shadow: 0 2px 12px rgba(227,139,139,0.5); line-height: calc(1 * var(--iv-lh, 1)); }
 
   .ivb-details { padding: 40px 24px; background: #2A2A3E; }
   .ivb-sec-title { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.36em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-light); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }

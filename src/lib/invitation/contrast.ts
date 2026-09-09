@@ -34,6 +34,39 @@ export function waxInk(hex: string): string {
   return contrastWhite >= contrastDark ? WAX_INK_LIGHT : WAX_INK_DARK;
 }
 
+/** Contrast ratio between two relative luminances (order-independent). */
+function ratio(l1: number, l2: number): number {
+  return l1 >= l2 ? (l1 + 0.05) / (l2 + 0.05) : (l2 + 0.05) / (l1 + 0.05);
+}
+
+/**
+ * Accent shade that stays legible as TEXT on the given background. Unlike `waxDeep` (which always
+ * targets white), this adapts to the actual page: on a dark background it LIGHTENS the accent toward
+ * white; on a light one it darkens toward black — until it clears ~4.5:1. Hue-preserving. Used for
+ * accent-colored text on dark themes so a custom accent doesn't vanish into the dark page.
+ */
+export function accentOn(hex: string, bgHex: string): string {
+  const rgb = parseHex(hex);
+  const bg = parseHex(bgHex);
+  if (!rgb || !bg) return hex;
+  const bgL = lum(bg[0], bg[1], bg[2]);
+  if (ratio(lum(rgb[0], rgb[1], rgb[2]), bgL) >= 4.5) return hex; // already legible
+  if (bgL < 0.18) {
+    // dark background → lighten toward white
+    for (let k = 0.1; k <= 1; k += 0.1) {
+      const R = rgb[0] + (255 - rgb[0]) * k, G = rgb[1] + (255 - rgb[1]) * k, B = rgb[2] + (255 - rgb[2]) * k;
+      if (ratio(lum(R, G, B), bgL) >= 4.5) return toHex(R, G, B);
+    }
+    return "#ffffff";
+  }
+  // light background → darken toward black (same direction as waxDeep)
+  for (let k = 0.9; k >= 0.15; k -= 0.05) {
+    const R = rgb[0] * k, G = rgb[1] * k, B = rgb[2] * k;
+    if (ratio(lum(R, G, B), bgL) >= 4.5) return toHex(R, G, B);
+  }
+  return toHex(rgb[0] * 0.15, rgb[1] * 0.15, rgb[2] * 0.15);
+}
+
 /** A darker shade of the accent for accent-COLORED TEXT (eyebrows, dates, D-day numbers) so it stays
  * legible on the light page. Darkens the hue toward black until it clears ~4:1 vs white; a dark accent
  * is returned unchanged. Hue is preserved (uniform RGB scale), so it still reads as the accent. */
