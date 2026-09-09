@@ -28,6 +28,15 @@ type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; acce
 const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
+// The order ContentEditors renders section groups in (mirrors content-editors.tsx JSX order).
+// Lets a section-list click scroll the inspector to that section's editor group.
+// ponytail: keep in sync with content-editors.tsx if its group order changes.
+const INSPECTOR_ORDER: SectionType[] = [
+  "cover", "message", "location", "date", "schedule", "gallery", "rsvp", "versus", "countdown", "rules",
+  "account", "dday", "guestbook", "attendees", "accept", "timeline", "checklist", "details", "notice",
+  "quote", "lanes", "gInfo", "tierChart", "cost", "route", "roster", "menu", "dayPlan", "ending",
+];
+
 /** Basics handed over from the /new wizard (one-shot, via sessionStorage). */
 type WizardSeed = { title?: string; subtitle?: string; date?: string; time?: string; location?: string; eventName?: string; theme?: ThemeId; accent?: string; eventStart?: string };
 function readWizardSeed(): WizardSeed | null {
@@ -346,16 +355,28 @@ export function EditorClient() {
     }));
   };
 
-  // Select a section AND scroll the center preview to it (section-list click → jump to that page).
+  // Select a section AND scroll both the center preview and the inspector to it (section-list
+  // click → jump to that page in the preview and to that section's editor group on the right).
   const selectSection = (id: string) => {
     setSelectedId(id);
     const scroller = document.querySelector<HTMLElement>(".phone-scroll");
     const el = scroller?.querySelector<HTMLElement>(`[data-sec-id="${CSS.escape(id)}"]`);
-    if (!scroller || !el) return;
-    const top = scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
-    // scrollTo({behavior:"smooth"}) silently no-ops on this scroll container in some browsers; set
-    // scrollTop directly (always works). The focus ring makes the jump obvious.
-    scroller.scrollTop = Math.max(0, top);
+    if (scroller && el) {
+      const top = scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
+      // scrollTo({behavior:"smooth"}) silently no-ops on this scroll container in some browsers; set
+      // scrollTop directly (always works). The focus ring makes the jump obvious.
+      scroller.scrollTop = Math.max(0, top);
+    }
+    // The 내용 tab stacks every section's editor; scroll the inspector to the clicked one's group.
+    // Groups render in INSPECTOR_ORDER for the types that exist, so the group index = the selected
+    // type's position among existing types (trailing 캘린더/참여 인원 groups come after, so they don't shift it).
+    const sec = draft.sections.find((s) => s.id === id);
+    const body = document.querySelector<HTMLElement>(".inspector-body");
+    if (tab === "content" && sec && body) {
+      const idx = INSPECTOR_ORDER.filter((t) => draft.sections.some((s) => s.type === t)).indexOf(sec.type);
+      const group = idx >= 0 ? body.querySelectorAll<HTMLElement>(".insp-group")[idx] : undefined;
+      if (group) body.scrollTop = Math.max(0, body.scrollTop + group.getBoundingClientRect().top - body.getBoundingClientRect().top - 8);
+    }
   };
   // Section types the current theme can actually render (for the add-section picker).
   // Every section type the current theme can render (its own palette), minus cover
@@ -616,7 +637,7 @@ export function EditorClient() {
           <div className="inspector-body">
             {tab === "content" && (
               <>
-                <ContentEditors draft={draft} patch={patch} />
+                <ContentEditors draft={draft} patch={patch} onEventStart={(iso) => setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
                 <div className="insp-group">
                   <h5>캘린더</h5>
                   <div className="insp-field">
