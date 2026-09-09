@@ -783,3 +783,25 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - Verified: `tsc --noEmit` clean, `eslint` 0 errors (only the repo's existing set-state-in-effect warnings),
   `next build --webpack` passes (all routes). Interactive editor is login-gated → the WYSIWYG toolbar/inspector
   UX needs a hands-on check on a logged-in session (project norm; see next-session.md).
+
+### 2026-09-09 — 관리자 콘솔 (/admin) — 유저 + 초대장 관리 (신규 기능, prd-admin.md)
+
+- PRD: `prd-admin.md`. 결정(user): 관리자 지정 = **별도 DB 테이블 `public.admins`(이메일 키)**; 유저 관리 범위 =
+  프리미엄 티어 부여/회수 + 계정 정지(ban) + 계정 삭제(비가역) 전부.
+- **권한 모델(서버 전용)**: `src/lib/db/admin.ts` — `isAdminEmail`(admins 테이블 조회, service role), `getAdminUser`
+  (로그인 유저가 admins에 있으면 반환), `requireAdmin`(모든 admin 액션 선행). admins 테이블은 RLS on + **공개 정책
+  없음** → 서버만 읽음. 테이블 미존재 시 전부 false(fail-safe: 마이그레이션 전엔 관리자 없음, 크래시 없음).
+- **마이그레이션 `0006_admins.sql`** (⚠️ 사용자가 적용해야 함): admins 테이블 생성 + 첫 관리자 이메일 시드
+  (`sgustjd1234@gmail.com` — 스모크로 실제 로그인 유저임을 확인, 적용 즉시 권한 부여됨).
+- **데이터 계층** `src/lib/invitation/admin-store.ts` (service role, RLS 우회 + `auth.admin` API):
+  `loadAdminData`(유저 `auth.admin.listUsers` 페이지네이션 + 전체 초대장 + RSVP 카운트 + 소유자 이메일 매핑 + 지표),
+  `adminDeleteInvitation`(rsvps·guestbook FK cascade), `adminSetVisibility`(공개중지/공개), `adminSetUserTier`(그 유저
+  모든 초대장 data.tier 일괄 — 티어는 초대장 단위라), `adminBanUser`(ban_duration), `adminDeleteUser`(초대장 먼저
+  삭제→cascade, 그 다음 auth 유저; owner_id가 on-delete-set-null이라 순서 중요).
+- **액션** `admin-actions.ts`: 각 액션 `requireAdmin` 재확인; 본인 계정 정지/삭제 차단.
+- **UI**: `/admin`(서버 게이트 — 비관리자는 대시보드/로그인으로 조용히 리다이렉트, `robots noindex`) →
+  `AdminClient`(탭 초대장/유저, 검색, 지표 4카드, 행 동작 + window.confirm, 성공 시 `router.refresh()`).
+  `admin.css`는 대시보드/미디어 레이아웃 패턴 재사용. 헤더 `AccountMenu`에 `isAdmin`일 때만 '관리자 콘솔' 링크
+  (landing + templates 페이지에서 주입).
+- 검증: tsc + eslint 0 + `next build --webpack` 통과. 서비스키 읽기 스모크: `listUsers` OK(유저 3+), 초대장 6,
+  admins 테이블 미적용(=fail-safe 확인). 인터랙티브(테이블 동작)는 0006 적용 + 로그인 후 사용자 확인 필요.

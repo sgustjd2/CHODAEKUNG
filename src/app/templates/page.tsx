@@ -9,6 +9,7 @@ import { CustomEvent } from "@/components/templates/custom-event";
 import { TemplateCard, type Template } from "@/components/templates/template-card";
 import { AccountMenu } from "@/components/landing/account-menu";
 import { hasSession } from "@/lib/db/supabase-server";
+import { getAdminUser } from "@/lib/db/admin";
 import "./templates.css";
 
 export const metadata: Metadata = {
@@ -162,6 +163,7 @@ const navItems = categories.map((c) => ({ id: c.id, label: c.navLabel, iconName:
 
 export default async function TemplateGalleryPage() {
   const authed = await hasSession();
+  const isAdmin = authed ? (await getAdminUser()) !== null : false;
   return (
     <div className="gallery">
       {/* NAV */}
@@ -178,7 +180,7 @@ export default async function TemplateGalleryPage() {
               <Button variant="primary" size="sm">무료로 시작하기</Button>
             </Link>
             {authed ? (
-              <AccountMenu />
+              <AccountMenu isAdmin={isAdmin} />
             ) : (
               <Link href="/login" style={{ textDecoration: "none" }}>
                 <Button variant="ghost" size="sm">로그인</Button>

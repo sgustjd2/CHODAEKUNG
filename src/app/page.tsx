@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { MobileNav } from "@/components/landing/mobile-nav";
 import { AccountMenu } from "@/components/landing/account-menu";
 import { hasSession } from "@/lib/db/supabase-server";
+import { getAdminUser } from "@/lib/db/admin";
 import "./landing.css";
 
 const templates: { img: string; cat: string; name: ReactNode }[] = [
@@ -76,6 +77,7 @@ const footerCols: { title: string; links: { label: string; href: string }[] }[] 
 
 export default async function LandingPage() {
   const authed = await hasSession();
+  const isAdmin = authed ? (await getAdminUser()) !== null : false;
   return (
     <div className="landing">
       {/* NAV */}
@@ -93,7 +95,7 @@ export default async function LandingPage() {
           <div className="nav-cta">
             <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
             {authed ? (
-              <AccountMenu />
+              <AccountMenu isAdmin={isAdmin} />
             ) : (
               <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
             )}

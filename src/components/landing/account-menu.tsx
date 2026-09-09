@@ -24,7 +24,7 @@ const itemStyle: CSSProperties = {
 /** Logged-in account menu for the marketing header: an avatar button that opens a dropdown with
  *  the dashboard menu (내 초대장 / RSVP / 템플릿 / 미디어 / 설정) plus 로그아웃. Rendered only when
  *  the server already determined the visitor is signed in. */
-export function AccountMenu() {
+export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("회원");
@@ -89,6 +89,9 @@ export function AccountMenu() {
           {ITEMS.map((it) => (
             <Link key={it.href} role="menuitem" href={it.href} onClick={() => setOpen(false)} style={itemStyle}>{it.label}</Link>
           ))}
+          {isAdmin && (
+            <Link role="menuitem" href="/admin" onClick={() => setOpen(false)} style={{ ...itemStyle, color: "var(--wax-deep, #C25C5C)", fontWeight: 700 }}>관리자 콘솔</Link>
+          )}
           <div style={{ borderTop: "1px solid var(--line)", margin: "4px 0" }} />
           <button type="button" role="menuitem" onClick={logout} style={{ ...itemStyle, color: "var(--wax-deep, #C25C5C)" }}>로그아웃</button>
         </div>
