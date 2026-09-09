@@ -805,3 +805,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   (landing + templates 페이지에서 주입).
 - 검증: tsc + eslint 0 + `next build --webpack` 통과. 서비스키 읽기 스모크: `listUsers` OK(유저 3+), 초대장 6,
   admins 테이블 미적용(=fail-safe 확인). 인터랙티브(테이블 동작)는 0006 적용 + 로그인 후 사용자 확인 필요.
+
+### 2026-09-09 — 관리자 콘솔 공개중지(takedown) 버그 수정 — unlisted 초대장 포함
+
+- 0006 마이그레이션은 이미 적용됨(admins 테이블 + 시드 `sgustjd1234@gmail.com` REST로 확인). backend-state 메모리 갱신.
+- **버그**: `AdminClient` 초대장 행의 `공개중지` 버튼이 `visibility === "published"`일 때만 노출됐음. 그러나 이 제품
+  초대장은 대부분(현재 dev DB 6/6 전부) **링크공개(unlisted)**이고, `getPublishedInvitation`은 draft만 제외하므로
+  unlisted도 `/i/slug`에서 공개 렌더됨. 즉 부적절한 링크공개 초대장을 admin이 **삭제 외엔 내릴 수 없던** 상태 —
+  PRD-admin §4.1 takedown 요구사항의 실질적 구멍.
+- **수정**(`src/components/admin/admin-client.tsx`): 이미 계산돼 있던 `live`(=`visibility !== "draft"`) 기준으로 전환.
+  live(공개 OR 링크공개) → `공개중지`→draft. draft → `공개`→**unlisted**.
+- **PRD 문구와의 의도적 차이(사용자 확인)**: PRD-admin §4.1은 "복구: 다시 published"지만, 링크공개였던 걸 내렸다가
+  복구할 때 published(검색노출)로 올리면 원래보다 노출이 커짐. 안전한 되돌리기 위해 복구 대상을 **unlisted**로 둠.
+  (사용자에게 published 옵션도 제시했고, 별도 반대 없어 unlisted 유지.)
+- 검증: tsc + eslint 0 + `next build --webpack`(23 라우트) 통과. 인터랙티브 동작은 배포 후 로그인 상태에서 사용자와 점검.

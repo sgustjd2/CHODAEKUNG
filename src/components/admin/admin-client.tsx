@@ -145,10 +145,12 @@ function InvitationTable({ rows, pending, run }: { rows: AdminInvitation[]; pend
                 <td className="act">
                   <div className="adm-rowbtns">
                     <a className="adm-mini" href={live ? `/i/${r.slug}` : "#"} target={live ? "_blank" : undefined} rel="noopener" aria-disabled={!live} onClick={(e) => { if (!live) e.preventDefault(); }}>열기</a>
-                    {r.visibility === "published" ? (
+                    {live ? (
+                      // Any live invite (published OR unlisted) resolves at /i/slug, so both can be taken down → draft.
                       <button className="adm-mini" disabled={pending} onClick={() => run("공개중지", () => adminSetVisibilityAction(r.slug, "draft"))}>공개중지</button>
                     ) : (
-                      <button className="adm-mini" disabled={pending} onClick={() => run("공개", () => adminSetVisibilityAction(r.slug, "published"))}>공개</button>
+                      // Restore a taken-down invite to link-visible (unlisted), not searchable-public — a safe undo.
+                      <button className="adm-mini" disabled={pending} onClick={() => run("공개", () => adminSetVisibilityAction(r.slug, "unlisted"))}>공개</button>
                     )}
                     <button
                       className="adm-mini danger"
