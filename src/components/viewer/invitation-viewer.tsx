@@ -165,6 +165,7 @@ export function InvitationViewer({
         eventStart={invitation.eventStart}
         eventLocation={eventLocationOf(invitation)}
         hasAttendees={invitation.sections.some((s) => s.type === "attendees")}
+        capacity={invitation.capacity}
       />
       {!contained && !preview && <ViewPing slug={invitation.slug} />}
       <LightboxRoot />

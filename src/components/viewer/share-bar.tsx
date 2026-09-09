@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
-import { submitRsvpAction } from "@/lib/invitation/actions";
+import { submitRsvpAction, attendingCountAction } from "@/lib/invitation/actions";
 import { RSVP_OPEN_EVENT } from "@/lib/invitation/rsvp-open";
 import { SHARE_EVENT, type ShareAction } from "@/lib/invitation/share-actions";
 import { ensureKakao } from "@/lib/kakao";
@@ -26,6 +26,7 @@ export function ShareBar({
   eventStart,
   eventLocation,
   hasAttendees,
+  capacity,
 }: {
   slug: string;
   shareCta: string;
@@ -39,6 +40,8 @@ export function ShareBar({
   eventLocation?: string;
   /** The invitation has a public attendee roster → pre-fill the name for signed-in guests + warn it's shown. */
   hasAttendees?: boolean;
+  /** Attendee cap (정원). When the confirmed headcount reaches it, the RSVP CTA shows 마감 and blocks new 참석. */
+  capacity?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -49,8 +52,13 @@ export function ShareBar({
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
   const [responded, setResponded] = useState(false); // this browser already RSVP'd → edit mode
+  const [wasAttending, setWasAttending] = useState(false); // this browser's saved answer was 참석 (already counted toward 정원)
   const [doneKind, setDoneKind] = useState<"new" | "edit">("new");
+  const [count, setCount] = useState<number | null>(null); // confirmed headcount, for the 정원 마감 check
   const attending = resp === (options[0] ?? "참석");
+  const full = typeof capacity === "number" && capacity > 0 && count !== null && count >= capacity;
+  // A new 참석 is blocked once full; someone already counted (editing) or choosing 불참/미정 is not.
+  const blockedByFull = full && attending && !wasAttending;
   const modalRef = useRef<HTMLDivElement>(null);
   const rsvpKey = `chodaekung:rsvp:${slug}`;
   const triggerRef = useRef<HTMLElement | null>(null); // the control that opened the dialog, to restore focus to
@@ -90,10 +98,22 @@ export function ShareBar({
       if (typeof prev.guests === "number" && prev.guests > 0) setGuests(prev.guests);
       if (prev.message) setMessage(prev.message);
       setResponded(true);
+      setWasAttending(prev.response === (options[0] ?? "참석"));
     } catch {
       /* private mode / corrupt value — ignore */
     }
-  }, [rsvpKey, preview]);
+  }, [rsvpKey, preview, options]);
+
+  // Live confirmed headcount for the 정원(capacity) 마감 display. Refetched after any RSVP on this
+  // page (the submit handler dispatches "chodaekung:rsvp"), so the CTA flips to 마감 as it fills.
+  useEffect(() => {
+    if (preview || contained || !capacity) return;
+    let alive = true;
+    const load = () => attendingCountAction(slug).then((r) => { if (alive && r.ok) setCount(r.count); }).catch(() => {});
+    load();
+    window.addEventListener("chodaekung:rsvp", load);
+    return () => { alive = false; window.removeEventListener("chodaekung:rsvp", load); };
+  }, [slug, capacity, preview, contained]);
 
   // RSVP sections (참석/불참 buttons, accept/decline CTAs) open this same modal via an event, so a
   // tap there leads to a real submission instead of just a visual toggle. Preselects the tapped
@@ -236,8 +256,8 @@ export function ShareBar({
             <Icon name="ic-clock" /> 캘린더
           </button>
         )}
-        <button type="button" className="primary" onClick={(e) => { triggerRef.current = e.currentTarget; setState("idle"); setOpen(true); }}>
-          {responded ? "응답 수정" : shareCta}
+        <button type="button" className="primary" disabled={full && !responded} onClick={(e) => { triggerRef.current = e.currentTarget; setState("idle"); setOpen(true); }}>
+          {full && !responded ? "마감" : responded ? "응답 수정" : shareCta}
         </button>
       </div>
 
@@ -276,6 +296,11 @@ export function ShareBar({
                     ))}
                   </div>
                 </div>
+                {typeof capacity === "number" && capacity > 0 && (
+                  <div style={{ fontSize: 12, color: full ? "var(--wax-deep, #C25C5C)" : "var(--muted, #8a8a95)", lineHeight: 1.5, marginBottom: 2, fontWeight: full ? 700 : 400 }}>
+                    정원 {capacity}명{count !== null ? ` · 현재 ${count}명 참석` : ""}{full ? " · 마감되었어요" : ""}
+                  </div>
+                )}
                 {attending && (
                   <div className="rsvp-field">
                     <span>동반 인원 (본인 포함)</span>
@@ -295,9 +320,10 @@ export function ShareBar({
                     ‘참석’을 선택하면 이름이 초대장 참석자 명단에 표시돼요.
                   </div>
                 )}
+                {blockedByFull && <div className="rsvp-err" role="alert">정원이 가득 차 새로 참석할 수 없어요. ‘불참·미정’은 응답할 수 있어요.</div>}
                 {state === "error" && <div className="rsvp-err" role="alert">{err}</div>}
-                <button type="button" className="rsvp-btn" onClick={submit} disabled={state === "sending"}>
-                  {state === "sending" ? "보내는 중…" : responded ? "수정 저장" : "보내기"}
+                <button type="button" className="rsvp-btn" onClick={submit} disabled={state === "sending" || blockedByFull}>
+                  {state === "sending" ? "보내는 중…" : blockedByFull ? "마감" : responded ? "수정 저장" : "보내기"}
                 </button>
               </>
             )}

@@ -202,9 +202,53 @@ export async function listMyInvitations(ownerId: string): Promise<MyInvitation[]
   });
 }
 
+/** Deduped latest RSVP per guest (newest-first, name-keyed). Shared by the headcount + capacity checks. */
+async function latestRsvpPerGuest(slug: string): Promise<{ name: string; response: string; guests: number }[]> {
+  const { data } = await getServiceClient()
+    .from("rsvps")
+    .select("name, response, guests, created_at")
+    .eq("invitation_slug", slug)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+  const seen = new Set<string>();
+  const out: { name: string; response: string; guests: number }[] = [];
+  for (const r of data ?? []) {
+    const name = (r.name ?? "").trim();
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+    out.push({ name, response: r.response, guests: Math.max(1, r.guests ?? 1) });
+  }
+  return out;
+}
+
+/** Public: confirmed-attendee headcount (sum of 동반 인원 for everyone whose latest answer is 참석).
+ * Drives the 정원(capacity) 마감 display. 0 when there's no backend or the invite isn't live. */
+export async function attendingHeadcount(slug: string): Promise<number> {
+  if (!isDbEnabled()) return 0;
+  if (!(await isLiveInvitation(slug))) return 0;
+  return (await latestRsvpPerGuest(slug)).filter((r) => r.response === "참석").reduce((n, r) => n + r.guests, 0);
+}
+
 /** Guest RSVP submission (anonymous). The invitation must be live. */
 export async function submitRsvp(slug: string, entry: { name: string; response: string; guests?: number; message?: string }): Promise<{ ok: boolean; error?: string }> {
   if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
+  const name = entry.name.trim();
+  // 정원(capacity): a new/raised 참석 can't push the headcount over the cap. An existing attendee
+  // editing their own entry is measured net of their old count, so they're never locked out of it.
+  // ponytail: naive read-then-insert — a tiny race between simultaneous submits could overfill by a
+  // seat or two; fine for a social 정원. Add a DB constraint if exact capacity ever matters.
+  if (entry.response === "참석") {
+    const { data: inv } = await getServiceClient().from("invitations").select("data").eq("slug", slug).maybeSingle();
+    const capacity = (inv?.data as Invitation | undefined)?.capacity;
+    if (typeof capacity === "number" && capacity > 0) {
+      const others = (await latestRsvpPerGuest(slug))
+        .filter((r) => r.name !== name && r.response === "참석")
+        .reduce((n, r) => n + r.guests, 0);
+      if (others + Math.max(1, entry.guests ?? 1) > capacity) {
+        return { ok: false, error: `정원(${capacity}명)이 가득 찼어요.` };
+      }
+    }
+  }
   const { error } = await getServiceClient().from("rsvps").insert({
     invitation_slug: slug,
     name: entry.name,

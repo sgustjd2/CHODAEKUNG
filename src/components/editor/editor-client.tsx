@@ -632,6 +632,23 @@ export function EditorClient() {
                     </div>
                   </div>
                 </div>
+                <div className="insp-group">
+                  <h5>참여 인원</h5>
+                  <div className="insp-field">
+                    <div className="insp-label">정원 (참석 인원 제한)</div>
+                    <input
+                      className="insp-input"
+                      type="number"
+                      min={0}
+                      placeholder="비우면 제한 없음 · 예: 20"
+                      value={draft.capacity ?? ""}
+                      onChange={(e) => { const n = parseInt(e.target.value, 10); setDraft((d) => ({ ...d, capacity: Number.isFinite(n) && n > 0 ? n : undefined })); }}
+                    />
+                    <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
+                      참석 인원(동반 포함)이 이 수에 도달하면 초대장에 ‘마감’이 표시되고 새 참석 응답이 막혀요.
+                    </div>
+                  </div>
+                </div>
               </>
             )}
 

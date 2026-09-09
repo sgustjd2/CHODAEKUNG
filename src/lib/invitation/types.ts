@@ -376,5 +376,8 @@ export type Invitation = {
    * SCAFFOLD: lives in data for now; when real payments land this must become a
    * server-authoritative flag (a DB column set by the payment webhook), not client data. */
   tier?: "free" | "premium";
+  /** Attendee cap (number of people, guests included). When the attending headcount reaches this,
+   * the invitation shows 마감 and blocks further 참석 responses. Absent = no limit. */
+  capacity?: number;
   sections: Section[];
 };

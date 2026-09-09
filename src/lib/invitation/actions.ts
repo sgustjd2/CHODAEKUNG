@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, submitGuestbookEntry, listGuestbook, listAttendees, type Visibility } from "./store";
+import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvitations, getOwnedInvitation, deleteInvitation, submitGuestbookEntry, listGuestbook, listAttendees, attendingHeadcount, type Visibility } from "./store";
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
@@ -83,6 +83,11 @@ export async function listGuestbookAction(slug: string) {
 /** Public: names of confirmed attendees (참석) for the on-invite roster. */
 export async function listAttendeesAction(slug: string) {
   return { ok: true as const, names: (await listAttendees(slug)).map((a) => a.name) };
+}
+
+/** Public: confirmed-attendee headcount, for the 정원(capacity) 마감 display in the RSVP bar. */
+export async function attendingCountAction(slug: string) {
+  return { ok: true as const, count: await attendingHeadcount(slug) };
 }
 
 /** Owner-only RSVP list (verifies the invitation's edit token). */
