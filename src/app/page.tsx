@@ -4,6 +4,7 @@ import { Logo } from "@/components/ui/logo";
 import { Seal } from "@/components/ui/seal";
 import { Icon } from "@/components/ui/icon";
 import { MobileNav } from "@/components/landing/mobile-nav";
+import { AccountMenu } from "@/components/landing/account-menu";
 import { hasSession } from "@/lib/db/supabase-server";
 import "./landing.css";
 
@@ -90,12 +91,12 @@ export default async function LandingPage() {
             <a href="#faq">자주 묻는 질문</a>
           </div>
           <div className="nav-cta">
+            <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
             {authed ? (
-              <Link className="btn btn-ghost btn-sm" href="/dashboard">대시보드</Link>
+              <AccountMenu />
             ) : (
               <Link className="btn btn-ghost btn-sm" href="/login">로그인</Link>
             )}
-            <Link className="btn btn-primary btn-sm" href="/new">무료로 만들기</Link>
           </div>
           <MobileNav authed={authed} />
         </div>

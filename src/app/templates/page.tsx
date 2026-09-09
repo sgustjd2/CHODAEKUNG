@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { CategoryNav } from "@/components/templates/category-nav";
 import { CustomEvent } from "@/components/templates/custom-event";
 import { TemplateCard, type Template } from "@/components/templates/template-card";
+import { AccountMenu } from "@/components/landing/account-menu";
 import { hasSession } from "@/lib/db/supabase-server";
 import "./templates.css";
 
@@ -171,13 +172,17 @@ export default async function TemplateGalleryPage() {
           <div className="nav-crumb">
             HOME · <span className="cur">TEMPLATES</span>
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <Link href={authed ? "/dashboard" : "/login"} style={{ textDecoration: "none" }}>
-              <Button variant="ghost" size="sm">{authed ? "대시보드" : "로그인"}</Button>
-            </Link>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <Link href="/new" style={{ textDecoration: "none" }}>
               <Button variant="primary" size="sm">무료로 시작하기</Button>
             </Link>
+            {authed ? (
+              <AccountMenu />
+            ) : (
+              <Link href="/login" style={{ textDecoration: "none" }}>
+                <Button variant="ghost" size="sm">로그인</Button>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
