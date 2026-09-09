@@ -33,14 +33,14 @@ const categories: Category[] = [
     navLabel: "결혼 · 기념일",
     iconName: "ic-ring",
     iconClass: "c-wedding",
-    eb: "Category 01",
+    eb: "카테고리 01",
     title: <>결혼 · <em>기념일</em></>,
     desc: "두 사람의 시작, 그리고 매년 돌아오는 소중한 순간. 로맨틱, 미니멀, 파인 아트까지 다양한 감성.",
     templates: [
-      { img: "romantic_wedding", badge: { text: "Free", kind: "free" }, catTag: "Romantic Wedding", name: <>Meadow <em>Love</em></>, meta: ["Fraunces", "Rose · Ivory"], fav: true },
-      { img: "hero_flatlay", badge: { text: "Classic" }, catTag: "Handwritten", name: <>Wax <em>Seal</em></>, meta: ["Calligraphy", "Dried Florals"] },
-      { img: "wedding_gallery_1", badge: { text: "Featured" }, catTag: "Fine Art · Serif", name: <>Hands <em>Together</em></>, meta: ["Blush · Cream", "Parallax"] },
-      { img: "wedding_gallery_2", badge: { text: "New", kind: "new" }, catTag: "Editorial · Trending", name: <>Golden <em>Trail</em></>, meta: ["Backlit", "Sunset"] },
+      { img: "romantic_wedding", badge: { text: "무료", kind: "free" }, catTag: "로맨틱 웨딩", name: <>들꽃 <em>웨딩</em></>, meta: ["세리프체", "로즈 · 아이보리"], fav: true },
+      { img: "hero_flatlay", badge: { text: "클래식" }, catTag: "손글씨", name: <>왁스 <em>실링</em></>, meta: ["캘리그래피", "드라이플라워"] },
+      { img: "wedding_gallery_1", badge: { text: "추천" }, catTag: "파인아트 · 세리프", name: <>맞잡은 <em>손</em></>, meta: ["블러시 · 크림", "패럴랙스"] },
+      { img: "wedding_gallery_2", badge: { text: "신규", kind: "new" }, catTag: "에디토리얼 · 인기", name: <>노을 <em>웨딩</em></>, meta: ["역광", "노을"] },
     ],
   },
   {
@@ -48,14 +48,14 @@ const categories: Category[] = [
     navLabel: "생일 · 돌잔치",
     iconName: "ic-cake",
     iconClass: "c-birthday",
-    eb: "Category 02",
+    eb: "카테고리 02",
     title: <>생일 · <em>돌잔치</em></>,
     desc: "첫 생일부터 환갑까지, 매년의 축하가 특별해지는 초대장. 아기부터 어른까지 톤 별로.",
     templates: [
-      { img: "minimal_birthday", badge: { text: "Free", kind: "free" }, catTag: "Minimal Birthday", name: <>Quiet <em>Day</em></>, meta: ["Editorial Grid", "Cream · Blush"] },
-      { img: "tmpl_doljanchi", badge: { text: "Doljanchi", kind: "new" }, catTag: "첫 번째 생일", name: <>First <em>Year</em></>, meta: ["Rounded", "Butter · Peach"] },
-      { img: "cute_housewarming", badge: { text: "Pro", kind: "pro" }, catTag: "Kids Birthday", name: <>Little <em>Party</em></>, meta: ["Cute Mascot", "Pastel"] },
-      { img: "tmpl_yearend", badge: { text: "환갑 · 칠순" }, catTag: "Milestone Birthday", name: <>Golden <em>Age</em></>, meta: ["Traditional", "Gold Accent"] },
+      { img: "minimal_birthday", badge: { text: "무료", kind: "free" }, catTag: "미니멀 생일", name: <>조용한 <em>하루</em></>, meta: ["에디토리얼 그리드", "크림 · 블러시"] },
+      { img: "tmpl_doljanchi", badge: { text: "돌잔치", kind: "new" }, catTag: "첫 번째 생일", name: <>첫 <em>돌</em></>, meta: ["둥근 서체", "버터 · 피치"] },
+      { img: "cute_housewarming", badge: { text: "프로", kind: "pro" }, catTag: "키즈 생일", name: <>리틀 <em>파티</em></>, meta: ["귀여운 마스코트", "파스텔"] },
+      { img: "tmpl_yearend", badge: { text: "환갑 · 칠순" }, catTag: "환갑 · 칠순", name: <>황금빛 <em>날</em></>, meta: ["전통", "골드 포인트"] },
     ],
   },
   {
@@ -63,13 +63,13 @@ const categories: Category[] = [
     navLabel: "집들이 · 홈파티",
     iconName: "ic-house",
     iconClass: "c-home",
-    eb: "Category 03",
+    eb: "카테고리 03",
     title: <>집들이 · <em>홈파티</em></>,
     desc: "새 집 첫 손님, 저녁 홈파티, 브런치 모임. 시간별 진행과 메뉴 구성까지 담을 수 있어요.",
     templates: [
-      { img: "tmpl_housewarming_v2", badge: { text: "New", kind: "new" }, catTag: "Cute · Housewarming", name: <>Cozy <em>Home</em></>, meta: ["MOMO Mascot", "Pastel"], fav: true },
-      { img: "timeline_gathering", badge: { text: "Timeline · Pro", kind: "pro" }, catTag: "Timeline · Menu", name: <>Home <em>Timeline</em></>, meta: ["시간별 진행", "메뉴 카드"] },
-      { img: "tmpl_stationery_flatlay", badge: { text: "Free", kind: "free" }, catTag: "Dinner Party", name: <>Warm <em>Dinner</em></>, meta: ["Editorial", "Wine · Cream"] },
+      { img: "tmpl_housewarming_v2", badge: { text: "신규", kind: "new" }, catTag: "귀여운 · 집들이", name: <>포근한 <em>집</em></>, meta: ["모모 마스코트", "파스텔"], fav: true },
+      { img: "timeline_gathering", badge: { text: "타임라인 · 프로", kind: "pro" }, catTag: "타임라인 · 메뉴", name: <>홈파티 <em>타임라인</em></>, meta: ["시간별 진행", "메뉴 카드"] },
+      { img: "tmpl_stationery_flatlay", badge: { text: "무료", kind: "free" }, catTag: "디너 파티", name: <>따뜻한 <em>저녁</em></>, meta: ["에디토리얼", "와인 · 크림"] },
     ],
   },
   {
@@ -77,15 +77,15 @@ const categories: Category[] = [
     navLabel: "스포츠 배틀",
     iconName: "ic-ball",
     iconClass: "c-sports",
-    eb: "Category 04",
+    eb: "카테고리 04",
     title: <>스포츠 <em>배틀</em></>,
     desc: "조기축구, 배드민턴, 테니스, 야구관람, 반대항 경기까지. VS 대결 구도의 재미있는 도전장.",
     templates: [
-      { img: "battle_sports", badge: { text: "Battle", kind: "new" }, catTag: "Soccer · 조기축구", name: <>조기축구 <em>배틀</em></>, meta: ["VS Layout", "Team Roster"] },
-      { img: "tmpl_badminton", badge: { text: "Free", kind: "free" }, catTag: "Badminton · 배드민턴", name: <>Shuttle <em>Battle</em></>, meta: ["2v2 · 개인전", "Bracket"] },
-      { img: "tmpl_baseball", badge: { text: "Pro", kind: "pro" }, catTag: "Baseball · 야구", name: <>야구장 <em>관람</em></>, meta: ["좌석 정보", "응원 팀"] },
-      { img: "tmpl_tennis", badge: { text: "Tennis" }, catTag: "Tennis · Golf", name: <>Match <em>Day</em></>, meta: ["Score Card", "Court Info"] },
-      { img: "tmpl_climbing", badge: { text: "반대항", kind: "new" }, catTag: "Company · 반대항", name: <>반대항 <em>매치</em></>, meta: ["팀 배지", "스코어보드"] },
+      { img: "battle_sports", badge: { text: "배틀", kind: "new" }, catTag: "축구 · 조기축구", name: <>조기축구 <em>배틀</em></>, meta: ["VS 구도", "팀 명단"] },
+      { img: "tmpl_badminton", badge: { text: "무료", kind: "free" }, catTag: "배드민턴", name: <>셔틀 <em>배틀</em></>, meta: ["2v2 · 개인전", "대진표"] },
+      { img: "tmpl_baseball", badge: { text: "프로", kind: "pro" }, catTag: "야구 · 직관", name: <>야구장 <em>관람</em></>, meta: ["좌석 정보", "응원 팀"] },
+      { img: "tmpl_tennis", badge: { text: "테니스" }, catTag: "테니스 · 골프", name: <>매치 <em>데이</em></>, meta: ["스코어 카드", "코트 정보"] },
+      { img: "tmpl_climbing", badge: { text: "반대항", kind: "new" }, catTag: "회사 · 반대항", name: <>반대항 <em>매치</em></>, meta: ["팀 배지", "스코어보드"] },
     ],
   },
   {
@@ -93,20 +93,20 @@ const categories: Category[] = [
     navLabel: "게이밍 · 롤",
     iconName: "ic-controller",
     iconClass: "c-gaming",
-    eb: "Category 05",
+    eb: "카테고리 05",
     title: <>게이밍 · <em>롤</em></>,
     desc: "롤 빠른대전, 내전, 랭크 파티, 발로란트, 오버워치까지. 소환사명·티어·포지션 정보를 담은 게이밍 초대장.",
     templates: [
-      { img: "game_lol_rank", badge: { text: "New · LoL", kind: "new" }, catTag: "League of Legends · 롤", name: <>랭크 <em>파티</em></>, meta: ["티어 · 포지션", "Duo · Flex"] },
-      { img: "game_lol_aram", badge: { text: "Free", kind: "free" }, catTag: "LoL · 빠른대전", name: <>빠대 <em>파티</em></>, meta: ["5인 파티", "ARAM · 노말"] },
-      { img: "game_lol_draft", badge: { text: "Pro · 내전", kind: "pro" }, catTag: "Custom · 내전", name: <>10인 <em>내전</em></>, meta: ["블루 vs 레드", "드래프트"] },
-      { img: "game_valorant", badge: { text: "Valorant" }, catTag: "FPS · Valorant", name: <>Agent <em>Lock</em></>, meta: ["5v5", "에이전트 선택"] },
-      { img: "game_overwatch", badge: { text: "Hero", kind: "new" }, catTag: "Hero Shooter · 오버워치", name: <>Hero <em>Select</em></>, meta: ["탱 · 딜 · 힐", "궁 타이밍"] },
-      { img: "game_fifa", badge: { text: "FC · Football" }, catTag: "EA Sports FC · 피파", name: <>Kick <em>Off</em></>, meta: ["토너먼트", "포메이션"] },
-      { img: "game_battleroyale", badge: { text: "Battle Royale", kind: "pro" }, catTag: "배그 · 서든어택", name: <>Last <em>Squad</em></>, meta: ["스쿼드 4인", "매치 시간"] },
-      { img: "game_rts", badge: { text: "RTS · Classic" }, catTag: "Starcraft · RTS", name: <>GG <em>Night</em></>, meta: ["1v1 · 팀플", "맵 로테이션"] },
-      { img: "minecraft_party", badge: { text: "New · 마크", kind: "new" }, catTag: "Minecraft · 블록월드", name: <>Block <em>Party</em></>, meta: ["생존 · 멀티", "정원 8명"] },
-      { img: "developer_terminal", badge: { text: "Dev · Terminal", kind: "pro" }, catTag: "Game · e-Sports", name: <>$ moi <em>--invite</em></>, meta: ["Dark · Mono", "Tournament"] },
+      { img: "game_lol_rank", badge: { text: "신규 · 롤", kind: "new" }, catTag: "리그 오브 레전드 · 롤", name: <>랭크 <em>파티</em></>, meta: ["티어 · 포지션", "듀오 · 자유랭"] },
+      { img: "game_lol_aram", badge: { text: "무료", kind: "free" }, catTag: "롤 · 빠른대전", name: <>빠대 <em>파티</em></>, meta: ["5인 파티", "칼바람 · 일반"] },
+      { img: "game_lol_draft", badge: { text: "프로 · 내전", kind: "pro" }, catTag: "사용자 설정 · 내전", name: <>10인 <em>내전</em></>, meta: ["블루 vs 레드", "드래프트"] },
+      { img: "game_valorant", badge: { text: "발로란트" }, catTag: "FPS · 발로란트", name: <>요원 <em>선택</em></>, meta: ["5v5", "에이전트 선택"] },
+      { img: "game_overwatch", badge: { text: "히어로", kind: "new" }, catTag: "히어로 슈터 · 오버워치", name: <>영웅 <em>선택</em></>, meta: ["탱 · 딜 · 힐", "궁 타이밍"] },
+      { img: "game_fifa", badge: { text: "FC · 축구" }, catTag: "EA SPORTS FC · 피파", name: <>킥 <em>오프</em></>, meta: ["토너먼트", "포메이션"] },
+      { img: "game_battleroyale", badge: { text: "배틀로얄", kind: "pro" }, catTag: "배그 · 서든어택", name: <>라스트 <em>스쿼드</em></>, meta: ["스쿼드 4인", "매치 시간"] },
+      { img: "game_rts", badge: { text: "RTS · 클래식" }, catTag: "스타크래프트 · RTS", name: <>GG <em>나이트</em></>, meta: ["1v1 · 팀플", "맵 로테이션"] },
+      { img: "minecraft_party", badge: { text: "신규 · 마크", kind: "new" }, catTag: "마인크래프트 · 블록월드", name: <>블록 <em>파티</em></>, meta: ["생존 · 멀티", "정원 8명"] },
+      { img: "developer_terminal", badge: { text: "개발자 · 터미널", kind: "pro" }, catTag: "게임 · e스포츠", name: <>개발자 <em>밋업</em></>, meta: ["다크 · 모노", "토너먼트"] },
     ],
   },
   {
@@ -114,15 +114,15 @@ const categories: Category[] = [
     navLabel: "아웃도어",
     iconName: "ic-mountain",
     iconClass: "c-outdoor",
-    eb: "Category 06",
+    eb: "카테고리 06",
     title: <>아웃도어 <em>모임</em></>,
     desc: "러닝, 등산, 캠핑, 피크닉, 여행/MT. 이동 경로, 준비물, 일정 공유가 필요한 모임.",
     templates: [
-      { img: "tmpl_running", badge: { text: "New", kind: "new" }, catTag: "Running Club", name: <>Morning <em>Run</em></>, meta: ["페이스 · 거리", "루트 맵"] },
-      { img: "tmpl_hiking", badge: { text: "Free", kind: "free" }, catTag: "Hiking Meet", name: <>Trail <em>Together</em></>, meta: ["난이도", "준비물"] },
-      { img: "tmpl_camping", badge: { text: "Pro", kind: "pro" }, catTag: "Camping · 차박", name: <>Under <em>Stars</em></>, meta: ["사이트 정보", "담당표"] },
-      { img: "tmpl_picnic", badge: { text: "Trending", kind: "new" }, catTag: "Picnic", name: <>Sunny <em>Picnic</em></>, meta: ["가져올 것", "공원 위치"] },
-      { img: "tmpl_travel", badge: { text: "MT · Trip", kind: "pro" }, catTag: "MT · 여행", name: <>Trip <em>Together</em></>, meta: ["일별 일정", "비용 정산"], fav: true },
+      { img: "tmpl_running", badge: { text: "신규", kind: "new" }, catTag: "러닝 크루", name: <>모닝 <em>런</em></>, meta: ["페이스 · 거리", "코스 지도"] },
+      { img: "tmpl_hiking", badge: { text: "무료", kind: "free" }, catTag: "등산 모임", name: <>함께 <em>등산</em></>, meta: ["난이도", "준비물"] },
+      { img: "tmpl_camping", badge: { text: "프로", kind: "pro" }, catTag: "캠핑 · 차박", name: <>별 <em>아래</em></>, meta: ["사이트 정보", "담당표"] },
+      { img: "tmpl_picnic", badge: { text: "인기", kind: "new" }, catTag: "피크닉", name: <>화창한 <em>피크닉</em></>, meta: ["가져올 것", "공원 위치"] },
+      { img: "tmpl_travel", badge: { text: "MT · 여행", kind: "pro" }, catTag: "MT · 여행", name: <>함께 <em>여행</em></>, meta: ["일별 일정", "비용 정산"], fav: true },
     ],
   },
   {
@@ -130,15 +130,15 @@ const categories: Category[] = [
     navLabel: "취미 소모임",
     iconName: "ic-book",
     iconClass: "c-hobby",
-    eb: "Category 07",
+    eb: "카테고리 07",
     title: <>취미 <em>소모임</em></>,
     desc: "스터디, 요가, 사진 출사, 반려동물, 카페 투어. 관심사로 모이는 작은 만남들.",
     templates: [
-      { img: "tmpl_study", badge: { text: "Free", kind: "free" }, catTag: "Study Group", name: <>Study <em>Time</em></>, meta: ["주제 · 교재", "커리큘럼"] },
-      { img: "tmpl_yoga", badge: { text: "New", kind: "new" }, catTag: "Yoga · Wellness", name: <>Slow <em>Flow</em></>, meta: ["레벨", "준비물"] },
-      { img: "tmpl_pet", badge: { text: "Cute", kind: "new" }, catTag: "Pet Meetup", name: <>Furry <em>Friends</em></>, meta: ["견종·크기", "애견 카페"] },
-      { img: "tmpl_rooftop_party", badge: { text: "Pro", kind: "pro" }, catTag: "Photo Walk", name: <>Golden <em>Hour</em></>, meta: ["스팟 리스트", "장비 안내"] },
-      { img: "tmpl_bookclub", badge: { text: "Free", kind: "free" }, catTag: "Cafe · Foodie", name: <>Cafe <em>Hop</em></>, meta: ["코스", "추천 메뉴"] },
+      { img: "tmpl_study", badge: { text: "무료", kind: "free" }, catTag: "스터디 모임", name: <>스터디 <em>타임</em></>, meta: ["주제 · 교재", "커리큘럼"] },
+      { img: "tmpl_yoga", badge: { text: "신규", kind: "new" }, catTag: "요가 · 웰니스", name: <>슬로우 <em>플로우</em></>, meta: ["레벨", "준비물"] },
+      { img: "tmpl_pet", badge: { text: "귀여움", kind: "new" }, catTag: "반려동물 모임", name: <>털친구 <em>모임</em></>, meta: ["견종·크기", "애견 카페"] },
+      { img: "tmpl_rooftop_party", badge: { text: "프로", kind: "pro" }, catTag: "사진 출사", name: <>골든 <em>아워</em></>, meta: ["스팟 리스트", "장비 안내"] },
+      { img: "tmpl_bookclub", badge: { text: "무료", kind: "free" }, catTag: "카페 · 맛집", name: <>카페 <em>투어</em></>, meta: ["코스", "추천 메뉴"] },
     ],
   },
   {
@@ -146,14 +146,14 @@ const categories: Category[] = [
     navLabel: "파티 · 이벤트",
     iconName: "ic-confetti",
     iconClass: "c-party",
-    eb: "Category 08",
+    eb: "카테고리 08",
     title: <>파티 · <em>이벤트</em></>,
     desc: "송년회, 브라이덜/베이비 샤워, 회사 행사, 세미나. 격식 있는 이벤트부터 캐주얼 파티까지.",
     templates: [
-      { img: "editorial_party", badge: { text: "Featured", kind: "new" }, catTag: "Editorial Party", name: <>After <em>Hours</em></>, meta: ["Film Grain", "Magazine"] },
-      { img: "tmpl_yearend_v2", badge: { text: "Year-End" }, catTag: "Year-End · 송년회", name: <>Golden <em>Night</em></>, meta: ["Dark", "Ink · Gold"] },
-      { img: "tmpl_bridalshower", badge: { text: "New", kind: "new" }, catTag: "Bridal Shower", name: <>Lavender <em>Fields</em></>, meta: ["Botanical", "Lavender"] },
-      { img: "tmpl_seminar", badge: { text: "Pro", kind: "pro" }, catTag: "Seminar · Corporate", name: <>Modern <em>Assembly</em></>, meta: ["Formal", "Neutral"] },
+      { img: "editorial_party", badge: { text: "추천", kind: "new" }, catTag: "에디토리얼 파티", name: <>애프터 <em>파티</em></>, meta: ["필름 그레인", "매거진"] },
+      { img: "tmpl_yearend_v2", badge: { text: "송년" }, catTag: "연말 · 송년회", name: <>골든 <em>나이트</em></>, meta: ["다크", "잉크 · 골드"] },
+      { img: "tmpl_bridalshower", badge: { text: "신규", kind: "new" }, catTag: "브라이덜 샤워", name: <>라벤더 <em>필즈</em></>, meta: ["보태니컬", "라벤더"] },
+      { img: "tmpl_seminar", badge: { text: "프로", kind: "pro" }, catTag: "세미나 · 기업", name: <>모던 <em>세미나</em></>, meta: ["포멀", "뉴트럴"] },
     ],
   },
 ];
@@ -171,7 +171,7 @@ export default async function TemplateGalleryPage() {
             <Logo />
           </Link>
           <div className="nav-crumb">
-            HOME · <span className="cur">TEMPLATES</span>
+            홈 · <span className="cur">템플릿</span>
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <Link href="/new" style={{ textDecoration: "none" }}>
@@ -190,7 +190,7 @@ export default async function TemplateGalleryPage() {
 
       {/* HEAD */}
       <div className="head">
-        <div className="head-eyebrow">Templates · 8 Categories</div>
+        <div className="head-eyebrow">템플릿 · 8개 카테고리</div>
         <h1 className="head-title">
           청첩장부터 <em>롤 파티까지.</em>
           <br />
@@ -215,7 +215,7 @@ export default async function TemplateGalleryPage() {
           <input type="text" placeholder="템플릿 검색 · 예: 미니멀 웨딩, 조기축구, 캠핑장" />
         </div>
         <div className="sort">
-          SORT BY
+          정렬
           <select defaultValue="인기순">
             <option>인기순</option>
             <option>최신순</option>

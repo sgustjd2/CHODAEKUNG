@@ -38,14 +38,14 @@ const SECTIONS: { label: string; checked?: boolean }[] = [
 ];
 
 const TEMPLATE_MAP: Record<string, string> = {
-  warm: "Warm & Cozy",
-  minimal: "Clean Minimal",
-  playful: "Playful Peach",
-  nature: "Nature Sage",
-  fresh: "Fresh Sky",
-  elegant: "Elegant Lilac",
-  celebratory: "Celebratory Gold",
-  bold: "Bold Ink",
+  warm: "따뜻하고 포근한",
+  minimal: "깔끔한 미니멀",
+  playful: "발랄한 피치",
+  nature: "내추럴 세이지",
+  fresh: "산뜻한 스카이",
+  elegant: "우아한 라일락",
+  celebratory: "화려한 골드",
+  bold: "강렬한 잉크",
 };
 
 export function CustomEvent() {
@@ -66,7 +66,7 @@ export function CustomEvent() {
     setMoods((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
 
   const showPreview = name.trim() !== "" || moods.length > 0;
-  const primary = moods[0] ? TEMPLATE_MAP[moods[0]] : "Warm & Cozy";
+  const primary = moods[0] ? TEMPLATE_MAP[moods[0]] : "따뜻하고 포근한";
   const create = () =>
     router.push(`/new?event=${encodeURIComponent(name.trim() || "내 이벤트")}`);
 
@@ -109,7 +109,7 @@ export function CustomEvent() {
       >
         <div className="ce-modal-head">
           <div>
-            <div className="ce-eb">Custom Event</div>
+            <div className="ce-eb">커스텀 이벤트</div>
             <h3>
               어떤 <em>이벤트</em>인가요?
             </h3>

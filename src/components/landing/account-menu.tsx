@@ -67,9 +67,15 @@ export function AccountMenu() {
         aria-expanded={open}
         aria-label="내 정보"
         onClick={() => setOpen((v) => !v)}
-        style={{ width: 38, height: 38, borderRadius: "50%", border: "1px solid var(--line)", background: "var(--wax)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+        style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 38, padding: "0 12px 0 8px", borderRadius: 999, border: "1px solid var(--line)", background: "var(--card, #fff)", color: "var(--ink)", fontWeight: 700, fontSize: 13, cursor: "pointer", maxWidth: 220 }}
       >
-        {name.charAt(0).toUpperCase()}
+        <span aria-hidden="true" style={{ width: 24, height: 24, borderRadius: "50%", background: "var(--wax)", color: "#fff", fontWeight: 800, fontSize: 12, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          {name.charAt(0).toUpperCase()}
+        </span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, opacity: 0.5 }}>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
       {open && (
         <div
