@@ -831,3 +831,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - `ContentEditors`: 커버 "배지(칩)" 편집 필드 추가, 디테일 `info`에 "단위(선택)"(u) 필드 추가 → 모바일/데스크톱 모두에서 배지·디테일 전 항목 편집 가능.
 
 검증: tsc 0, eslint 0 errors(기존 warning 3), 로컬(데모 모드) 모바일/데스크톱 뷰포트에서 위 4건 재현→수정 확인. 발행 서버동작은 배포 DB에서만(로컬은 "백엔드 미설정" 메시지 정상).
+
+## 2026-09-11 (2) — 프리뷰 인라인 편집 전 테마 + RSVP 파티 블록
+
+**요청(사용자):** ① 프리뷰에서 탭해서 전부 수정(모든 템플릿), ② 템플릿 기본 예시값을 회색 힌트로(탭 시 사라짐, 발행 시 미표시), ③ 참여자 블록을 실제 RSVP로 자동.
+
+**A. 인라인 편집(완료·배포):** `handleInlineEdit`를 임의 중첩 경로(getAtPath/setAtPath, 불변)로 일반화. 8개 테마 전 섹션 렌더러의 content 유래 텍스트를 `<Editable>`로 래핑 — 공용 셸(TlSection/section-head/c-card/e-section/d-section/g-section/sec-title)에서 eyebrow·title 일괄 처리 + 커버 배지/부제, 정보·스탯 카드(k/v/u), 일정·라인업·룰·메뉴·루트·엔딩 등 항목. 아이콘/이미지/런타임 카운트다운/RSVP·토글 버튼은 제외(공개 렌더 불변). 타임라인은 직접, 나머지 7테마는 병렬 서브에이전트로 적용 후 tsc+webpack 빌드+브라우저(romantic/editorial/gaming) 검증. `desc`(string)의 잘못된 multiline 제거.
+
+**C. RSVP 파티(완료·배포):** `useLiveParty` 훅 — 발행 페이지에서 details.party를 실제 참석자 이름/헤드카운트로 채우고 RSVP 이벤트/12s 폴링 갱신, capacity로 "N자리 남음". 에디터/미리보기는 템플릿 party 유지. `TimelineDetails`만 party를 렌더하므로 거기만 배선(editorial details엔 party 없음). attendees 섹션과 동일 패턴.
+
+**B. 회색 플레이스홀더 기본값(보류):** 템플릿 예시값을 옅은 힌트로 표시→탭 시 클리어→발행 시 미표시. 안전 구현엔 "필드가 아직 템플릿 기본값인지(pristine)" 추적이 필요(어떤 path가 편집 텍스트인지 중앙 목록이 없음 — 현재는 각 렌더러의 data-edit에 분산). 템플릿 시딩/블랭킹을 잘못 건드리면 템플릿이 빈 화면으로 깨질 위험이 있어, pristine 추적 방식을 설계 후 별도로 진행 예정. [[no-auto-default-values]] 정책과 상호작용.
