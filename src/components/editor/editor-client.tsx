@@ -54,7 +54,15 @@ function readWizardSeed(): WizardSeed | null {
 /** Apply the wizard basics onto the seeded invitation. Each field is applied independently
  * (any subset the user filled carries over) and only into fields the theme's cover actually
  * uses, so nothing the guest typed is silently dropped and no unused field is invented. */
+// Cover badge icons that mean "place" vs "time" — used to steer the wizard venue/date into the
+// right chip (timeline/meetup covers carry the venue + date as badges, not a dateLabel).
+const PLACE_BADGE_ICONS = ["ic-pin", "ic-mountain", "ic-map", "ic-location"];
+// Details `info` row keys that mean "venue" (case-insensitive), so a wizard venue lands there too.
+const VENUE_INFO_KEYS = ["where", "location", "place", "venue", "장소", "위치"];
 function applyWizardSeed(inv: Invitation, w: WizardSeed) {
+  const loc = w.location?.trim();
+  const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
+  const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
   const cover = inv.sections.find((s) => s.type === "cover") as Extract<Section, { type: "cover" }> | undefined;
   if (cover) {
     const c = cover.content;
@@ -71,21 +79,36 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
       else if (typeof c.subtitle === "string") c.subtitle = sub;
     }
     // Cover date label (plain text — safe across themes). Native date input hands over ISO.
-    const prettyDate = w.date?.trim() ? w.date.replace(/-/g, ".") : "";
-    const dl = [prettyDate, w.time?.trim()].filter(Boolean).join(" · ");
     if (dl && typeof c.dateLabel === "string") c.dateLabel = dl;
     // Battle/gaming covers show the date on the cover header (headerRightLines), not a dateLabel —
     // update those too so a wizard-entered date actually reflects on the cover.
     if (Array.isArray(c.headerRightLines) && w.date?.trim()) {
       c.headerRightLines = coverDateLines(`${w.date}${w.time?.trim() ? "T" + w.time : "T00:00"}`);
     }
+    // Timeline/meetup covers carry the venue + date as badges (chips), not names/dateLabel — steer
+    // the wizard venue into the place chip and the date into the clock chip so they're not left at
+    // the template's sample (e.g. "홍대 골목집"). Matched by the badge's icon.
+    if (Array.isArray(c.badges)) {
+      c.badges = c.badges.map((b) => {
+        if (loc && b.icon && PLACE_BADGE_ICONS.includes(b.icon)) return { ...b, label: loc };
+        if (dl && b.icon === "ic-clock") return { ...b, label: dl };
+        return b;
+      });
+    }
   }
   // Venue → the location section's title line (its header). Body/address stay template-provided
   // (the user edits the rest); on a blank start the section fills in cleanly.
-  const loc = w.location?.trim();
   if (loc) {
     const locSec = inv.sections.find((s) => s.type === "location") as Extract<Section, { type: "location" }> | undefined;
     if (locSec) locSec.content.title = [[loc]];
+    // A details/info card also surfaces the venue (its "Where" row) — update it so the venue isn't
+    // left at the sample there either. Full venue goes in the value; the unit suffix is cleared.
+    const detailsSec = inv.sections.find((s) => s.type === "details") as Extract<Section, { type: "details" }> | undefined;
+    if (detailsSec?.content.info) {
+      detailsSec.content.info = detailsSec.content.info.map((kv) =>
+        VENUE_INFO_KEYS.includes((kv.k ?? "").trim().toLowerCase()) ? { ...kv, v: loc, u: "" } : kv,
+      );
+    }
   }
   // Canonical event datetime (D-day countdown + .ics). Prefer the wizard's ISO, else date[+time].
   const iso = w.eventStart?.trim() || (w.date?.trim() ? `${w.date}${w.time?.trim() ? "T" + w.time : ""}` : "");
@@ -350,6 +373,24 @@ export function EditorClient() {
       /* storage unavailable — skip; edits stay in memory */
     }
   }, [hydrated, slug, draft, title, hidden, accent]);
+
+  // Mobile viewport height: track the visual viewport so the editor shell fits the *visible* area —
+  // above the browser chrome, and (on iOS, which ignores interactive-widget) above the on-screen
+  // keyboard, so the bottom sheet's fields aren't hidden behind it. CSS falls back to 100dvh.
+  // ponytail: pinch-zoom also shrinks visualViewport.height; acceptable for an editor.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const set = () => document.documentElement.style.setProperty("--app-vh", `${Math.round(vv.height)}px`);
+    set();
+    vv.addEventListener("resize", set);
+    vv.addEventListener("scroll", set);
+    return () => {
+      vv.removeEventListener("resize", set);
+      vv.removeEventListener("scroll", set);
+      document.documentElement.style.removeProperty("--app-vh");
+    };
+  }, []);
 
   const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
 

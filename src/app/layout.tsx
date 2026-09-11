@@ -11,6 +11,9 @@ export const metadata: Metadata = {
 
 // Tints the mobile browser chrome to the app's paper ground for every viewer (light + dark).
 export const viewport: Viewport = {
+  // On Android, let the on-screen keyboard shrink the layout viewport (so dvh/bottom-sheet
+  // controls stay above it). iOS ignores this — the editor tracks visualViewport in JS instead.
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#F5F1EA" },
     { media: "(prefers-color-scheme: dark)", color: "#2A2622" },

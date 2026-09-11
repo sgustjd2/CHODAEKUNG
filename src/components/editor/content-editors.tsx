@@ -93,6 +93,19 @@ export function ContentEditors({ draft, patch, onEventStart }: { draft: Invitati
             <Field key={i} label={`이름 ${i + 1}`} value={n} onChange={(v) => patch(cover.id, { names: cover.content.names!.map((x, j) => (j === i ? v : x)) })} />
           ))}
           <Field label="날짜 표기" value={cover.content.dateLabel ?? ""} onChange={(v) => patch(cover.id, { dateLabel: v })} />
+          {cover.content.badges?.length ? (
+            <>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "var(--fg-2, #4a4a5a)", margin: "14px 0 8px" }}>커버 배지 (칩)</div>
+              {cover.content.badges.map((b, i) => (
+                <Field
+                  key={i}
+                  label={`배지 ${i + 1}`}
+                  value={b.label}
+                  onChange={(v) => patch(cover.id, { badges: cover.content.badges!.map((x, j) => (j === i ? { ...x, label: v } : x)) })}
+                />
+              ))}
+            </>
+          ) : null}
           <div style={{ fontSize: 12, fontWeight: 600, color: "var(--fg-2, #4a4a5a)", margin: "14px 0 8px" }}>커버 레이아웃</div>
           <div className="radio-group">
             {COVER_LAYOUTS.map((l) => (
@@ -383,9 +396,10 @@ export function ContentEditors({ draft, patch, onEventStart }: { draft: Invitati
               </div>
               <Field label="항목" value={kv.k} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, k: v } : x)) })} />
               <Field label="값" value={kv.v} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, v } : x)) })} />
+              <Field label="단위 (선택)" value={kv.u ?? ""} onChange={(v) => patch(details.id, { info: details.content.info.map((x, j) => (j === i ? { ...x, u: v } : x)) })} />
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(details.id, { info: [...details.content.info, { k: "", v: "" }] })}>+ 항목 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(details.id, { info: [...details.content.info, { k: "", v: "", u: "" }] })}>+ 항목 추가</button>
         </div>
       )}
       {notice && (

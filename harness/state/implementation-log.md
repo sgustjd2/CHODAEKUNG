@@ -819,3 +819,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
   복구할 때 published(검색노출)로 올리면 원래보다 노출이 커짐. 안전한 되돌리기 위해 복구 대상을 **unlisted**로 둠.
   (사용자에게 published 옵션도 제시했고, 별도 반대 없어 unlisted 유지.)
 - 검증: tsc + eslint 0 + `next build --webpack`(23 라우트) 통과. 인터랙티브 동작은 배포 후 로그인 상태에서 사용자와 점검.
+
+## 2026-09-11 — 모바일 에디터 뷰포트 버그 + 마법사 정보 반영 + 배지/디테일 편집
+
+**증상(사용자, 모바일 iOS):** ① 에디터 하단 탭·시트가 브라우저 크롬/키보드에 가려 "화면이 짤림", ② 발행/공유가 "안 됨"(발행 다이얼로그 footer가 크롬 뒤로 밀려 도달 불가 — 서버는 정상: 배포 DB 설정됨, /i/jisoo-minjun 렌더 확인), ③ 동호회모임(=`club`→`beongae` 타임라인 템플릿) 마법사에서 입력한 장소/날짜가 반영 안 되고 "홍대 골목집"에 고정, ④ 모바일에서 커버 배지·디테일 카드를 편집할 수 없음.
+
+**수정:**
+- `.editor-page` 높이 `100vh`→`100dvh`→`var(--app-vh,100dvh)`; `EditorClient`에 `visualViewport` 추적 effect가 `--app-vh`를 실제 가시영역 높이로 갱신. → 크롬 가림 + iOS 키보드가 하단 시트를 가리는 문제 동시 해결(시뮬레이션 검증: 키보드 시 시트가 키보드 위로 재배치). `layout.tsx` viewport에 `interactiveWidget:"resizes-content"`(안드로이드), `.m-tabs`/`.m-sheet`에 `env(safe-area-inset-bottom)`.
+- 발행 다이얼로그 모바일(≤800px): `.pub-modal { display:block; height:100dvh; overflow-y:auto }` + 패널 `max-height:none` → 그리드에서 도달 불가하던 footer(발행하기)가 단일 스크롤로 도달 가능.
+- `applyWizardSeed`(editor-client.tsx): 장소→커버 place 배지(`ic-pin`류)+디테일 `info`의 "Where"류 행, 날짜→커버 `ic-clock` 배지에도 반영(기존엔 location 섹션 title만 갱신). 타임라인/모임 템플릿의 커버 칩·WHERE가 이제 마법사 입력을 따름.
+- `ContentEditors`: 커버 "배지(칩)" 편집 필드 추가, 디테일 `info`에 "단위(선택)"(u) 필드 추가 → 모바일/데스크톱 모두에서 배지·디테일 전 항목 편집 가능.
+
+검증: tsc 0, eslint 0 errors(기존 warning 3), 로컬(데모 모드) 모바일/데스크톱 뷰포트에서 위 4건 재현→수정 확인. 발행 서버동작은 배포 DB에서만(로컬은 "백엔드 미설정" 메시지 정상).
