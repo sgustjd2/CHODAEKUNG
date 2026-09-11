@@ -133,7 +133,7 @@ export function InvitationViewer({
         {invitation.sections.map((s, i) => {
           // Cover with a non-theme layout uses the shared GenericCover; everything else the theme renderer.
           const useGeneric = s.type === "cover" && !!(s.content as CoverContent).layout && (s.content as CoverContent).layout !== "theme";
-          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number; target?: string }> | undefined;
+          const Renderer = set[s.type] as ComponentType<{ content: unknown; index?: number; target?: string; slug?: string; preview?: boolean; capacity?: number }> | undefined;
           const node = useGeneric ? (
             <GenericCover content={s.content as CoverContent} />
           ) : s.type === "dday" ? (
@@ -147,6 +147,10 @@ export function InvitationViewer({
             <GuestbookSection content={s.content as GuestbookContent} slug={invitation.slug} preview={preview || contained} />
           ) : s.type === "attendees" ? (
             <AttendeesSection content={s.content as AttendeesContent} slug={invitation.slug} preview={preview || contained} />
+          ) : s.type === "details" && Renderer ? (
+            // The details party block (avatars + N명 확정) is live-RSVP-driven on the published page,
+            // so it needs the slug + preview flag + capacity (for "자리 남음"), like attendees.
+            <Renderer content={s.content} index={i} slug={invitation.slug} preview={preview || contained} capacity={invitation.capacity} />
           ) : Renderer ? (
             <Renderer content={s.content} index={i} />
           ) : null;

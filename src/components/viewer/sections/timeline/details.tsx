@@ -1,8 +1,13 @@
+"use client";
+
 import { TlSection } from "./tl-section";
 import { Editable } from "../../editable";
+import { useLiveParty } from "../../use-live-party";
 import type { DetailsContent } from "@/lib/invitation/types";
 
-export function TimelineDetails({ content }: { content: DetailsContent }) {
+export function TimelineDetails({ content, slug, preview, capacity }: { content: DetailsContent; slug?: string; preview?: boolean; capacity?: number }) {
+  // Published page: party block reflects real RSVPs. Editor/preview: the template's own party.
+  const party = useLiveParty(slug, preview ?? false, capacity, content.party);
   return (
     <TlSection eyebrow={content.eyebrow} title={content.title} tint={content.tint}>
       <div className="tl-info-grid">
@@ -16,17 +21,17 @@ export function TimelineDetails({ content }: { content: DetailsContent }) {
           </div>
         ))}
       </div>
-      {content.party && (
+      {party && (
         <div className="party-row">
-          {content.party.avatars.map((a, i) => (
+          {party.avatars.map((a, i) => (
             <div key={i} className={`party-ava${a.tone ? ` n${a.tone}` : ""}`}>
               {a.label}
             </div>
           ))}
-          {content.party.more && <div className="party-ava more">{content.party.more}</div>}
+          {party.more && <div className="party-ava more">{party.more}</div>}
           <div className="party-count">
-            <span className="n-t"><Editable path="party.countLabel">{content.party.countLabel}</Editable></span>
-            <span className="l-t"><Editable path="party.countSub">{content.party.countSub}</Editable></span>
+            <span className="n-t"><Editable path="party.countLabel">{party.countLabel}</Editable></span>
+            {party.countSub && <span className="l-t"><Editable path="party.countSub">{party.countSub}</Editable></span>}
           </div>
         </div>
       )}
