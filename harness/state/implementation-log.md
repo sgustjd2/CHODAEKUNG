@@ -887,3 +887,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **설계:** 저장 상태(auto-hide set) 없이 **파생값**으로 처리 — `canRenderInTheme(type)=!!themeRegistry[theme][type]`. `visibleDraft`가 `!hidden && canRenderInTheme`로 필터 → 프리뷰·발행(둘 다 visibleDraft 경유) 모두에서 미지원 섹션 제외. draft에는 남아있어 편집 가능하고, 테마를 되돌리면 자동 복귀(별도 unhide 로직 불필요, 수동 숨김과도 안 섞임). 좌측/모바일 목록엔 `orphan-sec`(흐리게)+"미표시" 배지+title 툴팁으로 이유 표시.
 
 **검증(브라우저, 데스크톱 3열):** romantic→cute 전환 시 message·schedule만 "미표시"·프리뷰 12→10개로 제외(orphanCount=2), cute→romantic 되돌리면 12/12 전부 복귀(orphanCount=0). 콘솔 React 에러 0. tsc 0, eslint 0.
+
+## 2026-09-11 (7) — 복제 섹션 인스펙터 편집 가능화
+
+**요청(사용자):** 복제한 섹션이 인스펙터로 편집 안 되는 문제 해결.
+
+**원인:** `ContentEditors`가 타입별 `find(t)`=첫 섹션만 대상으로 삼아, 같은 타입 복제본은 인스펙터 구조 편집(행/사진 추가·삭제 등)이 항상 첫 번째로 감.
+
+**수정:** `find`가 **선택된 섹션(selectedId)**을 우선 반환하고 없을 때만 첫 섹션으로 폴백. `selectedId`를 ContentEditors에 prop으로 전달(데스크톱·모바일 둘 다). 좌측/프리뷰에서 복제본을 선택하면 그 타입의 인스펙터 그룹이 해당 인스턴스를 편집. 단일 섹션 동작은 불변.
+
+**검증(브라우저):** 일정 섹션 복제(원본/복제 각 4항목) → 복제본 선택 → 인스펙터 "+ 일정 추가" → 복제본 4→5, 원본 4 유지. 콘솔 에러 0. tsc(앱 코드) 0, eslint 0.

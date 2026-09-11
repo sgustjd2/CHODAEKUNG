@@ -145,7 +145,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
   return (
     <>
       <DecorTabs tabs={chips} />
-      <ContentEditors draft={api.draft} patch={api.patch} onEventStart={(iso) => api.setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
+      <ContentEditors draft={api.draft} patch={api.patch} selectedId={api.selectedId} onEventStart={(iso) => api.setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
       <div className="insp-group">
         <h5>캘린더</h5>
         <div className="insp-field">

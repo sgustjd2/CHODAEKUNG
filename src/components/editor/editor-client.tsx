@@ -866,7 +866,7 @@ export function EditorClient() {
                     <div className="ts-hint">프리뷰에서 바꾸고 싶은 문구를 클릭하면 크기·색·글꼴·굵기·기울임을 지정할 수 있어요.</div>
                   )}
                 </div>
-                <ContentEditors draft={draft} patch={patch} onEventStart={(iso) => setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
+                <ContentEditors draft={draft} patch={patch} selectedId={selectedId} onEventStart={(iso) => setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
                 <div className="insp-group" data-fixed-group>
                   <h5>캘린더</h5>
                   <div className="insp-field">

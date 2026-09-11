@@ -49,8 +49,12 @@ import type {
  * for both layouts. Given the draft + a `patch(id, content)`, it finds each editable section
  * and renders its fields; edits flow straight to the shared draft → live preview.
  */
-export function ContentEditors({ draft, patch, onEventStart }: { draft: Invitation; patch: (id: string, content: object) => void; onEventStart?: (iso: string | undefined) => void }) {
-  const find = <T extends SectionType>(t: T) => draft.sections.find((s) => s.type === t) as Extract<Section, { type: T }> | undefined;
+export function ContentEditors({ draft, patch, onEventStart, selectedId }: { draft: Invitation; patch: (id: string, content: object) => void; onEventStart?: (iso: string | undefined) => void; selectedId?: string }) {
+  // Prefer the currently-selected section of a type over the first of that type, so a *duplicated*
+  // section is editable: select it (list/preview) and this type's editor group targets that instance.
+  // Falls back to the first of the type when nothing of it is selected (unchanged single-section case).
+  const find = <T extends SectionType>(t: T) =>
+    (draft.sections.find((s) => s.id === selectedId && s.type === t) ?? draft.sections.find((s) => s.type === t)) as Extract<Section, { type: T }> | undefined;
   const patchScheduleItems = (id: string, items: ScheduleContent["items"]) => patch(id, { items });
 
   const cover = find("cover");
