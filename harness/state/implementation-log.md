@@ -841,3 +841,7 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **C. RSVP 파티(완료·배포):** `useLiveParty` 훅 — 발행 페이지에서 details.party를 실제 참석자 이름/헤드카운트로 채우고 RSVP 이벤트/12s 폴링 갱신, capacity로 "N자리 남음". 에디터/미리보기는 템플릿 party 유지. `TimelineDetails`만 party를 렌더하므로 거기만 배선(editorial details엔 party 없음). attendees 섹션과 동일 패턴.
 
 **B. 회색 플레이스홀더 기본값(보류):** 템플릿 예시값을 옅은 힌트로 표시→탭 시 클리어→발행 시 미표시. 안전 구현엔 "필드가 아직 템플릿 기본값인지(pristine)" 추적이 필요(어떤 path가 편집 텍스트인지 중앙 목록이 없음 — 현재는 각 렌더러의 data-edit에 분산). 템플릿 시딩/블랭킹을 잘못 건드리면 템플릿이 빈 화면으로 깨질 위험이 있어, pristine 추적 방식을 설계 후 별도로 진행 예정. [[no-auto-default-values]] 정책과 상호작용.
+
+## 2026-09-11 (3) — B 완료: 템플릿 예시 = 회색 힌트 + 발행 시 미편집 항목 제거
+
+보류했던 B 구현·배포. 새 템플릿 시작 시 `templateDefaults`(원본) 보관 → `Editable`이 EditContext의 content/defaultContent로 path별 pristine 판정 → 미편집 필드를 회색(iv-example)으로 표시, 포커스 시 전체 선택(첫 타이핑에 교체). 발행 시 `cleanForPublish`가 프리뷰의 data-edit 마커로 편집 필드 집합을 읽어, 미편집 예시 "항목"을 배열에서 통째로 제거(배지·정보행·스텝 등 — leaf 블랭크가 아니라 항목 단위라 빈 카드가 안 남음). 마법사/사용자가 편집한 항목은 유지. getAtPath/flattenText/lineToText는 lib/invitation/path.ts로 공용화. 검증: tsc 0, webpack 빌드, 마법사 케이스 DOM 검증(채운 필드 유지·미편집 예시만 drop).
