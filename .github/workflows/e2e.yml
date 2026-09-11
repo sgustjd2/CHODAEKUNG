@@ -6,10 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Cancel superseded runs on the same ref (e.g. a new push while the last is still running).
+# Supersede in-progress runs only for PR updates (a new commit obsoletes the old check). Pushes to a
+# branch (e.g. main) are NOT canceled, so every main commit gets a completed CI result — important
+# when multiple sessions push to main in quick succession.
 concurrency:
-  group: e2e-${{ github.ref }}
-  cancel-in-progress: true
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   e2e:
