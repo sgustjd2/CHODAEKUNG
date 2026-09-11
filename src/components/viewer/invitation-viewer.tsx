@@ -118,6 +118,9 @@ export function InvitationViewer({
   const base = contained ? undefined : layoutStyle;
   const rootStyle: CSSProperties | undefined =
     base || Object.keys(vars).length ? ({ ...base, ...vars } as CSSProperties) : undefined;
+  // The invitation body is the page's main landmark on the full/public viewer (screen-reader nav);
+  // the editor's contained preview stays a plain div — it lives inside the editor app's own layout.
+  const Doc = contained ? "div" : "main";
   return (
     <div
       className={`iv t-${invitation.theme}${contained ? " iv-contained" : ""}`}
@@ -133,7 +136,7 @@ export function InvitationViewer({
           <style>{`.iv-reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>
         </noscript>
       )}
-      <div className="iv-doc">
+      <Doc className="iv-doc">
         {invitation.sections.map((s, i) => {
           // Cover with a non-theme layout uses the shared GenericCover; everything else the theme renderer.
           const useGeneric = s.type === "cover" && !!(s.content as CoverContent).layout && (s.content as CoverContent).layout !== "theme";
@@ -205,7 +208,7 @@ export function InvitationViewer({
             <Fragment key={s.id}>{inner}</Fragment>
           );
         })}
-      </div>
+      </Doc>
 
       <ShareBar
         slug={invitation.slug}

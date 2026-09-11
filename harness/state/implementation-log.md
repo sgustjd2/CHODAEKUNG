@@ -958,3 +958,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정:** 모바일 디자인 시트(DecorPanel) 끝에 "콘텐츠 폭"·"배경" m-group 추가(데스크톱과 동일 옵션·동작, setDraft(layout) 갱신). DecorPanel은 이미 draft/setDraft 보유.
 
 **검증(브라우저, 375px):** 디자인 시트에 두 그룹 표시, "넓게" 탭→active + localStorage draft.layout.width="wide" 저장. tsc(앱) 0, eslint 0, 콘솔 에러 0.
+
+## 2026-09-11 (14) — 뷰어 a11y: main 랜드마크 + 전 테마 크리티컬 감사
+
+**요청(사용자):** "다음 작업진행" → 관리자 axe 스캔(landing/templates/romantic 뷰어, critical 게이트)이 커버 못 하는 나머지 테마 뷰어 접근성.
+
+**감사(수동, 샌드박스가 CDN 차단이라 axe 주입 불가 → JS DOM 계측):** /preview로 풀 뷰어 렌더 후 배틀·게이밍 테마에서 alt 없는 img / 이름 없는 button·link / 라벨 없는 input / 중복 id 검사 → 모두 0. 헤딩 계층(1→2..) 정상, htmlLang=ko, h1 1개. **크리티컬 위반 없음**(뷰어 공유 컴포넌트가 alt=""·aria-label 잘 처리).
+
+**수정(발견 갭):** 풀/공개 뷰어에 main 랜드마크 부재(axe critical 게이트엔 안 걸리나 스크린리더 탐색에 필요). InvitationViewer의 `.iv-doc`를 `contained`가 아닐 때 `<main>`으로 렌더(에디터 contained 프리뷰는 div 유지 → 에디터 앱 안에 stray main 방지). 전 테마·공개 /i/ 공통 적용.
+
+**검증(브라우저):** /preview main 1개(.iv-doc=MAIN), 에디터는 main 0개(프리뷰 2개 다 div). tsc(앱) 0, eslint 0. *후속(보류):* 8개 테마로 axe 스캔 확장은 @playwright/test 로컬 미설치로 검증 불가 + 관리자가 테스트 스위트 활발히 소유 중이라, 관리자 몫으로 남김.
