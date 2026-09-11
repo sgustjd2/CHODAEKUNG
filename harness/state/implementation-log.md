@@ -928,3 +928,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - champions picked(주력 픽 강조): 불리언이라 인라인 불가였음 → 인스펙터 아이템에 체크박스 추가 + "+ 챔피언 추가" 기본값에 picked:false.
 
 **검증(브라우저):** jogi-battle VS contentEditable, jisoo-minjun "&" contentEditable, yangyang-mt 인스펙터 "일자 N 영문" 3개, lol-rank picked 토글로 강조 타일 6→5. tsc(앱) 0, eslint 0, 콘솔 에러 0.
+
+## 2026-09-11 (11) — P4: 카운트다운 eventStart 편집 중복 제거
+
+**요청(사용자):** "다음 작업진행"(다음 작업 위임) → 로드맵 P4의 카운트다운 편집 중복 처리.
+
+**문제:** 카운트다운 인스펙터 그룹이 자체 datetime-local(목표 일시=eventStart)을 갖고, 데스크톱·모바일 둘 다 항상 렌더하는 "캘린더 > 행사 일시"와 동일 값을 중복 편집(그룹 안내문도 "아래 행사 일시와 같은 값"이라 인정). dday 그룹은 이미 안내문만 두는 올바른 패턴.
+
+**수정:** 카운트다운 그룹의 datetime 입력 제거 → dday처럼 "행사 일시 기준 자동 계산" 안내문으로 교체(단위 라벨만 편집). 죽은 `onEventStart` prop을 ContentEditors 시그니처·타입 + 2개 호출부(editor-client/mobile-editor)에서 제거. syncCoverDate는 캘린더 그룹 onChange에 그대로 남아 있어 커버 날짜 동기화 유지.
+
+**검증(브라우저):** jogi-battle 인스펙터 datetime 입력 2→1, 카운트다운 그룹은 안내문만·캘린더 그룹 입력 유지. 캘린더 행사 일시 변경 시 배틀 커버 헤더 2027·04·18→2027·12·25 정상 동기화. tsc(앱) 0, eslint 0(기존 warning 2), 콘솔 에러 0.

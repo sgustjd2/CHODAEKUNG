@@ -51,7 +51,7 @@ import type {
  * for both layouts. Given the draft + a `patch(id, content)`, it finds each editable section
  * and renders its fields; edits flow straight to the shared draft → live preview.
  */
-export function ContentEditors({ draft, patch, onEventStart, selectedId }: { draft: Invitation; patch: (id: string, content: object) => void; onEventStart?: (iso: string | undefined) => void; selectedId?: string }) {
+export function ContentEditors({ draft, patch, selectedId }: { draft: Invitation; patch: (id: string, content: object) => void; selectedId?: string }) {
   // Prefer the currently-selected section of a type over the first of that type, so a *duplicated*
   // section is editable: select it (list/preview) and this type's editor group targets that instance.
   // Falls back to the first of the type when nothing of it is selected (unchanged single-section case).
@@ -271,17 +271,8 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
       {countdown && (
         <div className="insp-group">
           <h5>카운트다운</h5>
-          <div className="insp-field">
-            <div className="insp-label">목표 일시</div>
-            <input
-              className="insp-input"
-              type="datetime-local"
-              value={draft.eventStart ?? ""}
-              onChange={(e) => onEventStart?.(e.target.value || undefined)}
-            />
-            <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginTop: 6, lineHeight: 1.5 }}>
-              이 시각까지 남은 시간이 실시간으로 계산돼 표시돼요. 아래 ‘행사 일시’와 같은 값이에요.
-            </div>
+          <div style={{ fontSize: 11, color: "var(--fg-3, #8a8a99)", marginBottom: 8, lineHeight: 1.5 }}>
+            남은 시간은 “내용” 탭 하단의 <b>행사 일시</b>를 기준으로 자동 계산돼요. 여기선 단위 라벨만 바꿔요.
           </div>
           {countdown.content.cells.map((c, i) => (
             <div key={i} className="insp-subitem">
