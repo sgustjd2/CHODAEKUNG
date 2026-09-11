@@ -916,3 +916,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정(editor-client.tsx `addSection`):** `[...sections, new]`(무조건 끝) → 선택된 섹션 바로 뒤에 삽입, 단 엔딩 뒤로는 안 감(엔딩 앞으로 clamp). 선택 없으면 엔딩 앞(없으면 끝). 추가한 섹션을 selectedId로 지정해 사용자가 위치 확인.
 
 **검증(브라우저):** date 선택 후 장소 추가→date 바로 뒤(index 3) 삽입+선택, 엔딩 여전히 마지막. 엔딩 선택 후 일정 추가→엔딩 바로 앞(second-last) 삽입, 엔딩 마지막 유지. tsc(앱) 0, eslint 0, 콘솔 에러 0. (데스크톱·모바일 공용 addSection.)
+
+## 2026-09-11 (10) — 남은 미세 편집 갭 보강
+
+**요청(사용자):** 남은 자잘한 편집 불가 항목 처리.
+
+**수정:**
+- versus "VS"(vsWord): 편집 불가였음 → `<Editable path="vsWord">`로 인라인 편집(battle/versus.tsx).
+- romantic 커버 이름 연결어(connector, "&" 등): `<span class="and">`를 `<Editable path="connector">`로 래핑(cover.tsx). 연결어가 있을 때만(없으면 줄바꿈).
+- dayPlan 일자 영문 라벨(day.en): 탭 버튼 안이라 인라인이 부적합 → 인스펙터에 "일자 N 영문" 필드 추가(content-editors.tsx).
+- champions picked(주력 픽 강조): 불리언이라 인라인 불가였음 → 인스펙터 아이템에 체크박스 추가 + "+ 챔피언 추가" 기본값에 picked:false.
+
+**검증(브라우저):** jogi-battle VS contentEditable, jisoo-minjun "&" contentEditable, yangyang-mt 인스펙터 "일자 N 영문" 3개, lol-rank picked 토글로 강조 타일 6→5. tsc(앱) 0, eslint 0, 콘솔 에러 0.

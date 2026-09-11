@@ -17,7 +17,7 @@ export function CoverSection({ content }: { content: CoverContent }) {
           {names
             ? names.map((n, i) => (
                 <Fragment key={i}>
-                  {i > 0 && (connector ? <span className="and">{connector}</span> : <br />)}
+                  {i > 0 && (connector ? <span className="and"><Editable path="connector">{connector}</Editable></span> : <br />)}
                   <Editable path={`names.${i}`}>{n}</Editable>
                 </Fragment>
               ))

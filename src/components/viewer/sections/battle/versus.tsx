@@ -31,7 +31,7 @@ export function BattleVersus({ content }: { content: VersusContent }) {
       <div className="ivb-versus">
         <TeamCard team={content.home} base="home" home />
         <div className="ivb-vs-mid">
-          <div className="ivb-vs-word">{content.vsWord ?? "VS"}</div>
+          <div className="ivb-vs-word"><Editable path="vsWord">{content.vsWord ?? "VS"}</Editable></div>
         </div>
         <TeamCard team={content.away} base="away" />
       </div>

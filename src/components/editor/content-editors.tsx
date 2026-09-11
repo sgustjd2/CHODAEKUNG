@@ -516,9 +516,13 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
               </div>
               <Field label="아이콘 (이모지)" value={it.icon} onChange={(v) => patch(champions.id, { items: champions.content.items.map((x, j) => (j === i ? { ...x, icon: v } : x)) })} />
               <Field label="라인 · 이름" value={it.lane} onChange={(v) => patch(champions.id, { items: champions.content.items.map((x, j) => (j === i ? { ...x, lane: v } : x)) })} />
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--fg-2, #4a4a5a)", marginTop: 4, cursor: "pointer" }}>
+                <input type="checkbox" checked={!!it.picked} onChange={(e) => patch(champions.id, { items: champions.content.items.map((x, j) => (j === i ? { ...x, picked: e.target.checked } : x)) })} />
+                주력 픽 강조
+              </label>
             </div>
           ))}
-          <button type="button" className="insp-add" onClick={() => patch(champions.id, { items: [...champions.content.items, { icon: "", lane: "" }] })}>+ 챔피언 추가</button>
+          <button type="button" className="insp-add" onClick={() => patch(champions.id, { items: [...champions.content.items, { icon: "", lane: "", picked: false }] })}>+ 챔피언 추가</button>
         </div>
       )}
       {cost && (
@@ -605,6 +609,7 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
           {dayPlan.content.days.map((day, di) => (
             <div key={di}>
               <Field label={`일자 ${di + 1} 라벨`} value={day.label} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, label: v } : d)) })} />
+              <Field label={`일자 ${di + 1} 영문`} value={day.en} onChange={(v) => patch(dayPlan.id, { days: dayPlan.content.days.map((d, j) => (j === di ? { ...d, en: v } : d)) })} />
               {day.items.map((it, ii) => (
                 <div key={ii} className="insp-subitem">
                   <div className="insp-subitem-head">
