@@ -908,3 +908,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 `INSPECTOR_ORDER`에 matchInfo(versus 뒤)·champions(tierChart 뒤) 추가 — ContentEditors JSX 순서와 일치시켜 스크롤 싱크 정상.
 
 **검증(브라우저):** jogi-battle에서 경기 정보 선택→그룹 렌더+"+ 항목 추가"로 셀 4→5. lol-rank에서 챔피언 선택→그룹 렌더(아이콘/라인)+"+ 챔피언 추가"로 8→9. 인스펙터 스크롤 싱크도 두 그룹으로 정상 이동. tsc(앱) 0, eslint 0, 콘솔 에러 0.
+
+## 2026-09-11 (9) — 새 섹션 추가 위치 개선
+
+**요청(사용자):** 새 섹션이 항상 맨 끝(엔딩 뒤)에 붙는 문제.
+
+**수정(editor-client.tsx `addSection`):** `[...sections, new]`(무조건 끝) → 선택된 섹션 바로 뒤에 삽입, 단 엔딩 뒤로는 안 감(엔딩 앞으로 clamp). 선택 없으면 엔딩 앞(없으면 끝). 추가한 섹션을 selectedId로 지정해 사용자가 위치 확인.
+
+**검증(브라우저):** date 선택 후 장소 추가→date 바로 뒤(index 3) 삽입+선택, 엔딩 여전히 마지막. 엔딩 선택 후 일정 추가→엔딩 바로 앞(second-last) 삽입, 엔딩 마지막 유지. tsc(앱) 0, eslint 0, 콘솔 에러 0. (데스크톱·모바일 공용 addSection.)

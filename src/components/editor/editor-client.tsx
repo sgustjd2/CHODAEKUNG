@@ -543,8 +543,22 @@ export function EditorClient() {
       s.splice(i + 1, 0, clone);
       return { ...d, sections: s };
     });
-  const addSection = (type: SectionType) =>
-    setDraft((d) => ({ ...d, sections: [...d.sections, exampleSection(type, d.theme)] }));
+  // Insert a new section right after the selected one (so it lands where the user is working), never
+  // after the ending — the closing stays last; falls back to just-before-ending, else the end. Selects
+  // the new section so the user sees where it went.
+  const addSection = (type: SectionType) => {
+    const sec = exampleSection(type, draft.theme);
+    setDraft((d) => {
+      const sections = [...d.sections];
+      const selIdx = sections.findIndex((s) => s.id === selectedId);
+      const endIdx = sections.findIndex((s) => s.type === "ending");
+      let at = selIdx >= 0 ? selIdx + 1 : sections.length;
+      if (endIdx >= 0 && at > endIdx) at = endIdx;
+      sections.splice(at, 0, sec);
+      return { ...d, sections };
+    });
+    setSelectedId(sec.id);
+  };
 
   // Change an existing section's type in place (keeps its id/position; content resets to a
   // theme-appropriate example for the new type).
