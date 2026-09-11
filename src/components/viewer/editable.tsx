@@ -4,6 +4,7 @@ import { createContext, memo, useContext } from "react";
 import type { ReactNode } from "react";
 import type { TextStyle } from "@/lib/invitation/types";
 import { textStyleCss } from "@/lib/invitation/text-style";
+import { getAtPath, flattenText } from "@/lib/invitation/path";
 
 /** Renders children once and never re-renders. Inside a contentEditable this stops React from
  * reconciling inner nodes the user has edited (which otherwise throws removeChild) — the DOM is
@@ -22,6 +23,13 @@ export type EditCtx = {
   /** Focusing an editable also reports which text field it is, so the per-field style controls
    * (inspector panel + floating toolbar) target it. */
   onSelectField?: (secId: string, path: string) => void;
+  /** This section's current content, so an Editable can tell whether its field still holds the
+   * template example (see `defaultContent`). */
+  content?: unknown;
+  /** The template's original content for this section (only on a fresh template start). A field
+   * whose current value still equals this reads as an untouched "example" — rendered as a gray
+   * hint that clears on first tap and is dropped from the published copy. */
+  defaultContent?: unknown;
 };
 export const EditContext = createContext<EditCtx | null>(null);
 
@@ -72,9 +80,13 @@ export function Editable({
   // Public page (no editor context): render a styled span only when this field carries an override,
   // otherwise stay a zero-overhead plain text node (unchanged behavior).
   if (!ctx) return inlineStyle ? <span style={inlineStyle}>{children}</span> : <>{children}</>;
+  // "Example" field: on a fresh template start, a field the user/wizard hasn't changed still equals
+  // the template default → show it as a gray hint that clears on first focus (so typing replaces it).
+  const defText = ctx.defaultContent != null ? flattenText(getAtPath(ctx.defaultContent, path)) : "";
+  const isExample = defText !== "" && flattenText(getAtPath(ctx.content, path)) === defText;
   return (
     <span
-      className="iv-editable"
+      className={`iv-editable${isExample ? " iv-example" : ""}`}
       data-edit={path}
       data-ph={placeholder ?? placeholderForPath(path)}
       style={inlineStyle}
@@ -82,7 +94,26 @@ export function Editable({
       suppressContentEditableWarning
       spellCheck={false}
       // Focusing an inline field selects its section (side panel follows) and targets it for styling.
-      onFocus={() => { ctx.onSelect?.(ctx.secId); ctx.onSelectField?.(ctx.secId, path); }}
+      // An untouched example gets fully selected on focus so the first keystroke replaces the hint
+      // (and if left untouched it's dropped on publish). Done in rAF so the section-select re-render
+      // settles first (mutating the DOM here would fight React's contentEditable reconciliation).
+      onFocus={(e) => {
+        const el = e.currentTarget;
+        ctx.onSelect?.(ctx.secId);
+        ctx.onSelectField?.(ctx.secId, path);
+        if (isExample)
+          setTimeout(() => {
+            try {
+              const r = document.createRange();
+              r.selectNodeContents(el);
+              const sel = window.getSelection();
+              sel?.removeAllRanges();
+              sel?.addRange(r);
+            } catch {
+              /* selection API unavailable */
+            }
+          }, 0);
+      }}
       // multiline (e.g. titleLines) keeps <br>/line breaks via innerText; single-line uses textContent.
       onBlur={(e) => ctx.onEdit(ctx.secId, path, multiline ? e.currentTarget.innerText : e.currentTarget.textContent ?? "", !!multiline)}
       onKeyDown={(e) => {

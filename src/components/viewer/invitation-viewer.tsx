@@ -47,6 +47,7 @@ export function InvitationViewer({
   onSelectSection,
   onSelectField,
   selectedId,
+  templateDefaults,
 }: {
   invitation: Invitation;
   contained?: boolean;
@@ -61,6 +62,9 @@ export function InvitationViewer({
   onSelectField?: (secId: string, path: string) => void;
   /** Editor-only: the currently selected section id — highlights that section in the contained preview. */
   selectedId?: string;
+  /** Editor-only: the template a fresh invitation was seeded from. Fields still matching it render as
+   * gray "example" hints (see Editable). Undefined for existing/blank starts. */
+  templateDefaults?: Invitation | null;
 }) {
   const set = themeRegistry[invitation.theme] ?? themeRegistry.romantic!;
   // Reveal animation plays on the public page and full preview; the in-editor phone preview (contained) stays static.
@@ -170,7 +174,22 @@ export function InvitationViewer({
             return (
               <div key={s.id} data-sec-id={s.id} className={`iv-secwrap${selectedId === s.id ? " selected" : ""}`} style={secVars}>
                 <TextStyleContext.Provider value={textStyles}>
-                  {onEdit ? <EditContext.Provider value={{ secId: s.id, onEdit, onSelect: onSelectSection, onSelectField }}>{node}</EditContext.Provider> : node}
+                  {onEdit ? (
+                    <EditContext.Provider
+                      value={{
+                        secId: s.id,
+                        onEdit,
+                        onSelect: onSelectSection,
+                        onSelectField,
+                        content: s.content,
+                        defaultContent: templateDefaults?.sections.find((d) => d.id === s.id)?.content,
+                      }}
+                    >
+                      {node}
+                    </EditContext.Provider>
+                  ) : (
+                    node
+                  )}
                 </TextStyleContext.Provider>
               </div>
             );

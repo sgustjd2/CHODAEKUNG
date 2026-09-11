@@ -61,6 +61,11 @@
    ::before isn't part of textContent, so it never commits as the value. */
 .iv-editable:empty { display: inline-block; min-width: 2.5em; }
 .iv-editable:empty::before { content: attr(data-ph); opacity: 0.4; font-weight: 400; }
+/* "Example" hint: a field still holding the template's sample text (user hasn't changed it). Shown
+   dimmed so it reads as a placeholder to replace; it clears on first tap and is dropped on publish.
+   Editor-only (the class is never rendered on the public page). :focus below re-solidifies it. */
+.iv-editable.iv-example { opacity: 0.45; }
+.iv-editable.iv-example:focus { opacity: 1; }
 
 /* Contained (editor preview): fill the host box, share pill sticks to that box */
 .iv.iv-contained { min-height: 100%; padding: 0; background: none; }

@@ -39,6 +39,7 @@ export function PublishDialog({
   open,
   onClose,
   invitation,
+  prepareData,
   title,
   editToken,
   onPublished,
@@ -46,6 +47,9 @@ export function PublishDialog({
   open: boolean;
   onClose: () => void;
   invitation: Invitation;
+  /** Optional transform run at publish time to produce the data actually stored (e.g. drop untouched
+   * template examples). Falls back to `invitation`. Only affects what's saved, not the dialog preview. */
+  prepareData?: () => Invitation;
   title: string;
   editToken?: string;
   onPublished?: (r: { slug: string; editToken: string; url: string }) => void;
@@ -162,8 +166,9 @@ export function PublishDialog({
     setBusy(true);
     setMsg(null);
     const visibility = vis === "public" ? "published" : vis === "unlisted" ? "unlisted" : "draft";
+    const data = prepareData ? prepareData() : invitation;
     // Re-publish targets the already-created slug (with its token), never the draft/sample slug.
-    const res = await publishInvitationAction({ slug: publishedSlug ?? invitation.slug, title, theme: invitation.theme, data: invitation, visibility, editToken });
+    const res = await publishInvitationAction({ slug: publishedSlug ?? invitation.slug, title, theme: invitation.theme, data, visibility, editToken });
     setBusy(false);
     if (res.ok) {
       setPublishedSlug(res.slug);

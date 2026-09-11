@@ -46,6 +46,7 @@ export type EditorApi = {
   move: (from: number, to: number) => void;
   dragIndex: { current: number | null };
   cover?: Extract<Section, { type: "cover" }>;
+  templateDefaults?: Invitation | null;
   openPublish: () => void;
   openPreview: () => void;
 };
@@ -96,7 +97,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
       </div>
 
       <div className="m-preview" style={previewStyle}>
-        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} selectedId={api.selectedId} />
+        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} selectedId={api.selectedId} templateDefaults={api.templateDefaults} />
       </div>
 
       <div className="m-tabs">

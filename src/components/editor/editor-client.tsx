@@ -19,6 +19,7 @@ import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, exampleSection, getInvitation } from "@/lib/invitation/samples";
 import { invitationMeta } from "@/lib/invitation/meta";
 import { monthGrid } from "@/lib/invitation/month-grid";
+import { getAtPath, flattenText, lineToText } from "@/lib/invitation/path";
 import { getInvitationForEditAction } from "@/lib/invitation/actions";
 import type { Invitation, Section, SectionType, TextStyle, ThemeId } from "@/lib/invitation/types";
 
@@ -118,17 +119,6 @@ function applyWizardSeed(inv: Invitation, w: WizardSeed) {
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** Flatten a rich Line (string | Run[]) to plain text — for the inline-edit titleLines guard. */
-function lineToText(line: unknown): string {
-  if (typeof line === "string") return line;
-  if (Array.isArray(line)) return line.map((r) => (typeof r === "string" ? r : (r as { text?: string })?.text ?? "")).join("");
-  return "";
-}
-
-/** Read a value at a dot-path (numeric segments index arrays), for the inline-edit no-op guard. */
-function getAtPath(obj: unknown, path: string): unknown {
-  return path.split(".").reduce<unknown>((cur, key) => (cur == null ? undefined : (cur as Record<string, unknown>)[key]), obj);
-}
 /** Immutably set a value at a dot-path, cloning each container along the way (numeric segment → array
  * index, else object key). Used by inline editing to write nested fields (badges.0.label, info.2.v,
  * party.countLabel, items.0.title) without mutating the previous draft. */
@@ -279,6 +269,9 @@ export function EditorClient() {
 
   const [pubOpen, setPubOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  // Raw template a NEW invitation was seeded from — its example values render as gray "hint" text
+  // (still untouched by the user) and are dropped from the published copy. Null for existing/blank starts.
+  const [templateDefaults, setTemplateDefaults] = useState<Invitation | null>(null);
   // Two-step guard for the destructive full reset ("되돌리기"): first click arms, second confirms.
   const [resetArmed, setResetArmed] = useState(false);
   // Snapshot of the invitation as first loaded, so "되돌리기" reverts to *this* invitation's starting
@@ -308,6 +301,9 @@ export function EditorClient() {
     if (templateParam && !slugParam) {
       const base = structuredClone(getInvitation(templateParam));
       base.slug = "new";
+      // Baseline = the template's own example content (before the wizard fills anything), so a field
+      // the user/wizard hasn't changed still reads as a gray hint; wizard-filled fields are "real".
+      setTemplateDefaults(structuredClone(base));
       if (wiz) {
         applyWizardSeed(base, wiz);
         if (wiz.accent) base.accent = wiz.accent;
@@ -563,6 +559,66 @@ export function EditorClient() {
     window.open(`/preview?slug=${encodeURIComponent(slug)}`, "_blank", "noopener");
   };
 
+  // Build the copy to publish: drop the template's example DATA the user never touched (shown as gray
+  // hints in the editor). The editable fields are read from the preview's data-edit markers (the
+  // authoritative set). A field is "untouched" if its value still equals the template default. We
+  // remove whole untouched *items* from list fields (badges, info rows, schedule steps, …) rather than
+  // blanking leaves — so no empty cards/pills ship — and keep any item the user edited even partially.
+  const cleanForPublish = (): Invitation => {
+    if (!templateDefaults) return visibleDraft;
+    const defBy = new Map(templateDefaults.sections.map((s) => [s.id, s.content]));
+    const pathsBySec = new Map<string, Set<string>>();
+    document.querySelectorAll<HTMLElement>("[data-sec-id] [data-edit]").forEach((el) => {
+      const secId = el.closest<HTMLElement>("[data-sec-id]")?.dataset.secId;
+      const path = el.dataset.edit;
+      if (!secId || !path) return;
+      if (!pathsBySec.has(secId)) pathsBySec.set(secId, new Set());
+      pathsBySec.get(secId)!.add(path);
+    });
+    let out = visibleDraft;
+    for (const [secId, pathSet] of pathsBySec) {
+      const defContent = defBy.get(secId);
+      const sec = out.sections.find((s) => s.id === secId);
+      if (!defContent || !sec) continue;
+      const isPristine = (p: string) => {
+        const d = flattenText(getAtPath(defContent, p));
+        return d !== "" && flattenText(getAtPath(sec.content, p)) === d;
+      };
+      // Group the section's editable paths by their top-level list item ("badges.0", "info.2").
+      const groups = new Map<string, string[]>();
+      for (const p of pathSet) {
+        const m = p.match(/^([^.]+)\.(\d+)(?:\.|$)/);
+        if (m) {
+          const key = `${m[1]}.${m[2]}`;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key)!.push(p);
+        }
+      }
+      // An item is a droppable example when every editable leaf under it is still pristine.
+      const dropIdx = new Map<string, Set<number>>();
+      for (const [key, ps] of groups) {
+        if (!ps.every(isPristine)) continue;
+        const [arr, idx] = key.split(".");
+        if (!dropIdx.has(arr)) dropIdx.set(arr, new Set());
+        dropIdx.get(arr)!.add(Number(idx));
+      }
+      if (dropIdx.size === 0) continue;
+      let content = sec.content as Record<string, unknown>;
+      let changed = false;
+      for (const [arr, idxs] of dropIdx) {
+        const cur = content[arr];
+        if (!Array.isArray(cur)) continue;
+        const kept = cur.filter((_, i) => !idxs.has(i));
+        if (kept.length !== cur.length) {
+          content = { ...content, [arr]: kept };
+          changed = true;
+        }
+      }
+      if (changed) out = { ...out, sections: out.sections.map((s) => (s.id === secId ? ({ ...s, content } as Section) : s)) };
+    }
+    return out;
+  };
+
   const api: EditorApi = {
     draft,
     visibleDraft,
@@ -597,6 +653,7 @@ export function EditorClient() {
     move,
     dragIndex,
     cover,
+    templateDefaults,
     openPublish: () => setPubOpen(true),
     openPreview,
     applyTemplate,
@@ -723,7 +780,7 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} onSelectField={(secId, path) => setSelectedField({ secId, path })} selectedId={selectedId} />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} onSelectField={(secId, path) => setSelectedField({ secId, path })} selectedId={selectedId} templateDefaults={templateDefaults} />
               </div>
             </div>
           </div>
@@ -1154,6 +1211,7 @@ export function EditorClient() {
         open={pubOpen}
         onClose={() => setPubOpen(false)}
         invitation={visibleDraft}
+        prepareData={cleanForPublish}
         title={title}
         editToken={editToken}
         onPublished={(r) => {
