@@ -1,7 +1,9 @@
 # E2E (mobile) tests
 
+[![E2E (mobile)](https://github.com/sgustjd2/CHODAEKUNG/actions/workflows/e2e.yml/badge.svg)](https://github.com/sgustjd2/CHODAEKUNG/actions/workflows/e2e.yml)
+
 Playwright smoke tests for the mobile-first flow, run on a real Chromium at an iPhone 13 device
-profile (mobile viewport + touch) — the primary 초대쿵 experience.
+profile (mobile viewport + touch) — the primary 초대쿵 experience. Required to merge into `main`.
 
 ## Run
 
