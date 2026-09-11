@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { MinimalHead } from "./section-head";
 import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { RsvpContent } from "@/lib/invitation/types";
@@ -12,10 +13,10 @@ export function MinimalRsvp({ content, index }: { content: RsvpContent; index?: 
     <div className="ivm-section">
       <MinimalHead eyebrow={content.eyebrow} index={index} />
       <div className="ivm-title">
-        <Rich lines={content.title} />
+        <Editable path="title" multiline><Rich lines={content.title} /></Editable>
       </div>
       <p className="ivm-body">
-        <Rich lines={content.body} />
+        <Editable path="body" multiline><Rich lines={content.body} /></Editable>
       </p>
       <div className="ivm-rsvp-blocks">
         {content.options.map((o, i) => (

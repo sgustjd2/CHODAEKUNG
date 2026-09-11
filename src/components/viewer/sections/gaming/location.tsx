@@ -1,5 +1,6 @@
 import { GSection } from "./g-section";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { LocationMap } from "../../location-map";
 import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
@@ -14,7 +15,7 @@ export function GamingLocation({ content }: { content: LocationContent }) {
         <div className="g-info" style={{ marginBottom: 12 }}>
           <div className="k">Address</div>
           <div className="v" style={{ fontSize: 16 }}>
-            <Rich lines={content.body} />
+            <Editable path="body" multiline><Rich lines={content.body} /></Editable>
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import { DSection } from "./d-section";
+import { Editable } from "../../editable";
 import { LocationMap } from "../../location-map";
 import { LocationButtons } from "../../location-buttons";
 import { locationQuery, locationAddress } from "@/lib/invitation/map-links";
@@ -17,8 +18,12 @@ export function DevLocation({ content }: { content: LocationContent }) {
         const isNum = /^[\d.]+$/.test(r.v);
         return (
           <div className="d-output" key={i}>
-            <span className="key">{r.k}</span>:{" "}
-            {isNum ? <span style={{ color: "#A0A8B8" }}>{r.v}</span> : <span className="str">&quot;{r.v}&quot;</span>}
+            <span className="key"><Editable path={`rows.${i}.k`}>{r.k}</Editable></span>:{" "}
+            {isNum ? (
+              <span style={{ color: "#A0A8B8" }}><Editable path={`rows.${i}.v`}>{r.v}</Editable></span>
+            ) : (
+              <span className="str">&quot;<Editable path={`rows.${i}.v`}>{r.v}</Editable>&quot;</span>
+            )}
           </div>
         );
       })}

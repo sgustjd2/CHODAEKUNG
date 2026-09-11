@@ -29,7 +29,16 @@ export function GamingCover({ content }: { content: CoverContent }) {
             <Editable path="titleLines" multiline><Rich lines={content.titleLines} /></Editable>
           </h1>
         )}
-        {content.subtitleLines && <div className="g-title-sub">{content.subtitleLines.join(" ")}</div>}
+        {content.subtitleLines && (
+          <div className="g-title-sub">
+            {content.subtitleLines.map((l, i) => (
+              <Fragment key={i}>
+                {i > 0 && " "}
+                <Editable path={`subtitleLines.${i}`}>{l}</Editable>
+              </Fragment>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

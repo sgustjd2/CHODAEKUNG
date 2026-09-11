@@ -1,5 +1,6 @@
 import { ESection } from "./e-section";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { photoUrl } from "@/lib/photo";
 import { LocationMap } from "../../location-map";
 import { LocationButtons } from "../../location-buttons";
@@ -16,15 +17,15 @@ export function EditorialLocation({ content }: { content: LocationContent }) {
           <img src={photoUrl(content.photo)} alt="" loading="lazy" decoding="async" />
           {content.photoCap && (
             <div className="e-photo-cap">
-              <span>{content.photoCap.l}</span>
-              <span>{content.photoCap.r}</span>
+              <span><Editable path="photoCap.l">{content.photoCap.l}</Editable></span>
+              <span><Editable path="photoCap.r">{content.photoCap.r}</Editable></span>
             </div>
           )}
         </div>
       )}
       {content.body.length > 0 && (
         <div className="e-body">
-          <Rich lines={content.body} />
+          <Editable path="body" multiline><Rich lines={content.body} /></Editable>
         </div>
       )}
       <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />

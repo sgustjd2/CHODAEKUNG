@@ -1,4 +1,5 @@
 import { GSection } from "./g-section";
+import { Editable } from "../../editable";
 import type { TierChartContent } from "@/lib/invitation/types";
 
 export function GamingTierChart({ content }: { content: TierChartContent }) {
@@ -7,8 +8,8 @@ export function GamingTierChart({ content }: { content: TierChartContent }) {
       <div className="g-tier-chart">
         {content.cols.map((c, i) => (
           <div className="g-tier-col" key={i}>
-            <div className="t">{c.t}</div>
-            <div className="n">{c.n}</div>
+            <div className="t"><Editable path={`cols.${i}.t`}>{c.t}</Editable></div>
+            <div className="n"><Editable path={`cols.${i}.n`}>{c.n}</Editable></div>
           </div>
         ))}
       </div>

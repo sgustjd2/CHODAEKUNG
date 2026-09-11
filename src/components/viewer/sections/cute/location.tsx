@@ -1,4 +1,5 @@
 import { CCard } from "./c-card";
+import { Editable } from "../../editable";
 import { Icon } from "@/components/ui/icon";
 import { photoUrl } from "@/lib/photo";
 import { LocationMap } from "../../location-map";
@@ -20,8 +21,8 @@ export function CuteLocation({ content }: { content: LocationContent }) {
             <Icon name="ic-pin" width={18} height={18} />
           </div>
           <div>
-            <div className="t">{content.address.t}</div>
-            <div className="a">{content.address.a}</div>
+            <div className="t"><Editable path="address.t">{content.address.t}</Editable></div>
+            <div className="a"><Editable path="address.a">{content.address.a}</Editable></div>
           </div>
         </div>
       )}

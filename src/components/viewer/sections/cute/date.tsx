@@ -1,4 +1,5 @@
 import { CCard } from "./c-card";
+import { Editable } from "../../editable";
 import type { DateContent } from "@/lib/invitation/types";
 
 export function CuteDate({ content }: { content: DateContent }) {
@@ -8,7 +9,7 @@ export function CuteDate({ content }: { content: DateContent }) {
     <CCard eb={content.eyebrow} ebVariant="butter" title={content.title}>
       {content.pill && (
         <div className="c-date-pill">
-          <span className="en">{content.pill.en}</span> {content.pill.text}
+          <span className="en"><Editable path="pill.en">{content.pill.en}</Editable></span> <Editable path="pill.text">{content.pill.text}</Editable>
         </div>
       )}
       {cd && (

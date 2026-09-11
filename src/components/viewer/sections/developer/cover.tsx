@@ -1,3 +1,4 @@
+import { Editable } from "../../editable";
 import type { CoverContent } from "@/lib/invitation/types";
 
 const BANNER = ` ███╗   ███╗ ██████╗ ██╗
@@ -26,7 +27,7 @@ export function DevCover({ content }: { content: CoverContent }) {
         {content.from && (
           <>
             {" "}
-            <span className="flag">--from={content.from}</span>
+            <span className="flag">--from=<Editable path="from">{content.from}</Editable></span>
           </>
         )}
       </div>
@@ -49,9 +50,13 @@ export function DevCover({ content }: { content: CoverContent }) {
             <span style={{ color: "#A9B69C" }}>{"{"}</span>
             {content.json.map((row, i) => (
               <span className="indent" key={i}>
-                <span style={{ color: "#F5D896" }}>&quot;{row.k}&quot;</span>:{" "}
+                <span style={{ color: "#F5D896" }}>&quot;<Editable path={`json.${i}.k`}>{row.k}</Editable>&quot;</span>:{" "}
                 <span style={{ color: jsonColor[row.t ?? "str"] }}>
-                  {row.t === "num" || row.t === "bool" ? row.v : `"${row.v}"`}
+                  {row.t === "num" || row.t === "bool" ? (
+                    <Editable path={`json.${i}.v`}>{row.v}</Editable>
+                  ) : (
+                    <>&quot;<Editable path={`json.${i}.v`}>{row.v}</Editable>&quot;</>
+                  )}
                 </span>
                 {i < content.json!.length - 1 ? "," : ""}
               </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/ui/icon";
+import { Editable } from "../../editable";
 import { triggerShare } from "@/lib/invitation/share-actions";
 import type { EndingContent } from "@/lib/invitation/types";
 
@@ -19,9 +20,9 @@ export function DevEnding({ content }: { content: EndingContent }) {
 
       <div className="d-end">
         <div className="d-cmd">
-          <span className="prompt">$</span> echo &quot;{content.signature}&quot;
+          <span className="prompt">$</span> echo &quot;<Editable path="signature">{content.signature}</Editable>&quot;
         </div>
-        <div className="d-output">{content.signature}</div>
+        <div className="d-output"><Editable path="signature">{content.signature}</Editable></div>
         <br />
         <div>
           CHODAEKUNG · <span className="accent">v0.1.0</span> · MIT License

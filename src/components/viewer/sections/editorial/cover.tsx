@@ -25,8 +25,8 @@ export function EditorialCover({ content }: { content: CoverContent }) {
         )}
         {content.coverSub && (
           <div className="e-cover-sub">
-            <span className="l">{content.coverSub.l}</span>
-            <span className="r">{content.coverSub.r}</span>
+            <span className="l"><Editable path="coverSub.l">{content.coverSub.l}</Editable></span>
+            <span className="r"><Editable path="coverSub.r">{content.coverSub.r}</Editable></span>
           </div>
         )}
       </div>

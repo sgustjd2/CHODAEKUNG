@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DSection } from "./d-section";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import type { RsvpContent } from "@/lib/invitation/types";
 
 export function DevRsvp({ content }: { content: RsvpContent }) {
@@ -14,7 +15,7 @@ export function DevRsvp({ content }: { content: RsvpContent }) {
     <DSection name={content.eyebrow} badge="required">
       <div className="d-rsvp">
         <div className="q">
-          <span className="prompt">?</span> <Rich lines={content.title} />
+          <span className="prompt">?</span> <Editable path="title" multiline><Rich lines={content.title} /></Editable>
         </div>
         <div className="d-rsvp-opts">
           {content.options.map((o, i) => (

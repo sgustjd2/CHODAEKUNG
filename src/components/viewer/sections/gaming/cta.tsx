@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import type { AcceptContent } from "@/lib/invitation/types";
 
 export function GamingCta({ content }: { content: AcceptContent }) {
@@ -9,9 +10,9 @@ export function GamingCta({ content }: { content: AcceptContent }) {
   return (
     <div className="g-cta">
       <h3>
-        <Rich lines={content.title} />
+        <Editable path="title" multiline><Rich lines={content.title} /></Editable>
       </h3>
-      <div className="sub">{content.sub}</div>
+      <div className="sub"><Editable path="sub">{content.sub}</Editable></div>
       <div className="g-cta-btns">
         <button type="button" className={`g-cta-btn yes${selected === "yes" ? " on" : ""}`} aria-pressed={selected === "yes"} onClick={() => setSelected("yes")}>
           {content.accept}

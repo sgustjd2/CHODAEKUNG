@@ -1,6 +1,7 @@
 "use client";
 
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { MinimalHead } from "./section-head";
 import { photoUrl } from "@/lib/photo";
 import { openLightbox } from "../../lightbox";
@@ -13,7 +14,7 @@ export function MinimalGallery({ content, index }: { content: GalleryContent; in
     <div className="ivm-section">
       <MinimalHead eyebrow={content.eyebrow} index={index} />
       <div className="ivm-title">
-        <Rich lines={content.title} />
+        <Editable path="title" multiline><Rich lines={content.title} /></Editable>
       </div>
       <div className="ivm-gallery">
         {/* eslint-disable-next-line @next/next/no-img-element */}

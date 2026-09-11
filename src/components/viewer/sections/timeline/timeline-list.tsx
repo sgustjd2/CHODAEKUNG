@@ -15,7 +15,7 @@ export function TimelineList({ items, pathBase = "items" }: { items: TimelineIte
           </div>
           <div className="tl-content">
             <div className="t"><Editable path={`${pathBase}.${i}.title`}>{it.title}</Editable></div>
-            <div className="d"><Editable path={`${pathBase}.${i}.desc`} multiline>{it.desc}</Editable></div>
+            <div className="d"><Editable path={`${pathBase}.${i}.desc`}>{it.desc}</Editable></div>
             {it.tags && it.tags.length > 0 && (
               <div className="tags">
                 {it.tags.map((t, j) => (

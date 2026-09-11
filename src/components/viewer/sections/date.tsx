@@ -24,11 +24,11 @@ export function DateSection({ content }: { content: DateContent }) {
       {calendar && (
         <div className="iv-calendar">
           <div className="iv-cal-head">
-            <Rich lines={[calendar.monthLabel]} />
+            <Editable path="calendar.monthLabel"><Rich lines={[calendar.monthLabel]} /></Editable>
           </div>
           <div className="iv-cal-grid">
             {calendar.weekdays.map((w, i) => (
-              <div key={`h${i}`} className="iv-cal-day head">{w}</div>
+              <div key={`h${i}`} className="iv-cal-day head"><Editable path={`calendar.weekdays.${i}`}>{w}</Editable></div>
             ))}
             {calendar.days.map((d, i) => (
               <div key={i} className={`iv-cal-day${d.dim ? " dim" : ""}${d.today ? " today" : ""}`}>{d.n}</div>

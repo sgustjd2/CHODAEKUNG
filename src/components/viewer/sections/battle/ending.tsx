@@ -1,13 +1,14 @@
+import { Editable } from "../../editable";
 import type { EndingContent } from "@/lib/invitation/types";
 
 export function BattleEnding({ content }: { content: EndingContent }) {
   return (
     <div className="ivb-ending">
-      {content.stamp && <div className="stamp">{content.stamp}</div>}
+      {content.stamp && <div className="stamp"><Editable path="stamp">{content.stamp}</Editable></div>}
       <div className="kung-signature">
-        {content.signature} <span className="seal-kung">쿵</span>
+        <Editable path="signature">{content.signature}</Editable> <span className="seal-kung">쿵</span>
       </div>
-      {content.below && <div className="brand-tiny">{content.below}</div>}
+      {content.below && <div className="brand-tiny"><Editable path="below">{content.below}</Editable></div>}
     </div>
   );
 }

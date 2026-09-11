@@ -1,6 +1,7 @@
 "use client";
 
 import { ESection } from "./e-section";
+import { Editable } from "../../editable";
 import { photoUrl } from "@/lib/photo";
 import { openLightbox } from "../../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
@@ -17,8 +18,8 @@ export function EditorialGallery({ content }: { content: GalleryContent }) {
       </div>
       {content.caption && (
         <div className="e-photo-cap e-gallery-cap">
-          <span>{content.caption.l}</span>
-          <span>{content.caption.r}</span>
+          <span><Editable path="caption.l">{content.caption.l}</Editable></span>
+          <span><Editable path="caption.r">{content.caption.r}</Editable></span>
         </div>
       )}
     </ESection>

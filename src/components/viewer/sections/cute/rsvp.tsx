@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CCard } from "./c-card";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { Icon } from "@/components/ui/icon";
 import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { RsvpContent } from "@/lib/invitation/types";
@@ -13,7 +14,7 @@ export function CuteRsvp({ content }: { content: RsvpContent }) {
     <CCard eb={content.eyebrow} title={content.title} tint>
       {content.body && (
         <div className="c-body">
-          <Rich lines={content.body} />
+          <Editable path="body" multiline><Rich lines={content.body} /></Editable>
         </div>
       )}
       <div className="c-rsvp-btns">

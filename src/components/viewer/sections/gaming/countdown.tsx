@@ -1,6 +1,7 @@
 "use client";
 
 import { GSection } from "./g-section";
+import { Editable } from "../../editable";
 import type { CountdownContent } from "@/lib/invitation/types";
 import { useCountdown } from "../../use-countdown";
 
@@ -14,7 +15,7 @@ export function GamingCountdown({ content, target }: { content: CountdownContent
         {content.cells.map((c, i) => (
           <div className={`g-cd-cell${c.warn ? " warn" : ""}`} key={i}>
             <div className="n">{nums && i < 4 ? (i === 0 ? String(nums[i]) : String(nums[i]).padStart(2, "0")) : c.n}</div>
-            <div className="l">{c.l}</div>
+            <div className="l"><Editable path={`cells.${i}.l`}>{c.l}</Editable></div>
           </div>
         ))}
       </div>

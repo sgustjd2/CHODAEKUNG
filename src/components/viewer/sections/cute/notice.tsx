@@ -1,4 +1,5 @@
 import { CCard } from "./c-card";
+import { Editable } from "../../editable";
 import { Icon } from "@/components/ui/icon";
 import type { NoticeContent } from "@/lib/invitation/types";
 
@@ -12,8 +13,8 @@ export function CuteNotice({ content }: { content: NoticeContent }) {
               <Icon name={it.icon} width={20} height={20} />
             </div>
             <div>
-              <div className="t">{it.t}</div>
-              <div className="d">{it.d}</div>
+              <div className="t"><Editable path={`items.${i}.t`}>{it.t}</Editable></div>
+              <div className="d"><Editable path={`items.${i}.d`}>{it.d}</Editable></div>
             </div>
           </div>
         ))}

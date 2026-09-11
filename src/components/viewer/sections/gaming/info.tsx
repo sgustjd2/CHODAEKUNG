@@ -1,4 +1,5 @@
 import { GSection } from "./g-section";
+import { Editable } from "../../editable";
 import type { GInfoContent } from "@/lib/invitation/types";
 
 export function GamingInfo({ content }: { content: GInfoContent }) {
@@ -7,10 +8,10 @@ export function GamingInfo({ content }: { content: GInfoContent }) {
       <div className="g-info-grid">
         {content.cells.map((c, i) => (
           <div className="g-info" key={i}>
-            <div className="k">{c.k}</div>
+            <div className="k"><Editable path={`cells.${i}.k`}>{c.k}</Editable></div>
             <div className="v">
-              {c.v}
-              {c.u && <span className="u">{c.u}</span>}
+              <Editable path={`cells.${i}.v`}>{c.v}</Editable>
+              {c.u && <span className="u"><Editable path={`cells.${i}.u`}>{c.u}</Editable></span>}
             </div>
           </div>
         ))}
