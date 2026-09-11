@@ -1,4 +1,5 @@
 import { TlSection } from "./tl-section";
+import { Editable } from "../../editable";
 import type { RouteContent } from "@/lib/invitation/types";
 
 export function TimelineRoute({ content }: { content: RouteContent }) {
@@ -11,9 +12,9 @@ export function TimelineRoute({ content }: { content: RouteContent }) {
               {s.icon}
             </div>
             <div className="route-info">
-              <div className="t">{s.title}</div>
-              <div className="m">{s.meta}</div>
-              <div className="time-t">{s.time}</div>
+              <div className="t"><Editable path={`stops.${i}.title`}>{s.title}</Editable></div>
+              <div className="m"><Editable path={`stops.${i}.meta`}>{s.meta}</Editable></div>
+              <div className="time-t"><Editable path={`stops.${i}.time`}>{s.time}</Editable></div>
             </div>
           </div>
         ))}

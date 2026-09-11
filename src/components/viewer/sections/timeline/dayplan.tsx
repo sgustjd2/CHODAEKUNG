@@ -23,7 +23,7 @@ export function TimelineDayPlan({ content }: { content: DayPlanContent }) {
           </button>
         ))}
       </div>
-      <TimelineList items={active.items} />
+      <TimelineList items={active.items} pathBase={`days.${day}.items`} />
     </TlSection>
   );
 }

@@ -125,6 +125,29 @@ function lineToText(line: unknown): string {
   return "";
 }
 
+/** Read a value at a dot-path (numeric segments index arrays), for the inline-edit no-op guard. */
+function getAtPath(obj: unknown, path: string): unknown {
+  return path.split(".").reduce<unknown>((cur, key) => (cur == null ? undefined : (cur as Record<string, unknown>)[key]), obj);
+}
+/** Immutably set a value at a dot-path, cloning each container along the way (numeric segment → array
+ * index, else object key). Used by inline editing to write nested fields (badges.0.label, info.2.v,
+ * party.countLabel, items.0.title) without mutating the previous draft. */
+function setAtPath<T extends Record<string, unknown>>(root: T, path: string, value: unknown): T {
+  const parts = path.split(".");
+  const clone = (v: unknown): Record<string, unknown> | unknown[] => (Array.isArray(v) ? [...v] : { ...(v as Record<string, unknown> | undefined) });
+  const out = clone(root) as Record<string, unknown>;
+  let cur: Record<string, unknown> | unknown[] = out;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const key: string | number = /^\d+$/.test(parts[i]) ? Number(parts[i]) : parts[i];
+    const child = clone((cur as Record<string, unknown>)[key as string]);
+    (cur as Record<string, unknown>)[key as string] = child;
+    cur = child;
+  }
+  const last = parts[parts.length - 1];
+  (cur as Record<string, unknown>)[/^\d+$/.test(last) ? Number(last) : last] = value;
+  return out as T;
+}
+
 /** Blank-start ONLY: fill the (empty) date section from the wizard date, across the fields the
  * themes actually render — title (romantic/cute), bigDate + dataGrid (minimal/developer), and the
  * calendar month grid (romantic). Deliberately NOT called on a template start, so a chosen
@@ -422,23 +445,16 @@ export function EditorClient() {
       ...d,
       sections: d.sections.map((s) => {
         if (s.id !== secId) return s;
-        const content = { ...(s.content as Record<string, unknown>) };
-        const dot = path.indexOf(".");
+        // A rich Line[] leaf (title/body/titleLines): guard a no-op so an incidental click preserves
+        // the original Line[] and its em runs (a real edit flattens to plain-string lines).
         if (asLines) {
-          // A rich Line[] field (title/body/titleLines): split the edited text into plain-string
-          // lines. Guard on change so a no-op click preserves the original Line[] and its em runs.
-          const cur = Array.isArray(content[path]) ? (content[path] as unknown[]).map(lineToText).join("\n") : "";
-          if (value !== cur) content[path] = value.split("\n");
-        } else if (dot >= 0) {
-          // A string in an array by index: names[i], subtitleLines[i], headerRightLines[i].
-          const field = path.slice(0, dot);
-          const idx = Number(path.slice(dot + 1));
-          const arr = Array.isArray(content[field]) ? [...(content[field] as unknown[])] : [];
-          arr[idx] = value;
-          content[field] = arr;
-        } else {
-          content[path] = value;
+          const cur = getAtPath(s.content, path);
+          const curText = Array.isArray(cur) ? (cur as unknown[]).map(lineToText).join("\n") : "";
+          if (value === curText) return s;
         }
+        // Write the edited text into the section content at `path` — supports nested paths with
+        // array indices and object keys (badges.0.label, info.2.v, party.countLabel, items.0.title).
+        const content = setAtPath(s.content as Record<string, unknown>, path, asLines ? value.split("\n") : value);
         return { ...s, content } as Section;
       }),
     }));

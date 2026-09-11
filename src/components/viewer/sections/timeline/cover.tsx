@@ -28,7 +28,7 @@ export function TimelineCover({ content }: { content: CoverContent }) {
           {content.badges.map((b, i) => (
             <div key={i} className={`tl-badge${b.variant ? " " + b.variant : ""}`}>
               {b.icon && <Icon name={b.icon} />}
-              {b.label}
+              <Editable path={`badges.${i}.label`}>{b.label}</Editable>
             </div>
           ))}
         </div>

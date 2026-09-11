@@ -1,5 +1,6 @@
 import { Rich } from "../../rich-text";
 import { TlSection } from "./tl-section";
+import { Editable } from "../../editable";
 import { LocationMap } from "../../location-map";
 import { LocationButtons } from "../../location-buttons";
 import { lineText } from "@/lib/invitation/meta";
@@ -12,7 +13,7 @@ export function TimelineLocation({ content }: { content: LocationContent }) {
       <div className="tl-info" style={{ marginBottom: 8 }}>
         <div className="k">Address</div>
         <div className="v" style={{ fontSize: 15, letterSpacing: "-0.01em" }}>
-          <Rich lines={content.body} />
+          <Editable path="body" multiline><Rich lines={content.body} /></Editable>
         </div>
       </div>
       <LocationMap className="iv-locmap" address={lineText(content.body)} fallback={lineText(content.title)} />

@@ -1,4 +1,5 @@
 import { TlSection } from "./tl-section";
+import { Editable } from "../../editable";
 import type { DetailsContent } from "@/lib/invitation/types";
 
 export function TimelineDetails({ content }: { content: DetailsContent }) {
@@ -7,10 +8,10 @@ export function TimelineDetails({ content }: { content: DetailsContent }) {
       <div className="tl-info-grid">
         {content.info.map((c, i) => (
           <div className="tl-info" key={i}>
-            <div className="k">{c.k}</div>
+            <div className="k"><Editable path={`info.${i}.k`}>{c.k}</Editable></div>
             <div className="v">
-              {c.v}
-              {c.u && <span className="u">{c.u}</span>}
+              <Editable path={`info.${i}.v`}>{c.v}</Editable>
+              {c.u && <span className="u"><Editable path={`info.${i}.u`}>{c.u}</Editable></span>}
             </div>
           </div>
         ))}
@@ -24,8 +25,8 @@ export function TimelineDetails({ content }: { content: DetailsContent }) {
           ))}
           {content.party.more && <div className="party-ava more">{content.party.more}</div>}
           <div className="party-count">
-            <span className="n-t">{content.party.countLabel}</span>
-            <span className="l-t">{content.party.countSub}</span>
+            <span className="n-t"><Editable path="party.countLabel">{content.party.countLabel}</Editable></span>
+            <span className="l-t"><Editable path="party.countSub">{content.party.countSub}</Editable></span>
           </div>
         </div>
       )}

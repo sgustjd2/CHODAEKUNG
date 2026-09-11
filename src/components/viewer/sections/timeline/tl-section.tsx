@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import type { Line } from "@/lib/invitation/types";
 
 /** Timeline section shell: eyebrow bar + heading + body, optional paper tint. */
@@ -16,9 +17,9 @@ export function TlSection({
 }) {
   return (
     <div className={`tl-section${tint ? " tl-tint" : ""}`}>
-      <div className="tl-section-eb">{eyebrow}</div>
+      <div className="tl-section-eb"><Editable path="eyebrow">{eyebrow}</Editable></div>
       <h2>
-        <Rich lines={title} />
+        <Editable path="title" multiline><Rich lines={title} /></Editable>
       </h2>
       {children}
     </div>

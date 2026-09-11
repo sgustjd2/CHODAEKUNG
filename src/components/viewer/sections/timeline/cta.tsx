@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Rich } from "../../rich-text";
+import { Editable } from "../../editable";
 import { openRsvpModal } from "@/lib/invitation/rsvp-open";
 import type { AcceptContent } from "@/lib/invitation/types";
 
@@ -11,9 +12,9 @@ export function TimelineCta({ content }: { content: AcceptContent }) {
   return (
     <div className="tl-cta">
       <h3>
-        <Rich lines={content.title} />
+        <Editable path="title" multiline><Rich lines={content.title} /></Editable>
       </h3>
-      <div className="sub">{content.sub}</div>
+      <div className="sub"><Editable path="sub">{content.sub}</Editable></div>
       <div className="tl-cta-btns">
         <button
           type="button"
