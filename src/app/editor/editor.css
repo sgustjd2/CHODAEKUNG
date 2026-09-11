@@ -49,6 +49,8 @@
   .sec-item.active { background: var(--wax-tint); border-color: var(--wax); box-shadow: 0 0 0 2px rgba(227,139,139,0.1); }
   .sec-item.dragging { opacity: 0.5; }
   .sec-item.hidden-sec { opacity: 0.5; }
+  .sec-item.orphan-sec { opacity: 0.6; }
+  .sec-orphan-badge { font-size: 9px; font-weight: 700; color: var(--muted); background: var(--paper-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; flex-shrink: 0; white-space: nowrap; }
   .sec-drag { color: var(--muted); cursor: grab; display: flex; align-items: center; }
   .sec-drag svg { width: 14px; height: 14px; }
   .sec-icon { width: 28px; height: 28px; border-radius: 6px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--fg-2); }
@@ -401,6 +403,8 @@
   .m-sec-actions button { width: 32px; height: 32px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .m-sec-actions button:active { background: var(--paper-2); color: var(--ink); }
   .m-sec-actions svg { width: 15px; height: 15px; }
+  .m-sec.orphan-sec { opacity: 0.6; }
+  .m-sec-orphan-badge { font-size: 9px; font-weight: 700; color: var(--muted); background: var(--paper-3); border-radius: 999px; padding: 2px 7px; flex-shrink: 0; white-space: nowrap; }
 
   .m-toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--fg-2); }
   .m-toggle { width: 34px; height: 20px; border-radius: 10px; background: var(--paper-3); position: relative; cursor: pointer; border: none; transition: background 200ms; flex-shrink: 0; }

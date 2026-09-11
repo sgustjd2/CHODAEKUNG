@@ -414,7 +414,12 @@ export function EditorClient() {
     };
   }, []);
 
-  const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id)) };
+  // A section the current theme has no renderer for is "orphaned" — kept in the draft (and still
+  // editable, so switching back restores it) but excluded from the preview AND the published record,
+  // so a cross-theme switch never silently ships an invisible section. Derived from theme+type (no
+  // stored hide state), so it self-corrects when the theme changes back.
+  const canRenderInTheme = (type: SectionType) => !!themeRegistry[draft.theme]?.[type];
+  const visibleDraft: Invitation = { ...draft, sections: draft.sections.filter((s) => !hidden.has(s.id) && canRenderInTheme(s.type)) };
 
   // Keep the floating style toolbar anchored above the selected editable field as the preview scrolls
   // or the layout changes (a style edit can resize the text). Cleared when no field is selected.
@@ -765,7 +770,8 @@ export function EditorClient() {
                 <div
                   key={s.id}
                   data-sec-item={s.id}
-                  className={`sec-item${selectedId === s.id ? " active" : ""}${hidden.has(s.id) ? " hidden-sec" : ""}`}
+                  className={`sec-item${selectedId === s.id ? " active" : ""}${hidden.has(s.id) ? " hidden-sec" : ""}${!canRenderInTheme(s.type) ? " orphan-sec" : ""}`}
+                  title={!canRenderInTheme(s.type) ? "이 테마에서는 표시되지 않아요 (다른 테마로 바꾸면 다시 나타나요)" : undefined}
                   onClick={() => selectSection(s.id)}
                   draggable
                   onDragStart={() => (dragIndex.current = i)}
@@ -787,6 +793,7 @@ export function EditorClient() {
                     />
                     <div className="sec-type">{s.type}</div>
                   </div>
+                  {!canRenderInTheme(s.type) && <span className="sec-orphan-badge">미표시</span>}
                   <div className="sec-actions">
                     <button title="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
                       <Icon name={hidden.has(s.id) ? "ic-eye" : "ic-eye-off"} />

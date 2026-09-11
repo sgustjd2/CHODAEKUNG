@@ -396,6 +396,8 @@ function SectionsPanel({ api }: { api: EditorApi }) {
   const listRef = useRef<HTMLDivElement>(null);
   // The current theme's own section palette, minus cover (order follows the theme flow).
   const addableTypes = (Object.keys(themeRegistry[draft.theme] ?? {}) as SectionType[]).filter((t) => t !== "cover");
+  // Sections the current theme can't render are kept but excluded from preview/publish (see editor-client).
+  const canRenderInTheme = (type: SectionType) => !!themeRegistry[draft.theme]?.[type];
 
   // Touch-capable drag reorder (HTML5 drag doesn't fire on touch): pointer events on the handle,
   // reordering live as the finger passes each row's midpoint.
@@ -451,7 +453,8 @@ function SectionsPanel({ api }: { api: EditorApi }) {
           return (
             <div
               key={s.id}
-              className={`m-sec${active ? " active" : ""}${dragId === s.id ? " dragging" : ""}`}
+              className={`m-sec${active ? " active" : ""}${dragId === s.id ? " dragging" : ""}${!canRenderInTheme(s.type) ? " orphan-sec" : ""}`}
+              title={!canRenderInTheme(s.type) ? "이 테마에서는 표시되지 않아요 (다른 테마로 바꾸면 다시 나타나요)" : undefined}
               onClick={() => setSelectedId(s.id)}
             >
               <span
@@ -488,6 +491,7 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 />
                 <div className="m-sec-type">{s.type}</div>
               </div>
+              {!canRenderInTheme(s.type) && <span className="m-sec-orphan-badge">미표시</span>}
               <div className="m-sec-actions" style={{ display: "flex", gap: 2, marginLeft: "auto" }}>
                 <button type="button" title="숨김" aria-label="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
                   <Icon name={hidden.has(s.id) ? "ic-eye" : "ic-eye-off"} />

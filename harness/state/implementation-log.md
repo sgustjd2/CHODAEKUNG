@@ -879,3 +879,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 - (경미) 추가 섹션은 항상 엔딩 뒤에 붙음 / dayPlan `d.en`·versus `vsWord`·romantic connector 인라인 편집 불가.
 
 검증: tsc 0, eslint 0 errors.
+
+## 2026-09-11 (6) — 테마 전환 시 미지원 섹션 자동 제외(orphan)
+
+**요청(사용자):** 테마 전환 시 새 테마가 못 그리는 섹션이 데이터엔 남고 발행엔 안 보이는 문제 해결.
+
+**설계:** 저장 상태(auto-hide set) 없이 **파생값**으로 처리 — `canRenderInTheme(type)=!!themeRegistry[theme][type]`. `visibleDraft`가 `!hidden && canRenderInTheme`로 필터 → 프리뷰·발행(둘 다 visibleDraft 경유) 모두에서 미지원 섹션 제외. draft에는 남아있어 편집 가능하고, 테마를 되돌리면 자동 복귀(별도 unhide 로직 불필요, 수동 숨김과도 안 섞임). 좌측/모바일 목록엔 `orphan-sec`(흐리게)+"미표시" 배지+title 툴팁으로 이유 표시.
+
+**검증(브라우저, 데스크톱 3열):** romantic→cute 전환 시 message·schedule만 "미표시"·프리뷰 12→10개로 제외(orphanCount=2), cute→romantic 되돌리면 12/12 전부 복귀(orphanCount=0). 콘솔 React 에러 0. tsc 0, eslint 0.
