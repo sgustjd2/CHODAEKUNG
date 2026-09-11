@@ -35,9 +35,9 @@ const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 // Lets a section-list click scroll the inspector to that section's editor group.
 // ponytail: keep in sync with content-editors.tsx if its group order changes.
 const INSPECTOR_ORDER: SectionType[] = [
-  "cover", "message", "location", "date", "schedule", "gallery", "rsvp", "versus", "countdown", "rules",
+  "cover", "message", "location", "date", "schedule", "gallery", "rsvp", "versus", "matchInfo", "countdown", "rules",
   "account", "dday", "guestbook", "attendees", "accept", "timeline", "checklist", "details", "notice",
-  "quote", "lanes", "gInfo", "tierChart", "cost", "route", "roster", "menu", "dayPlan", "ending",
+  "quote", "lanes", "gInfo", "tierChart", "champions", "cost", "route", "roster", "menu", "dayPlan", "ending",
 ];
 
 /** Basics handed over from the /new wizard (one-shot, via sessionStorage). */

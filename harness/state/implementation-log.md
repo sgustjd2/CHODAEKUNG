@@ -897,3 +897,14 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정:** `find`가 **선택된 섹션(selectedId)**을 우선 반환하고 없을 때만 첫 섹션으로 폴백. `selectedId`를 ContentEditors에 prop으로 전달(데스크톱·모바일 둘 다). 좌측/프리뷰에서 복제본을 선택하면 그 타입의 인스펙터 그룹이 해당 인스턴스를 편집. 단일 섹션 동작은 불변.
 
 **검증(브라우저):** 일정 섹션 복제(원본/복제 각 4항목) → 복제본 선택 → 인스펙터 "+ 일정 추가" → 복제본 4→5, 원본 4 유지. 콘솔 에러 0. tsc(앱 코드) 0, eslint 0.
+
+## 2026-09-11 (8) — matchInfo·champions 인스펙터 편집기 추가
+
+**요청(사용자):** matchInfo(배틀)·champions(게이밍) 인스펙터 편집기 추가.
+
+**수정(content-editors.tsx):** 두 타입 편집 그룹 추가.
+- 경기 정보(matchInfo): 제목(string) + cells[] 편집(항목 k / 값 + 추가·삭제). 값은 rich run(t/unit) 배열이라 편집 시 단일 run으로 합침(단위 스타일은 프리뷰 인라인 편집으로 유지 가능) — 코드베이스의 기존 flatten 관례와 동일.
+- 챔피언(champions): Eyebrow + 제목(Line[]) + items[] 편집(아이콘 이모지 / 라인·이름 + 추가·삭제). picked 불리언은 보류(텍스트 컨트롤만 있는 Field 관례 유지).
+`INSPECTOR_ORDER`에 matchInfo(versus 뒤)·champions(tierChart 뒤) 추가 — ContentEditors JSX 순서와 일치시켜 스크롤 싱크 정상.
+
+**검증(브라우저):** jogi-battle에서 경기 정보 선택→그룹 렌더+"+ 항목 추가"로 셀 4→5. lol-rank에서 챔피언 선택→그룹 렌더(아이콘/라인)+"+ 챔피언 추가"로 8→9. 인스펙터 스크롤 싱크도 두 그룹으로 정상 이동. tsc(앱) 0, eslint 0, 콘솔 에러 0.

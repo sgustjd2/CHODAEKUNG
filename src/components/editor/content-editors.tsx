@@ -26,7 +26,9 @@ import type {
   GInfoContent,
   Invitation,
   LanesContent,
+  ChampionsContent,
   LocationContent,
+  MatchInfoContent,
   MenuContent,
   MessageContent,
   NoticeContent,
@@ -66,6 +68,7 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
   const rsvp = find("rsvp");
   const ending = find("ending");
   const versus = find("versus");
+  const matchInfo = find("matchInfo");
   const countdown = find("countdown");
   const rules = find("rules");
   const accept = find("accept");
@@ -77,6 +80,7 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
   const lanes = find("lanes");
   const gInfo = find("gInfo");
   const tierChart = find("tierChart");
+  const champions = find("champions");
   const cost = find("cost");
   const route = find("route");
   const roster = find("roster");
@@ -244,6 +248,24 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
           <Field label="홈팀 설명" value={versus.content.home.meta} onChange={(v) => patch(versus.id, { home: { ...versus.content.home, meta: v } })} />
           <Field label="원정팀 이름" value={versus.content.away.name} onChange={(v) => patch(versus.id, { away: { ...versus.content.away, name: v } } satisfies Partial<VersusContent>)} />
           <Field label="원정팀 설명" value={versus.content.away.meta} onChange={(v) => patch(versus.id, { away: { ...versus.content.away, meta: v } })} />
+        </div>
+      )}
+      {matchInfo && (
+        <div className="insp-group">
+          <h5>경기 정보</h5>
+          <Field label="제목" value={matchInfo.content.title} onChange={(v) => patch(matchInfo.id, { title: v } satisfies Partial<MatchInfoContent>)} />
+          {matchInfo.content.cells.map((c, i) => (
+            <div key={i} className="insp-subitem">
+              <div className="insp-subitem-head">
+                <span>{c.k || `#${i + 1}`}</span>
+                <button type="button" onClick={() => patch(matchInfo.id, { cells: matchInfo.content.cells.filter((_, j) => j !== i) })}>삭제</button>
+              </div>
+              <Field label="항목" value={c.k} onChange={(v) => patch(matchInfo.id, { cells: matchInfo.content.cells.map((x, j) => (j === i ? { ...x, k: v } : x)) })} />
+              {/* Value collapses its rich runs (t/unit) to one run on edit — fine-grained unit styling stays available via inline preview edit. */}
+              <Field label="값" value={c.v.map((p) => p.t).join("")} onChange={(v) => patch(matchInfo.id, { cells: matchInfo.content.cells.map((x, j) => (j === i ? { ...x, v: [{ t: v }] } : x)) })} />
+            </div>
+          ))}
+          <button type="button" className="insp-add" onClick={() => patch(matchInfo.id, { cells: [...matchInfo.content.cells, { k: "", v: [{ t: "" }] }] })}>+ 항목 추가</button>
         </div>
       )}
       {countdown && (
@@ -481,6 +503,24 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
           ))}
         </div>
       )}
+      {champions && (
+        <div className="insp-group">
+          <h5>챔피언</h5>
+          <Field label="Eyebrow" value={champions.content.eyebrow} onChange={(v) => patch(champions.id, { eyebrow: v } satisfies Partial<ChampionsContent>)} />
+          <Field label="제목" value={plainTitle(champions.content.title)} onChange={(v) => patch(champions.id, { title: [[v]] } satisfies Partial<ChampionsContent>)} />
+          {champions.content.items.map((it, i) => (
+            <div key={i} className="insp-subitem">
+              <div className="insp-subitem-head">
+                <span>{it.lane || `#${i + 1}`}</span>
+                <button type="button" onClick={() => patch(champions.id, { items: champions.content.items.filter((_, j) => j !== i) })}>삭제</button>
+              </div>
+              <Field label="아이콘 (이모지)" value={it.icon} onChange={(v) => patch(champions.id, { items: champions.content.items.map((x, j) => (j === i ? { ...x, icon: v } : x)) })} />
+              <Field label="라인 · 이름" value={it.lane} onChange={(v) => patch(champions.id, { items: champions.content.items.map((x, j) => (j === i ? { ...x, lane: v } : x)) })} />
+            </div>
+          ))}
+          <button type="button" className="insp-add" onClick={() => patch(champions.id, { items: [...champions.content.items, { icon: "", lane: "" }] })}>+ 챔피언 추가</button>
+        </div>
+      )}
       {cost && (
         <div className="insp-group">
           <h5>Cost · 비용</h5>
@@ -588,7 +628,7 @@ export function ContentEditors({ draft, patch, onEventStart, selectedId }: { dra
           <Field label="서명 (이름)" value={ending.content.names ?? ""} onChange={(v) => patch(ending.id, { names: v } satisfies Partial<EndingContent>)} />
         </div>
       )}
-      {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !cost && !route && !roster && !menu && !dayPlan && (
+      {!cover && !message && !location && !date && !gallery && !schedule && !rsvp && !ending && !versus && !matchInfo && !countdown && !rules && !accept && !timeline && !checklist && !details && !notice && !quote && !lanes && !gInfo && !tierChart && !champions && !cost && !route && !roster && !menu && !dayPlan && (
         <div className="insp-group">
           <h5>내용</h5>
           <p style={{ fontSize: 12, color: "var(--fg-3)", lineHeight: 1.6 }}>이 테마의 섹션별 상세 편집은 순차적으로 추가됩니다.</p>
