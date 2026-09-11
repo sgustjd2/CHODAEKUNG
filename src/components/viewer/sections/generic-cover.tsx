@@ -21,6 +21,11 @@ export function GenericCover({ content }: { content: CoverContent }) {
     ? content.names.join(content.connector ? ` ${content.connector} ` : " · ")
     : content.title || flatten(content.titleLines);
   const subtitle = content.subtitle || content.subtitleLines?.join(" ") || "";
+  // Names-based title stays plain (edited via the inspector's 이름 fields); a title/titleLines-based
+  // title has no inspector field, so make it inline-editable here — otherwise a cover switched to a
+  // photo layout (e.g. timeline/cute/developer) would have an uneditable title/subtitle.
+  const titlePath = content.names?.length ? null : content.title != null ? "title" : content.titleLines ? "titleLines" : null;
+  const subPath = content.subtitle != null ? "subtitle" : content.subtitleLines ? "subtitleLines" : null;
   return (
     <div className={`gcover gcover-${variant}`}>
       <div
@@ -29,8 +34,16 @@ export function GenericCover({ content }: { content: CoverContent }) {
       />
       <div className="gcover-body">
         {content.eyebrow && <div className="gcover-eb"><Editable path="eyebrow">{content.eyebrow}</Editable></div>}
-        {title && <h1 className="gcover-title">{title}</h1>}
-        {subtitle && <p className="gcover-sub">{subtitle}</p>}
+        {title && (
+          <h1 className="gcover-title">
+            {titlePath ? <Editable path={titlePath} multiline={titlePath === "titleLines"}>{title}</Editable> : title}
+          </h1>
+        )}
+        {subtitle && (
+          <p className="gcover-sub">
+            {subPath ? <Editable path={subPath} multiline={subPath === "subtitleLines"}>{subtitle}</Editable> : subtitle}
+          </p>
+        )}
         {content.dateLabel && <div className="gcover-date"><Editable path="dateLabel">{content.dateLabel}</Editable></div>}
       </div>
     </div>

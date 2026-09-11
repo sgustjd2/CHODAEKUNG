@@ -520,7 +520,14 @@ export function EditorClient() {
       else n.add(id);
       return n;
     });
-  const del = (id: string) => setDraft((d) => ({ ...d, sections: d.sections.filter((s) => s.id !== id) }));
+  // The cover is never deletable — it isn't in the add picker, so deleting it strands the invitation
+  // with no cover and dead cover controls. Deleting the selected section also re-points the selection.
+  const del = (id: string) => {
+    const target = draft.sections.find((s) => s.id === id);
+    if (!target || target.type === "cover") return;
+    setDraft((d) => ({ ...d, sections: d.sections.filter((s) => s.id !== id) }));
+    if (selectedId === id) setSelectedId(draft.sections.find((s) => s.id !== id)?.id ?? "");
+  };
   const duplicate = (id: string) =>
     setDraft((d) => {
       const i = d.sections.findIndex((s) => s.id === id);
@@ -670,6 +677,10 @@ export function EditorClient() {
     patch,
     addSection,
     changeSectionType,
+    del,
+    duplicate,
+    toggleHide,
+    hidden,
     reorder,
     move,
     dragIndex,
@@ -783,9 +794,11 @@ export function EditorClient() {
                     <button title="복제" onClick={(e) => { e.stopPropagation(); duplicate(s.id); }}>
                       <Icon name="ic-duplicate" />
                     </button>
-                    <button title="삭제" onClick={(e) => { e.stopPropagation(); del(s.id); }}>
-                      <Icon name="ic-x" />
-                    </button>
+                    {s.type !== "cover" && (
+                      <button title="삭제" onClick={(e) => { e.stopPropagation(); del(s.id); }}>
+                        <Icon name="ic-x" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );

@@ -859,3 +859,23 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **부수 버그(선반영):** 프리뷰 필드 선택 시 플로팅 스타일 툴바 effect가 매 렌더 새로 생기는 `visibleDraft`를 의존성으로 둬 setFtPos→리렌더 무한루프("Maximum update depth exceeded"). 의존성을 렌더 간 안정적인 `draft`로 교체. → 필드 선택 후 로그 max-depth 0건(검증).
 
 검증: tsc 0, eslint 0 errors(기존 warning 3), 로컬 webpack dev + 브라우저(1440px 데스크톱 3열)에서 ①②③ 및 루프 수정 확인.
+
+## 2026-09-11 (5) — 전 테마 에디터 QA 스윕 (이미지 업로드 + 잔버그)
+
+**요청(사용자):** 에디터 전반 잔버그를 테마 전체로 점검(이미지 업로드 안 됨 등).
+
+**검증:** 8개 테마(romantic/minimal/cute/editorial/timeline/battle/gaming/developer)를 데스크톱 3열에서 순회 — 크래시/빈 프리뷰/콘솔 React 에러 0(외부 폰트 fetch ERR_NAME_NOT_RESOLVED만, 무관). 이미지 업로드는 Supabase Storage(invite-photos) 익명 경로로 실제 업로드→공개 읽기→삭제까지 200 확인 → 백엔드 있으면 정상. 로컬/워크트리는 .env.local이 없어 authEnabled()=false라 "백엔드가 설정되지 않았어요" 표시(정상). *열린 이슈:* 로그인 사용자 경로 u/{userId} storage 정책은 사용자 JWT 없이 미검증.
+
+**수정(선반영·검증):**
+- 커버 삭제 방지: `del`이 cover면 no-op + 선택 섹션 삭제 시 selectedId 재지정. 좌측/모바일 목록에서 커버 삭제(X) 버튼 숨김(cover는 add 목록에 없어 재추가 불가→복구 불능 상태 차단). DOM 검증: cover만 삭제버튼 없음.
+- 모바일 섹션 패널: 삭제/숨김/복제 버튼 없었음(추가/재정렬/타입변경만) → EditorApi에 del/duplicate/toggleHide/hidden 노출 + 버튼 배선(+ `.m-sec-actions` CSS, 32px 터치타깃). 커버는 삭제 버튼 제외. 브라우저 검증: 메뉴 섹션 삭제 동작.
+- 모바일 디자인 탭 "Overlay 강도" 슬라이더 = 아무 데도 연결 안 된 죽은 컨트롤 → 제거(로컬 state만 있었음).
+- GenericCover(사진 레이아웃) title/subtitle 인라인 편집 불가였음 → titleLines/title·subtitleLines/subtitle을 `<Editable>`로 래핑(names 기반은 인스펙터 이름 필드로 편집 유지). 커버 사진 자동 전환(타임라인/큐트/개발자)으로 GenericCover에 도달해도 제목/부제 편집 가능. 브라우저 검증: photo-center 전환 후 title=titleLines·sub=subtitleLines contentEditable.
+
+**보고만(수정 보류 — 제품 결정/경미):**
+- (P0) 테마 전환 시 새 테마가 못 그리는 섹션이 데이터·인스펙터엔 남고 프리뷰/발행엔 안 보임(무음). 거의 모든 교차-패밀리 전환에서 발생. 권장: 전환 시 못 그리는 섹션 자동 숨김(+경고) — 사용자 결정 필요.
+- (P1) 섹션 복제 시 복제본은 인스펙터에서 편집 불가(ContentEditors가 타입별 first만 대상). 인라인 텍스트만 가능.
+- (P1) matchInfo/champions 인스펙터 편집 그룹 없음(인라인만; 행/셀 추가·삭제 불가).
+- (경미) 추가 섹션은 항상 엔딩 뒤에 붙음 / dayPlan `d.en`·versus `vsWord`·romantic connector 인라인 편집 불가.
+
+검증: tsc 0, eslint 0 errors.

@@ -397,6 +397,10 @@
   .m-sec-type-select:active { opacity: 0.6; }
   .m-sec-type { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
   .m-sec-badge { font-family: var(--font-en); font-size: 8px; letter-spacing: 0.2em; color: var(--wax-deep); font-weight: 700; }
+  .m-sec-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .m-sec-actions button { width: 32px; height: 32px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .m-sec-actions button:active { background: var(--paper-2); color: var(--ink); }
+  .m-sec-actions svg { width: 15px; height: 15px; }
 
   .m-toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--fg-2); }
   .m-toggle { width: 34px; height: 20px; border-radius: 10px; background: var(--paper-3); position: relative; cursor: pointer; border: none; transition: background 200ms; flex-shrink: 0; }

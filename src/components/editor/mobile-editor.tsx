@@ -41,6 +41,10 @@ export type EditorApi = {
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
   changeSectionType: (id: string, type: SectionType) => void;
+  del: (id: string) => void;
+  duplicate: (id: string) => void;
+  toggleHide: (id: string) => void;
+  hidden: Set<string>;
   applyTemplate: (sampleSlug: string) => void;
   reorder: (to: number) => void;
   move: (from: number, to: number) => void;
@@ -187,7 +191,6 @@ function DesignPanel({ api }: { api: EditorApi }) {
   const applyPalette = (p: (typeof PALETTES)[number]) =>
     setDraft((d) => ({ ...d, accent: p.accent ?? undefined, bgColor: p.bg ?? undefined, textColor: p.text ?? undefined }));
   const paletteActive = (p: (typeof PALETTES)[number]) => (p.accent ?? null) === accent && (p.bg ?? null) === bgColor && (p.text ?? null) === textColor;
-  const [overlay, setOverlay] = useState(65);
   return (
     <>
       <DecorTabs tabs={["이벤트", "테마", "색상", "커버"]} />
@@ -375,12 +378,6 @@ function DesignPanel({ api }: { api: EditorApi }) {
         <div style={{ marginTop: 10 }}>
           <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
         </div>
-        <div className="m-field" style={{ marginTop: 12 }}>
-          <div className="m-lbl">
-            Overlay 강도 <span className="v">{overlay}%</span>
-          </div>
-          <input type="range" className="m-slider" min={0} max={100} value={overlay} onChange={(e) => setOverlay(+e.target.value)} />
-        </div>
       </div>
       <div className="m-group">
         <button type="button" className="design-reset" onClick={resetDesign} disabled={!hasCustomDesign}>
@@ -393,7 +390,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
 }
 
 function SectionsPanel({ api }: { api: EditorApi }) {
-  const { draft, selectedId, setSelectedId, addSection, changeSectionType, move } = api;
+  const { draft, selectedId, setSelectedId, addSection, changeSectionType, move, del, duplicate, toggleHide, hidden } = api;
   const [pick, setPick] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -491,7 +488,19 @@ function SectionsPanel({ api }: { api: EditorApi }) {
                 />
                 <div className="m-sec-type">{s.type}</div>
               </div>
-              {active && <span className="m-sec-badge">ACTIVE</span>}
+              <div className="m-sec-actions" style={{ display: "flex", gap: 2, marginLeft: "auto" }}>
+                <button type="button" title="숨김" aria-label="숨김" onClick={(e) => { e.stopPropagation(); toggleHide(s.id); }}>
+                  <Icon name={hidden.has(s.id) ? "ic-eye" : "ic-eye-off"} />
+                </button>
+                <button type="button" title="복제" aria-label="복제" onClick={(e) => { e.stopPropagation(); duplicate(s.id); }}>
+                  <Icon name="ic-duplicate" />
+                </button>
+                {s.type !== "cover" && (
+                  <button type="button" title="삭제" aria-label="삭제" onClick={(e) => { e.stopPropagation(); del(s.id); }}>
+                    <Icon name="ic-x" />
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
