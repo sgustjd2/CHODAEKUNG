@@ -948,3 +948,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정:** `EditorApi`에 selectedField/setSelectedField/selFieldStyle/patchTextStyle 노출(데스크톱 상태 재사용). 모바일 뷰어에 `onSelectField` 연결. 탭바 위에 뜨는 `.m-ts-float` 패널(공용 `TextStyleControls` 재사용) 추가 — 바텀시트 열리면 숨김(`!sheet`). editor.css에 `.m-ts-float`/`-head` 스타일(플렉스 항목이라 프리뷰가 줄고 탭 위에 얹힘, 매직오프셋 없음).
 
 **검증(브라우저, 375px):** 커버 문구 탭→"문구 스타일" 패널(크기/색상/글꼴/스타일+초기화) 표시, 굵게 토글→해당 문구 computed font-weight 700, 시트 열면 패널 숨김. 데스크톱 경로 불변. tsc(앱) 0, eslint 0, 콘솔 에러 0.
+
+## 2026-09-11 (13) — 모바일 레이아웃(콘텐츠 폭·배경) 컨트롤 추가
+
+**요청(사용자):** "다음 작업진행" → 데스크톱/모바일 파리티 잔여(모바일에 레이아웃 탭 없음) 처리. (뷰어 reveal 모션은 이미 transform/opacity·IO·reduced-motion 준수라 개선 여지 적어 스킵.)
+
+**문제:** 데스크톱은 레이아웃 탭에서 콘텐츠 폭(narrow/normal/wide)·배경(soft/solid/none)을 설정하나, 모바일엔 없음. 모바일 편집자는 layout.width/background 설정 불가.
+
+**수정:** 모바일 디자인 시트(DecorPanel) 끝에 "콘텐츠 폭"·"배경" m-group 추가(데스크톱과 동일 옵션·동작, setDraft(layout) 갱신). DecorPanel은 이미 draft/setDraft 보유.
+
+**검증(브라우저, 375px):** 디자인 시트에 두 그룹 표시, "넓게" 탭→active + localStorage draft.layout.width="wide" 저장. tsc(앱) 0, eslint 0, 콘솔 에러 0.

@@ -402,6 +402,27 @@ function DesignPanel({ api }: { api: EditorApi }) {
         </div>
       </div>
       <div className="m-group">
+        <h6>콘텐츠 폭</h6>
+        <div className="m-radios">
+          {([["narrow", "좁게"], ["normal", "기본"], ["wide", "넓게"]] as const).map(([id, label]) => (
+            <button key={id} type="button" className={`m-radio${(draft.layout?.width ?? "normal") === id ? " active" : ""}`} onClick={() => setDraft((d) => ({ ...d, layout: { ...d.layout, width: id } }))}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="m-group">
+        <h6>배경</h6>
+        <div className="m-radios">
+          {([["soft", "부드럽게"], ["solid", "단색"], ["none", "꽉 채움"]] as const).map(([id, label]) => (
+            <button key={id} type="button" className={`m-radio${(draft.layout?.background ?? "soft") === id ? " active" : ""}`} onClick={() => setDraft((d) => ({ ...d, layout: { ...d.layout, background: id } }))}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className="m-note" style={{ marginTop: 8 }}>초대장을 감싸는 폭·여백·배경이에요. 발행·미리보기(특히 데스크톱)에 반영돼요 — 편집 프리뷰는 항상 폰 폭이에요.</p>
+      </div>
+      <div className="m-group">
         <button type="button" className="design-reset" onClick={resetDesign} disabled={!hasCustomDesign}>
           색상·글씨 초기화
         </button>
