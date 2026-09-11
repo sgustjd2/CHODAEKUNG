@@ -218,7 +218,7 @@ export default async function TemplateGalleryPage() {
         </div>
         <div className="sort">
           정렬
-          <select defaultValue="인기순">
+          <select defaultValue="인기순" aria-label="템플릿 정렬 기준">
             <option>인기순</option>
             <option>최신순</option>
             <option>이름순</option>
