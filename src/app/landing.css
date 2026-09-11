@@ -508,9 +508,10 @@
     margin-bottom: 16px;
   }
   .footer-col a {
-    display: block; color: rgba(251,247,241,0.75);
+    /* ≥44px tap target (a11y — CLAUDE.md §10) while keeping the compact footer look. */
+    display: flex; align-items: center; min-height: 44px;
+    color: rgba(251,247,241,0.75);
     text-decoration: none; font-size: 13.5px;
-    padding: 5px 0;
   }
   .footer-col a:hover { color: var(--paper); }
   .footer-bottom {
