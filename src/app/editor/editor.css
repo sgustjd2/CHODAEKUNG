@@ -333,6 +333,11 @@
   .m-tab .lbl { font-size: 10px; font-weight: 700; }
   .m-tab.active { color: var(--wax-deep); }
 
+  /* Per-field text-style panel: a flex row above the tabs (shown when a preview text field is tapped). */
+  .m-ts-float { flex-shrink: 0; background: var(--card, #fff); border-top: 1px solid var(--line-strong); box-shadow: 0 -6px 20px rgba(42,42,62,0.10); padding: 10px 16px 12px; max-height: 46%; overflow-y: auto; }
+  .m-ts-float-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .m-ts-float-head button { background: none; border: none; font-size: 18px; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 4px; }
+
   .m-backdrop { position: absolute; inset: 0; background: rgba(42,42,62,0.4); z-index: 8; opacity: 0; pointer-events: none; transition: opacity 250ms; }
   .m-backdrop.open { opacity: 1; pointer-events: auto; }
 

@@ -938,3 +938,13 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정:** 카운트다운 그룹의 datetime 입력 제거 → dday처럼 "행사 일시 기준 자동 계산" 안내문으로 교체(단위 라벨만 편집). 죽은 `onEventStart` prop을 ContentEditors 시그니처·타입 + 2개 호출부(editor-client/mobile-editor)에서 제거. syncCoverDate는 캘린더 그룹 onChange에 그대로 남아 있어 커버 날짜 동기화 유지.
 
 **검증(브라우저):** jogi-battle 인스펙터 datetime 입력 2→1, 카운트다운 그룹은 안내문만·캘린더 그룹 입력 유지. 캘린더 행사 일시 변경 시 배틀 커버 헤더 2027·04·18→2027·12·25 정상 동기화. tsc(앱) 0, eslint 0(기존 warning 2), 콘솔 에러 0.
+
+## 2026-09-11 (12) — 모바일 문구별 텍스트 스타일 편집 추가
+
+**요청(사용자):** "다음 작업진행" → 핸드오프 P1의 모바일 per-field 텍스트 스타일 갭 처리.
+
+**문제:** 데스크톱은 프리뷰 문구 탭 시 플로팅 "문구 스타일" 툴바(크기·색·글꼴·굵기·기울임)가 있으나, 모바일은 `onSelectField` 미연결 + UI 없음. 데스크톱에서 지정한 스타일은 모바일 프리뷰/발행본에 렌더는 되지만 모바일에서 편집 불가.
+
+**수정:** `EditorApi`에 selectedField/setSelectedField/selFieldStyle/patchTextStyle 노출(데스크톱 상태 재사용). 모바일 뷰어에 `onSelectField` 연결. 탭바 위에 뜨는 `.m-ts-float` 패널(공용 `TextStyleControls` 재사용) 추가 — 바텀시트 열리면 숨김(`!sheet`). editor.css에 `.m-ts-float`/`-head` 스타일(플렉스 항목이라 프리뷰가 줄고 탭 위에 얹힘, 매직오프셋 없음).
+
+**검증(브라우저, 375px):** 커버 문구 탭→"문구 스타일" 패널(크기/색상/글꼴/스타일+초기화) 표시, 굵게 토글→해당 문구 computed font-weight 700, 시트 열면 패널 숨김. 데스크톱 경로 불변. tsc(앱) 0, eslint 0, 콘솔 에러 0.

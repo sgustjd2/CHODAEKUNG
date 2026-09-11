@@ -5,10 +5,11 @@ import type { CSSProperties, Dispatch, PointerEvent as ReactPointerEvent, SetSta
 import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
+import { TextStyleControls } from "./text-style-controls";
 import { TypeMenu } from "./type-menu";
 import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
-import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
+import type { Invitation, Section, SectionType, TextStyle } from "@/lib/invitation/types";
 
 /** Shared editor state/actions, owned by EditorClient and consumed by both layouts. */
 export type EditorApi = {
@@ -37,6 +38,11 @@ export type EditorApi = {
   resetDesign: () => void;
   handleInlineEdit: (secId: string, path: string, value: string, asLines: boolean) => void;
   setSecStyle: (key: "accent" | "bg", val: string | null) => void;
+  // Per-field text styling (tap a preview text field → style it). Shared with desktop.
+  selectedField: { secId: string; path: string } | null;
+  setSelectedField: (f: { secId: string; path: string } | null) => void;
+  selFieldStyle?: TextStyle;
+  patchTextStyle: (secId: string, path: string, partial: Partial<TextStyle> | null) => void;
   previewStyle?: CSSProperties;
   patch: (id: string, content: object) => void;
   addSection: (type: SectionType) => void;
@@ -101,8 +107,24 @@ export function MobileEditor({ api }: { api: EditorApi }) {
       </div>
 
       <div className="m-preview" style={previewStyle}>
-        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} selectedId={api.selectedId} templateDefaults={api.templateDefaults} />
+        <InvitationViewer invitation={visibleDraft} contained onEdit={api.handleInlineEdit} onSelectSection={api.setSelectedId} onSelectField={(secId, path) => api.setSelectedField({ secId, path })} selectedId={api.selectedId} templateDefaults={api.templateDefaults} />
       </div>
+
+      {/* Tap a preview text field → style it (size/color/font/weight/italic), pinned above the tabs.
+          Hidden while a bottom sheet is open (the sheet covers the preview). */}
+      {!sheet && api.selectedField && (
+        <div className="m-ts-float">
+          <div className="m-ts-float-head">
+            <span>문구 스타일</span>
+            <button type="button" aria-label="닫기" onClick={() => api.setSelectedField(null)}>×</button>
+          </div>
+          <TextStyleControls
+            value={api.selFieldStyle}
+            onChange={(p) => api.selectedField && api.patchTextStyle(api.selectedField.secId, api.selectedField.path, p)}
+            onReset={() => api.selectedField && api.patchTextStyle(api.selectedField.secId, api.selectedField.path, null)}
+          />
+        </div>
+      )}
 
       <div className="m-tabs">
         {TABS.map((t) => (
