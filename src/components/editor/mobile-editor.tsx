@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType } from "@/lib/invitation/types";
 
@@ -368,12 +368,12 @@ function DesignPanel({ api }: { api: EditorApi }) {
               className={`m-thumb${cover?.content.image === p ? " active" : ""}`}
               style={{ backgroundImage: `url(/assets/photos/${p}.jpg)` }}
               aria-label={p}
-              onClick={() => cover && patch(cover.id, { image: p })}
+              onClick={() => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, p))}
             />
           ))}
         </div>
         <div style={{ marginTop: 10 }}>
-          <PhotoUpload onUploaded={(url) => cover && patch(cover.id, { image: url })} label="+ 커버 사진 업로드" />
+          <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
         </div>
         <div className="m-field" style={{ marginTop: 12 }}>
           <div className="m-lbl">

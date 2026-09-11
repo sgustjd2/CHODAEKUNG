@@ -845,3 +845,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 ## 2026-09-11 (3) — B 완료: 템플릿 예시 = 회색 힌트 + 발행 시 미편집 항목 제거
 
 보류했던 B 구현·배포. 새 템플릿 시작 시 `templateDefaults`(원본) 보관 → `Editable`이 EditContext의 content/defaultContent로 path별 pristine 판정 → 미편집 필드를 회색(iv-example)으로 표시, 포커스 시 전체 선택(첫 타이핑에 교체). 발행 시 `cleanForPublish`가 프리뷰의 data-edit 마커로 편집 필드 집합을 읽어, 미편집 예시 "항목"을 배열에서 통째로 제거(배지·정보행·스텝 등 — leaf 블랭크가 아니라 항목 단위라 빈 카드가 안 남음). 마법사/사용자가 편집한 항목은 유지. getAtPath/flattenText/lineToText는 lib/invitation/path.ts로 공용화. 검증: tsc 0, webpack 빌드, 마법사 케이스 DOM 검증(채운 필드 유지·미편집 예시만 drop).
+
+## 2026-09-11 (4) — 좌/중/우 포커스 싱크 + 회색 힌트 새로고침 유지 + 커버 사진 클릭
+
+**요청(사용자):** ① 왼쪽(섹션 목록)·가운데(프리뷰)·오른쪽(인스펙터) 클릭 시 서로 포커스가 안 맞음, ② 기본값(예시)이 계속 들어가 있음, ③ 커버 사진을 클릭해도 안 바뀜.
+
+**① 싱크(editor-client.tsx):** 섹션-리스트 클릭이 인스펙터를 잘못된 그룹으로 스크롤하던 off-by-one 수정 — `내용` 탭의 첫 그룹 `문구 스타일`(및 말미의 `캘린더`/`참여 인원`)에 `data-fixed-group`를 달고, 스크롤 계산에서 필터링해 실제 섹션 그룹만 인덱싱. 프리뷰 텍스트 클릭(`onSelectSection`)이 `setSelectedId`만 하던 것을 `selectFromPreview`로 교체 — 인스펙터 그룹 스크롤 + 좌측 목록 `scrollIntoView`(섹션이 바뀔 때만, 같은 섹션 내 필드 이동엔 재스크롤 안 함). 좌측 항목에 `data-sec-item`. → 셋 다 같은 섹션으로 포커스 일치(브라우저 검증: 메뉴/장소/참석응답 왕복).
+
+**② 회색 힌트 새로고침 유지(editor-client.tsx):** `templateDefaults`가 localStorage에 저장되지 않아 새로고침 시 null이 되고 예시(회색)가 검은 실값으로 굳어 "기본값이 계속 들어가있다"로 보이던 문제. `SavedEditor`에 `templateDefaults` 추가, 3개 저장 지점(autosave/openPreview/저장) + 로드 복원. → 새로고침 후에도 미편집 예시 98/98 회색 유지·발행 시 drop 유지(브라우저 검증).
+
+**③ 커버 사진(editor-shared.ts + 3 에디터):** 타임라인/큐트/개발자 테마의 테마 커버는 사진을 렌더하지 않는 텍스트/배지 커버라, `테마 기본` 레이아웃에서 사진 썸네일 클릭이 아무 효과가 없었음. `coverImagePatch(theme, layout, image)` 헬퍼 — 현재 커버가 사진을 못 보여주는 경우 `photo-center`(히어로) 레이아웃으로 자동 전환. 6개 패치 지점(썸네일+업로드 × 데스크톱 스타일탭/내용탭/모바일) 경유. → 타임라인 테마에서 사진 클릭 시 히어로 커버로 바로 표시(브라우저 검증).
+
+**부수 버그(선반영):** 프리뷰 필드 선택 시 플로팅 스타일 툴바 effect가 매 렌더 새로 생기는 `visibleDraft`를 의존성으로 둬 setFtPos→리렌더 무한루프("Maximum update depth exceeded"). 의존성을 렌더 간 안정적인 `draft`로 교체. → 필드 선택 후 로그 max-depth 0건(검증).
+
+검증: tsc 0, eslint 0 errors(기존 warning 3), 로컬 webpack dev + 브라우저(1440px 데스크톱 3열)에서 ①②③ 및 루프 수정 확인.

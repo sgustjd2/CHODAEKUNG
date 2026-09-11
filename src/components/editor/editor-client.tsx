@@ -13,7 +13,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
 import { TextStyleControls } from "@/components/editor/text-style-controls";
 import { mergeTextStyle } from "@/lib/invitation/text-style";
-import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, exampleSection, getInvitation } from "@/lib/invitation/samples";
@@ -27,7 +27,7 @@ type Tab = "content" | "style" | "layout" | "anim";
 
 // ponytail: localStorage draft store — swap for a real backend when multi-device/sharing lands
 const STORAGE_KEY = "chodaekung:editor:v1";
-type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; accent?: string | null };
+type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; accent?: string | null; templateDefaults?: Invitation | null };
 const keyFor = (slug: string) => `${STORAGE_KEY}:${slug}`;
 const tokenKeyFor = (slug: string) => `chodaekung:editor:token:${slug}`;
 
@@ -347,6 +347,9 @@ export function EditorClient() {
           if (saved.draft) { d = saved.draft; hadLocalDraft = true; }
           if (typeof saved.title === "string") loadedTitle = saved.title;
           if (Array.isArray(saved.hidden)) { setHidden(new Set(saved.hidden)); loadedHidden = saved.hidden; }
+          // Restore the template baseline so untouched example fields stay gray hints (and drop on
+          // publish) after a refresh — without it the hints hardened into permanent solid content.
+          if (saved.templateDefaults) setTemplateDefaults(saved.templateDefaults);
           // Migrate a legacy top-level saved accent into the draft (new saves keep it in draft.accent).
           if (saved.accent != null && d.accent == null) d.accent = saved.accent;
         }
@@ -387,11 +390,11 @@ export function EditorClient() {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent, templateDefaults } satisfies SavedEditor));
     } catch {
       /* storage unavailable — skip; edits stay in memory */
     }
-  }, [hydrated, slug, draft, title, hidden, accent]);
+  }, [hydrated, slug, draft, title, hidden, accent, templateDefaults]);
 
   // Mobile viewport height: track the visual viewport so the editor shell fits the *visible* area —
   // above the browser chrome, and (on iOS, which ignores interactive-widget) above the on-screen
@@ -432,7 +435,10 @@ export function EditorClient() {
     window.addEventListener("scroll", compute, true);
     window.addEventListener("resize", compute);
     return () => { window.removeEventListener("scroll", compute, true); window.removeEventListener("resize", compute); };
-  }, [selectedField, visibleDraft]);
+    // Depend on `draft` (stable identity between edits), NOT the derived `visibleDraft` (a fresh object
+    // every render) — the latter re-ran this effect every render, and its setFtPos re-triggered the
+    // render, looping until React's "Maximum update depth exceeded". A real edit still repositions.
+  }, [selectedField, draft]);
 
   // Inline WYSIWYG edit from the center preview: commit a tagged text field to the draft.
   // `path` is a field within the section content, e.g. "eyebrow", "dateLabel", "names.0".
@@ -456,28 +462,43 @@ export function EditorClient() {
     }));
   };
 
-  // Select a section AND scroll both the center preview and the inspector to it (section-list
-  // click → jump to that page in the preview and to that section's editor group on the right).
-  const selectSection = (id: string) => {
-    setSelectedId(id);
+  // Scroll the inspector's 내용 tab to a section's editor group. The 내용 tab stacks every section's
+  // editor; groups render in INSPECTOR_ORDER for the types that exist, so the group index = the
+  // selected type's position among existing types. The leading 문구 스타일 and trailing 캘린더/참여 인원
+  // groups carry data-fixed-group, so they're filtered out (else every jump landed one group short).
+  const scrollInspectorToSection = (sec: Section | undefined) => {
+    if (tab !== "content" || !sec) return;
+    const body = document.querySelector<HTMLElement>(".inspector-body");
+    if (!body) return;
+    const idx = INSPECTOR_ORDER.filter((t) => draft.sections.some((s) => s.type === t)).indexOf(sec.type);
+    if (idx < 0) return;
+    const groups = [...body.querySelectorAll<HTMLElement>(".insp-group")].filter((g) => !g.dataset.fixedGroup);
+    const group = groups[idx];
+    if (group) body.scrollTop = Math.max(0, body.scrollTop + group.getBoundingClientRect().top - body.getBoundingClientRect().top - 8);
+  };
+  const scrollPreviewToSection = (id: string) => {
     const scroller = document.querySelector<HTMLElement>(".phone-scroll");
     const el = scroller?.querySelector<HTMLElement>(`[data-sec-id="${CSS.escape(id)}"]`);
-    if (scroller && el) {
-      const top = scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
-      // scrollTo({behavior:"smooth"}) silently no-ops on this scroll container in some browsers; set
-      // scrollTop directly (always works). The focus ring makes the jump obvious.
-      scroller.scrollTop = Math.max(0, top);
-    }
-    // The 내용 tab stacks every section's editor; scroll the inspector to the clicked one's group.
-    // Groups render in INSPECTOR_ORDER for the types that exist, so the group index = the selected
-    // type's position among existing types (trailing 캘린더/참여 인원 groups come after, so they don't shift it).
-    const sec = draft.sections.find((s) => s.id === id);
-    const body = document.querySelector<HTMLElement>(".inspector-body");
-    if (tab === "content" && sec && body) {
-      const idx = INSPECTOR_ORDER.filter((t) => draft.sections.some((s) => s.type === t)).indexOf(sec.type);
-      const group = idx >= 0 ? body.querySelectorAll<HTMLElement>(".insp-group")[idx] : undefined;
-      if (group) body.scrollTop = Math.max(0, body.scrollTop + group.getBoundingClientRect().top - body.getBoundingClientRect().top - 8);
-    }
+    if (!scroller || !el) return;
+    // scrollTo({behavior:"smooth"}) silently no-ops on this scroll container in some browsers; set
+    // scrollTop directly (always works). The focus ring makes the jump obvious.
+    scroller.scrollTop = Math.max(0, scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8);
+  };
+  // Section-list click → select + jump the preview AND the inspector to that section (all three sync).
+  const selectSection = (id: string) => {
+    setSelectedId(id);
+    scrollPreviewToSection(id);
+    scrollInspectorToSection(draft.sections.find((s) => s.id === id));
+  };
+  // Preview field focus → select + follow in the inspector and section list (but don't yank the
+  // preview, which the user is already looking at). Only re-scroll when the section actually changed,
+  // so tabbing between fields of the same section doesn't jump the inspector.
+  const selectFromPreview = (id: string) => {
+    const changed = id !== selectedId;
+    setSelectedId(id);
+    if (!changed) return;
+    scrollInspectorToSection(draft.sections.find((s) => s.id === id));
+    document.querySelector<HTMLElement>(`.sec-list [data-sec-item="${CSS.escape(id)}"]`)?.scrollIntoView({ block: "nearest" });
   };
   // Section types the current theme can actually render (for the add-section picker).
   // Every section type the current theme can render (its own palette), minus cover
@@ -552,7 +573,7 @@ export function EditorClient() {
   // Open the full pre-publish preview (new tab) — saves the draft, then reads it back in /preview.
   const openPreview = () => {
     try {
-      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+      localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent, templateDefaults } satisfies SavedEditor));
     } catch {
       /* storage unavailable — preview may show a stale/empty draft */
     }
@@ -732,6 +753,7 @@ export function EditorClient() {
               return (
                 <div
                   key={s.id}
+                  data-sec-item={s.id}
                   className={`sec-item${selectedId === s.id ? " active" : ""}${hidden.has(s.id) ? " hidden-sec" : ""}`}
                   onClick={() => selectSection(s.id)}
                   draggable
@@ -780,7 +802,7 @@ export function EditorClient() {
             <div className="notch" />
             <div className="screen">
               <div className="phone-scroll" style={previewStyle}>
-                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={setSelectedId} onSelectField={(secId, path) => setSelectedField({ secId, path })} selectedId={selectedId} templateDefaults={templateDefaults} />
+                <InvitationViewer invitation={visibleDraft} contained onEdit={handleInlineEdit} onSelectSection={selectFromPreview} onSelectField={(secId, path) => setSelectedField({ secId, path })} selectedId={selectedId} templateDefaults={templateDefaults} />
               </div>
             </div>
           </div>
@@ -812,7 +834,7 @@ export function EditorClient() {
           <div className="inspector-body">
             {tab === "content" && (
               <>
-                <div className="insp-group">
+                <div className="insp-group" data-fixed-group>
                   <h5>문구 스타일</h5>
                   {selectedField ? (
                     <TextStyleControls
@@ -825,7 +847,7 @@ export function EditorClient() {
                   )}
                 </div>
                 <ContentEditors draft={draft} patch={patch} onEventStart={(iso) => setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso))} />
-                <div className="insp-group">
+                <div className="insp-group" data-fixed-group>
                   <h5>캘린더</h5>
                   <div className="insp-field">
                     <div className="insp-label">행사 일시</div>
@@ -840,7 +862,7 @@ export function EditorClient() {
                     </div>
                   </div>
                 </div>
-                <div className="insp-group">
+                <div className="insp-group" data-fixed-group>
                   <h5>참여 인원</h5>
                   <div className="insp-field">
                     <div className="insp-label">정원 (참석 인원 제한)</div>
@@ -1085,12 +1107,12 @@ export function EditorClient() {
                         src={`/assets/photos/${p}.jpg`}
                         alt=""
                         className={`cover-thumb${cover?.content.image === p ? " active" : ""}`}
-                        onClick={() => cover && patch(cover.id, { image: p })}
+                        onClick={() => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, p))}
                       />
                     ))}
                   </div>
                   <div style={{ marginTop: 8 }}>
-                    <PhotoUpload onUploaded={(url) => cover && patch(cover.id, { image: url })} label="+ 커버 사진 업로드" />
+                    <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
                   </div>
                 </div>
                 <div className="insp-group">
@@ -1192,7 +1214,7 @@ export function EditorClient() {
               size="sm"
               onClick={() => {
                 try {
-                  localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent } satisfies SavedEditor));
+                  localStorage.setItem(keyFor(slug), JSON.stringify({ draft, title, hidden: [...hidden], accent, templateDefaults } satisfies SavedEditor));
                 } catch {
                   /* storage unavailable */
                 }

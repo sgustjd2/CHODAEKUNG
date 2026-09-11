@@ -1,4 +1,4 @@
-import type { CoverLayout, Invitation, Line, RevealAnim, Section, SectionType, ThemeId } from "@/lib/invitation/types";
+import type { CoverContent, CoverLayout, Invitation, Line, RevealAnim, Section, SectionType, ThemeId } from "@/lib/invitation/types";
 
 /** Shared editor constants + helpers used by both the desktop and mobile layouts. */
 
@@ -84,6 +84,20 @@ export const COVER_PHOTOS_BY_THEME: Record<ThemeId, string[]> = {
 /** Cover presets for a theme, falling back to the default set. */
 export function coverPhotosFor(theme: ThemeId): string[] {
   return COVER_PHOTOS_BY_THEME[theme] ?? COVER_PHOTOS;
+}
+
+/** Theme covers that paint a background photo in their own ("theme") layout. The others
+ * (timeline/cute/developer) are text/badge covers, so a chosen photo only shows via a photo layout. */
+const THEME_COVER_SHOWS_PHOTO: Record<ThemeId, boolean> = {
+  romantic: true, minimal: true, battle: true, editorial: true, gaming: true,
+  timeline: false, cute: false, developer: false,
+};
+/** Patch for setting the cover photo. If the current cover wouldn't render one (a text/badge theme
+ * cover on the default layout), also switch to the hero photo layout so the pick is actually visible
+ * — otherwise clicking a thumbnail does nothing. */
+export function coverImagePatch(theme: ThemeId, layout: CoverLayout | undefined, image: string): Partial<CoverContent> {
+  const willShow = (layout ?? "theme") !== "theme" || THEME_COVER_SHOWS_PHOTO[theme];
+  return willShow ? { image } : { image, layout: "photo-center" };
 }
 export const ACCENTS = ["#E38B8B", "#C96A6A", "#E29F76", "#D9B96A", "#F5D896", "#8AA588", "#B5CAB2", "#8AB2C6", "#A0A8B8", "#B097CC", "#C97AA0", "#2A2A3E"];
 

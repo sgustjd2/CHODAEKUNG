@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { COVER_LAYOUTS, coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
+import { COVER_LAYOUTS, coverImagePatch, coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
@@ -126,10 +126,10 @@ export function ContentEditors({ draft, patch, onEventStart }: { draft: Invitati
             )}
             {coverPhotosFor(draft.theme).map((p) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={p} src={`/assets/photos/${p}.jpg`} alt="" className={`cover-thumb${cover.content.image === p ? " active" : ""}`} onClick={() => patch(cover.id, { image: p } satisfies Partial<CoverContent>)} />
+              <img key={p} src={`/assets/photos/${p}.jpg`} alt="" className={`cover-thumb${cover.content.image === p ? " active" : ""}`} onClick={() => patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, p))} />
             ))}
           </div>
-          <PhotoUpload onUploaded={(url) => patch(cover.id, { image: url } satisfies Partial<CoverContent>)} label="+ 커버 사진 업로드" />
+          <PhotoUpload onUploaded={(url) => patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
         </div>
       )}
       {message && (
