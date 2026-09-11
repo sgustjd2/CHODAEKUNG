@@ -20,20 +20,36 @@ const CATEGORIES = [
   "파티 · 이벤트",
 ];
 
+/** Advance the wizard, waiting for `expectVisible` to appear — retrying the click once, since the
+ * step panels animate in and a single click can occasionally land before the panel is interactive. */
+async function next(page: Page, expectVisible: ReturnType<Page["locator"]>) {
+  const btn = page.getByRole("button", { name: /다음/ });
+  await btn.click();
+  try {
+    await expectVisible.waitFor({ state: "visible", timeout: 6_000 });
+  } catch {
+    await btn.click();
+    await expectVisible.waitFor({ state: "visible", timeout: 10_000 });
+  }
+}
+
 /** Drive the /new wizard with a known event + basics, then open the editor. */
 async function createFromWizard(page: Page) {
   await page.goto("/new", { waitUntil: "domcontentloaded" });
-  await page.getByText("동호회 모임", { exact: true }).click();
-  await page.getByRole("button", { name: /다음/ }).click();
+  const card = page.getByText("동호회 모임", { exact: true });
+  await card.scrollIntoViewIfNeeded();
+  await card.click();
 
-  await page.getByPlaceholder("예: 지수 · 민준의 결혼식").fill("강남 번개모임");
+  const title = page.getByPlaceholder("예: 지수 · 민준의 결혼식");
+  await next(page, title); // step 1 → 2
+  await title.fill("강남 번개모임");
   await page.getByPlaceholder(/저희의 시작/).fill("금요일 저녁 한잔");
   await page.locator('input[type="date"]').fill("2026-10-02");
   await page.locator('input[type="time"]').fill("19:30");
   await page.getByPlaceholder("장소명 · 주소").fill("강남역 포차거리");
 
-  await page.getByRole("button", { name: /다음/ }).click(); // → template
-  await page.getByRole("button", { name: /다음/ }).click(); // → done
+  await next(page, page.getByRole("heading", { name: /스타일/ })); // step 2 → 3 (템플릿)
+  await next(page, page.getByRole("button", { name: /에디터로 이동/ })); // step 3 → 4 (완료)
   await page.getByRole("button", { name: /에디터로 이동/ }).click();
 
   await page.waitForSelector(".ed-mobile", { timeout: 30_000 });
@@ -53,7 +69,8 @@ test("wizard basics land in the editor; untouched examples are gray hints", asyn
   await createFromWizard(page);
 
   const details = page.locator('.ed-mobile [data-sec-id="details"]').first();
-  await expect(details).toContainText("강남역 포차거리"); // wizard venue, not the 홍대 sample
+  // generous timeout: first /editor hit compiles on the dev server before the seed-applied render
+  await expect(details).toContainText("강남역 포차거리", { timeout: 25_000 }); // wizard venue, not the 홍대 sample
   await expect(details).not.toContainText("홍대");
 
   // the wizard-filled venue chip is solid; an untouched example (the 2시간 chip) is ghosted

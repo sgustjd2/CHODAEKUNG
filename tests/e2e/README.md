@@ -11,10 +11,11 @@ npm run test:e2e                  # runs tests/e2e/*.spec.ts (auto-starts the de
 npm run test:e2e:report           # open the last HTML report
 ```
 
-`playwright.config.ts` starts the dev server itself with `next dev --webpack` (Turbopack panics
-when this repo runs inside a git worktree whose `node_modules` is a symlink; webpack works in both
-a normal checkout and a worktree). Override the port with `PORT`, or point at an already-running
-server with `BASE_URL`.
+`playwright.config.ts` starts the server itself: a **production build** (`next build --webpack &&
+next start`), so the run matches the deployed site and avoids dev-only React StrictMode
+double-mounting. `--webpack` is used because Turbopack panics when this repo runs inside a git
+worktree whose `node_modules` is a symlink. First run builds (~1–2 min); override the port with
+`PORT`, or skip the build by pointing at an already-running server with `BASE_URL`.
 
 ## Coverage (`mobile-smoke.spec.ts`)
 

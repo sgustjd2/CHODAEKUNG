@@ -2,13 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { listAttendeesAction, attendingCountAction } from "@/lib/invitation/actions";
+import { partyFromRsvp, type Party } from "./party";
 
-export type Party = {
-  avatars: { label: string; tone?: number }[];
-  more?: string;
-  countLabel: string;
-  countSub: string;
-};
+export type { Party };
 
 /**
  * The party block (avatars + "N명 확정 · 자리 남음") driven by real RSVPs on the published page.
@@ -42,13 +38,5 @@ export function useLiveParty(slug: string | undefined, preview: boolean, capacit
   }, [slug, off]);
 
   if (off || !live) return fallback; // editor/preview, or before the first fetch → template party
-  const avatars = live.names.slice(0, 5).map((n, i) => ({ label: n.trim().charAt(0) || "?", tone: (i % 5) + 1 }));
-  const more = live.names.length > 5 ? `+${live.names.length - 5}` : undefined;
-  const remaining = typeof capacity === "number" && capacity > 0 ? Math.max(0, capacity - live.count) : null;
-  return {
-    avatars,
-    more,
-    countLabel: `${live.count}명 확정`,
-    countSub: remaining != null ? `${remaining}자리 남음` : "",
-  };
+  return partyFromRsvp(live.names, live.count, capacity);
 }
