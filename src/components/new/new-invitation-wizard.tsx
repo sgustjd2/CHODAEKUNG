@@ -11,73 +11,85 @@ import { AddressSearch } from "@/components/ui/address-search";
 import type { ThemeId } from "@/lib/invitation/types";
 
 type EventDef = { id: string; icon: string; name: string; hint: string };
-type EventGroup = { key: string; label: string; sub: string; items: EventDef[] };
+type EventGroup = { key: string; label: string; sub: string; icon: string; items: EventDef[] };
 
-// Events grouped into tidy sections so Step 1 reads as organized categories, not one long grid.
+// Step 1 categories mirror the /templates gallery exactly (same 8 categories, labels, icons and
+// order) so browsing and creating share one taxonomy. Each category's individual events keep their
+// own icon/hint and map to a theme sample via EVENT_SAMPLE.
 const EVENT_GROUPS: EventGroup[] = [
   {
-    key: "celebration", label: "경조사 · 기념일", sub: "Celebrations",
+    key: "wedding", label: "결혼 · 기념일", sub: "Weddings & Anniversaries", icon: "ic-ring",
     items: [
       { id: "wedding", icon: "ic-ring", name: "결혼식", hint: "wedding" },
+    ],
+  },
+  {
+    key: "birthday", label: "생일 · 돌잔치", sub: "Birthdays", icon: "ic-cake",
+    items: [
       { id: "dol", icon: "ic-balloon", name: "돌잔치", hint: "first birthday" },
       { id: "birthday", icon: "ic-cake", name: "생일", hint: "birthday" },
-      { id: "bridal", icon: "ic-flower", name: "브라이덜 샤워", hint: "bridal shower" },
-      { id: "baby", icon: "ic-baby", name: "베이비 샤워", hint: "baby shower" },
     ],
   },
   {
-    key: "party", label: "파티 · 모임", sub: "Parties & Meetups",
+    key: "home", label: "집들이 · 홈파티", sub: "Home & House Parties", icon: "ic-house",
     items: [
       { id: "housewarming", icon: "ic-house", name: "집들이", hint: "housewarming" },
-      { id: "party", icon: "ic-confetti", name: "파티", hint: "party" },
-      { id: "yearend", icon: "ic-glass", name: "송년회", hint: "year-end" },
-      { id: "club", icon: "ic-target", name: "동호회 모임", hint: "club meet" },
-      { id: "pet", icon: "ic-pet", name: "반려동물 모임", hint: "pet meetup" },
+      { id: "party", icon: "ic-confetti", name: "홈파티", hint: "home party" },
     ],
   },
   {
-    key: "sports", label: "스포츠 · 운동", sub: "Sports",
+    key: "sports", label: "스포츠 배틀", sub: "Sports", icon: "ic-ball",
     items: [
       { id: "sports-battle", icon: "ic-ball", name: "조기축구", hint: "soccer battle" },
-      { id: "running", icon: "ic-run", name: "러닝 모임", hint: "morning run" },
       { id: "badminton", icon: "ic-badminton", name: "배드민턴", hint: "badminton" },
-      { id: "hiking", icon: "ic-mountain", name: "등산 모임", hint: "hiking" },
       { id: "baseball", icon: "ic-baseball", name: "야구 관람", hint: "baseball watch" },
       { id: "basketball", icon: "ic-basketball", name: "농구 모임", hint: "basketball" },
       { id: "tennis", icon: "ic-tennis", name: "테니스", hint: "tennis meet" },
       { id: "golf", icon: "ic-golf", name: "골프 라운딩", hint: "golf" },
-      { id: "cycling", icon: "ic-bike", name: "자전거", hint: "cycling" },
-      { id: "swim", icon: "ic-swim", name: "수영·서핑", hint: "swim & surf" },
-      { id: "yoga", icon: "ic-yoga", name: "요가·필라테스", hint: "yoga · pilates" },
-    ],
-  },
-  {
-    key: "hobby", label: "취미 · 나들이", sub: "Hobbies & Outings",
-    items: [
-      { id: "camping", icon: "ic-camping", name: "캠핑·차박", hint: "camping" },
-      { id: "picnic", icon: "ic-picnic", name: "피크닉", hint: "picnic" },
-      { id: "travel", icon: "ic-travel", name: "여행 모임", hint: "travel" },
-      { id: "cafe", icon: "ic-coffee", name: "카페 투어", hint: "cafe hop" },
-      { id: "foodie", icon: "ic-food", name: "맛집 탐방", hint: "foodie meet" },
-      { id: "music", icon: "ic-music", name: "음악·공연", hint: "concert" },
-      { id: "photo", icon: "ic-camera", name: "사진 출사", hint: "photo walk" },
-    ],
-  },
-  {
-    key: "business", label: "비즈니스 · 스터디", sub: "Business & Study",
-    items: [
-      { id: "seminar", icon: "ic-book", name: "세미나", hint: "seminar" },
-      { id: "corporate", icon: "ic-briefcase", name: "회사 행사", hint: "corporate" },
-      { id: "study", icon: "ic-study", name: "스터디", hint: "study group" },
-    ],
-  },
-  {
-    key: "battle", label: "경쟁 · 배틀", sub: "Competition",
-    items: [
       { id: "duel", icon: "ic-swords", name: "1대1 맞짱", hint: "1v1 duel" },
+    ],
+  },
+  {
+    key: "gaming", label: "게이밍 · 롤", sub: "Gaming", icon: "ic-controller",
+    items: [
       { id: "game-battle", icon: "ic-controller", name: "게임 도전장", hint: "e-sports" },
       { id: "minecraft", icon: "ic-grid", name: "마인크래프트", hint: "block party" },
       { id: "tournament", icon: "ic-trophy", name: "토너먼트", hint: "championship" },
+    ],
+  },
+  {
+    key: "outdoor", label: "아웃도어", sub: "Outdoors", icon: "ic-mountain",
+    items: [
+      { id: "running", icon: "ic-run", name: "러닝 모임", hint: "morning run" },
+      { id: "hiking", icon: "ic-mountain", name: "등산 모임", hint: "hiking" },
+      { id: "cycling", icon: "ic-bike", name: "자전거", hint: "cycling" },
+      { id: "swim", icon: "ic-swim", name: "수영·서핑", hint: "swim & surf" },
+      { id: "camping", icon: "ic-camping", name: "캠핑·차박", hint: "camping" },
+      { id: "picnic", icon: "ic-picnic", name: "피크닉", hint: "picnic" },
+      { id: "travel", icon: "ic-travel", name: "MT · 여행", hint: "travel" },
+    ],
+  },
+  {
+    key: "hobby", label: "취미 소모임", sub: "Hobbies", icon: "ic-book",
+    items: [
+      { id: "club", icon: "ic-target", name: "동호회 모임", hint: "club meet" },
+      { id: "study", icon: "ic-study", name: "스터디", hint: "study group" },
+      { id: "yoga", icon: "ic-yoga", name: "요가·필라테스", hint: "yoga · pilates" },
+      { id: "cafe", icon: "ic-coffee", name: "카페 투어", hint: "cafe hop" },
+      { id: "foodie", icon: "ic-food", name: "맛집 탐방", hint: "foodie meet" },
+      { id: "photo", icon: "ic-camera", name: "사진 출사", hint: "photo walk" },
+      { id: "music", icon: "ic-music", name: "음악·공연", hint: "concert" },
+      { id: "pet", icon: "ic-pet", name: "반려동물 모임", hint: "pet meetup" },
+    ],
+  },
+  {
+    key: "party", label: "파티 · 이벤트", sub: "Parties & Events", icon: "ic-confetti",
+    items: [
+      { id: "yearend", icon: "ic-glass", name: "송년회", hint: "year-end" },
+      { id: "bridal", icon: "ic-flower", name: "브라이덜 샤워", hint: "bridal shower" },
+      { id: "baby", icon: "ic-baby", name: "베이비 샤워", hint: "baby shower" },
+      { id: "seminar", icon: "ic-book", name: "세미나", hint: "seminar" },
+      { id: "corporate", icon: "ic-briefcase", name: "회사 행사", hint: "corporate" },
     ],
   },
 ];
@@ -329,6 +341,7 @@ export function NewInvitationWizard() {
             {EVENT_GROUPS.map((g) => (
               <section className="event-group" key={g.key}>
                 <div className="event-group-head">
+                  <span className="egh-icon"><Icon name={g.icon} /></span>
                   <span className="egh-label">{g.label}</span>
                   <span className="egh-sub">{g.sub}</span>
                 </div>
@@ -352,6 +365,7 @@ export function NewInvitationWizard() {
             {/* 기타 — free-form custom event */}
             <section className="event-group">
               <div className="event-group-head">
+                <span className="egh-icon"><Icon name="ic-sparkle" /></span>
                 <span className="egh-label">기타</span>
                 <span className="egh-sub">Custom</span>
               </div>
