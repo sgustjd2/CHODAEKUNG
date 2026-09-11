@@ -22,10 +22,11 @@
                                 buttons + coral em/accent text now ~4.2:1 (was ~2.5), while staying legible
                                 as an accent on dark themes (~4.0:1). One token serves both surfaces. */
   --wax-deep:     #C96A6A;   /* hover / 강조 (left lighter so it stays legible on dark themes too) */
-  /* Accent-colored TEXT on the page background. Defaults to --wax-deep (dark-safe), but the viewer
-     overrides it per invitation: darkened for light pages, lightened for dark themes — so a custom
-     accent stays readable as text without affecting --wax-deep panels (which pair with white text). */
-  --wax-onpage:   var(--wax-deep);
+  /* Accent-colored TEXT on the page background. A deepened coral that clears WCAG AA (≥4.5:1) on
+     white/blush for small text — --wax-deep (#C96A6A) was only ~3.65:1. The viewer still overrides
+     it per invitation (darkened for light pages, lightened for dark themes) so custom accents stay
+     readable; --wax-deep is unchanged for panels that pair with white text. */
+  --wax-onpage:   #B84F4F;
   --wax-light:    #F5B5B0;   /* 연한 피치 */
   --wax-soft:     #FCE0DC;   /* 아주 연한 블러시 */
   --wax-tint:     #FEF6F4;   /* 배경용 미묘 블러시 */

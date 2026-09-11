@@ -4,23 +4,20 @@ import AxeBuilder from "@axe-core/playwright";
 /**
  * Automated accessibility scan (axe-core) of the public pages, on the iPhone profile.
  *
- * GATE: no `critical` WCAG A/AA violations (missing accessible names, no-alt images, broken roles …).
- * REPORT: `serious` violations are logged but non-blocking — the current ones are color-contrast on
- * the brand accent/muted palette used as small bold text (e.g. --wax-deep #C96A6A ≈ 3.65:1), which is
- * a brand/design decision (darkening the palette) rather than a mechanical fix, and some live in
- * shared viewer files. Tracked to fix with design input; this keeps the gate honest meanwhile.
+ * - landing & templates: gate on critical + serious WCAG A/AA (contrast, labels, roles) — these are
+ *   fixed and locked against regression.
+ * - viewer: gate on critical only. Its remaining `serious` are color-contrast on the accent/muted
+ *   palette inside shared viewer/section files; fixing those is a coordinated pass (tracked). The
+ *   count is logged so the debt stays visible.
  */
 const PAGES = [
-  { name: "landing", url: "/" },
-  { name: "templates", url: "/templates" },
-  { name: "viewer (romantic)", url: "/i/jisoo-minjun" },
+  { name: "landing", url: "/", gateSerious: true },
+  { name: "templates", url: "/templates", gateSerious: true },
+  { name: "viewer (romantic)", url: "/i/jisoo-minjun", gateSerious: false },
 ];
 
-const fmt = (vs: { impact?: string | null; id: string; help: string; nodes: { target: unknown[] }[] }[]) =>
-  vs.map((v) => `  [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length})`).join("\n");
-
 for (const p of PAGES) {
-  test(`a11y: ${p.name} — no critical WCAG A/AA violations`, async ({ page }) => {
+  test(`a11y: ${p.name}`, async ({ page }) => {
     await page.goto(p.url, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(500);
 
@@ -30,8 +27,14 @@ for (const p of PAGES) {
 
     const critical = violations.filter((v) => v.impact === "critical");
     const serious = violations.filter((v) => v.impact === "serious");
-    if (serious.length) console.log(`\n[a11y] ${p.url} — serious (non-gating), fix with design input:\n${fmt(serious)}\n`);
+    if (!p.gateSerious && serious.length) {
+      console.log(`[a11y] ${p.url}: ${serious.reduce((n, v) => n + v.nodes.length, 0)} serious node(s) (deferred): ${serious.map((v) => v.id).join(", ")}`);
+    }
 
-    expect(critical.map((v) => v.id), `critical a11y violations on ${p.url}:\n${fmt(critical)}`).toEqual([]);
+    const gated = p.gateSerious ? [...critical, ...serious] : critical;
+    const report = gated
+      .map((v) => `  [${v.impact}] ${v.id}: ${v.help}\n    ${[...new Set(v.nodes.map((n) => n.target.join(" ")))].slice(0, 6).join("\n    ")}`)
+      .join("\n");
+    expect(gated.map((v) => `${v.impact}:${v.id}`), `a11y violations on ${p.url}:\n${report}`).toEqual([]);
   });
 }

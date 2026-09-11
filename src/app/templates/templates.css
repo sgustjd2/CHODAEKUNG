@@ -28,7 +28,7 @@
   }
   .head-eyebrow {
     font-family: var(--font-en); font-size: 12px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--wax-deep); font-weight: 800;
+    text-transform: uppercase; color: var(--wax-onpage); font-weight: 800;
   }
   .head-title {
     font-weight: 800;
@@ -65,7 +65,7 @@
   }
   .cat-nav a:hover { border-color: var(--wax-soft); color: var(--wax-deep); }
   .cat-nav a:hover .ic-wrap { background: var(--wax-soft); color: var(--wax-deep); }
-  .cat-nav a.active { background: var(--wax); color: var(--paper); border-color: var(--wax); }
+  .cat-nav a.active { background: var(--wax-onpage); color: var(--paper); border-color: var(--wax-onpage); }
   .cat-nav a.active .ic-wrap { background: rgba(255,255,255,0.22); color: var(--paper); }
   .cat-nav a .ic-wrap {
     width: 28px; height: 28px;
@@ -101,7 +101,7 @@
     margin-left: auto;
     display: flex; align-items: center; gap: 8px;
     font-family: var(--font-en); font-size: 12px;
-    letter-spacing: 0.05em; color: var(--muted); font-weight: 700;
+    letter-spacing: 0.05em; color: var(--ink-3); font-weight: 700;
   }
   .sort select {
     background: transparent; border: none;
@@ -135,7 +135,7 @@
     color: var(--ink);
     margin-bottom: 4px;
   }
-  .ceb-title em { color: var(--wax); font-weight: 800; }
+  .ceb-title em { color: var(--wax-onpage); font-weight: 800; }
   .ceb-desc { font-size: 13.5px; color: var(--fg-2); line-height: 1.5; }
   .ceb-btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -364,7 +364,7 @@
   .cat-eb {
     font-family: var(--font-en); font-size: 11px; font-weight: 800;
     letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--wax-deep);
+    color: var(--wax-onpage);
     margin-bottom: 6px;
   }
   .cat-title {
@@ -422,8 +422,8 @@
     white-space: nowrap;
   }
   .tpl .badge.pro { background: var(--ink); color: var(--gold-light); }
-  .tpl .badge.free { background: var(--sage-light); color: var(--sage-deep); }
-  .tpl .badge.new { background: var(--wax); color: var(--paper); }
+  .tpl .badge.free { background: var(--sage-light); color: var(--ink); }
+  .tpl .badge.new { background: var(--wax-onpage); color: var(--paper); }
   .tpl .fav {
     position: absolute; top: 12px; right: 12px;
     width: 32px; height: 32px; border-radius: 50%;
@@ -441,7 +441,7 @@
     font-family: var(--font-en);
     font-size: 10px; font-weight: 800;
     letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--wax-deep);
+    color: var(--wax-onpage);
     margin-bottom: 6px;
   }
   .tpl .name {
@@ -451,12 +451,12 @@
     margin-bottom: 4px;
     color: var(--ink);
   }
-  .tpl .name em { color: var(--wax); }
+  .tpl .name em { color: var(--wax-onpage); }
   .tpl .meta {
     display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
     font-family: var(--font-en);
     font-size: 11px; letter-spacing: 0.02em;
-    color: var(--muted); font-weight: 700;
+    color: var(--ink-3); font-weight: 700;
     margin-top: 8px;
   }
   .tpl .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
