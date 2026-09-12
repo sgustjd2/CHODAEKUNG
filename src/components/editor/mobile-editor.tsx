@@ -7,7 +7,7 @@ import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import { ContentEditors, PhotoUpload } from "./content-editors";
 import { TextStyleControls } from "./text-style-controls";
 import { TypeMenu } from "./type-menu";
-import { ACCENTS, BG_COLORS, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
+import { ACCENTS, BG_COLORS, COVER_CROP_ASPECT, COVER_LAYOUTS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "./editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import type { Invitation, Section, SectionType, TextStyle } from "@/lib/invitation/types";
 
@@ -398,7 +398,7 @@ function DesignPanel({ api }: { api: EditorApi }) {
           ))}
         </div>
         <div style={{ marginTop: 10 }}>
-          <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
+          <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" cropAspect={COVER_CROP_ASPECT} />
         </div>
       </div>
       <div className="m-group">

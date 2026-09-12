@@ -1008,3 +1008,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **추가(desktop describe):** ⑬프리뷰 location 필드 클릭 → 좌측 location active + 인스펙터 "장소" 그룹 최상단. ⑭프리뷰 필드 3개 클릭(플로팅 툴바 트리거) → 콘솔 "Maximum update depth" 0건(visibleDraft→draft 의존성 수정 보호).
 
 **로컬 검증:** 14 passed(재시도 0). 중간에 실패 1건은 수동 next start와 playwright 자동 webServer의 3200 포트 경쟁(인프라)이었고, 서버 기동 대기 후 재실행하니 14/14. tsc 0, eslint 0.
+
+## 2026-09-11 (20) — ImageCropper(커버 사진 크롭) 구현
+
+**요청(사용자):** "크롭 가자" → 유일한 미구현 필수 컴포넌트(CLAUDE.md §5 ImageCropper shell).
+
+**구현:** `src/components/editor/image-cropper.tsx` — 무의존성 팬·줌 크롭 모달. 고정 비율 프레임(기본 3:4 세로, `COVER_CROP_ASPECT`)에 이미지를 pan(pointer 드래그)+zoom(슬라이더)로 프레이밍, 항상 프레임을 덮도록 pos clamp(coverScale×zoom 모델), 적용 시 canvas.drawImage로 프레임 영역만 JPEG(0.9)로 export→File. 룰오브서드 그리드, 취소/적용, 에러 처리. CSS는 editor.css `.ic-*`(fixed overlay z200, 반응형). `PhotoUpload`에 `cropAspect?` 추가 — 있으면 파일 선택→크롭 모달→onCropped→기존 uploadPhoto. 커버 업로드 3곳(내용탭·데스크톱 스타일탭·모바일)에 배선. 갤러리/장소는 기존대로 직접 업로드.
+
+**검증(Playwright setInputFiles):** 커버 파일 선택→`.ic-overlay` 표시→줌 조절→적용→모달 닫힘(크롭 File 생성; 업로드 자체는 백엔드 필요라 데모에선 에러 메시지만). 스크린샷으로 UI 육안 확인(3:4 프레임·그리드·이미지 커버 정상). editor-smoke +1(총 16). tsc 0, eslint 0(경고 2 기존/양성). **실제 Supabase 업로드 최종 확인은 배포본/실브라우저에서 사용자 몫.**

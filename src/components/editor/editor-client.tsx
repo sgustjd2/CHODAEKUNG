@@ -13,7 +13,7 @@ import { MobileEditor, type EditorApi } from "@/components/editor/mobile-editor"
 import { ContentEditors, PhotoUpload } from "@/components/editor/content-editors";
 import { TextStyleControls } from "@/components/editor/text-style-controls";
 import { mergeTextStyle } from "@/lib/invitation/text-style";
-import { ACCENTS, BG_COLORS, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
+import { ACCENTS, BG_COLORS, COVER_CROP_ASPECT, FONTS, PALETTES, TEXT_COLORS, coverImagePatch, coverPhotosFor, coverDateLines, syncCoverDate, EVENT_TEMPLATES, REVEALS, THEME_PRESETS, metaFor, type Mode } from "@/components/editor/editor-shared";
 import { themeRegistry } from "@/components/viewer/section-registry";
 import { romanticSample } from "@/lib/invitation/sample-romantic";
 import { blankInvitation, exampleSection, getInvitation } from "@/lib/invitation/samples";
@@ -1150,7 +1150,7 @@ export function EditorClient() {
                     ))}
                   </div>
                   <div style={{ marginTop: 8 }}>
-                    <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
+                    <PhotoUpload onUploaded={(url) => cover && patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" cropAspect={COVER_CROP_ASPECT} />
                   </div>
                 </div>
                 <div className="insp-group">

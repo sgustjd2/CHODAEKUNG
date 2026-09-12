@@ -82,6 +82,21 @@ test("gaming champions has an inspector editor", async ({ page }) => {
   await expect(page.locator(".m-sheet.open").getByRole("heading", { name: "챔피언" })).toBeVisible();
 });
 
+test("uploading a cover photo opens the cropper and applies a crop", async ({ page }) => {
+  await openEditor(page, "jisoo-minjun");
+  await openSheet(page, "디자인");
+  // the cover upload's hidden file input (only PhotoUpload in the 디자인 sheet is the cover)
+  await page.locator('.m-sheet.open input[type="file"]').first().setInputFiles("public/assets/photos/cute_housewarming.jpg");
+
+  const cropper = page.locator(".ic-overlay");
+  await expect(cropper).toBeVisible();
+  await expect(cropper.getByText("사진 자르기")).toBeVisible();
+  await cropper.locator('input[type="range"]').fill("1.6"); // zoom in
+  await cropper.getByRole("button", { name: "적용" }).click();
+  // a cropped file was produced and the cropper closed (the upload itself needs a backend)
+  await expect(cropper).toHaveCount(0);
+});
+
 test("tapping a preview text field opens the 문구 스타일 panel", async ({ page }) => {
   await openEditor(page, "jisoo-minjun");
   await page.locator(".m-preview [data-edit]").first().tap();

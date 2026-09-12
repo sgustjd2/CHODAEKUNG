@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { COVER_LAYOUTS, coverImagePatch, coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
+import { COVER_CROP_ASPECT, COVER_LAYOUTS, coverImagePatch, coverPhotosFor, linesToText, plainTitle, textToLines } from "./editor-shared";
+import { ImageCropper } from "./image-cropper";
 import { AddressSearch } from "@/components/ui/address-search";
 import { photoUrl } from "@/lib/photo";
 import { uploadPhoto } from "@/lib/db/upload";
@@ -137,7 +138,7 @@ export function ContentEditors({ draft, patch, selectedId }: { draft: Invitation
               <img key={p} src={`/assets/photos/${p}.jpg`} alt="" className={`cover-thumb${cover.content.image === p ? " active" : ""}`} onClick={() => patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, p))} />
             ))}
           </div>
-          <PhotoUpload onUploaded={(url) => patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" />
+          <PhotoUpload onUploaded={(url) => patch(cover.id, coverImagePatch(draft.theme, cover.content.layout, url))} label="+ 커버 사진 업로드" cropAspect={COVER_CROP_ASPECT} />
         </div>
       )}
       {message && (
@@ -647,12 +648,22 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
   );
 }
 
-export function PhotoUpload({ onUploaded, label, showLibrary = true }: { onUploaded: (url: string) => void; label?: string; showLibrary?: boolean }) {
+export function PhotoUpload({ onUploaded, label, showLibrary = true, cropAspect }: { onUploaded: (url: string) => void; label?: string; showLibrary?: boolean; cropAspect?: number }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [libOpen, setLibOpen] = useState(false);
   const [lib, setLib] = useState<{ path: string; url: string }[] | null>(null);
   const [libMsg, setLibMsg] = useState("");
+  const [cropFile, setCropFile] = useState<File | null>(null);
+
+  const doUpload = async (file: File) => {
+    setBusy(true);
+    setErr("");
+    const res = await uploadPhoto(file);
+    setBusy(false);
+    if ("url" in res) onUploaded(res.url);
+    else setErr(res.error);
+  };
 
   const toggleLib = async () => {
     const next = !libOpen;
@@ -679,16 +690,13 @@ export function PhotoUpload({ onUploaded, label, showLibrary = true }: { onUploa
             accept="image/*"
             hidden
             disabled={busy}
-            onChange={async (e) => {
+            onChange={(e) => {
               const file = e.target.files?.[0];
-              if (!file) return;
-              setBusy(true);
-              setErr("");
-              const res = await uploadPhoto(file);
-              setBusy(false);
               e.target.value = "";
-              if ("url" in res) onUploaded(res.url);
-              else setErr(res.error);
+              if (!file) return;
+              // With a crop aspect (cover), frame it first; otherwise upload straight away.
+              if (cropAspect) setCropFile(file);
+              else void doUpload(file);
             }}
           />
         </label>
@@ -722,6 +730,14 @@ export function PhotoUpload({ onUploaded, label, showLibrary = true }: { onUploa
         </div>
       )}
       {err && <div style={{ fontSize: 11, color: "var(--wax-deep)", marginTop: 4 }}>{err}</div>}
+      {cropFile && cropAspect && (
+        <ImageCropper
+          file={cropFile}
+          aspect={cropAspect}
+          onCancel={() => setCropFile(null)}
+          onCropped={(f) => { setCropFile(null); void doUpload(f); }}
+        />
+      )}
     </div>
   );
 }

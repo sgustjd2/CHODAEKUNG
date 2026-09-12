@@ -70,6 +70,10 @@ export const metaFor = (t: SectionType) => SECTION_META[t] ?? { label: t, icon: 
 
 export const COVER_PHOTOS = ["romantic_wedding", "wedding_gallery_2", "hero_flatlay", "minimal_birthday"];
 
+/** Crop frame aspect (width/height) for uploaded cover photos — a gentle portrait that suits the
+ * full-bleed cover across themes. The user pans/zooms within this frame before upload. */
+export const COVER_CROP_ASPECT = 3 / 4;
+
 /** Cover background presets tailored to each theme/event category. */
 export const COVER_PHOTOS_BY_THEME: Record<ThemeId, string[]> = {
   romantic: ["romantic_wedding", "wedding_gallery_1", "wedding_gallery_2", "hero_flatlay"],

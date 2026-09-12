@@ -163,6 +163,23 @@
   .col-inspector .foot { border-top: 1px solid var(--line); padding: 14px 16px; display: flex; gap: 8px; flex-shrink: 0; }
   .col-inspector .foot .btn { flex: 1; }
 
+  /* ImageCropper (cover upload) — fixed overlay, pan/zoom frame. */
+  .ic-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(26,26,46,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .ic-modal { width: min(360px, 100%); max-height: 90vh; overflow-y: auto; background: var(--card, #fff); border-radius: var(--r-md, 14px); box-shadow: 0 20px 60px -12px rgba(42,42,62,0.4); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .ic-head { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--ink); }
+  .ic-head button { background: none; border: none; font-size: 16px; line-height: 1; color: var(--muted); cursor: pointer; padding: 2px 4px; }
+  .ic-frame { position: relative; width: 100%; overflow: hidden; border-radius: 10px; background: #000; touch-action: none; cursor: grab; user-select: none; }
+  .ic-frame:active { cursor: grabbing; }
+  .ic-img { position: absolute; top: 0; left: 0; max-width: none; will-change: transform; pointer-events: none; }
+  .ic-grid { position: absolute; inset: 0; pointer-events: none; opacity: 0.4; background-image: linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 33.33% 33.33%; }
+  .ic-zoom { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--fg-2, #4a4a5a); }
+  .ic-zoom input[type="range"] { flex: 1; }
+  .ic-err { font-size: 11px; color: var(--wax-deep); }
+  .ic-actions { display: flex; gap: 8px; }
+  .ic-btn { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper-2, #f0ece4); font: inherit; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; }
+  .ic-btn.ic-primary { background: var(--ink); color: var(--paper, #fff); border-color: transparent; }
+  .ic-btn:disabled { opacity: 0.5; cursor: default; }
+
   @media (min-width: 961px) and (max-width: 1024px) {
     height: auto; overflow: auto;
     .editor { grid-template-columns: 1fr; }
