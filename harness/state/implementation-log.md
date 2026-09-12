@@ -976,3 +976,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **작성:** `tests/e2e/editor-smoke.spec.ts` (모바일 iPhone 프로파일, 데모 모드로 /editor?template= 직접 진입). 6개 테스트: ①커버 삭제 불가·타 섹션 삭제 가능, ②테마 전환 시 미지원 섹션 "미표시" 배지+프리뷰 제외(romantic→cute), ③새 섹션이 엔딩 앞에 삽입, ④battle matchInfo 인스펙터 편집기, ⑤gaming champions 인스펙터 편집기, ⑥프리뷰 문구 탭→문구 스타일 패널.
 
 **로컬 검증:** @playwright/test·@axe-core/playwright는 워크트리 공유 node_modules에 미설치였음(main package.json엔 선언됨) → `npm install --no-save`로 설치(브라우저는 이미 캐시). `next build --webpack` + `next start :3200` 후 `BASE_URL=... playwright test e2e/editor-smoke --project=mobile-chrome` → **6 passed**(재시도 0, 결정적). 디버깅에서 배운 것: `.m-sec-type`는 CSS uppercase라 assert엔 textContent 사용; 열린 시트의 backdrop(z8)이 탭바(z5)를 덮어 시트 전환 전 닫아야 함; 커버 섹션 id는 샘플마다 다름(q-cover/r-cover 등)이라 `[data-sec-id]`(any)로 준비 대기. tsc 0, eslint 0.
+
+## 2026-09-11 (16) — 에디터 e2e 커버리지 확장 (+2)
+
+**요청(사용자):** "다음 작업 진행" → 검증된 방식으로 에디터 e2e 몇 개 더.
+
+**추가(editor-smoke.spec.ts, 총 8개):** ⑦복제 섹션 독립 편집 — schedule 복제 후 2번째(사본) 선택 → 인스펙터 "+ 일정 추가" → 사본만 items+1, 원본 불변(find가 selectedId 우선하는 수정 검증, page.evaluate로 섹션별 item 카운트). ⑧텍스트 커버 테마 사진 자동 전환 — timeline(.tl-cover, 사진 없음)에서 커버 배경 썸네일 탭 → GenericCover(.gcover, 사진 레이아웃)로 전환.
+
+**로컬 검증:** 기존 빌드 재사용 + next start :3200, mobile-chrome **8 passed**(재시도 0). tsc 0, eslint 0.

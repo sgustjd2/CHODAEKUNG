@@ -89,3 +89,45 @@ test("tapping a preview text field opens the 문구 스타일 panel", async ({ p
   await expect(panel).toBeVisible();
   await expect(panel.getByText("문구 스타일")).toBeVisible();
 });
+
+test("a duplicated section is independently editable via the inspector", async ({ page }) => {
+  await openEditor(page, "jisoo-minjun"); // romantic: has a schedule with items
+  // item count of each schedule section in the preview (the copy's id starts with "schedule" too)
+  const scheduleItemCounts = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll(".m-preview [data-sec-id]")]
+        .filter((w) => (w.getAttribute("data-sec-id") || "").startsWith("schedule"))
+        .map((w) => new Set([...w.querySelectorAll("[data-edit]")].map((e) => (e.getAttribute("data-edit") || "").match(/^items\.(\d+)/)?.[1]).filter(Boolean)).size),
+    );
+
+  await openSheet(page, "섹션");
+  await row(page, "schedule").locator('button[aria-label="복제"]').click();
+  await expect(row(page, "schedule")).toHaveCount(2);
+  const dup = await scheduleItemCounts();
+  expect(dup.length).toBe(2);
+  expect(dup[0]).toBe(dup[1]); // fresh copy is identical
+
+  // select the SECOND schedule (the copy), then add an item to it via the inspector
+  await row(page, "schedule").nth(1).click();
+  await openSheet(page, "내용");
+  await page.locator(".m-sheet.open").getByRole("button", { name: /일정 추가/ }).click();
+  await page.locator(".m-sheet-close").click();
+
+  // exactly the copy grew — the inspector targeted the selected instance, not the first-of-type
+  const after = await scheduleItemCounts();
+  expect(after.filter((n) => n === dup[0] + 1)).toHaveLength(1);
+  expect(after.filter((n) => n === dup[0])).toHaveLength(1);
+});
+
+test("picking a cover photo on a text-cover theme switches to a photo layout", async ({ page }) => {
+  await openEditor(page, "jibdeuli"); // timeline: its theme cover is text/badge (.tl-cover), no photo
+  await expect(page.locator(".m-preview .tl-cover")).toBeVisible();
+  await expect(page.locator(".m-preview .gcover")).toHaveCount(0);
+
+  await openSheet(page, "디자인");
+  await page.locator(".m-sheet.open .m-thumbs .m-thumb").first().click();
+  await page.locator(".m-sheet-close").click();
+
+  // the pick is now visible: the cover renders via the shared GenericCover (a photo layout)
+  await expect(page.locator(".m-preview .gcover")).toBeVisible();
+});
