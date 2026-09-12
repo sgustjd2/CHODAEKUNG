@@ -151,7 +151,7 @@
 .acc-info { min-width: 0; }
 .acc-side { display: inline-block; font-size: calc(11px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-onpage, var(--wax-deep, #a04547)); margin-bottom: 4px; }
 .acc-bank { font-size: calc(15px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); word-break: break-all; }
-.acc-holder { font-size: calc(13px * var(--iv-fs, 1)); color: #777; margin-top: 2px; }
+.acc-holder { font-size: calc(13px * var(--iv-fs, 1)); color: var(--ink-3); margin-top: 2px; }
 .acc-copy { flex-shrink: 0; padding: 9px 16px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: var(--wax-ink, #fff); font: inherit; font-size: calc(13px * var(--iv-fs, 1)); font-weight: 700; cursor: pointer; }
 .acc-copy:hover { background: var(--wax-deep, #c96a6a); }
 
@@ -203,6 +203,28 @@
 @media (prefers-reduced-motion: reduce) { .att-skel, .gb-skel-line { animation: none; } }
 
 /* ============================================================
+   LIGHT THEMES · brand-coral + muted text → WCAG AA on the page
+   ------------------------------------------------------------
+   --wax (#C25C5C, white-on-wax ~4.2:1) and --wax-deep (#C96A6A as text ~3.65:1)
+   both fall just short of AA on light surfaces. On light themes remap them to
+   --wax-onpage (#B84F4F: ≥4.5:1 with white text AND as coral text on paper), and
+   muted body labels to --ink-3 (5:1). Dark themes (battle/gaming/developer) keep
+   the lighter coral — they're excluded so the accent stays legible on dark bg.
+   Custom per-invitation accents set --wax/--wax-deep INLINE (invitation-viewer.tsx),
+   which outranks these rules, so a user's chosen accent is preserved and its text
+   contrast is handled by waxDeep()/waxInk(). Only the default palette is remapped.
+   ============================================================ */
+.iv.t-romantic, .iv.t-minimal, .iv.t-cute, .iv.t-timeline, .iv.t-editorial {
+  --wax: var(--wax-onpage);
+  --wax-deep: var(--wax-onpage);
+  /* --rose/--rose-deep are :root aliases of --wax/--wax-deep; re-declare them here so
+     cute/editorial elements that read the alias inherit the light-theme value too. */
+  --rose: var(--wax-onpage);
+  --rose-deep: var(--wax-onpage);
+  --muted: var(--ink-3);
+}
+
+/* ============================================================
    THEME · ROMANTIC WEDDING
    ============================================================ */
 .iv.t-romantic {
@@ -252,7 +274,7 @@
   .iv-flourish svg { width: 32px; height: 32px; color: var(--wax); opacity: 0.6; }
   .iv-eb {
     font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 700;
-    letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage);
+    letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep);
     margin-bottom: 14px; display: inline-flex; align-items: center; gap: 12px;
   }
   .iv-eb::before, .iv-eb::after { content: ''; width: 20px; height: 1px; background: var(--wax); }
@@ -265,7 +287,7 @@
     box-shadow: 0 4px 20px rgba(42,42,62,0.06); border: 1px solid var(--line);
   }
   .iv-cal-head { font-family: var(--font-serif); font-size: calc(18px * var(--iv-fs, 1)); margin-bottom: 12px; letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); }
-  .iv-cal-head em { font-weight: 700; color: var(--wax-onpage); }
+  .iv-cal-head em { font-weight: 700; color: var(--wax); }
   .iv-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
   .iv-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); font-weight: 600; color: rgba(42,42,62,0.7); }
   .iv-cal-day.head { color: var(--wax-deep); font-weight: 700; font-size: calc(9px * var(--iv-fs, 1)); letter-spacing: calc(0.1em + var(--iv-ls, 0em)); }
@@ -276,7 +298,7 @@
   .iv-cd { padding: 12px 14px; min-width: 56px; border-left: 1px solid var(--line); }
   .iv-cd:first-child { border-left: none; }
   .iv-cd .n { font-family: var(--font-serif); font-weight: 500; font-size: calc(32px * var(--iv-fs, 1)); letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); line-height: calc(1 * var(--iv-lh, 1)); color: var(--ink); }
-  .iv-cd .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.3em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+  .iv-cd .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.3em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--muted); margin-top: 6px; }
 
   .iv-loc-card { padding: 0; }
   .iv-map {
@@ -298,9 +320,9 @@
 
   .iv-schedule { max-width: 320px; margin: 24px auto 0; text-align: left; padding: 0 8px; }
   .iv-sch-item { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px dashed var(--line); }
-  .iv-sch-time { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-onpage); letter-spacing: calc(0.06em + var(--iv-ls, 0em)); flex-shrink: 0; padding-top: 2px; }
+  .iv-sch-time { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-deep); letter-spacing: calc(0.06em + var(--iv-ls, 0em)); flex-shrink: 0; padding-top: 2px; }
   .iv-sch-content .t { font-family: var(--font-serif); font-weight: 500; font-size: calc(15px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); margin-bottom: 2px; }
-  .iv-sch-content .d { font-size: calc(11.5px * var(--iv-fs, 1)); color: var(--ink-3); font-family: var(--font-serif); }
+  .iv-sch-content .d { font-size: calc(11.5px * var(--iv-fs, 1)); color: var(--muted); font-family: var(--font-serif); }
 
   .iv-rsvp-buttons { display: flex; gap: 8px; max-width: 300px; margin: 24px auto 0; }
   .iv-rsvp-btn { flex: 1; padding: 14px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); cursor: pointer; white-space: nowrap; }
@@ -525,9 +547,10 @@
   .tl-badge { padding: 6px 14px; border-radius: 100px; background: var(--card); border: 1px solid var(--line); font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--fg-2); display: inline-flex; align-items: center; gap: 6px; box-shadow: var(--shadow-xs); }
   .tl-badge svg { width: 12px; height: 12px; }
   .tl-badge.wax { background: var(--wax); color: var(--wax-ink, var(--paper)); border-color: transparent; }
-  .tl-badge.sage { background: var(--sage-light); color: var(--sage-deep); border-color: transparent; }
-  .tl-badge.sky { background: var(--sky-soft); color: var(--sky-deep); border-color: transparent; }
-  .tl-badge.gold { background: var(--gold-light); color: var(--gold-deep); border-color: transparent; }
+  /* deep hue text (not --*-deep, which is a mid-tone that only reaches ~2:1 on its own light tint) → AA */
+  .tl-badge.sage { background: var(--sage-light); color: #3F5A3B; border-color: transparent; }
+  .tl-badge.sky { background: var(--sky-soft); color: #2F5566; border-color: transparent; }
+  .tl-badge.gold { background: var(--gold-light); color: #6E5310; border-color: transparent; }
 
   .tl-section { padding: 40px 26px; }
   .tl-section.tl-tint { background: var(--paper-2); }
@@ -749,6 +772,8 @@
   font-family: var(--font-ko);
   background: var(--paper-2);
   background-image: none;
+  /* .c-eb sits on a rose-tint pill (#fbe9e7); --wax-onpage #B84F4F is ~4.19 there → deepen for AA. */
+  --wax-onpage: #A8474A;
 
   .iv-doc { background: var(--iv-bg, linear-gradient(180deg, #FFF8EF 0%, #FEF6F4 50%, #FFF8EF 100%)); }
 
@@ -833,8 +858,14 @@
   font-family: var(--font-ko);
   background: var(--paper-2);
   background-image: none;
+  /* The cream #F2EFE9 paper is darker than other light themes' #FAFAFC, so the shared AA
+     coral/muted (--wax-onpage #B84F4F ≈4.28, --ink-3 #6E6E82 ≈4.34) fall just short here.
+     Deepen both for this theme only (feeds --rose-deep/--muted via the light-theme remap). */
+  --wax-onpage: #A8474A;
+  --ink-3: #5A5A6C;
 
   .iv-doc { background: var(--iv-bg, #F2EFE9); }
+  .gb-empty { color: var(--ink-3); }
 
   /* Cover — full-bleed film photo */
   .e-cover { height: 720px; background-size: cover; background-position: center; position: relative; color: var(--paper); padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; }
@@ -908,7 +939,7 @@
   .e-ending { padding: 100px 24px 140px; text-align: center; background: var(--ink); color: var(--paper); }
   .e-ending .brand-huge { font-family: var(--font-en); font-size: calc(76px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(-0.05em + var(--iv-ls, 0em)); line-height: calc(0.88 * var(--iv-lh, 1)); color: var(--paper); }
   .e-ending .brand-huge em { font-family: var(--font-serif-italic); font-style: italic; color: var(--butter); font-weight: 400; display: block; margin-top: 8px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
-  .e-ending .colophon { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(251,247,241,0.5); margin-top: 40px; line-height: calc(1.8 * var(--iv-lh, 1)); }
+  .e-ending .colophon { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(251,247,241,0.62); margin-top: 40px; line-height: calc(1.8 * var(--iv-lh, 1)); }
 }
 
 /* ============================================================

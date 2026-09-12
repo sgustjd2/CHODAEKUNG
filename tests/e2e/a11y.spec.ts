@@ -4,16 +4,25 @@ import AxeBuilder from "@axe-core/playwright";
 /**
  * Automated accessibility scan (axe-core) of the public pages, on the iPhone profile.
  *
- * - landing & templates: gate on critical + serious WCAG A/AA (contrast, labels, roles) — these are
- *   fixed and locked against regression.
- * - viewer: gate on critical only. Its remaining `serious` are color-contrast on the accent/muted
- *   palette inside shared viewer/section files; fixing those is a coordinated pass (tracked). The
- *   count is logged so the debt stays visible.
+ * - landing & templates: gate on critical + serious WCAG A/AA (contrast, labels, roles).
+ * - LIGHT-theme viewers (romantic/minimal/cute/timeline/editorial): gate on critical + serious.
+ *   Their brand-coral + muted contrast is resolved (viewer.css "LIGHT THEMES" remap → --wax-onpage /
+ *   --ink-3, deepened further for editorial/cute tinted paper) and locked against regression.
+ * - DARK-theme viewers (battle/gaming/developer): gate on critical only. Their remaining `serious`
+ *   are color-contrast on the dark accent palette (a separate coordinated pass) — logged so the debt
+ *   stays visible.
  */
 const PAGES = [
   { name: "landing", url: "/", gateSerious: true },
   { name: "templates", url: "/templates", gateSerious: true },
-  { name: "viewer (romantic)", url: "/i/jisoo-minjun", gateSerious: false },
+  { name: "viewer · romantic", url: "/i/jisoo-minjun", gateSerious: true },
+  { name: "viewer · minimal", url: "/i/appa-60", gateSerious: true },
+  { name: "viewer · cute", url: "/i/cozy-home", gateSerious: true },
+  { name: "viewer · timeline", url: "/i/jibdeuli", gateSerious: true },
+  { name: "viewer · editorial", url: "/i/after-hours", gateSerious: true },
+  { name: "viewer · battle (dark)", url: "/i/jogi-battle", gateSerious: false },
+  { name: "viewer · gaming (dark)", url: "/i/lol-rank", gateSerious: false },
+  { name: "viewer · developer (dark)", url: "/i/dev-meetup", gateSerious: false },
 ];
 
 for (const p of PAGES) {
