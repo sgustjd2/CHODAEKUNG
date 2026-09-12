@@ -194,4 +194,44 @@ test.describe("desktop editor (3-column)", () => {
     });
     expect(topGroupHeading).toBe("장소");
   });
+
+  test("clicking a preview field selects its section in the list and inspector", async ({ page }) => {
+    await page.goto("/editor?template=jisoo-minjun", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector('.ed-desktop .phone-scroll [data-sec-id="location"] [data-edit]', { timeout: 30_000 });
+
+    // click an editable field inside the location section of the center preview
+    await page.locator('.phone-scroll [data-sec-id="location"] [data-edit]').first().click();
+
+    // the left list highlights location, and the inspector scrolls to its 장소 group
+    await expect(page.locator(".col-sections .sec-item").filter({ has: page.locator(".sec-type", { hasText: /^location$/ }) })).toHaveClass(/active/);
+    const topGroupHeading = await page.evaluate(() => {
+      const body = document.querySelector(".inspector-body");
+      if (!body) return null;
+      const bodyTop = body.getBoundingClientRect().top;
+      const groups = [...body.querySelectorAll<HTMLElement>(".insp-group")].filter((g) => !g.dataset.fixedGroup);
+      let best: HTMLElement | null = null;
+      let bestDist = Infinity;
+      for (const g of groups) {
+        const d = g.getBoundingClientRect().top - bodyTop;
+        if (d >= -4 && d < bestDist) { bestDist = d; best = g; }
+      }
+      return best?.querySelector("h5")?.textContent?.trim() ?? null;
+    });
+    expect(topGroupHeading).toBe("장소");
+  });
+
+  test("selecting preview fields does not trigger an infinite render loop", async ({ page }) => {
+    const loopErrors: string[] = [];
+    page.on("console", (m) => {
+      if (m.type() === "error" && /Maximum update depth/i.test(m.text())) loopErrors.push(m.text());
+    });
+    await page.goto("/editor?template=jisoo-minjun", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector(".ed-desktop .phone-scroll [data-edit]", { timeout: 30_000 });
+
+    // focusing a field opens the floating style toolbar — the exact trigger of the fixed loop
+    const fields = page.locator(".phone-scroll [data-edit]");
+    for (const i of [0, 1, 2]) await fields.nth(i).click();
+    await page.waitForTimeout(600);
+    expect(loopErrors).toEqual([]);
+  });
 });

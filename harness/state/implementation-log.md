@@ -1000,3 +1000,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **추가:** `test.describe("desktop editor")` + `test.use({viewport:1400x900})`(공유 config 안 건드리고 프로젝트 내에서 데스크톱 레이아웃 렌더). 좌측 장소(location) 섹션 아이콘 클릭 → active + 내용 인스펙터가 "장소" 그룹을 최상단으로 스크롤(off-by-one이면 다른 그룹이 옴). page.evaluate로 인스펙터 top에 가장 가까운 섹션 그룹의 h5 판정.
 
 **로컬 검증:** mobile-chrome 프로젝트에서 뷰포트 오버라이드로 12개 **all passed**(재시도 0). tsc 0, eslint 0.
+
+## 2026-09-11 (19) — 에디터 e2e +2: 데스크톱 프리뷰→인스펙터 싱크 + 루프 회귀 가드
+
+**요청(사용자):** "다음작업진행" → 헤드라인 수정 중 아직 미테스트인 (a) 프리뷰 클릭→좌측·인스펙터 싱크(반대 방향), (b) 프리뷰 필드 선택 시 무한렌더루프(Maximum update depth) 없음.
+
+**추가(desktop describe):** ⑬프리뷰 location 필드 클릭 → 좌측 location active + 인스펙터 "장소" 그룹 최상단. ⑭프리뷰 필드 3개 클릭(플로팅 툴바 트리거) → 콘솔 "Maximum update depth" 0건(visibleDraft→draft 의존성 수정 보호).
+
+**로컬 검증:** 14 passed(재시도 0). 중간에 실패 1건은 수동 next start와 playwright 자동 webServer의 3200 포트 경쟁(인프라)이었고, 서버 기동 대기 후 재실행하니 14/14. tsc 0, eslint 0.
