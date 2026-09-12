@@ -252,7 +252,7 @@
   .iv-flourish svg { width: 32px; height: 32px; color: var(--wax); opacity: 0.6; }
   .iv-eb {
     font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 700;
-    letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep);
+    letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage);
     margin-bottom: 14px; display: inline-flex; align-items: center; gap: 12px;
   }
   .iv-eb::before, .iv-eb::after { content: ''; width: 20px; height: 1px; background: var(--wax); }
@@ -265,18 +265,18 @@
     box-shadow: 0 4px 20px rgba(42,42,62,0.06); border: 1px solid var(--line);
   }
   .iv-cal-head { font-family: var(--font-serif); font-size: calc(18px * var(--iv-fs, 1)); margin-bottom: 12px; letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); }
-  .iv-cal-head em { font-weight: 700; color: var(--wax); }
+  .iv-cal-head em { font-weight: 700; color: var(--wax-onpage); }
   .iv-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
   .iv-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); font-weight: 600; color: rgba(42,42,62,0.7); }
   .iv-cal-day.head { color: var(--wax-deep); font-weight: 700; font-size: calc(9px * var(--iv-fs, 1)); letter-spacing: calc(0.1em + var(--iv-ls, 0em)); }
-  .iv-cal-day.dim { color: rgba(42,42,62,0.25); }
+  .iv-cal-day.dim { color: rgba(42,42,62,0.66); }
   .iv-cal-day.today { background: var(--wax); color: var(--wax-ink, var(--paper)); border-radius: 50%; font-weight: 800; box-shadow: 0 2px 6px rgba(227,139,139,0.4); }
 
   .iv-countdown { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
   .iv-cd { padding: 12px 14px; min-width: 56px; border-left: 1px solid var(--line); }
   .iv-cd:first-child { border-left: none; }
   .iv-cd .n { font-family: var(--font-serif); font-weight: 500; font-size: calc(32px * var(--iv-fs, 1)); letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); line-height: calc(1 * var(--iv-lh, 1)); color: var(--ink); }
-  .iv-cd .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.3em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  .iv-cd .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.3em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
 
   .iv-loc-card { padding: 0; }
   .iv-map {
@@ -298,9 +298,9 @@
 
   .iv-schedule { max-width: 320px; margin: 24px auto 0; text-align: left; padding: 0 8px; }
   .iv-sch-item { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px dashed var(--line); }
-  .iv-sch-time { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-deep); letter-spacing: calc(0.06em + var(--iv-ls, 0em)); flex-shrink: 0; padding-top: 2px; }
+  .iv-sch-time { font-family: var(--font-en); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-onpage); letter-spacing: calc(0.06em + var(--iv-ls, 0em)); flex-shrink: 0; padding-top: 2px; }
   .iv-sch-content .t { font-family: var(--font-serif); font-weight: 500; font-size: calc(15px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); margin-bottom: 2px; }
-  .iv-sch-content .d { font-size: calc(11.5px * var(--iv-fs, 1)); color: var(--muted); font-family: var(--font-serif); }
+  .iv-sch-content .d { font-size: calc(11.5px * var(--iv-fs, 1)); color: var(--ink-3); font-family: var(--font-serif); }
 
   .iv-rsvp-buttons { display: flex; gap: 8px; max-width: 300px; margin: 24px auto 0; }
   .iv-rsvp-btn { flex: 1; padding: 14px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); cursor: pointer; white-space: nowrap; }
