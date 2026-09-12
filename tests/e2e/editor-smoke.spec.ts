@@ -131,3 +131,34 @@ test("picking a cover photo on a text-cover theme switches to a photo layout", a
   // the pick is now visible: the cover renders via the shared GenericCover (a photo layout)
   await expect(page.locator(".m-preview .gcover")).toBeVisible();
 });
+
+test("hiding a section removes it from the preview", async ({ page }) => {
+  await openEditor(page, "jisoo-minjun");
+  await openSheet(page, "섹션");
+  const previewSections = page.locator(".m-preview [data-sec-id]");
+  const before = await previewSections.count();
+  await row(page, "gallery").locator('button[aria-label="숨김"]').click();
+  await expect(previewSections).toHaveCount(before - 1); // excluded from the preview (and publish)
+});
+
+test("applying an accent color updates the invitation", async ({ page }) => {
+  await openEditor(page, "jisoo-minjun");
+  await openSheet(page, "디자인");
+  const swatch = page.locator(".m-sheet.open .m-color:not(.m-color-none)").first();
+  const color = (await swatch.getAttribute("aria-label")) ?? "";
+  await swatch.click();
+  const wax = await page.evaluate(() =>
+    getComputedStyle(document.querySelector(".m-preview .iv") as Element).getPropertyValue("--wax").trim(),
+  );
+  expect(wax.toLowerCase()).toBe(color.toLowerCase());
+});
+
+test('matchInfo "+ 항목 추가" adds a cell to the section', async ({ page }) => {
+  await openEditor(page, "jogi-battle");
+  await openSheet(page, "내용");
+  const cells = page.locator(".m-preview .ivb-info-cell");
+  const before = await cells.count();
+  const group = page.locator(".m-sheet.open .insp-group").filter({ has: page.getByRole("heading", { name: "경기 정보" }) });
+  await group.getByRole("button", { name: /항목 추가/ }).click();
+  await expect(cells).toHaveCount(before + 1);
+});

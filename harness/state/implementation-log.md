@@ -984,3 +984,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **추가(editor-smoke.spec.ts, 총 8개):** ⑦복제 섹션 독립 편집 — schedule 복제 후 2번째(사본) 선택 → 인스펙터 "+ 일정 추가" → 사본만 items+1, 원본 불변(find가 selectedId 우선하는 수정 검증, page.evaluate로 섹션별 item 카운트). ⑧텍스트 커버 테마 사진 자동 전환 — timeline(.tl-cover, 사진 없음)에서 커버 배경 썸네일 탭 → GenericCover(.gcover, 사진 레이아웃)로 전환.
 
 **로컬 검증:** 기존 빌드 재사용 + next start :3200, mobile-chrome **8 passed**(재시도 0). tsc 0, eslint 0.
+
+## 2026-09-11 (17) — 에디터 e2e 커버리지 +3 (총 11개)
+
+**요청(사용자):** "A"(자율 코드) → 에디터 e2e 확장 계속.
+
+**추가(editor-smoke.spec.ts):** ⑨섹션 숨김 → 프리뷰에서 제외(mobile 숨김 토글), ⑩강조색 적용 → 프리뷰 `.iv`의 `--wax` = 선택 색, ⑪matchInfo "+ 항목 추가" → 프리뷰 셀 +1.
+
+**로컬 검증:** 기존 빌드 재사용 + next start :3200 → mobile-chrome **11 passed**(재시도 0). tsc 0, eslint 0.
