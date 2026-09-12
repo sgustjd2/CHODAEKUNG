@@ -505,12 +505,11 @@
     .cat-header-left .cat-icon { width: 48px; height: 48px; }
     .cat-header-left .cat-icon svg { width: 24px; height: 24px; }
     .cat-title { font-size: 24px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    /* auto-fill/minmax (not a fixed 2 cols) — a fixed count let cards balloon up to ~423px right
+       before this breakpoint's own edge, then jump back down past it (non-monotonic). */
+    .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
     .tpl .name { font-size: 16px; }
     .bottom-cta { padding: 40px 24px; margin: 24px 20px 60px; }
     .bottom-cta h2 { font-size: 28px; }
-  }
-  @media (max-width: 400px) {
-    .grid { grid-template-columns: 1fr; }
   }
 }

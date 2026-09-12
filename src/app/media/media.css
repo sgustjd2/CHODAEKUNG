@@ -49,6 +49,7 @@
 
 @media (max-width: 560px) {
   .med-top { padding: 12px 16px; }
+  .med-crumb { display: none; }
   .med-wrap { padding: 28px 16px 64px; }
   .med-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
 }

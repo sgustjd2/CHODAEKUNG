@@ -107,5 +107,7 @@
     .donut-wrap { flex-direction: column; align-items: stretch; }
     .donut { margin: 0 auto; }
     .table-head { padding: 20px; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .table-actions { width: 100%; flex-wrap: wrap; }
+    .search-mini { width: 100%; max-width: 220px; }
   }
 }

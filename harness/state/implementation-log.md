@@ -1036,3 +1036,28 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **전체 감사(533px 계측):** 유일한 비대 그리드는 `.cover-thumbs`뿐. `.m-thumbs`(4열 119px), 갤러리 `.insp-photos`(3열 149px, globals 공유·/media 영향이라 손 안 댐, 비대 아님), color/palette/radio-row는 flex-wrap이라 비대 없음. 마진/패딩(insp-group 16px 등) 이상 없음.
 
 **검증(브라우저 계측):** 533px 전 227→후 110(4열), 데스크톱/375px 불변(2열), 갤러리 3열 유지. CSS-only.
+
+## 2026-09-11 (23) — 전 화면 그리드/여백 비대·오버플로 감사 (워크플로우) + 13건 수정
+
+**요청(사용자):** "다른 화면도 체크 검증을 한번 전체적으로 돌려줘" — 커버 사진 칸 비대 버그와 같은 종류의 문제가 에디터 외 다른 화면에도 있는지 포괄적으로.
+
+**감사(Workflow):** 10개 화면 그룹(마케팅/템플릿/마법사/대시보드/RSVP/설정·미디어/에디터 재감사/뷰어 라이트·다크/관리자) 병렬 정적 스캔 → 발견 건별 독립 에이전트가 반박 시도(적대적 검증). 후보 19건 → 확인 14건, 반박 5건.
+
+**수정 13건 (1건 보류):**
+1. `editor.css .m-thumbs`(모바일 커버 배경) — cover-thumbs와 동일 버그, 고정 4열 → auto-fill/minmax(100px,1fr).
+2. `templates.css .grid`(≤900px) — 고정 2열이라 899→901px에서 카드가 오히려 58% 커지는 비단조 현상 → auto-fill/minmax(200px,1fr), 이제 불필요해진 ≤400px 1열 강제 규칙 제거.
+3. `dashboard.css .stats` — `.dash-main`에 max-width 없어 와이드 모니터에서 무한 비대 → `repeat(4, minmax(auto,280px))`(901px 경계 동작은 auto플로어 유지로 불변, 최대만 캡).
+4. `dashboard.css .tabs` — `overflow-x:auto`를 900px 이하 전용에서 상시 적용으로(900~1000px 구간 탭바 오버플로 방지, flex 아이템 min-width 플로어 제거 기법).
+5/6. `settings.css .set-crumb`, `media.css .med-crumb` — rsvp.css/editor.css/templates.css에 이미 있는 "좁은 화면에서 크럼 숨김"(≤900px) 패턴이 이 두 파일(≤560px 브레이크포인트)엔 없었음 → 동일 패턴 추가.
+7. `admin.css .adm-who`(관리자 이메일) — `min-width:0; word-break:break-all`(테이블의 기존 `.adm-owner` 처리와 동일하게) → 좁은 화면에서 안 잘리고 줄바꿈.
+8. `rsvp.css .table-actions/.search-mini`(≤900px) — `width:100%;flex-wrap:wrap` 추가로 CSV 버튼이 카드 밖으로 안 넘침.
+9/10. `viewer.css .iv-rsvp-buttons`(romantic)/`.e-rsvp-buttons`(editorial) — `flex-wrap:wrap` 추가(cute/RSVP모달은 이미 있었음) → 옵션 4개 이상도 안 잘림.
+11. `viewer.css .ivm-rsvp-block .val`(minimal) — 부모의 nowrap 상속 → `white-space:normal; word-break:keep-all`로 긴 한글 라벨(예: "대리참석") 줄바꿈.
+12. `viewer.css .day-tabs`(timeline dayplan) — `overflow-x:auto` 추가(긴 여행 일정이 조용히 잘리던 것→스크롤로 도달 가능).
+13. `viewer.css .dday-grid` — `overflow-x:auto` 추가(<334px 극단 좁은 화면 안전장치).
+
+**보류(미수정):** `viewer.css .e-mag-gallery`(editorial 매거진 갤러리) — 6열 고정 grid-auto-rows:60px 매거진 콜라주가 --iv-w(콘텐츠 폭 설정, 392/430/512px) 변경 시 타일 크롭 비율이 달라짐. 디자인 레퍼런스 없이 손대면 의도된 매거진 미학을 해칠 위험이 있어 §15에 따라 보고만 하고 보류.
+
+**검증:** 대부분 실제 로컬 서버(webpack build+start)로 실측 — templates(899/901/320px 실측, 비단조 해소 확인), editor m-thumbs(950px, 4→8열 전환 확인), viewer RSVP 버튼 3테마(실제 4옵션/긴 라벨 주입 후 줄바꿈·비클리핑 확인), day-tabs(8일 주입 후 스크롤 도달 확인), dday-grid(320px 비잘림 확인). 로그인 필요한 대시보드/RSVP는 실제 CSS를 그대로 복사한 정적 재현 페이지(public/ 임시 서빙, 이후 삭제)로 `.stats`(2400px에서 280px 캡 확인)/`.table-actions`(줄바꿈 확인) 개별 검증(재현 페이지 자체의 box-sizing 누락으로 인한 무관한 아티팩트 1건 확인 후 무시). settings/media/admin은 기존 코드베이스 패턴(워크플로우 검증 근거 포함)에 근거해 코드 레벨로만 확인.
+
+tsc 0, 전체 e2e+unit 103 passed(회귀 없음), `next build --webpack` 통과.

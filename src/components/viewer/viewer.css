@@ -159,7 +159,7 @@
 .iv-dday { padding: 44px 28px; text-align: center; }
 .dday-eb { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-onpage, var(--wax-deep, #a04547)); font-weight: 700; margin-bottom: 10px; }
 .dday-title { font-family: var(--font-serif); font-size: calc(22px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); margin: 0 0 20px; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
-.dday-grid { display: flex; justify-content: center; gap: 10px; }
+.dday-grid { display: flex; justify-content: center; gap: 10px; overflow-x: auto; }
 .dday-cell { min-width: 62px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 .dday-n { font-family: var(--font-en); font-size: calc(30px * var(--iv-fs, 1)); font-weight: 800; color: var(--wax-deep, #a04547); line-height: calc(1 * var(--iv-lh, 1)); letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); font-variant-numeric: tabular-nums; }
 .dday-l { font-size: calc(11px * var(--iv-fs, 1)); color: #888; margin-top: 6px; font-weight: 600; }
@@ -324,7 +324,7 @@
   .iv-sch-content .t { font-family: var(--font-serif); font-weight: 500; font-size: calc(15px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); margin-bottom: 2px; }
   .iv-sch-content .d { font-size: calc(11.5px * var(--iv-fs, 1)); color: var(--muted); font-family: var(--font-serif); }
 
-  .iv-rsvp-buttons { display: flex; gap: 8px; max-width: 300px; margin: 24px auto 0; }
+  .iv-rsvp-buttons { display: flex; flex-wrap: wrap; gap: 8px; max-width: 300px; margin: 24px auto 0; }
   .iv-rsvp-btn { flex: 1; padding: 14px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); cursor: pointer; white-space: nowrap; }
   .iv-rsvp-btn.selected { background: var(--wax); color: var(--wax-ink, var(--paper)); border-color: transparent; box-shadow: var(--shadow-wax); }
 
@@ -392,7 +392,9 @@
   .ivm-rsvp-block.selected { background: var(--ink); color: var(--paper); }
   .ivm-rsvp-block .lbl { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); font-weight: 700; letter-spacing: calc(0.24em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .ivm-rsvp-block.selected .lbl { color: var(--gold); }
-  .ivm-rsvp-block .val { font-family: var(--font-ko); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
+  /* Parent is nowrap (for the short EN .lbl above); a longer Korean option label needs to wrap rather
+     than overflow the cell — keep-all avoids an awkward mid-syllable break. */
+  .ivm-rsvp-block .val { font-family: var(--font-ko); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); white-space: normal; word-break: keep-all; }
 
   .ivm-ending { padding: 100px 24px 140px; text-align: center; border-top: 1px solid var(--ink); }
   .ivm-ending .huge { font-family: var(--font-en); font-size: calc(88px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(-0.05em + var(--iv-ls, 0em)); line-height: calc(0.9 * var(--iv-lh, 1)); color: var(--ink); }
@@ -609,7 +611,9 @@
   .check-text { flex: 1; font-size: calc(14px * var(--iv-fs, 1)); font-weight: 600; color: var(--ink); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); }
   .check-owner { font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); color: var(--muted); font-weight: 700; letter-spacing: calc(0.12em + var(--iv-ls, 0em)); }
 
-  .day-tabs { display: flex; gap: 6px; padding: 5px; background: var(--paper-2); border-radius: 100px; margin-bottom: 20px; }
+  /* overflow-x so a long trip (many days) scrolls instead of clipping — flex:1 still divides evenly
+     for the common 2-4 day case since scrolling only engages once content can't shrink further. */
+  .day-tabs { display: flex; gap: 6px; padding: 5px; background: var(--paper-2); border-radius: 100px; margin-bottom: 20px; overflow-x: auto; }
   .day-tab { flex: 1; padding: 9px 14px; background: transparent; border: none; border-radius: 100px; font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 800; color: var(--fg-3); cursor: pointer; text-align: center; white-space: nowrap; }
   .day-tab.active { background: var(--ink); color: var(--paper); }
   .day-tab .en { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); letter-spacing: calc(0.16em + var(--iv-ls, 0em)); margin-left: 4px; opacity: 0.7; }
@@ -939,7 +943,7 @@
   .e-rsvp-editorial { margin-top: 24px; padding: 24px; background: var(--ink); color: var(--paper); text-align: center; }
   .e-rsvp-editorial .t { font-family: var(--font-serif); font-size: calc(24px * var(--iv-fs, 1)); font-weight: 500; letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); margin-bottom: 20px; }
   .e-rsvp-editorial .t em { font-family: var(--font-serif-italic); font-style: italic; color: var(--butter); }
-  .e-rsvp-buttons { display: flex; gap: 8px; }
+  .e-rsvp-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
   .e-rsvp-btn { flex: 1; padding: 14px; background: transparent; border: 1px solid var(--paper); color: var(--paper); font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.16em + var(--iv-ls, 0em)); text-transform: uppercase; cursor: pointer; white-space: nowrap; }
   .e-rsvp-btn.selected { background: var(--butter); color: var(--ink); border-color: transparent; }
 
