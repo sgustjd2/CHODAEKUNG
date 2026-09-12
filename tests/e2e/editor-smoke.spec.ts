@@ -162,3 +162,36 @@ test('matchInfo "+ 항목 추가" adds a cell to the section', async ({ page }) 
   await group.getByRole("button", { name: /항목 추가/ }).click();
   await expect(cells).toHaveCount(before + 1);
 });
+
+// The desktop 3-column editor (>960px). Per-test viewport override so it runs in the mobile-chrome
+// project without touching the shared config. Guards the left↔center↔right selection sync.
+test.describe("desktop editor (3-column)", () => {
+  test.use({ viewport: { width: 1400, height: 900 } });
+
+  test("clicking a section scrolls the inspector to that section's editor group", async ({ page }) => {
+    await page.goto("/editor?template=jisoo-minjun", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector(".ed-desktop .col-sections .sec-item", { timeout: 30_000 });
+
+    // select the 장소(location) row via its icon (not the type-menu trigger, which opens a dropdown)
+    const locationRow = page.locator(".col-sections .sec-item").filter({ has: page.locator(".sec-type", { hasText: /^location$/ }) });
+    await locationRow.locator(".sec-icon").click();
+    await expect(locationRow).toHaveClass(/active/);
+
+    // the 내용 inspector scrolled so the 장소 editor group sits at the top — the off-by-one bug would
+    // leave a different group there. Read the section group nearest the inspector's top.
+    const topGroupHeading = await page.evaluate(() => {
+      const body = document.querySelector(".inspector-body");
+      if (!body) return null;
+      const bodyTop = body.getBoundingClientRect().top;
+      const groups = [...body.querySelectorAll<HTMLElement>(".insp-group")].filter((g) => !g.dataset.fixedGroup);
+      let best: HTMLElement | null = null;
+      let bestDist = Infinity;
+      for (const g of groups) {
+        const d = g.getBoundingClientRect().top - bodyTop;
+        if (d >= -4 && d < bestDist) { bestDist = d; best = g; }
+      }
+      return best?.querySelector("h5")?.textContent?.trim() ?? null;
+    });
+    expect(topGroupHeading).toBe("장소");
+  });
+});

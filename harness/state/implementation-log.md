@@ -992,3 +992,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **추가(editor-smoke.spec.ts):** ⑨섹션 숨김 → 프리뷰에서 제외(mobile 숨김 토글), ⑩강조색 적용 → 프리뷰 `.iv`의 `--wax` = 선택 색, ⑪matchInfo "+ 항목 추가" → 프리뷰 셀 +1.
 
 **로컬 검증:** 기존 빌드 재사용 + next start :3200 → mobile-chrome **11 passed**(재시도 0). tsc 0, eslint 0.
+
+## 2026-09-11 (18) — 에디터 e2e +1: 데스크톱 3열 싱크(off-by-one)
+
+**요청(사용자):** "다음작업진행" → 세션 헤드라인 수정(좌/중/우 싱크, 데스크톱 전용)이 미테스트라 이걸 덮음.
+
+**추가:** `test.describe("desktop editor")` + `test.use({viewport:1400x900})`(공유 config 안 건드리고 프로젝트 내에서 데스크톱 레이아웃 렌더). 좌측 장소(location) 섹션 아이콘 클릭 → active + 내용 인스펙터가 "장소" 그룹을 최상단으로 스크롤(off-by-one이면 다른 그룹이 옴). page.evaluate로 인스펙터 top에 가장 가까운 섹션 그룹의 h5 판정.
+
+**로컬 검증:** mobile-chrome 프로젝트에서 뷰포트 오버라이드로 12개 **all passed**(재시도 0). tsc 0, eslint 0.
