@@ -3,7 +3,7 @@
 import { ESection } from "./e-section";
 import { Editable } from "../../editable";
 import { photoUrl } from "@/lib/photo";
-import { openLightbox } from "../../lightbox";
+import { lightboxTriggerProps } from "../../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function EditorialGallery({ content }: { content: GalleryContent }) {
@@ -13,7 +13,7 @@ export function EditorialGallery({ content }: { content: GalleryContent }) {
       <div className="e-mag-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} className={`iv-lb-src p${i + 1}`} src={srcs[i]} alt="" loading="lazy" decoding="async" onClick={() => openLightbox(srcs, i)} />
+          <img key={i} className={`iv-lb-src p${i + 1}`} src={srcs[i]} alt="" loading="lazy" decoding="async" {...lightboxTriggerProps(srcs, i)} />
         ))}
       </div>
       {content.caption && (

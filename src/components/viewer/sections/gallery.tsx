@@ -3,7 +3,7 @@
 import { Rich } from "../rich-text";
 import { Editable } from "../editable";
 import { photoUrl } from "@/lib/photo";
-import { openLightbox } from "../lightbox";
+import { lightboxTriggerProps } from "../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function GallerySection({ content }: { content: GalleryContent }) {
@@ -17,7 +17,7 @@ export function GallerySection({ content }: { content: GalleryContent }) {
       <div className="iv-gallery-grid">
         {content.images.map((im, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={srcs[i]} alt="" loading="lazy" decoding="async" className={`iv-lb-src${im.tall ? " tall" : ""}`} onClick={() => openLightbox(srcs, i)} />
+          <img key={i} src={srcs[i]} alt="" loading="lazy" decoding="async" className={`iv-lb-src${im.tall ? " tall" : ""}`} {...lightboxTriggerProps(srcs, i)} />
         ))}
       </div>
     </div>

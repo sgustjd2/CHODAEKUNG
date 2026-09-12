@@ -2,7 +2,7 @@
 
 import { CCard } from "./c-card";
 import { photoUrl } from "@/lib/photo";
-import { openLightbox } from "../../lightbox";
+import { lightboxTriggerProps } from "../../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function CuteGallery({ content }: { content: GalleryContent }) {
@@ -12,7 +12,7 @@ export function CuteGallery({ content }: { content: GalleryContent }) {
       <div className="c-gallery">
         {content.images.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={srcs[i]} alt="" loading="lazy" decoding="async" className="iv-lb-src" onClick={() => openLightbox(srcs, i)} />
+          <img key={i} src={srcs[i]} alt="" loading="lazy" decoding="async" className="iv-lb-src" {...lightboxTriggerProps(srcs, i)} />
         ))}
       </div>
     </CCard>

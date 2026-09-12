@@ -2,7 +2,7 @@
 
 import { DSection } from "./d-section";
 import { photoUrl } from "@/lib/photo";
-import { openLightbox } from "../../lightbox";
+import { lightboxTriggerProps } from "../../lightbox";
 import type { GalleryContent } from "@/lib/invitation/types";
 
 export function DevGallery({ content }: { content: GalleryContent }) {
@@ -13,7 +13,7 @@ export function DevGallery({ content }: { content: GalleryContent }) {
         {content.images.map((img, i) => (
           <div className="d-gallery-item" key={i}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={srcs[i]} alt="" loading="lazy" decoding="async" className="iv-lb-src" onClick={() => openLightbox(srcs, i)} />
+            <img src={srcs[i]} alt="" loading="lazy" decoding="async" className="iv-lb-src" {...lightboxTriggerProps(srcs, i)} />
             <div className="cap">v0{i + 1}.jpg</div>
           </div>
         ))}

@@ -36,3 +36,22 @@ test("lightbox: opens focused + labelled, arrows navigate, Tab trapped, Escape c
   await page.keyboard.press("Escape");
   await expect(lb).toBeHidden();
 });
+
+test("gallery thumbnail is a keyboard-operable trigger; focus returns to it on close", async ({ page }) => {
+  await page.goto("/i/jisoo-minjun", { waitUntil: "domcontentloaded" });
+
+  const thumb = page.locator(".iv-gallery-grid img").first();
+  await expect(thumb).toHaveAttribute("role", "button");
+  await expect(thumb).toHaveAttribute("aria-label", /.+/);
+
+  await thumb.focus();
+  await expect(thumb).toBeFocused();
+  await page.keyboard.press("Enter"); // opens via keyboard (not just click)
+
+  const lb = page.locator(".iv-lightbox");
+  await expect(lb).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(lb).toBeHidden();
+  await expect(thumb).toBeFocused(); // focus returned to the opening thumbnail
+});

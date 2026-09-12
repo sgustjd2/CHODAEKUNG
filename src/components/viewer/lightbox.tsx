@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 
 /** Tap a gallery photo → full-screen viewer with prev/next. Galleries dispatch this event with
@@ -10,6 +10,23 @@ export const LIGHTBOX_EVENT = "chodaekung:lightbox";
 export function openLightbox(images: string[], index: number) {
   if (typeof window === "undefined" || images.length === 0) return;
   window.dispatchEvent(new CustomEvent(LIGHTBOX_EVENT, { detail: { images, index } }));
+}
+
+/** Props that make a gallery thumbnail a real, keyboard-operable trigger for the lightbox — so
+ * keyboard/screen-reader users can open it, not just mouse/touch. Spread onto the <img>. */
+export function lightboxTriggerProps(srcs: string[], i: number) {
+  return {
+    role: "button" as const,
+    tabIndex: 0,
+    "aria-label": `사진 ${i + 1} 크게 보기`,
+    onClick: () => openLightbox(srcs, i),
+    onKeyDown: (e: ReactKeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openLightbox(srcs, i);
+      }
+    },
+  };
 }
 
 export function LightboxRoot() {
