@@ -8,9 +8,10 @@ import AxeBuilder from "@axe-core/playwright";
  * - LIGHT-theme viewers (romantic/minimal/cute/timeline/editorial): gate on critical + serious.
  *   Their brand-coral + muted contrast is resolved (viewer.css "LIGHT THEMES" remap → --wax-onpage /
  *   --ink-3, deepened further for editorial/cute tinted paper) and locked against regression.
- * - DARK-theme viewers (battle/gaming/developer): gate on critical only. Their remaining `serious`
- *   are color-contrast on the dark accent palette (a separate coordinated pass) — logged so the debt
- *   stays visible.
+ * - DARK-theme viewers (battle/gaming/developer): gate on critical + serious too. The coral that
+ *   serves both text and fills was split per dark theme (lighter --wax-onpage for accent text,
+ *   darker --wax/--wax-deep for white-text fill panels), and dimmed helper text bumped to AA.
+ * Every public viewer theme + funnel page is now locked at AA (critical + serious = 0).
  */
 const PAGES = [
   { name: "landing", url: "/", gateSerious: true },
@@ -21,9 +22,9 @@ const PAGES = [
   { name: "viewer · cute", url: "/i/cozy-home", gateSerious: true },
   { name: "viewer · timeline", url: "/i/jibdeuli", gateSerious: true },
   { name: "viewer · editorial", url: "/i/after-hours", gateSerious: true },
-  { name: "viewer · battle (dark)", url: "/i/jogi-battle", gateSerious: false },
-  { name: "viewer · gaming (dark)", url: "/i/lol-rank", gateSerious: false },
-  { name: "viewer · developer (dark)", url: "/i/dev-meetup", gateSerious: false },
+  { name: "viewer · battle (dark)", url: "/i/jogi-battle", gateSerious: true },
+  { name: "viewer · gaming (dark)", url: "/i/lol-rank", gateSerious: true },
+  { name: "viewer · developer (dark)", url: "/i/dev-meetup", gateSerious: true },
 ];
 
 for (const p of PAGES) {

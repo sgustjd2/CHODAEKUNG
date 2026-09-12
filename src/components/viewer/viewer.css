@@ -408,6 +408,13 @@
   background-image: none;
   color: var(--paper);
   font-family: var(--font-ko);
+  /* Dark-theme AA (default palette only — custom accents set these inline in invitation-viewer
+     and win). Coral plays two roles that the shared tokens can't both satisfy on a dark page:
+     accent TEXT needs a LIGHT coral, while accent-FILL panels/buttons carrying white text need a
+     DARKER coral. Split them here. */
+  --wax: #A8474A;        /* fills: flag / loc + roster + share buttons / countdown-warn → white text ≥4.5 */
+  --wax-deep: #9E4044;   /* accept + ending panels → light/white text ≥4.5; accept-btn label on white */
+  --wax-onpage: #F0A8A8; /* accent TEXT on the dark bg (VS word, title em) → ≥4.5 */
 
   .iv-doc { background: var(--iv-bg, #1A1A2E); }
 
@@ -468,6 +475,7 @@
   .ivb-cd-cell.warn { background: var(--wax); color: var(--wax-ink, var(--paper)); box-shadow: 0 4px 16px rgba(227,139,139,0.5), inset 0 -3px 0 rgba(0,0,0,0.15); }
   .ivb-cd-cell .n { font-family: var(--font-en); font-weight: 900; font-size: calc(30px * var(--iv-fs, 1)); line-height: calc(1 * var(--iv-lh, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); }
   .ivb-cd-cell .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.2em + var(--iv-ls, 0em)); text-transform: uppercase; margin-top: 5px; opacity: 0.7; }
+  .ivb-cd-cell.warn .l { opacity: 1; } /* white-on-coral: full opacity for AA (dimmed 0.7 only safe on the white cells) */
 
   .ivb-rules { padding: 40px 24px; background: #2A2A3E; }
   .ivb-rules-grid { display: flex; flex-direction: column; gap: 10px; }
@@ -501,7 +509,7 @@
   .ivb-accept { padding: 48px 24px; background: var(--wax-deep); text-align: center; }
   .ivb-accept-title { font-weight: 900; font-size: calc(34px * var(--iv-fs, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); color: var(--paper); line-height: calc(1.05 * var(--iv-lh, 1)); margin-bottom: 8px; }
   .ivb-accept-title em { font-weight: 900; color: var(--wax-light); }
-  .ivb-accept-sub { font-size: calc(14px * var(--iv-fs, 1)); color: rgba(255,255,255,0.7); margin-bottom: 28px; }
+  .ivb-accept-sub { font-size: calc(14px * var(--iv-fs, 1)); color: rgba(255,255,255,0.9); margin-bottom: 28px; }
   .ivb-accept-btns { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
   .ivb-accept-btn { flex: 1; padding: 18px; border-radius: 12px; font-family: var(--font-ko); font-size: calc(15px * var(--iv-fs, 1)); font-weight: 900; letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); cursor: pointer; border: none; transition: transform 150ms; white-space: nowrap; }
   .ivb-accept-btn.accept { background: var(--paper); color: var(--wax-deep); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
@@ -522,7 +530,7 @@
       inset 0 0 0 2px rgba(60,10,15,0.5),
       0 0 0 1px rgba(255,255,255,0.18);
   }
-  .ivb-ending .brand-tiny { margin-top: 30px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(255,255,255,0.65); }
+  .ivb-ending .brand-tiny { margin-top: 30px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(255,255,255,0.88); }
 
   .share-pill { background: rgba(0,0,0,0.85); border: 1px solid rgba(255,255,255,0.1); }
 }
@@ -705,19 +713,19 @@
   .g-lane-icon.mid { background: rgba(233,178,217,0.25); color: #E9B2D9; }
   .g-lane-icon.adc { background: rgba(245,178,147,0.25); color: #F5B293; }
   .g-lane-icon.sup { background: rgba(147,178,245,0.25); color: #93B2F5; }
-  .g-slot-open .g-lane-icon { background: transparent; border: 1.5px dashed rgba(233,217,241,0.3); color: rgba(233,217,241,0.5); }
+  .g-slot-open .g-lane-icon { background: transparent; border: 1.5px dashed rgba(233,217,241,0.3); color: rgba(233,217,241,0.65); }
   .g-p-info { min-width: 0; }
   .g-p-name { font-weight: 800; font-size: calc(14px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); color: var(--paper); margin-bottom: 3px; }
   .g-slot-open .g-p-name { color: rgba(233,217,241,0.6); font-weight: 700; }
   .g-p-summoner { font-family: var(--font-en); font-size: calc(11px * var(--iv-fs, 1)); color: rgba(255,255,255,0.55); letter-spacing: calc(0.03em + var(--iv-ls, 0em)); font-weight: 600; }
-  .g-slot-open .g-p-summoner { color: rgba(255,255,255,0.35); }
+  .g-slot-open .g-p-summoner { color: rgba(255,255,255,0.55); }
   .g-p-tier { padding: 5px 10px; background: rgba(255,255,255,0.1); border-radius: 6px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.14em + var(--iv-ls, 0em)); color: var(--paper); text-align: center; min-width: 62px; }
   .g-p-tier.iron { background: rgba(140,100,90,0.5); color: #D9A896; }
   .g-p-tier.bronze { background: rgba(191,122,90,0.35); color: #F5B293; }
   .g-p-tier.silver { background: rgba(170,176,192,0.3); color: #D8DDE8; }
   .g-p-tier.gold { background: rgba(245,216,150,0.3); color: #F5D896; }
   .g-p-tier.plat { background: rgba(147,245,202,0.3); color: #93F5CA; }
-  .g-p-tier.diamond { background: rgba(147,178,245,0.3); color: #93B2F5; }
+  .g-p-tier.diamond { background: rgba(147,178,245,0.3); color: #BBD0FA; }
   .g-p-tier.master { background: rgba(233,178,217,0.35); color: #E9B2D9; }
   .g-p-tier.empty { background: rgba(255,255,255,0.04); border: 1px dashed rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); font-family: var(--font-ko); font-size: calc(11px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); }
 
@@ -742,7 +750,7 @@
   .g-champions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
   .g-champ { aspect-ratio: 1; border-radius: 10px; background: #221A34; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: calc(22px * var(--iv-fs, 1)); color: var(--paper); position: relative; overflow: hidden; }
   .g-champ.picked { background: rgba(233,178,217,0.28); border-color: rgba(233,217,241,0.5); box-shadow: 0 0 12px rgba(233,217,241,0.3); }
-  .g-champ .lane { position: absolute; bottom: 4px; right: 6px; font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.1em + var(--iv-ls, 0em)); color: rgba(255,255,255,0.55); }
+  .g-champ .lane { position: absolute; bottom: 4px; right: 6px; font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.1em + var(--iv-ls, 0em)); color: rgba(255,255,255,0.78); }
 
   .g-cta { padding: 48px 24px 40px; text-align: center; background: #181425; border-top: 1px solid rgba(255,255,255,0.06); }
   .g-cta h3 { font-weight: 900; font-size: calc(30px * var(--iv-fs, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); color: var(--paper); line-height: calc(1.1 * var(--iv-lh, 1)); margin-bottom: 8px; }
@@ -757,7 +765,7 @@
   .g-ending { padding: 40px 24px 100px; text-align: center; background: #14101E; }
   .g-ending .signature { font-family: var(--font-en); font-weight: 900; font-size: calc(32px * var(--iv-fs, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); display: inline-block; background: linear-gradient(135deg, #E9D9F1 0%, #93B2F5 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .g-ending .signature-sub { font-family: var(--font-ko); font-size: calc(14px * var(--iv-fs, 1)); color: rgba(255,255,255,0.6); margin-top: 4px; font-weight: 700; }
-  .g-ending .brand-tiny { margin-top: 24px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .g-ending .brand-tiny { margin-top: 24px; font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.32em + var(--iv-ls, 0em)); text-transform: uppercase; color: rgba(255,255,255,0.62); display: flex; align-items: center; justify-content: center; gap: 6px; }
   .g-ending .brand-tiny .seal-kung { color: var(--paper); background: radial-gradient(circle at 45% 45%, var(--wax-light) 0%, var(--wax) 50%, var(--wax-deep) 100%); box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
 
   .share-pill { background: rgba(20,16,30,0.9); border: 1px solid rgba(233,217,241,0.2); }
@@ -950,6 +958,7 @@
   font-family: var(--font-mono);
   background: var(--paper-2);
   background-image: none;
+  --wax: #A8474A; /* the shared coral share-pill button carries white text → darken for AA (default only) */
 
   .iv-doc { background: var(--iv-bg, #0D0F0A); font-family: var(--font-mono); font-size: calc(12px * var(--iv-fs, 1)); line-height: calc(1.6 * var(--iv-lh, 1)); padding: 20px 16px 40px; position: relative; }
   .iv-doc::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(126,215,126,0.03) 0, rgba(126,215,126,0.03) 1px, transparent 1px, transparent 3px); pointer-events: none; z-index: 1; }
