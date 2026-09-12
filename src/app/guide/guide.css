@@ -12,10 +12,10 @@
 .guide-logo svg.ck-logo { width: auto; height: 34px; }
 .guide-crumb {
   font-family: var(--font-en); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-left: auto;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-left: auto;
 }
 .guide-cta-sm {
-  margin-left: 16px; background: var(--wax); color: #fff;
+  margin-left: 16px; background: var(--wax-onpage); color: #fff;
   padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none;
 }
 .guide-cta-sm:hover { background: var(--wax-deep); }
@@ -24,7 +24,7 @@
 .guide-head { text-align: center; margin-bottom: 44px; }
 .guide-eb {
   font-family: var(--font-en); font-size: 11px; font-weight: 700;
-  letter-spacing: 0.24em; text-transform: uppercase; color: var(--wax-deep); margin-bottom: 12px;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--wax-onpage); margin-bottom: 12px;
 }
 .guide-title { font-family: var(--font-ko); font-weight: 800; font-size: 40px; line-height: 1.15; letter-spacing: -0.03em; margin: 0 0 16px; color: var(--ink); }
 .guide-lead { font-size: 16px; line-height: 1.7; color: var(--fg-2, #4a4a5a); max-width: 520px; margin: 0 auto; }
@@ -34,7 +34,7 @@
 .guide-step-n { font-family: var(--font-en); font-size: 22px; font-weight: 800; color: var(--wax); flex-shrink: 0; width: 44px; }
 .guide-step-body h2 { font-family: var(--font-ko); font-weight: 700; font-size: 19px; letter-spacing: -0.02em; margin: 2px 0 8px; color: var(--ink); }
 .guide-step-body p { font-size: 14.5px; line-height: 1.7; color: var(--fg-2, #4a4a5a); margin: 0; }
-.guide-step-link { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--wax-deep); text-decoration: none; }
+.guide-step-link { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--wax-onpage); text-decoration: none; }
 .guide-step-link:hover { text-decoration: underline; }
 
 .guide-section { margin-bottom: 56px; }
@@ -51,7 +51,7 @@
 .guide-final p { font-size: 15px; color: var(--fg-2, #4a4a5a); margin: 0 0 24px; }
 .guide-final-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .guide-btn { padding: 13px 28px; border-radius: 999px; font-size: 15px; font-weight: 700; text-decoration: none; }
-.guide-btn.primary { background: var(--wax); color: #fff; }
+.guide-btn.primary { background: var(--wax-onpage); color: #fff; }
 .guide-btn.primary:hover { background: var(--wax-deep); }
 .guide-btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 .guide-btn.ghost:hover { background: var(--paper-2); }
