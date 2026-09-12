@@ -5,8 +5,13 @@
  * Deployment Protection often guards behind SSO (a scraper gets a login redirect, not the
  * image) — so prefer the stable, public production domain `VERCEL_PROJECT_PRODUCTION_URL`.
  * `NEXT_PUBLIC_SITE_URL` still wins when set (e.g. a custom domain). */
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-  "http://localhost:3000";
+export function resolveSiteUrl(env: Record<string, string | undefined> = process.env): string {
+  return (
+    env.NEXT_PUBLIC_SITE_URL ||
+    (env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
+    (env.VERCEL_URL ? `https://${env.VERCEL_URL}` : "") ||
+    "http://localhost:3000"
+  );
+}
+
+export const siteUrl = resolveSiteUrl();
