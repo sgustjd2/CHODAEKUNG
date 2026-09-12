@@ -1016,3 +1016,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **구현:** `src/components/editor/image-cropper.tsx` — 무의존성 팬·줌 크롭 모달. 고정 비율 프레임(기본 3:4 세로, `COVER_CROP_ASPECT`)에 이미지를 pan(pointer 드래그)+zoom(슬라이더)로 프레이밍, 항상 프레임을 덮도록 pos clamp(coverScale×zoom 모델), 적용 시 canvas.drawImage로 프레임 영역만 JPEG(0.9)로 export→File. 룰오브서드 그리드, 취소/적용, 에러 처리. CSS는 editor.css `.ic-*`(fixed overlay z200, 반응형). `PhotoUpload`에 `cropAspect?` 추가 — 있으면 파일 선택→크롭 모달→onCropped→기존 uploadPhoto. 커버 업로드 3곳(내용탭·데스크톱 스타일탭·모바일)에 배선. 갤러리/장소는 기존대로 직접 업로드.
 
 **검증(Playwright setInputFiles):** 커버 파일 선택→`.ic-overlay` 표시→줌 조절→적용→모달 닫힘(크롭 File 생성; 업로드 자체는 백엔드 필요라 데모에선 에러 메시지만). 스크린샷으로 UI 육안 확인(3:4 프레임·그리드·이미지 커버 정상). editor-smoke +1(총 16). tsc 0, eslint 0(경고 2 기존/양성). **실제 Supabase 업로드 최종 확인은 배포본/실브라우저에서 사용자 몫.**
+
+## 2026-09-11 (21) — 크롭 수학 순수함수 추출 + 유닛 테스트
+
+**요청(사용자):** "다음 작업 진행" → ImageCropper e2e는 흐름만 봤고 크롭 결과 정확성 미검증 → 수학 유닛 테스트.
+
+**추가:** `src/lib/invitation/crop.ts`(coverScale/clampPos/cropRegion 순수함수, DOM/React 무관)로 크롭 기하 추출. image-cropper.tsx가 이를 사용(동작 동일). `tests/unit/crop.spec.ts` 6개 — 출력 비율=프레임 비율, 소스영역이 이미지 경계 내(centered zoom1), 줌↑=소스영역↓(1/2), maxOut 캡, clampPos가 커버 유지.
+
+**검증:** unit 6 passed, tsc 0, eslint 0. 리팩터 후 재빌드+cropper e2e 재실행도 통과(동작 보존 확인).

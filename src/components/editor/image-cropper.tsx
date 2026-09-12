@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { clampPos, coverScale, cropRegion } from "@/lib/invitation/crop";
 
 /**
  * Minimal, dependency-free image cropper (CLAUDE.md §5 "ImageCropper shell"). A fixed-aspect frame
@@ -54,14 +55,11 @@ export function ImageCropper({
     return () => ro.disconnect();
   }, [url]);
 
-  const coverScale = img && frame.w ? Math.max(frame.w / img.naturalWidth, frame.h / img.naturalHeight) : 1;
-  const dispScale = coverScale * zoom;
+  const cScale = img && frame.w ? coverScale(img.naturalWidth, img.naturalHeight, frame.w, frame.h) : 1;
+  const dispScale = cScale * zoom;
   const dispW = img ? img.naturalWidth * dispScale : 0;
   const dispH = img ? img.naturalHeight * dispScale : 0;
-  const clamp = (p: { x: number; y: number }) => ({
-    x: Math.min(0, Math.max(frame.w - dispW, p.x)),
-    y: Math.min(0, Math.max(frame.h - dispH, p.y)),
-  });
+  const clamp = (p: { x: number; y: number }) => clampPos(p, dispW, dispH, frame.w, frame.h);
 
   // Center on first layout, and keep the image covering the frame as zoom/size change.
   const centered = useRef(false);
@@ -93,15 +91,13 @@ export function ImageCropper({
     if (!img || !frame.w) return;
     setBusy(true);
     try {
-      const outW = Math.min(1600, Math.round(frame.w * 2));
-      const outH = Math.round(outW / aspect);
+      const { sx, sy, sw, sh, outW, outH } = cropRegion({ imgW: img.naturalWidth, imgH: img.naturalHeight, frameW: frame.w, frameH: frame.h, zoom, pos, aspect });
       const canvas = document.createElement("canvas");
       canvas.width = outW;
       canvas.height = outH;
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("no ctx");
-      // Frame → source-pixel region (inverse of display scale/offset).
-      ctx.drawImage(img, -pos.x / dispScale, -pos.y / dispScale, frame.w / dispScale, frame.h / dispScale, 0, 0, outW, outH);
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH); // frame → source-pixel region
       canvas.toBlob(
         (blob) => {
           setBusy(false);
