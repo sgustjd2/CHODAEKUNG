@@ -16,6 +16,8 @@ const BASE = process.env.BASE_URL ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests",
+  // Resolve the app's "@/*" → src/* path alias in tests (and their imported modules).
+  tsconfig: "./tsconfig.json",
   timeout: 90_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,
