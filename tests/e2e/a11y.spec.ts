@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 /**
  * Automated accessibility scan (axe-core) of the public pages, on the iPhone profile.
  *
- * - landing & templates: gate on critical + serious WCAG A/AA (contrast, labels, roles).
+ * - landing, templates & the /new wizard: gate on critical + serious WCAG A/AA (contrast, labels, roles).
  * - LIGHT-theme viewers (romantic/minimal/cute/timeline/editorial): gate on critical + serious.
  *   Their brand-coral + muted contrast is resolved (viewer.css "LIGHT THEMES" remap → --wax-onpage /
  *   --ink-3, deepened further for editorial/cute tinted paper) and locked against regression.
@@ -15,6 +15,7 @@ import AxeBuilder from "@axe-core/playwright";
 const PAGES = [
   { name: "landing", url: "/", gateSerious: true },
   { name: "templates", url: "/templates", gateSerious: true },
+  { name: "new (wizard)", url: "/new", gateSerious: true },
   { name: "viewer · romantic", url: "/i/jisoo-minjun", gateSerious: true },
   { name: "viewer · minimal", url: "/i/appa-60", gateSerious: true },
   { name: "viewer · cute", url: "/i/cozy-home", gateSerious: true },

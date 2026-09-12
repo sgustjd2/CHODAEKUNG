@@ -30,9 +30,9 @@
   .top-logo svg.ck-logo { width: auto; height: 34px; }
   .progress-info {
     font-family: var(--font-en); font-size: 11px; font-weight: 700;
-    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3);
   }
-  .progress-info b { color: var(--rose-deep); }
+  .progress-info b { color: var(--wax-onpage); }
   .top-close {
     width: 36px; height: 36px; border-radius: var(--r-sm);
     border: 1px solid var(--line); background: var(--card);
@@ -54,7 +54,7 @@
     border: 1px solid var(--line);
     display: flex; align-items: center; justify-content: center;
     font-family: var(--font-en); font-size: 12px; font-weight: 700;
-    color: var(--muted);
+    color: var(--ink-3);
     transition: all 200ms;
     flex-shrink: 0;
   }
@@ -71,10 +71,10 @@
     font-family: var(--font-en);
     font-size: 10px; font-weight: 700;
     letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--muted);
+    color: var(--ink-3);
   }
   .step-labels .lbl { flex: 1; text-align: center; }
-  .step-labels .lbl.active { color: var(--rose-deep); }
+  .step-labels .lbl.active { color: var(--wax-onpage); }
 
   /* Main content */
   .wizard-body {
@@ -88,7 +88,7 @@
   .step-eyebrow {
     font-family: var(--font-en); font-size: 11px; font-weight: 700;
     letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--rose-deep);
+    color: var(--wax-onpage);
     text-align: center;
   }
   .step-title {
@@ -115,7 +115,7 @@
   .egh-icon { width: 30px; height: 30px; border-radius: 9px; background: var(--wax-soft); color: var(--wax-deep); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .egh-icon svg { width: 17px; height: 17px; }
   .egh-label { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
-  .egh-sub { font-family: var(--font-en); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .egh-sub { font-family: var(--font-en); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
   .event-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .event-card {
     background: var(--card);
@@ -146,7 +146,7 @@
   .event-icon { width: 32px; height: 32px; margin: 0 auto 10px; color: var(--wax-deep); display: block; }
   .event-card.selected .event-icon { color: var(--wax); }
   .event-name { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; word-break: keep-all; }
-  .event-hint { font-family: var(--font-en); font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; }
+  .event-hint { font-family: var(--font-en); font-size: 10px; color: var(--ink-3); margin-top: 4px; letter-spacing: 0.05em; }
 
   .event-card-custom { background: var(--wax-tint); border: 1.5px dashed var(--wax-soft); }
   .event-card-custom:hover { border-color: var(--wax); background: var(--wax-soft); }
@@ -271,8 +271,8 @@
     background: var(--paper-2); cursor: pointer; justify-content: center; flex-direction: column;
   }
   .upload-drop .u-hint { font-size: 13px; color: var(--fg-2); font-weight: 600; }
-  .upload-drop .u-hint span { color: var(--rose-deep); text-decoration: underline; }
-  .upload-drop .u-meta { font-family: var(--font-en); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+  .upload-drop .u-hint span { color: var(--wax-onpage); text-decoration: underline; }
+  .upload-drop .u-meta { font-family: var(--font-en); font-size: 10px; color: var(--ink-3); letter-spacing: 0.1em; }
 
   /* Template style */
   .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -300,7 +300,7 @@
   .style-cat {
     font-family: var(--font-en); font-size: 9px; font-weight: 700;
     letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--rose-deep); margin-bottom: 4px;
+    color: var(--wax-onpage); margin-bottom: 4px;
   }
   .style-name { font-family: var(--font-serif); font-size: 20px; font-weight: 500; letter-spacing: -0.015em; }
   .style-name em { font-weight: 700; color: var(--rose); }
@@ -337,7 +337,7 @@
   }
   .wizard-nav .progress-text {
     font-family: var(--font-en); font-size: 11px; font-weight: 700;
-    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3);
   }
   .wizard-nav .actions { display: flex; gap: 10px; }
 
