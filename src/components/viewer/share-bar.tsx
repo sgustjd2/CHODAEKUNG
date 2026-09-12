@@ -282,9 +282,9 @@ export function ShareBar({
                   </div>
                 )}
                 <label className="rsvp-field">
-                  <span>이름</span>
+                  <span>이름 (실명)</span>
                   {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
-                  <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="성함을 입력하세요" autoComplete="name" />
+                  <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="실명을 입력해 주세요 (참석자 확인용)" autoComplete="name" />
                 </label>
                 <div className="rsvp-field">
                   <span>참석 여부</span>

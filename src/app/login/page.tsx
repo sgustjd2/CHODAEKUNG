@@ -23,6 +23,7 @@ function friendlyAuthError(msg: string): string {
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
@@ -71,7 +72,7 @@ export default function LoginPage() {
     try {
       if (mode === "signup") {
         // Create the account already-confirmed (no email verification), then sign in right away.
-        const res = await signUpAction(email, pw);
+        const res = await signUpAction(email, pw, name);
         if (!res.ok) {
           setMsg({ ok: false, text: friendlyAuthError(res.error) });
         } else {
@@ -106,9 +107,16 @@ export default function LoginPage() {
         <p className="auth-sub">{gatedCreate ? "초대장을 만들려면 먼저 가입해 주세요 — 이메일만 있으면 돼요." : mode === "login" ? "내 초대장을 관리하려면 로그인하세요." : "가입하면 만든 초대장을 계정에서 관리할 수 있어요."}</p>
 
         <form onSubmit={submit}>
+          {mode === "signup" && (
+            <label className="auth-field">
+              <span>이름 (실명)</span>
+              <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="실명을 입력해 주세요" autoComplete="name" maxLength={40} autoFocus />
+              <p className="auth-hint">참석자가 누구인지 알아볼 수 있도록 실명으로 입력해 주세요.</p>
+            </label>
+          )}
           <label className="auth-field">
             <span>이메일</span>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" autoFocus />
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" autoFocus={mode === "login"} />
           </label>
           <label className="auth-field">
             <span>비밀번호</span>

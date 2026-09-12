@@ -51,7 +51,7 @@ test("RSVP modal opens and is interactive", async ({ page }) => {
   await page.locator(".share-pill .primary").click();
   const modal = page.locator(".rsvp-modal");
   await expect(modal).toBeVisible();
-  await expect(modal.locator('input[placeholder="성함을 입력하세요"]')).toBeVisible();
+  await expect(modal.locator('input[autocomplete="name"]')).toBeVisible();
 
   // selecting a response option reflects in aria-pressed
   const opts = modal.locator(".rsvp-opt");

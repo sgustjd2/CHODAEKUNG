@@ -27,6 +27,7 @@
 .auth-field > span { display: block; font-size: 12px; font-weight: 700; color: var(--fg-2); margin-bottom: 6px; }
 .auth-field input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-sm); font-size: 14px; font-family: var(--font-ko); color: var(--ink); background: var(--paper-2); }
 .auth-field input:focus { outline: none; border-color: var(--wax); background: var(--card); }
+.auth-hint { font-size: 11.5px; color: var(--fg-3, #8a8a99); margin: 6px 0 0; line-height: 1.5; }
 .auth-msg { font-size: 12px; font-weight: 700; color: var(--wax-deep); background: var(--wax-tint); padding: 10px 12px; border-radius: var(--r-sm); margin-bottom: 12px; line-height: 1.5; }
 .auth-msg.ok { color: var(--sage-deep); background: var(--sage-light); }
 .auth-btn { width: 100%; padding: 13px; border: none; border-radius: var(--r-sm); background: var(--wax); color: var(--paper); font-family: var(--font-ko); font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 4px; }

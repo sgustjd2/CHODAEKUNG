@@ -1061,3 +1061,17 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **검증:** 대부분 실제 로컬 서버(webpack build+start)로 실측 — templates(899/901/320px 실측, 비단조 해소 확인), editor m-thumbs(950px, 4→8열 전환 확인), viewer RSVP 버튼 3테마(실제 4옵션/긴 라벨 주입 후 줄바꿈·비클리핑 확인), day-tabs(8일 주입 후 스크롤 도달 확인), dday-grid(320px 비잘림 확인). 로그인 필요한 대시보드/RSVP는 실제 CSS를 그대로 복사한 정적 재현 페이지(public/ 임시 서빙, 이후 삭제)로 `.stats`(2400px에서 280px 캡 확인)/`.table-actions`(줄바꿈 확인) 개별 검증(재현 페이지 자체의 box-sizing 누락으로 인한 무관한 아티팩트 1건 확인 후 무시). settings/media/admin은 기존 코드베이스 패턴(워크플로우 검증 근거 포함)에 근거해 코드 레벨로만 확인.
 
 tsc 0, 전체 e2e+unit 103 passed(회귀 없음), `next build --webpack` 통과.
+
+## 2026-09-11 (24) — 가입에 실명 필드 추가 + RSVP 문구 실명 유도
+
+**요청(사용자):** "가입할 때 닉네임 말고 무조건 실명으로 해야 참석자를 알 수 있음."
+
+**구조 파악·정정 안내:** RSVP 응답은 가입/로그인 없이 누구나 공개 링크에서 이름을 직접 입력해 제출(share-bar.tsx 기존 `이름` 필드) — 참석자 식별은 이미 가입 닉네임과 무관하게 이 자유 텍스트 필드가 담당. "닉네임처럼 보이는 것"은 로그인된 사용자가 RSVP할 때 자동 채워지는 기본값(`user_metadata.name`이 이제까지 한 번도 안 채워져 이메일 아이디로 대체, share-bar.tsx:75)이며 이마저 자유롭게 수정 가능. 가입을 실명으로 강제해도 참석자 식별 자체는 해결 안 됨을 설명 후 사용자가 "RSVP 문구 강화 + 가입 이름 필드 추가" 둘 다 선택.
+
+**구현:**
+- `login/actions.ts` `signUpAction`에 `name` 파라미터 추가(필수), `auth.admin.createUser({..., user_metadata:{name}})`로 계정 생성 시점에 실명 시드 — 이걸로 로그인 사용자의 RSVP 기본값이 이메일 아이디 대신 실명이 됨(여전히 수정 가능, 강제 아님).
+- `login/page.tsx` 가입 모드에만 "이름 (실명)" 필드 추가(required, autoFocus, maxLength 40, 힌트 문구), 로그인 모드에는 안 보임(이메일 필드가 autoFocus 회수).
+- `share-bar.tsx` RSVP 이름 필드: 라벨 "이름"→"이름 (실명)", placeholder "성함을 입력하세요"→"실명을 입력해 주세요 (참석자 확인용)" — 넛지만, 강제 아님(자유 텍스트 유지).
+- `login.css`에 `.auth-hint`(settings.css `.set-hint`와 동일 톤) 추가.
+
+**검증:** tsc 0, eslint(신규 이슈 0 — share-bar.tsx의 사전 존재 이슈 3건은 git stash로 원본 대조해 무관함 확인). 실제 계정 생성/가입 폼 제출은 정책상 수행 안 함(계정 생성·비밀번호 인증은 금지 행동) — 렌더링만 브라우저로 확인(가입 모드에 필드+required+autoFocus 정상, 로그인 모드엔 안 보임, RSVP 모달 라벨/placeholder 정상 반영). 기존 e2e 1건(viewer-smoke.spec.ts:54)이 옛 placeholder 문자열에 의존해 깨짐 → `input[autocomplete="name"]` 셀렉터로 교체(문구 변경에 강건하게). 전체 e2e+unit 135 passed. **실제 가입 플로우 최종 확인은 배포본에서 사용자 본인이 해주세요** — 이름 입력→계정 생성→로그인 후 RSVP 열면 이름이 자동 채워지는지.
