@@ -968,3 +968,11 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **수정(발견 갭):** 풀/공개 뷰어에 main 랜드마크 부재(axe critical 게이트엔 안 걸리나 스크린리더 탐색에 필요). InvitationViewer의 `.iv-doc`를 `contained`가 아닐 때 `<main>`으로 렌더(에디터 contained 프리뷰는 div 유지 → 에디터 앱 안에 stray main 방지). 전 테마·공개 /i/ 공통 적용.
 
 **검증(브라우저):** /preview main 1개(.iv-doc=MAIN), 에디터는 main 0개(프리뷰 2개 다 div). tsc(앱) 0, eslint 0. *후속(보류):* 8개 테마로 axe 스캔 확장은 @playwright/test 로컬 미설치로 검증 불가 + 관리자가 테스트 스위트 활발히 소유 중이라, 관리자 몫으로 남김.
+
+## 2026-09-11 (15) — 에디터 회귀 e2e 테스트 추가
+
+**요청(사용자):** "다음 작업진행" → 이번 세션에서 고친 ~12개 에디터 수정을 Playwright e2e로 보호(회귀 방지). 사용자가 "에디터 회귀 테스트 작성" 선택.
+
+**작성:** `tests/e2e/editor-smoke.spec.ts` (모바일 iPhone 프로파일, 데모 모드로 /editor?template= 직접 진입). 6개 테스트: ①커버 삭제 불가·타 섹션 삭제 가능, ②테마 전환 시 미지원 섹션 "미표시" 배지+프리뷰 제외(romantic→cute), ③새 섹션이 엔딩 앞에 삽입, ④battle matchInfo 인스펙터 편집기, ⑤gaming champions 인스펙터 편집기, ⑥프리뷰 문구 탭→문구 스타일 패널.
+
+**로컬 검증:** @playwright/test·@axe-core/playwright는 워크트리 공유 node_modules에 미설치였음(main package.json엔 선언됨) → `npm install --no-save`로 설치(브라우저는 이미 캐시). `next build --webpack` + `next start :3200` 후 `BASE_URL=... playwright test e2e/editor-smoke --project=mobile-chrome` → **6 passed**(재시도 0, 결정적). 디버깅에서 배운 것: `.m-sec-type`는 CSS uppercase라 assert엔 textContent 사용; 열린 시트의 backdrop(z8)이 탭바(z5)를 덮어 시트 전환 전 닫아야 함; 커버 섹션 id는 샘플마다 다름(q-cover/r-cover 등)이라 `[data-sec-id]`(any)로 준비 대기. tsc 0, eslint 0.
