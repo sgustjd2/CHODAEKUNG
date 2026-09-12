@@ -1024,3 +1024,15 @@ Use this only for material decisions, discrepancies, or migrations. Do not log r
 **추가:** `src/lib/invitation/crop.ts`(coverScale/clampPos/cropRegion 순수함수, DOM/React 무관)로 크롭 기하 추출. image-cropper.tsx가 이를 사용(동작 동일). `tests/unit/crop.spec.ts` 6개 — 출력 비율=프레임 비율, 소스영역이 이미지 경계 내(centered zoom1), 줌↑=소스영역↓(1/2), maxOut 캡, clampPos가 커버 유지.
 
 **검증:** unit 6 passed, tsc 0, eslint 0. 리팩터 후 재빌드+cropper e2e 재실행도 통과(동작 보존 확인).
+
+## 2026-09-11 (22) — 에디터 UI: 커버 사진 썸네일 칸 넓어짐 수정
+
+**요청(사용자):** 스크린샷 — 넓은 화면(~533px)에서 "커버 사진" 썸네일 칸이 이상하게 넓어짐. 에디터 전반 칸 간격/마진 체크 후 수정.
+
+**원인:** `.cover-thumbs`가 `grid-template-columns: 1fr 1fr`(고정 2열) → 모바일 시트 폭이 넓으면(533px) 썸네일이 227×227px로 비대. 반면 `.m-thumbs`(디자인 커버 배경)는 4열이라 정상.
+
+**수정:** `.cover-thumbs`를 `repeat(auto-fill, minmax(100px, 1fr))`로. 데스크톱 320px 인스펙터=2열(112px, 불변), 375px 폰=2열(148px, 불변), 533px 시트=4열(110px, 수정), 넓을수록 열 추가. `.editor-page` 중첩 안이라 자동 에디터-스코프.
+
+**전체 감사(533px 계측):** 유일한 비대 그리드는 `.cover-thumbs`뿐. `.m-thumbs`(4열 119px), 갤러리 `.insp-photos`(3열 149px, globals 공유·/media 영향이라 손 안 댐, 비대 아님), color/palette/radio-row는 flex-wrap이라 비대 없음. 마진/패딩(insp-group 16px 등) 이상 없음.
+
+**검증(브라우저 계측):** 533px 전 227→후 110(4열), 데스크톱/375px 불변(2열), 갤러리 3열 유지. CSS-only.

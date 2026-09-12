@@ -157,7 +157,9 @@
   .ts-float-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-family: var(--font-en); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
   .ts-float-head button { background: none; border: none; font-size: 13px; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 2px; }
   .ts-float-head button:hover { color: var(--ink); }
-  .cover-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  /* auto-fill so thumbnails stay ~100-140px instead of ballooning to 2 huge columns on wide sheets
+     (desktop 320px inspector keeps 2 cols; a wide mobile sheet gets 4). */
+  .cover-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; }
   .cover-thumb { aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; width: 100%; }
   .cover-thumb.active { border-color: var(--wax); }
   .col-inspector .foot { border-top: 1px solid var(--line); padding: 14px 16px; display: flex; gap: 8px; flex-shrink: 0; }
