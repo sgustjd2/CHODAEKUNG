@@ -963,6 +963,7 @@
   background: var(--paper-2);
   background-image: none;
   --wax: #A8474A; /* the shared coral share-pill button carries white text → darken for AA (default only) */
+  --wax-deep: #9E4044; /* its :hover fill (base rule uses --wax-deep, which is otherwise LIGHTER) → keep white text AA */
 
   .iv-doc { background: var(--iv-bg, #0D0F0A); font-family: var(--font-mono); font-size: calc(12px * var(--iv-fs, 1)); line-height: calc(1.6 * var(--iv-lh, 1)); padding: 20px 16px 40px; position: relative; }
   .iv-doc::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(126,215,126,0.03) 0, rgba(126,215,126,0.03) 1px, transparent 1px, transparent 3px); pointer-events: none; z-index: 1; }

@@ -58,8 +58,8 @@
 .adm-mini { padding: 6px 10px; background: var(--paper-2); border: 1px solid var(--line-strong); border-radius: var(--r-sm); font-family: var(--font-ko); font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; white-space: nowrap; text-decoration: none; }
 .adm-mini:hover { border-color: var(--wax); color: var(--wax-deep); }
 .adm-mini:disabled, .adm-mini[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-.adm-mini.danger { color: var(--wax-deep); }
-.adm-mini.danger:hover { background: var(--wax-deep); color: #fff; border-color: transparent; }
+.adm-mini.danger { color: var(--wax-onpage); }
+.adm-mini.danger:hover { background: var(--wax-press); color: #fff; border-color: transparent; }
 
 .adm-empty { background: var(--card); border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 56px 24px; text-align: center; color: var(--muted); }
 

@@ -14,9 +14,12 @@ import { getServiceClient, isDbEnabled } from "@/lib/db/client";
  * of an email-derived string. Still freely editable per-RSVP — this only fixes the default.
  */
 export async function signUpAction(email: string, password: string, name: string) {
-  if (!isDbEnabled()) return { ok: false as const, error: "백엔드가 설정되지 않았어요 (Supabase 키 필요)." };
-  const trimmedName = name.trim();
+  // Trust boundary: a server action can be called directly, so the form's maxLength isn't enough —
+  // re-check the name here before it's stored in user_metadata (40 matches the form's maxLength).
+  const trimmedName = typeof name === "string" ? name.trim() : "";
   if (!trimmedName) return { ok: false as const, error: "이름을 입력해 주세요." };
+  if (trimmedName.length > 40) return { ok: false as const, error: "이름은 40자 이내로 입력해 주세요." };
+  if (!isDbEnabled()) return { ok: false as const, error: "백엔드가 설정되지 않았어요 (Supabase 키 필요)." };
   const { error } = await getServiceClient().auth.admin.createUser({
     email,
     password,

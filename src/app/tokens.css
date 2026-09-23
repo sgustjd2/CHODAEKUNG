@@ -27,6 +27,10 @@
      it per invitation (darkened for light pages, lightened for dark themes) so custom accents stay
      readable; --wax-deep is unchanged for panels that pair with white text. */
   --wax-onpage:   #B84F4F;
+  /* Hover/pressed fill for white-text coral buttons on app & marketing pages (not the viewer, whose
+     buttons follow the per-invitation accent). Must be DARKER than --wax-onpage: --wax-deep is
+     actually lighter than --wax, so using it as a hover fill dropped white text to ~3.65:1. ≈6.2:1. */
+  --wax-press:    #A04346;
   --wax-light:    #F5B5B0;   /* 연한 피치 */
   --wax-soft:     #FCE0DC;   /* 아주 연한 블러시 */
   --wax-tint:     #FEF6F4;   /* 배경용 미묘 블러시 */
@@ -256,8 +260,8 @@ p, .t-body { font-size: var(--t-body-size); font-weight: var(--t-body-weight); l
 .btn:active { transform: scale(0.97); }
 .btn-primary { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
 .btn-primary:hover { background: #12102a; box-shadow: var(--shadow-md); }
-.btn-wax, .btn-rose { background: var(--wax); color: var(--paper); box-shadow: var(--shadow-wax); }
-.btn-wax:hover, .btn-rose:hover { background: var(--wax-deep); }
+.btn-wax, .btn-rose { background: var(--wax-onpage); color: var(--paper); box-shadow: var(--shadow-wax); }
+.btn-wax:hover, .btn-rose:hover { background: var(--wax-press); }
 .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
 .btn-ghost:hover { background: rgba(26,26,46,0.04); }
 .btn-outline { background: var(--card); color: var(--ink); border: 1px solid var(--line-strong); }

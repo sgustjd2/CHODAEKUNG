@@ -18,7 +18,7 @@
   margin-left: 16px; background: var(--wax-onpage); color: #fff;
   padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none;
 }
-.guide-cta-sm:hover { background: var(--wax-deep); }
+.guide-cta-sm:hover { background: var(--wax-press); }
 
 .guide-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 90px; }
 .guide-head { text-align: center; margin-bottom: 44px; }
@@ -52,7 +52,7 @@
 .guide-final-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .guide-btn { padding: 13px 28px; border-radius: 999px; font-size: 15px; font-weight: 700; text-decoration: none; }
 .guide-btn.primary { background: var(--wax-onpage); color: #fff; }
-.guide-btn.primary:hover { background: var(--wax-deep); }
+.guide-btn.primary:hover { background: var(--wax-press); }
 .guide-btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 .guide-btn.ghost:hover { background: var(--paper-2); }
 

@@ -10,6 +10,7 @@ import "./login.css";
 
 /** Supabase returns English auth errors — show Korean instead. */
 function friendlyAuthError(msg: string): string {
+  if (/[가-힣]/.test(msg)) return msg; // our own action's validation messages are already user-facing Korean
   const m = msg.toLowerCase();
   if (m.includes("already registered") || m.includes("already been registered") || m.includes("already exists") || m.includes("email_exists")) return "이미 가입된 이메일이에요. 로그인해 주세요.";
   if (m.includes("invalid login credentials")) return "이메일 또는 비밀번호가 맞지 않아요.";
@@ -111,7 +112,7 @@ export default function LoginPage() {
             <label className="auth-field">
               <span>이름 (실명)</span>
               <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="실명을 입력해 주세요" autoComplete="name" maxLength={40} autoFocus />
-              <p className="auth-hint">참석자가 누구인지 알아볼 수 있도록 실명으로 입력해 주세요.</p>
+              <span className="auth-hint">참석자가 누구인지 알아볼 수 있도록 실명으로 입력해 주세요.</span>
             </label>
           )}
           <label className="auth-field">
