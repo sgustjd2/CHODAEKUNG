@@ -86,14 +86,24 @@ export async function listGuestbook(slug: string): Promise<GuestbookRow[]> {
  */
 export async function getPublishedInvitation(slug: string): Promise<Invitation | null> {
   if (isDbEnabled()) {
-    const { data, error } = await getServiceClient()
-      .from("invitations")
-      .select("data, visibility")
-      .eq("slug", slug)
-      .maybeSingle();
-    return !error && data && data.visibility !== "draft" ? (data.data as Invitation) : null;
+    return publishedFromRow(await getServiceClient().from("invitations").select("data, visibility").eq("slug", slug).maybeSingle());
   }
   return getSampleOrNull(slug);
+}
+
+/**
+ * The public invitation from its row read — `null` means genuinely not there (→ 404). A DB ERROR is not
+ * "not found": it used to be, so during any Supabase blip every shared link told guests the invitation
+ * doesn't exist, and a 404 is what link scrapers (the KakaoTalk preview) and crawlers remember as gone.
+ * Throw instead, so the page shows its retryable error screen (HTTP 500) and the OG route doesn't serve
+ * a generic card that could be cached as the link's preview.
+ */
+export function publishedFromRow(res: {
+  data: { data: unknown; visibility: string } | null;
+  error: { message: string } | null;
+}): Invitation | null {
+  if (res.error) throw new Error(`invitation read failed: ${res.error.message}`);
+  return res.data && res.data.visibility !== "draft" ? (res.data.data as Invitation) : null;
 }
 
 /** May this invitation appear in search results? Only ones explicitly published as Public

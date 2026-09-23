@@ -1112,3 +1112,11 @@ tsc 0, 전체 e2e+unit 103 passed(회귀 없음), `next build --webpack` 통과.
 `src/lib/image-shrink.ts` `shrinkForUpload()`: JPEG 계열(HEIC/HEIF 포함) 사진을 긴 변 2048px·JPEG 0.85로 축소. PNG/WebP/GIF(투명·애니메이션 가능)와 이미 작은 사진은 그대로, 디코딩 실패 시 원본 사용, 결과가 원본보다 크면 원본 유지. 모든 업로드가 지나는 `uploadPhoto`에서 5MB 검사 전에 적용 → 큰 휴대폰 사진도 업로드 가능해짐. 픽셀 수 약 1/4.
 
 검증: e2e `image-shrink.spec`이 실제 크로미움에서 함수 소스를 주입해 실행(4000×3000→2048×1536·크기 절반 미만, 세로 사진 방향 유지, 작은 JPEG·PNG는 그대로). 실제 업로드는 백엔드 필요라 로컬 미검증 — 배포본에서 확인 필요. 전체 242 passed.
+
+## 2026-09-23 (29) — DB 장애를 "초대장 없음(404)"으로 표시하던 문제
+
+`getPublishedInvitation`이 DB **오류**도 "행 없음"과 똑같이 null로 돌려, Supabase가 잠깐만 불안정해도 모든 공유 링크가 **404 "초대장을 찾을 수 없어요"**를 보여줬음. 하객에게 오해를 주고, 404는 카톡 링크 미리보기 스크레이퍼·검색엔진이 "없어진 페이지"로 기억하는 신호. OG 이미지 라우트는 같은 상황에서 **200 일반 "초대장" 카드**를 반환 → 링크 미리보기로 캐시될 위험.
+
+수정: 판단을 순수 함수 `publishedFromRow()`로 분리 — DB 오류면 throw(→ 뷰어의 기존 에러 경계 "초대장을 여는 중 문제가 생겼어요 · 다시 시도", HTTP 500), 행 없음·draft만 null(→ 404). 원인은 서버 로그에 남고 하객에겐 노출 안 됨.
+
+검증: unit `published-row.spec`. **실측**: 도달 불가 Supabase(127.0.0.1:9)로 빌드한 장애 시뮬레이션 서버에서 초대장 페이지·OG 이미지 모두 HTTP 500, 화면은 재시도 에러 화면(브라우저로 확인), 서버 로그에 `invitation read failed: TypeError: fetch failed`. 전체 245 passed.
