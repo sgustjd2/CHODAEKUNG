@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { waitForHydration } from "./hydration";
 
 /**
  * Editor smoke (mobile bottom-sheet layout — the config's iPhone profile). Guards editor behaviours
@@ -15,6 +16,8 @@ async function openEditor(page: Page, template: string) {
   // seed applied → the preview has rendered its sections (the cover section's id varies by sample,
   // so match any section wrapper rather than a specific id).
   await expect(page.locator(".m-preview [data-sec-id]").first()).toBeVisible({ timeout: 25_000 });
+  // …but the page is prerendered, so that is visible before the tab bar is interactive — wait for it.
+  await waitForHydration(page, ".m-tabs .m-tab");
 }
 
 /** Open a bottom-sheet tab by its label (내용 / 디자인 / 섹션 / 효과). An already-open sheet's backdrop
@@ -186,6 +189,7 @@ test.describe("desktop editor (3-column)", () => {
   test("clicking a section scrolls the inspector to that section's editor group", async ({ page }) => {
     await page.goto("/editor?template=jisoo-minjun", { waitUntil: "domcontentloaded" });
     await page.waitForSelector(".ed-desktop .col-sections .sec-item", { timeout: 30_000 });
+    await waitForHydration(page, ".ed-desktop .col-sections .sec-item .sec-icon");
 
     // select the 장소(location) row via its icon (not the type-menu trigger, which opens a dropdown)
     const locationRow = page.locator(".col-sections .sec-item").filter({ has: page.locator(".sec-type", { hasText: /^location$/ }) });
@@ -242,6 +246,7 @@ test.describe("desktop editor (3-column)", () => {
     });
     await page.goto("/editor?template=jisoo-minjun", { waitUntil: "domcontentloaded" });
     await page.waitForSelector(".ed-desktop .phone-scroll [data-edit]", { timeout: 30_000 });
+    await waitForHydration(page, ".ed-desktop .phone-scroll [data-edit]");
 
     // focusing a field opens the floating style toolbar — the exact trigger of the fixed loop
     const fields = page.locator(".phone-scroll [data-edit]");

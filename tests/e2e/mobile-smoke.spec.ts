@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { waitForHydration } from "./hydration";
 
 /**
  * Mobile smoke: the /new wizard → editor happy path on an iPhone profile. Guards the mobile
@@ -36,6 +37,7 @@ async function next(page: Page, expectVisible: ReturnType<Page["locator"]>) {
 /** Drive the /new wizard with a known event + basics, then open the editor. */
 async function createFromWizard(page: Page) {
   await page.goto("/new", { waitUntil: "domcontentloaded" });
+  await waitForHydration(page, ".event-card"); // prerendered: a pre-hydration card tap is dropped
   const card = page.getByText("동호회 모임", { exact: true });
   await card.scrollIntoViewIfNeeded();
   await card.click();
