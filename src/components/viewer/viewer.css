@@ -127,15 +127,19 @@
 .gcover-text { align-items: center; justify-content: center; text-align: center; }
 .gcover-text .gcover-body { align-items: center; gap: 20px; }
 .gcover-text .gcover-photo::after { background: rgba(14,14,22,0.74); }
-.gcover-text .gcover-eb { color: var(--wax); opacity: 1; }
+/* accent text on the dark overlay → the pastel "accent on a dark surface" token (the coral fill was ≈1.7–3.9:1 on
+   any photo). accentVars() derives it in the accent's hue for custom accents. */
+.gcover-text .gcover-eb { color: var(--wax-light); opacity: 1; }
 .gcover-text .gcover-title { font-size: calc(40px * var(--iv-fs, 1)); letter-spacing: calc(0.01em + var(--iv-ls, 0em)); }
 .gcover-text .gcover-date { margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.28); }
 
-/* Split — photo top, accent (--wax-deep) panel bottom */
+/* Split — photo top, accent (--wax fill) panel bottom */
 .gcover-split { flex-direction: column; }
 .gcover-split .gcover-photo { position: relative; inset: auto; flex: 0 0 56%; }
 .gcover-split .gcover-photo::after { background: linear-gradient(180deg, transparent 65%, rgba(0,0,0,0.12)); }
-.gcover-split .gcover-body { flex: 1; background: var(--wax-deep); align-items: center; justify-content: center; text-align: center; }
+/* solid accent panel → the FILL + its ink (AA by construction), text at full opacity (0.9–0.95 dipped to ~4.0–4.4) */
+.gcover-split .gcover-body { flex: 1; background: var(--wax); color: var(--wax-ink, #fff9f2); align-items: center; justify-content: center; text-align: center; }
+.gcover-split :is(.gcover-eb, .gcover-sub, .gcover-date) { opacity: 1; }
 .gcover-split .gcover-title { font-size: calc(40px * var(--iv-fs, 1)); }
 .gcover-split .gcover-sub { margin-left: auto; margin-right: auto; }
 
@@ -545,6 +549,8 @@
 .iv.t-timeline {
   color: #2A2A3E;
   font-family: var(--font-ko);
+  /* accent text also sits on the gold .cost-card (#FCECC4), where #B84F4F is ~4.2 → deepen for AA (default only) */
+  --wax-onpage: #A8474A;
 
   .tl-cover { padding: 44px 26px 40px; text-align: center; position: relative; overflow: hidden; }
   .tl-cover-hw { background: radial-gradient(ellipse at 20% 10%, var(--wax-soft) 0%, transparent 55%), radial-gradient(ellipse at 90% 95%, var(--peach-soft) 0%, transparent 60%), var(--paper); }
@@ -618,7 +624,8 @@
   .day-tabs { display: flex; gap: 6px; padding: 5px; background: var(--paper-2); border-radius: 100px; margin-bottom: 20px; overflow-x: auto; }
   .day-tab { flex: 1; padding: 9px 14px; background: transparent; border: none; border-radius: 100px; font-family: var(--font-ko); font-size: calc(12px * var(--iv-fs, 1)); font-weight: 800; color: var(--fg-3); cursor: pointer; text-align: center; white-space: nowrap; }
   .day-tab.active { background: var(--ink); color: var(--paper); }
-  .day-tab .en { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); letter-spacing: calc(0.16em + var(--iv-ls, 0em)); margin-left: 4px; opacity: 0.7; }
+  .day-tab .en { font-family: var(--font-en); font-size: calc(9px * var(--iv-fs, 1)); letter-spacing: calc(0.16em + var(--iv-ls, 0em)); margin-left: 4px; }
+  .day-tab.active .en { opacity: 0.7; } /* dimming only reads on the dark active tab; inactive (--fg-3 on light) needs full opacity for AA */
 
   .cost-card { padding: 22px 20px; background: var(--gold-light); border-radius: 20px; margin-top: 16px; text-align: center; }
   .cost-card .cost-eb { font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.28em + var(--iv-ls, 0em)); text-transform: uppercase; color: var(--wax-deep); margin-bottom: 6px; }
@@ -651,7 +658,7 @@
   .route-info { flex: 1; padding-top: 2px; }
   .route-info .t { font-weight: 800; font-size: calc(14px * var(--iv-fs, 1)); color: var(--ink); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); }
   .route-info .m { font-size: calc(12px * var(--iv-fs, 1)); color: var(--fg-3); margin-top: 2px; }
-  .route-info .time-t { font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 700; color: var(--sky-deep); letter-spacing: calc(0.12em + var(--iv-ls, 0em)); margin-top: 4px; }
+  .route-info .time-t { font-family: var(--font-en); font-size: calc(10px * var(--iv-fs, 1)); font-weight: 700; color: #2F5566; /* --sky-deep is a mid-tone (~2.3:1 as text) — deep sky, as .tl-badge.sky */ letter-spacing: calc(0.12em + var(--iv-ls, 0em)); margin-top: 4px; }
 
   .tl-cta { padding: 48px 26px 40px; text-align: center; background: var(--wax-tint); border-top: 1px solid var(--line); }
   .tl-cta h3 { font-weight: 900; font-size: calc(30px * var(--iv-fs, 1)); letter-spacing: calc(-0.03em + var(--iv-ls, 0em)); color: var(--ink); line-height: calc(1.05 * var(--iv-lh, 1)); margin-bottom: 8px; }
@@ -723,7 +730,7 @@
   .g-lane-icon.jgl { background: rgba(147,245,178,0.25); color: #93F5B2; }
   .g-lane-icon.mid { background: rgba(233,178,217,0.25); color: #E9B2D9; }
   .g-lane-icon.adc { background: rgba(245,178,147,0.25); color: #F5B293; }
-  .g-lane-icon.sup { background: rgba(147,178,245,0.25); color: #93B2F5; }
+  .g-lane-icon.sup { background: rgba(147,178,245,0.25); color: #B3CBFA; } /* #93B2F5 was 4.2 on the filled-slot tint */
   .g-slot-open .g-lane-icon { background: transparent; border: 1.5px dashed rgba(233,217,241,0.3); color: rgba(233,217,241,0.65); }
   .g-p-info { min-width: 0; }
   .g-p-name { font-weight: 800; font-size: calc(14px * var(--iv-fs, 1)); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); color: var(--paper); margin-bottom: 3px; }

@@ -110,18 +110,25 @@ export function blankSection(type: SectionType): Section {
   }
 }
 
-/** A theme's representative bundled sample (first match), for sourcing example content. */
-function sampleForTheme(theme: ThemeId): Invitation | undefined {
-  return Object.values(sampleInvitations).find((s) => s.theme === theme);
+/** The first section of `type` across ALL of a theme's bundled samples (in registry order). Searching
+ * only the first sample left types that another sample demonstrates (timeline cost/route/dayPlan,
+ * gaming tierChart/champions) as empty shells when added from the editor. */
+function exampleSource(type: SectionType, theme: ThemeId): Section | undefined {
+  for (const s of Object.values(sampleInvitations)) {
+    if (s.theme !== theme) continue;
+    const hit = s.sections.find((x) => x.type === type);
+    if (hit) return hit;
+  }
+  return undefined;
 }
 
 /**
- * A section pre-filled with the theme's example content — cloned from that theme's sample section of
- * the same type (with a fresh id), so an added or blank-canvas section shows theme-appropriate
- * examples instead of empty fields. Falls back to an empty shell when the sample has no such type.
+ * A section pre-filled with the theme's example content — cloned from a sample section of that theme and
+ * type (with a fresh id), so an added or blank-canvas section shows theme-appropriate examples instead
+ * of empty fields. Falls back to an empty shell when no sample of the theme has that type.
  */
 export function exampleSection(type: SectionType, theme: ThemeId): Section {
-  const src = sampleForTheme(theme)?.sections.find((s) => s.type === type);
+  const src = exampleSource(type, theme);
   if (!src) return blankSection(type);
   const id = `${type}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   return { ...structuredClone(src), id } as Section;

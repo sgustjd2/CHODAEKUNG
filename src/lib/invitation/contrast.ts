@@ -96,7 +96,9 @@ function lightenUntil(rgb: RGB, ok: (l: number) => boolean): string {
  * - `--wax-deep`  accent text on light surfaces (white cards) + accent PANELS carrying light text. On a
  *                 light page it equals `--wax-onpage`; on a dark page it's a deep shade (≥6.5:1 vs white,
  *                 matching the verified default battle panel) so translucent/pastel panel text still passes.
- * - `--wax-light` (dark pages only) pastel accent text — legible on the deep panels and the darker page.
+ * - `--wax-light` pastel accent text on a DARK surface — on dark pages legible on the deep panels (and the
+ *                 darker page); on light pages legible on the darkest-case photo overlay a light theme puts
+ *                 accent text on (the generic "text" cover), so it keeps the accent's hue there too.
  */
 export function accentVars(accent: string, pageBg: string): Record<string, string> {
   const rgb = parseHex(accent);
@@ -117,10 +119,14 @@ export function accentVars(accent: string, pageBg: string): Record<string, strin
   const onpage = accentOn(toHex(...rgb), pageBg);
   const deep = dark ? darkenUntil(rgb, (l) => ratio(l, 1) >= 6.5) : onpage;
 
-  const vars: Record<string, string> = { "--wax": fill, "--wax-ink": ink, "--wax-hover": hover, "--wax-onpage": onpage, "--wax-deep": deep };
-  if (dark) vars["--wax-light"] = accentOn(toHex(...rgb), deep);
-  return vars;
+  const light = accentOn(toHex(...rgb), dark ? deep : TEXT_COVER_OVERLAY_WORST);
+  return { "--wax": fill, "--wax-ink": ink, "--wax-hover": hover, "--wax-onpage": onpage, "--wax-deep": deep, "--wax-light": light };
 }
+
+/** The LIGHTEST the generic "text" cover's overlay can get: rgba(14,14,22,0.74) (viewer.css
+ * `.gcover-text .gcover-photo::after`) composited over a pure-white photo region. Accent text drawn there
+ * (`--wax-light`) must clear 4.5:1 against it — keep in sync if that overlay changes. */
+export const TEXT_COVER_OVERLAY_WORST = "#4D4D53";
 
 /** A darker shade of the accent for accent-COLORED TEXT (eyebrows, dates, D-day numbers) so it stays
  * legible on the light page. Darkens the hue toward black until it clears ~4:1 vs white; a dark accent

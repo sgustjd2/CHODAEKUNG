@@ -23,6 +23,13 @@ const PAGES = [
   { name: "viewer · minimal", url: "/i/appa-60", gateSerious: true },
   { name: "viewer · cute", url: "/i/cozy-home", gateSerious: true },
   { name: "viewer · timeline", url: "/i/jibdeuli", gateSerious: true },
+  // the remaining bundled samples — every template a user can start from (/editor?template=<slug>)
+  { name: "template · beongae (timeline)", url: "/i/beongae", gateSerious: true },
+  { name: "template · yangyang-mt (timeline)", url: "/i/yangyang-mt", gateSerious: true },
+  { name: "template · matjjang (battle)", url: "/i/matjjang", gateSerious: true },
+  { name: "template · lol-quick (gaming)", url: "/i/lol-quick", gateSerious: true },
+  { name: "template · lol-scrim (gaming)", url: "/i/lol-scrim", gateSerious: true },
+  { name: "template · mc-party (gaming)", url: "/i/mc-party", gateSerious: true },
   { name: "viewer · editorial", url: "/i/after-hours", gateSerious: true },
   { name: "viewer · battle (dark)", url: "/i/jogi-battle", gateSerious: true },
   { name: "viewer · gaming (dark)", url: "/i/lol-rank", gateSerious: true },

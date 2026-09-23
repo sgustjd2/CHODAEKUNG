@@ -86,3 +86,22 @@ test.describe("blankInvitation", () => {
     expect(blankInvitation().theme).toBe("romantic");
   });
 });
+
+test("exampleSection draws from ANY sample of the theme, not just the first", () => {
+  const byTheme: Record<string, (typeof sampleInvitations)[string][]> = {};
+  for (const s of Object.values(sampleInvitations)) (byTheme[s.theme] ??= []).push(s);
+  for (const [theme, samples] of Object.entries(byTheme)) {
+    const seen = new Set<string>();
+    for (const sample of samples)
+      for (const src of sample.sections) {
+        if (seen.has(src.type)) continue; // the first sample (in registry order) that has the type wins
+        seen.add(src.type);
+        const ex = exampleSection(src.type, theme as ThemeId);
+        expect(ex.content, `${theme}.${src.type} should use ${sample.slug}'s example`).toEqual(src.content);
+      }
+  }
+  // the cases that used to fall back to an empty shell (and, for dayPlan, crash the viewer)
+  expect((exampleSection("dayPlan", "timeline").content as { days: unknown[] }).days.length).toBeGreaterThan(0);
+  expect((exampleSection("route", "timeline").content as { stops: unknown[] }).stops.length).toBeGreaterThan(0);
+  expect((exampleSection("tierChart", "gaming").content as { cols: unknown[] }).cols.length).toBeGreaterThan(0);
+});

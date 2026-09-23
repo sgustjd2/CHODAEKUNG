@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { waxInk, waxDeep, accentOn, accentVars, WAX_INK_LIGHT, WAX_INK_DARK } from "../../src/lib/invitation/contrast";
+import { readFileSync } from "node:fs";
+import { waxInk, waxDeep, accentOn, accentVars, TEXT_COVER_OVERLAY_WORST, WAX_INK_LIGHT, WAX_INK_DARK } from "../../src/lib/invitation/contrast";
 
 /**
  * The accent-readability math (contrast.ts) underpins every custom-accent + a11y contrast decision.
@@ -94,7 +95,7 @@ for (const h of [0, 20, 40, 60, 90, 120, 160, 200, 230, 260, 290, 320])
 
 test.describe("accentVars — every custom-accent token is AA for its role", () => {
   // The viewer's per-theme text surfaces (light) + dark page backgrounds.
-  for (const page of ["#FFFFFF", "#FEF9F9", "#FBE9E7", "#F2EFE9", "#1A1A2E", "#14101E", "#0D0F0A"]) {
+  for (const page of ["#FFFFFF", "#FEF9F9", "#FBE9E7", "#F2EFE9", "#FCECC4", "#1A1A2E", "#14101E", "#0D0F0A"]) {
     test(`${SWEEP.length} swept accents on ${page}`, () => {
       const dark = relLum(page) < 0.18;
       for (const a of SWEEP) {
@@ -109,7 +110,7 @@ test.describe("accentVars — every custom-accent token is AA for its role", () 
           expect(contrast(v["--wax-light"], v["--wax-deep"]), `light-on-deep ${tag}`).toBeGreaterThanOrEqual(4.5);
         } else {
           expect(contrast(v["--wax-deep"], page), `deep text ${tag}`).toBeGreaterThanOrEqual(4.5);
-          expect(v["--wax-light"], `no --wax-light override on light pages ${tag}`).toBeUndefined();
+          expect(contrast(v["--wax-light"], TEXT_COVER_OVERLAY_WORST), `light on text-cover overlay ${tag}`).toBeGreaterThanOrEqual(4.5);
         }
       }
     });
@@ -132,5 +133,22 @@ test.describe("accentVars — every custom-accent token is AA for its role", () 
 
   test("invalid accent → only the raw --wax (defaults cover the rest)", () => {
     expect(accentVars("nope", "#FFFFFF")).toEqual({ "--wax": "nope" });
+  });
+});
+
+test.describe("generic 'text' cover overlay — accent text on a photo", () => {
+  test("TEXT_COVER_OVERLAY_WORST really is the CSS overlay over a white photo (kept in sync)", () => {
+    const css = readFileSync("src/components/viewer/viewer.css", "utf8");
+    const m = css.match(/\.gcover-text \.gcover-photo::after \{ background: rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\); \}/);
+    expect(m, "overlay rule not found — update this test with the CSS").not.toBeNull();
+    const [r, g, b, a] = m!.slice(1).map(Number);
+    const over = (c: number) => Math.round(c * a + 255 * (1 - a));
+    const [er, eg, eb] = rgb(TEXT_COVER_OVERLAY_WORST);
+    expect(Math.abs(over(r) - er)).toBeLessThanOrEqual(1);
+    expect(Math.abs(over(g) - eg)).toBeLessThanOrEqual(1);
+    expect(Math.abs(over(b) - eb)).toBeLessThanOrEqual(1);
+  });
+  test("the default --wax-light (#F5B5B0) clears AA on that worst case", () => {
+    expect(contrast("#F5B5B0", TEXT_COVER_OVERLAY_WORST)).toBeGreaterThanOrEqual(4.5);
   });
 });

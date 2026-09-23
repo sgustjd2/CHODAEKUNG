@@ -18,13 +18,14 @@ import { accentVars } from "@/lib/invitation/contrast";
 
 /** The surface a custom accent's TEXT sits on, per theme — what accentVars() makes it legible against.
  * Dark themes: their base --iv-bg. Light themes: the tightest common text surface (tinted section, cute's
- * eyebrow pill, editorial's cream paper), so the derived shade clears AA everywhere on that theme. */
+ * eyebrow pill, editorial's cream paper, timeline's gold cost card), so the derived shade clears AA
+ * everywhere on that theme. */
 const THEME_TEXT_BG: Partial<Record<string, string>> = {
   romantic: "#FEF9F9",
   minimal: "#FAFAFC",
   cute: "#FBE9E7",
   editorial: "#F2EFE9",
-  timeline: "#FAFAFC",
+  timeline: "#FCECC4", // the gold cost card
   battle: "#1A1A2E",
   gaming: "#14101E",
   developer: "#0D0F0A",
@@ -89,7 +90,6 @@ export function InvitationViewer({
   // User customizations, applied as CSS-var overrides on the invitation root — one place that
   // covers the contained editor preview, the full preview and the published page. Every theme's
   // CSS reads these vars (--wax = accent, --font-* = Korean text font, --ink = body text color).
-  // ponytail: --wax-deep uses the same hue as --wax (matches the editor); derive a darker shade if hover depth matters.
   const font = fontById(invitation.font);
   // Per-field font overrides (section.style.text[*].font) each need their Google font loaded too.
   const fieldFonts = new Set<string>();
