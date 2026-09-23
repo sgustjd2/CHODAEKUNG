@@ -33,7 +33,7 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   useEffect(() => {
     if (!authEnabled()) return;
     createBrowserSupabase()
-      .auth.getUser()
+      .then((sb) => sb.auth.getUser())
       .then(({ data }) => {
         const u = data.user;
         if (!u) return;
@@ -53,7 +53,7 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   }, [open]);
 
   const logout = async () => {
-    try { await createBrowserSupabase().auth.signOut(); } catch { /* ignore */ }
+    try { await (await createBrowserSupabase()).auth.signOut(); } catch { /* ignore */ }
     setOpen(false);
     router.push("/");
     router.refresh();

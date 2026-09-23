@@ -33,7 +33,7 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
     setNameBusy(true);
     setNameNote(null);
     try {
-      const { error } = await createBrowserSupabase().auth.updateUser({ data: { name: displayName.trim() } });
+      const { error } = await (await createBrowserSupabase()).auth.updateUser({ data: { name: displayName.trim() } });
       setNameNote(error ? { kind: "err", text: error.message } : { kind: "ok", text: "저장했어요." });
     } catch {
       setNameNote({ kind: "err", text: "저장에 실패했어요." });
@@ -47,7 +47,7 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
     if (pw1 !== pw2) return setPwNote({ kind: "err", text: "두 비밀번호가 일치하지 않아요." });
     setPwBusy(true);
     try {
-      const { error } = await createBrowserSupabase().auth.updateUser({ password: pw1 });
+      const { error } = await (await createBrowserSupabase()).auth.updateUser({ password: pw1 });
       if (error) setPwNote({ kind: "err", text: error.message });
       else {
         setPwNote({ kind: "ok", text: "비밀번호를 변경했어요." });
@@ -62,7 +62,7 @@ export function SettingsClient({ email, name, createdAt }: { email: string; name
 
   const logout = async () => {
     try {
-      await createBrowserSupabase().auth.signOut();
+      await (await createBrowserSupabase()).auth.signOut();
     } catch {
       /* ignore */
     }

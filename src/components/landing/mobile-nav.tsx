@@ -11,7 +11,7 @@ export function MobileNav({ authed = false }: { authed?: boolean }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   const logout = async () => {
-    try { await createBrowserSupabase().auth.signOut(); } catch { /* ignore */ }
+    try { await (await createBrowserSupabase()).auth.signOut(); } catch { /* ignore */ }
     close();
     router.push("/");
     router.refresh();

@@ -50,7 +50,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!authEnabled()) return;
     createBrowserSupabase()
-      .auth.getUser()
+      .then((sb) => sb.auth.getUser())
       .then(({ data }) => {
         if (!data.user) return;
         const n = new URLSearchParams(window.location.search).get("next");
@@ -67,7 +67,7 @@ export default function LoginPage() {
     }
     setBusy(true);
     setMsg(null);
-    const sb = createBrowserSupabase();
+    const sb = await createBrowserSupabase();
     // Return to the page that sent us here (?next=), guarding against open redirects.
     const dest = safeNextPath(new URLSearchParams(window.location.search).get("next"));
     try {

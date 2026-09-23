@@ -8,8 +8,7 @@ import { LIMITS } from "@/lib/invitation/validate";
 import { SHARE_EVENT, type ShareAction } from "@/lib/invitation/share-actions";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
-import { downloadQrPng } from "@/components/ui/qr-code";
-import { createBrowserSupabase } from "@/lib/db/supabase-browser";
+import { authEnabled, createBrowserSupabase } from "@/lib/db/supabase-browser";
 
 export type ShareMeta = { title: string; description: string; image: string };
 
@@ -65,24 +64,24 @@ export function ShareBar({
   const triggerRef = useRef<HTMLElement | null>(null); // the control that opened the dialog, to restore focus to
   const shareActionsRef = useRef<Record<ShareAction, () => void>>(null as never); // latest kakao/copy/cal, for the SHARE_EVENT bridge
 
-  // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name.
+  // Pre-fill the RSVP name from the signed-in account, so logged-in guests show their real name. Done the
+  // first time the RSVP dialog opens (the only place the name shows), NOT on mount — the auth client is
+  // ~67KB gzip, and fetching it on mount made every guest who merely reads the invitation download it.
+  const prefillStarted = useRef(false);
   useEffect(() => {
-    if (preview) return;
-    let alive = true;
-    (async () => {
-      try {
-        const { data } = await createBrowserSupabase().auth.getUser();
+    if (!open || preview || prefillStarted.current || !authEnabled()) return;
+    prefillStarted.current = true;
+    createBrowserSupabase()
+      .then((sb) => sb.auth.getUser())
+      .then(({ data }) => {
         const u = data.user;
         const n = (typeof u?.user_metadata?.name === "string" && u.user_metadata.name.trim()) || u?.email?.split("@")[0] || "";
-        if (alive && n) setName((prev) => prev || n);
-      } catch {
-        /* backend not configured / signed out */
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [preview]);
+        if (n) setName((prev) => prev || n); // never overwrite what the guest (or a saved RSVP) already filled
+      })
+      .catch(() => {
+        /* signed out / backend not configured */
+      });
+  }, [open, preview]);
 
   // Recognize a returning guest (this browser) and pre-fill their prior RSVP so they can edit it
   // rather than send a duplicate. Saved per-slug on submit; the backend dedupes by name, so a
@@ -240,7 +239,8 @@ export function ShareBar({
     kakao: shareKakao,
     copy: copyLink,
     cal: () => downloadIcs(eventStart || "", share?.title || "초대", eventLocation || "", typeof window !== "undefined" ? window.location.href : ""),
-    qr: () => { if (typeof window !== "undefined") downloadQrPng(window.location.href, `${slug}-qr.png`); },
+    // QR library loads on demand — only the developer theme offers this action, so don't ship it to every guest.
+    qr: () => { if (typeof window !== "undefined") void import("@/components/ui/qr-code").then(({ downloadQrPng }) => downloadQrPng(window.location.href, `${slug}-qr.png`)); },
   };
 
   return (

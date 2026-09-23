@@ -81,7 +81,7 @@ export function DashboardClient({ userEmail, displayName, myInvitations }: { use
 
   const logout = async () => {
     try {
-      await createBrowserSupabase().auth.signOut();
+      await (await createBrowserSupabase()).auth.signOut();
     } catch {
       /* ignore */
     }
