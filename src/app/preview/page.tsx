@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { CSSProperties } from "react";
 import { InvitationViewer } from "@/components/viewer/invitation-viewer";
 import type { Invitation } from "@/lib/invitation/types";
 import "@/components/viewer/viewer.css";
@@ -13,7 +12,6 @@ type SavedEditor = { draft?: Invitation; title?: string; hidden?: string[]; acce
 
 export default function PreviewPage() {
   const [invitation, setInvitation] = useState<Invitation | null>(null);
-  const [accent, setAccent] = useState<string | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "empty">("loading");
 
   useEffect(() => {
@@ -25,8 +23,10 @@ export default function PreviewPage() {
       const saved = JSON.parse(raw) as SavedEditor;
       if (!saved.draft) return setStatus("empty");
       const hidden = new Set(saved.hidden ?? []);
-      setInvitation({ ...saved.draft, sections: saved.draft.sections.filter((s) => !hidden.has(s.id)) });
-      setAccent(saved.accent ?? null);
+      // A legacy save kept the accent at the top level (new saves keep it in draft.accent) — fold it in, as
+      // the editor does, so the viewer derives every accent token from it (accentVars) instead of a raw wrapper.
+      const accent = saved.draft.accent ?? saved.accent ?? undefined;
+      setInvitation({ ...saved.draft, accent, sections: saved.draft.sections.filter((s) => !hidden.has(s.id)) });
       setStatus("ready");
     } catch {
       setStatus("empty");
@@ -43,9 +43,8 @@ export default function PreviewPage() {
   }
   if (!invitation) return <div className="pv-empty" aria-busy="true" />;
 
-  const style = accent ? ({ ["--wax"]: accent, ["--wax-deep"]: accent } as CSSProperties) : undefined;
   return (
-    <div style={style}>
+    <div>
       <div className="pv-badge" aria-hidden="true">
         미리보기
       </div>

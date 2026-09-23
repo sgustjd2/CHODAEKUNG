@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { waxInk, waxDeep, accentOn, WAX_INK_LIGHT, WAX_INK_DARK } from "../../src/lib/invitation/contrast";
+import { waxInk, waxDeep, accentOn, accentVars, WAX_INK_LIGHT, WAX_INK_DARK } from "../../src/lib/invitation/contrast";
 
 /**
  * The accent-readability math (contrast.ts) underpins every custom-accent + a11y contrast decision.
@@ -78,5 +78,59 @@ test.describe("accentOn — accent text made legible on a given background", () 
   });
   test("invalid input returns the original", () => {
     expect(accentOn("nope", "#ffffff")).toBe("nope");
+  });
+});
+
+/** HSL → hex, to sweep the whole colour space (hues × lightness × saturation) rather than hand-pick. */
+function hsl(h: number, s: number, l: number): string {
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return "#" + [f(0), f(8), f(4)].map((x) => Math.round(x * 255).toString(16).padStart(2, "0")).join("");
+}
+const SWEEP: string[] = [];
+for (const h of [0, 20, 40, 60, 90, 120, 160, 200, 230, 260, 290, 320])
+  for (const l of [0.2, 0.35, 0.5, 0.65, 0.8, 0.92]) for (const s of [0.35, 0.8]) SWEEP.push(hsl(h, s, l));
+
+test.describe("accentVars — every custom-accent token is AA for its role", () => {
+  // The viewer's per-theme text surfaces (light) + dark page backgrounds.
+  for (const page of ["#FFFFFF", "#FEF9F9", "#FBE9E7", "#F2EFE9", "#1A1A2E", "#14101E", "#0D0F0A"]) {
+    test(`${SWEEP.length} swept accents on ${page}`, () => {
+      const dark = relLum(page) < 0.18;
+      for (const a of SWEEP) {
+        const v = accentVars(a, page);
+        const tag = `${a} on ${page}`;
+        expect(contrast(v["--wax"], v["--wax-ink"]), `fill/ink ${tag}`).toBeGreaterThanOrEqual(4.5);
+        expect(contrast(v["--wax-hover"], v["--wax-ink"]), `hover/ink ${tag}`).toBeGreaterThanOrEqual(4.5);
+        expect(v["--wax-hover"].toLowerCase(), `hover differs ${tag}`).not.toBe(v["--wax"].toLowerCase());
+        expect(contrast(v["--wax-onpage"], page), `onpage ${tag}`).toBeGreaterThanOrEqual(4.5);
+        if (dark) {
+          expect(contrast(v["--wax-deep"], "#ffffff"), `deep panel ${tag}`).toBeGreaterThanOrEqual(6.5);
+          expect(contrast(v["--wax-light"], v["--wax-deep"]), `light-on-deep ${tag}`).toBeGreaterThanOrEqual(4.5);
+        } else {
+          expect(contrast(v["--wax-deep"], page), `deep text ${tag}`).toBeGreaterThanOrEqual(4.5);
+          expect(v["--wax-light"], `no --wax-light override on light pages ${tag}`).toBeUndefined();
+        }
+      }
+    });
+  }
+
+  test("keeps the user's colour as the fill when an ink already reaches 4.5", () => {
+    expect(accentVars("#3B6FD4", "#FFFFFF")["--wax"].toLowerCase()).toBe("#3b6fd4"); // blue → white ink
+    expect(accentVars("#F5D896", "#FFFFFF")["--wax"].toLowerCase()).toBe("#f5d896"); // pale gold → navy ink
+  });
+
+  test("a mid-tone accent (no ink reaches 4.5) is darkened just enough, hue kept", () => {
+    const a = "#2E9E5B";
+    expect(Math.max(contrast(a, WAX_INK_LIGHT), contrast(a, WAX_INK_DARK))).toBeLessThan(4.5); // precondition
+    const fill = accentVars(a, "#FFFFFF")["--wax"];
+    expect(fill.toLowerCase()).not.toBe(a.toLowerCase());
+    const [ir, ig, ib] = rgb(a), [or, og, ob] = rgb(fill);
+    expect(or / og).toBeCloseTo(ir / ig, 1);
+    expect(ob / og).toBeCloseTo(ib / ig, 1);
+  });
+
+  test("invalid accent → only the raw --wax (defaults cover the rest)", () => {
+    expect(accentVars("nope", "#FFFFFF")).toEqual({ "--wax": "nope" });
   });
 });

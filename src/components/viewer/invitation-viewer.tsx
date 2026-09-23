@@ -14,11 +14,21 @@ import { EditContext, TextStyleContext } from "./editable";
 import { FontLink } from "./font-link";
 import { LightboxRoot } from "./lightbox";
 import { fontById } from "@/lib/invitation/fonts";
-import { waxInk, waxDeep, accentOn } from "@/lib/invitation/contrast";
+import { accentVars } from "@/lib/invitation/contrast";
 
-/** Themes whose page background is dark → accent-colored TEXT must be lightened (not darkened) to stay
- * legible. Value is each theme's base --iv-bg (see viewer.css). */
-const DARK_THEME_BG: Partial<Record<string, string>> = { battle: "#1A1A2E", gaming: "#14101E", developer: "#0D0F0A" };
+/** The surface a custom accent's TEXT sits on, per theme — what accentVars() makes it legible against.
+ * Dark themes: their base --iv-bg. Light themes: the tightest common text surface (tinted section, cute's
+ * eyebrow pill, editorial's cream paper), so the derived shade clears AA everywhere on that theme. */
+const THEME_TEXT_BG: Partial<Record<string, string>> = {
+  romantic: "#FEF9F9",
+  minimal: "#FAFAFC",
+  cute: "#FBE9E7",
+  editorial: "#F2EFE9",
+  timeline: "#FAFAFC",
+  battle: "#1A1A2E",
+  gaming: "#14101E",
+  developer: "#0D0F0A",
+};
 
 /** Venue name for the calendar entry, from the first location section's title (else empty). */
 function eventLocationOf(inv: Invitation): string {
@@ -92,17 +102,11 @@ export function InvitationViewer({
     }
   }
   const vars: Record<string, string> = {};
-  if (invitation.accent) {
-    vars["--wax"] = invitation.accent;
-    // --wax-deep drives accent-BG panels (accept/ending) + accent text on light surfaces → darken so
-    // white text on it and it-as-text-on-white both stay legible. --wax-ink keeps text on accent-BG legible.
-    vars["--wax-deep"] = waxDeep(invitation.accent);
-    vars["--wax-ink"] = waxInk(invitation.accent);
-    // --wax-onpage is accent TEXT on the page background. On light themes it equals --wax-deep (via the
-    // token default), but on dark themes darkening makes it vanish — lighten against the dark page instead.
-    const darkBg = DARK_THEME_BG[invitation.theme];
-    if (darkBg) vars["--wax-onpage"] = accentOn(invitation.accent, darkBg);
-  }
+  // A custom page background (bgColor) is what accent text actually sits on; else the theme's surface.
+  const pageBg = invitation.bgColor || THEME_TEXT_BG[invitation.theme] || "#FFFFFF";
+  // Custom accent → ALL accent tokens from one derivation (fill, ink, hover, on-page text, deep, light),
+  // each AA for its role. Inline, so it outranks the theme's default-palette remaps in viewer.css.
+  if (invitation.accent) Object.assign(vars, accentVars(invitation.accent, pageBg));
   if (font?.google) {
     // Only override for non-default fonts (default Pretendard needs no change / no load).
     vars["--font-ko"] = font.stack;
@@ -167,7 +171,7 @@ export function InvitationViewer({
           const st = s.style;
           const secVars: CSSProperties | undefined =
             st && (st.accent || st.bg)
-              ? ({ ...(st.accent ? { ["--wax"]: st.accent, ["--wax-deep"]: waxDeep(st.accent), ["--wax-ink"]: waxInk(st.accent) } : null), ...(st.bg ? { background: st.bg } : null) } as CSSProperties)
+              ? ({ ...(st.accent ? accentVars(st.accent, st.bg || pageBg) : null), ...(st.bg ? { background: st.bg } : null) } as CSSProperties)
               : undefined;
           // In the editor preview (contained), wrap each section so the editor can scroll to it
           // (section-list click) and target inline edits. Public viewer DOM stays unchanged

@@ -51,20 +51,75 @@ export function accentOn(hex: string, bgHex: string): string {
   if (!rgb || !bg) return hex;
   const bgL = lum(bg[0], bg[1], bg[2]);
   if (ratio(lum(rgb[0], rgb[1], rgb[2]), bgL) >= 4.5) return hex; // already legible
-  if (bgL < 0.18) {
-    // dark background → lighten toward white
-    for (let k = 0.1; k <= 1; k += 0.1) {
-      const R = rgb[0] + (255 - rgb[0]) * k, G = rgb[1] + (255 - rgb[1]) * k, B = rgb[2] + (255 - rgb[2]) * k;
-      if (ratio(lum(R, G, B), bgL) >= 4.5) return toHex(R, G, B);
-    }
-    return "#ffffff";
+  return bgL < DARK_BG_LUM
+    ? lightenUntil(rgb, (l) => ratio(l, bgL) >= 4.5) // dark background → lighten toward white
+    : darkenUntil(rgb, (l) => ratio(l, bgL) >= 4.5); // light background → darken toward black
+}
+
+/** Below this background luminance, accent text must be lightened (not darkened) to stay legible. */
+const DARK_BG_LUM = 0.18;
+
+type RGB = [number, number, number];
+const round3 = (r: number, g: number, b: number): RGB => [Math.round(r), Math.round(g), Math.round(b)];
+const lumOf = (c: RGB) => lum(c[0], c[1], c[2]);
+
+/** Scale toward black (uniform RGB → hue kept) until `ok(luminance)`. Checks the ROUNDED colour, so the
+ * returned hex really meets the threshold (rounding can't land it at 4.49). */
+function darkenUntil(rgb: RGB, ok: (l: number) => boolean): string {
+  for (let k = 1; k >= 0; k -= 0.01) {
+    const c = round3(rgb[0] * k, rgb[1] * k, rgb[2] * k);
+    if (ok(lumOf(c))) return toHex(...c);
   }
-  // light background → darken toward black (same direction as waxDeep)
-  for (let k = 0.9; k >= 0.15; k -= 0.05) {
-    const R = rgb[0] * k, G = rgb[1] * k, B = rgb[2] * k;
-    if (ratio(lum(R, G, B), bgL) >= 4.5) return toHex(R, G, B);
+  return "#000000";
+}
+
+/** Mix toward white (hue kept) until `ok(luminance)`; rounded-colour check as above. */
+function lightenUntil(rgb: RGB, ok: (l: number) => boolean): string {
+  for (let k = 0; k <= 1; k += 0.01) {
+    const c = round3(rgb[0] + (255 - rgb[0]) * k, rgb[1] + (255 - rgb[1]) * k, rgb[2] + (255 - rgb[2]) * k);
+    if (ok(lumOf(c))) return toHex(...c);
   }
-  return toHex(rgb[0] * 0.15, rgb[1] * 0.15, rgb[2] * 0.15);
+  return "#ffffff";
+}
+
+/**
+ * Every accent-derived CSS var for a custom accent, each AA-safe (≥4.5:1) FOR ITS ROLE on the page it
+ * renders on, hue-preserving. One place so the viewer can't set some tokens from the accent and leave
+ * others on the default coral (which painted coral headings on a blue invitation).
+ *
+ * - `--wax`       button/badge FILL. The user's colour as-is, unless neither ink reaches 4.5 on it
+ *                 (mid-tones, luminance ≈0.18–0.28) → darkened just until white text does.
+ * - `--wax-ink`   text on the fill (white or navy, whichever contrasts more).
+ * - `--wax-hover` hover fill: moves AWAY from the ink (darker under white, lighter under navy), so hover
+ *                 can only raise contrast. (`--wax-deep` used to be the hover fill — wrong for light accents.)
+ * - `--wax-onpage` accent TEXT on the page background.
+ * - `--wax-deep`  accent text on light surfaces (white cards) + accent PANELS carrying light text. On a
+ *                 light page it equals `--wax-onpage`; on a dark page it's a deep shade (≥6.5:1 vs white,
+ *                 matching the verified default battle panel) so translucent/pastel panel text still passes.
+ * - `--wax-light` (dark pages only) pastel accent text — legible on the deep panels and the darker page.
+ */
+export function accentVars(accent: string, pageBg: string): Record<string, string> {
+  const rgb = parseHex(accent);
+  const bg = parseHex(pageBg);
+  if (!rgb || !bg) return { "--wax": accent };
+  const bgL = lumOf(bg);
+  const dark = bgL < DARK_BG_LUM;
+  const L = lumOf(rgb);
+
+  const inkOk = Math.max(ratio(L, 1), ratio(L, DARK_LUM)) >= 4.5;
+  const fill = inkOk ? toHex(...rgb) : darkenUntil(rgb, (l) => ratio(l, 1) >= 4.5);
+  const ink = waxInk(fill);
+  const f = parseHex(fill)!;
+  const hover =
+    ink === WAX_INK_LIGHT
+      ? toHex(...round3(f[0] * 0.85, f[1] * 0.85, f[2] * 0.85))
+      : toHex(...round3(f[0] + (255 - f[0]) * 0.3, f[1] + (255 - f[1]) * 0.3, f[2] + (255 - f[2]) * 0.3));
+  const onpage = accentOn(toHex(...rgb), pageBg);
+  const deep = dark ? darkenUntil(rgb, (l) => ratio(l, 1) >= 6.5) : onpage;
+
+  const vars: Record<string, string> = { "--wax": fill, "--wax-ink": ink, "--wax-hover": hover, "--wax-onpage": onpage, "--wax-deep": deep };
+  if (dark) vars["--wax-light"] = accentOn(toHex(...rgb), deep);
+  return vars;
 }
 
 /** A darker shade of the accent for accent-COLORED TEXT (eyebrows, dates, D-day numbers) so it stays
