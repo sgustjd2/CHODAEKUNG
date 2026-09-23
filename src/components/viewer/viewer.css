@@ -149,7 +149,9 @@
 .acc-list { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
 .acc-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 16px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 .acc-info { min-width: 0; }
-.acc-side { display: inline-block; font-size: calc(11px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-onpage, var(--wax-deep, #a04547)); margin-bottom: 4px; }
+/* .acc-side sits on the WHITE .acc-card on every theme, so it takes the "accent text on a light
+   surface" token (--wax-deep, like .dday-n) — not the page-level --wax-onpage, which dark themes lighten. */
+.acc-side { display: inline-block; font-size: calc(11px * var(--iv-fs, 1)); font-weight: 700; color: var(--wax-deep, #a04547); margin-bottom: 4px; }
 .acc-bank { font-size: calc(15px * var(--iv-fs, 1)); font-weight: 700; color: var(--ink); letter-spacing: calc(-0.01em + var(--iv-ls, 0em)); word-break: break-all; }
 .acc-holder { font-size: calc(13px * var(--iv-fs, 1)); color: var(--ink-3); margin-top: 2px; }
 .acc-copy { flex-shrink: 0; padding: 9px 16px; border-radius: 999px; border: none; background: var(--wax, #e38b8b); color: var(--wax-ink, #fff); font: inherit; font-size: calc(13px * var(--iv-fs, 1)); font-weight: 700; cursor: pointer; }
@@ -677,6 +679,11 @@
   background-image: none;
   color: var(--paper);
   font-family: var(--font-ko);
+  /* Gaming's own UI is lilac/blue, but the shared sections (account/guestbook/attendees/d-day) still use
+     the brand coral: split it like battle (default palette only; custom accents set these inline). */
+  --wax: #A8474A;        /* white-text fills: .acc-copy / .gb-submit → ≥4.5 */
+  --wax-deep: #9E4044;   /* their :hover fill + accent text on the white cards */
+  --wax-onpage: #F0A8A8; /* section eyebrows / counts on the dark page */
 
   .iv-doc { background: var(--iv-bg, #14101E); }
 
@@ -745,6 +752,7 @@
   .g-cd-cell .n { font-family: var(--font-en); font-weight: 900; font-size: calc(28px * var(--iv-fs, 1)); line-height: calc(1 * var(--iv-lh, 1)); color: var(--paper); letter-spacing: calc(-0.02em + var(--iv-ls, 0em)); }
   .g-cd-cell.warn .n { color: #F5D896; }
   .g-cd-cell .l { font-family: var(--font-en); font-size: calc(8px * var(--iv-fs, 1)); font-weight: 800; letter-spacing: calc(0.24em + var(--iv-ls, 0em)); color: rgba(255,255,255,0.5); margin-top: 6px; text-transform: uppercase; }
+  .g-cd-cell.warn .l { color: rgba(255,255,255,0.72); } /* the warn cell's lilac tint is lighter than the base cell → 0.5 only reached 4.2 */
 
   .g-tier-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
   .g-tier-col { text-align: center; padding: 10px 4px; background: rgba(255,255,255,0.04); border-radius: 8px; }
@@ -877,7 +885,7 @@
   --ink-3: #5A5A6C;
 
   .iv-doc { background: var(--iv-bg, #F2EFE9); }
-  .gb-empty { color: var(--ink-3); }
+  .gb-empty, .att-empty { color: var(--ink-3); }
 
   /* Cover — full-bleed film photo */
   .e-cover { height: 720px; background-size: cover; background-position: center; position: relative; color: var(--paper); padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; }
