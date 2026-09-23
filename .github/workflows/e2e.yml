@@ -16,7 +16,10 @@ concurrency:
 jobs:
   e2e:
     name: Playwright (unit + mobile smoke)
-    runs-on: ubuntu-latest
+    # Pinned (was ubuntu-latest = 24.04): GitHub moves ubuntu-latest to Ubuntu 26 from 2026-10-19, and
+    # `playwright install --with-deps` must support the host OS — bump this deliberately, alongside a
+    # Playwright upgrade, and bust the browser cache key below when you do (it's keyed on runner.os only).
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
