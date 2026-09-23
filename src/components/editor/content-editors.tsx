@@ -636,15 +636,17 @@ export function ContentEditors({ draft, patch, selectedId }: { draft: Invitation
 }
 
 function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
+  // A real <label> wrapper, so the caption IS the input's accessible name (screen readers announced every
+  // inspector field as an unnamed "edit text") — and tapping the caption focuses the field.
   return (
-    <div className="insp-field">
-      <div className="insp-label">{label}</div>
+    <label className="insp-field">
+      <span className="insp-label">{label}</span>
       {textarea ? (
         <textarea className="insp-input" rows={4} value={value} onChange={(e) => onChange(e.target.value)} />
       ) : (
         <input className="insp-input" value={value} onChange={(e) => onChange(e.target.value)} />
       )}
-    </div>
+    </label>
   );
 }
 

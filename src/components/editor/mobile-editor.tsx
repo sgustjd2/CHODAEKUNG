@@ -136,7 +136,7 @@ export function MobileEditor({ api }: { api: EditorApi }) {
       </div>
 
       <div className={`m-backdrop${sheet ? " open" : ""}`} onClick={() => setSheet(null)} />
-      <div className={`m-sheet${sheet ? " open" : ""}`} role="dialog" aria-hidden={!sheet}>
+      <div className={`m-sheet${sheet ? " open" : ""}`} role="dialog" aria-hidden={!sheet} inert={!sheet}>
         <div className="m-handle" />
         <div className="m-sheet-head">
           <div className="m-sheet-title">
@@ -175,6 +175,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
           <input
             className="insp-input"
             type="datetime-local"
+            aria-label="행사 일시"
             value={api.draft.eventStart ?? ""}
             onChange={(e) => { const iso = e.target.value || undefined; api.setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso)); }}
           />
@@ -190,6 +191,7 @@ function ContentPanel({ api }: { api: EditorApi }) {
           <input
             className="insp-input"
             type="number"
+            aria-label="정원 (참석 인원 제한)"
             min={0}
             placeholder="비우면 제한 없음 · 예: 20"
             value={api.draft.capacity ?? ""}

@@ -724,7 +724,7 @@ export function EditorClient() {
             <Logo />
           </Link>
           <span className="top-crumb">Dashboard · Editor</span>
-          <input className="top-title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input className="top-title" aria-label="초대장 제목" value={title} onChange={(e) => setTitle(e.target.value)} />
           <div className="save-indicator">
             <span className="d" /> Saved · 방금 전
           </div>
@@ -892,6 +892,7 @@ export function EditorClient() {
                     <input
                       className="insp-input"
                       type="datetime-local"
+                      aria-label="행사 일시"
                       value={draft.eventStart ?? ""}
                       onChange={(e) => { const iso = e.target.value || undefined; setDraft((d) => syncCoverDate({ ...d, eventStart: iso }, iso)); }}
                     />
@@ -907,6 +908,7 @@ export function EditorClient() {
                     <input
                       className="insp-input"
                       type="number"
+                      aria-label="정원 (참석 인원 제한)"
                       min={0}
                       placeholder="비우면 제한 없음 · 예: 20"
                       value={draft.capacity ?? ""}

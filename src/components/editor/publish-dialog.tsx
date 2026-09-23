@@ -185,6 +185,7 @@ export function PublishDialog({
       role="dialog"
       aria-modal="true"
       aria-hidden={!open}
+      inert={!open}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="pub-modal" ref={modalRef} tabIndex={-1}>
@@ -305,14 +306,14 @@ export function PublishDialog({
                 {publishedSlug ? (
                   <>{displayHost}/i/<b>{slug}</b></>
                 ) : (
-                  <span style={{ color: "var(--muted)" }}>발행하면 공유 링크가 생성돼요</span>
+                  <span style={{ color: "var(--ink-3)" }}>발행하면 공유 링크가 생성돼요</span>
                 )}
               </div>
               <button className={`btn-copy${copied ? " copied" : ""}`} onClick={copy} disabled={!publishedSlug}>
                 <Icon name="ic-copy" /> {copied ? "복사됨" : "복사"}
               </button>
             </div>
-            <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>Pro 플랜에서는 커스텀 도메인 사용 가능 (yourname.moi)</div>
+            <div style={{ fontSize: 11, color: "var(--ink-3)", marginTop: 6 }}>Pro 플랜에서는 커스텀 도메인 사용 가능 (yourname.moi)</div>
           </div>
 
           <div className="r-section">
