@@ -206,7 +206,7 @@ export function DashboardClient({ userEmail, displayName, myInvitations }: { use
             <div className="n">{name}</div>
             <div className="p" style={{ textTransform: "none", letterSpacing: 0 }}>{userEmail}</div>
           </div>
-          <button type="button" onClick={logout} aria-label="로그아웃" title="로그아웃" style={{ marginLeft: "auto", background: "none", border: "none", color: "var(--muted)", cursor: "pointer", padding: 4, display: "flex" }}>
+          <button type="button" onClick={logout} aria-label="로그아웃" title="로그아웃" style={{ marginLeft: "auto", background: "none", border: "none", color: "var(--ink-3)", cursor: "pointer", padding: 4, display: "flex" }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
             </svg>
@@ -295,7 +295,7 @@ export function DashboardClient({ userEmail, displayName, myInvitations }: { use
                             <button style={menuItem} disabled={c.status === "draft"} onClick={() => onCopyLink(c.slug!)}>{copiedSlug === c.slug ? "복사됨!" : "링크 복사"}</button>
                             <button style={menuItem} onClick={() => onDuplicate(c.slug!)}>복제</button>
                             <Link style={menuItem} href={`/rsvp?slug=${c.slug}`}>응답 보기</Link>
-                            <button style={{ ...menuItem, color: "var(--wax-deep)" }} onClick={() => onDelete(c.slug!, c.title)}>삭제</button>
+                            <button style={{ ...menuItem, color: "var(--wax-onpage)" }} onClick={() => onDelete(c.slug!, c.title)}>삭제</button>
                           </div>
                         </>
                       )}
@@ -308,7 +308,7 @@ export function DashboardClient({ userEmail, displayName, myInvitations }: { use
                   <div className="inv-date">
                     <span className="d">{c.date}</span>
                     <span>{c.time}</span>
-                    {c.status === "past" ? <span style={{ color: "var(--muted)" }}>완료</span> : <span className="dday">{c.dday}</span>}
+                    {c.status === "past" ? <span style={{ color: "var(--ink-3)" }}>완료</span> : <span className="dday">{c.dday}</span>}
                   </div>
                   <div className="inv-analytics">
                     {c.analytics.map((a, i) =>

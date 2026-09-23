@@ -31,6 +31,11 @@
      buttons follow the per-invitation accent). Must be DARKER than --wax-onpage: --wax-deep is
      actually lighter than --wax, so using it as a hover fill dropped white text to ~3.65:1. ≈6.2:1. */
   --wax-press:    #A04346;
+  /* TEXT on a light tint of its own hue (status badges, pills, tinted notes). The "-deep" swatches are
+     mid-tones (~2–3.7:1 as text), and even --wax-onpage is ~4.3 on a coral-tinted badge. All ≥4.5. */
+  --wax-on-tint:  #A8474A;
+  --sage-ink:     #3F5A3B;
+  --lilac-ink:    #5B4A78;
   --wax-light:    #F5B5B0;   /* 연한 피치 */
   --wax-soft:     #FCE0DC;   /* 아주 연한 블러시 */
   --wax-tint:     #FEF6F4;   /* 배경용 미묘 블러시 */

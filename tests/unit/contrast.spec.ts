@@ -152,3 +152,28 @@ test.describe("generic 'text' cover overlay — accent text on a photo", () => {
     expect(contrast("#F5B5B0", TEXT_COVER_OVERLAY_WORST)).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+test.describe("app pages (dashboard / rsvp / admin / settings / media) — text tokens on their surfaces", () => {
+  // These pages sit behind login, so the axe page gate can't render them; lock the token pairs instead.
+  const css = readFileSync("src/app/tokens.css", "utf8");
+  const tok = (name: string) => {
+    const m = css.match(new RegExp(`--${name}:\\s*(#[0-9A-Fa-f]{6})`));
+    if (!m) throw new Error(`--${name} not found in tokens.css`);
+    return m[1];
+  };
+  // rgba tint over the white card → the flat color the badge text actually sits on
+  const tint = (r: number, g: number, b: number, a: number) =>
+    "#" + [r, g, b].map((c) => Math.round(c * a + 255 * (1 - a)).toString(16).padStart(2, "0")).join("");
+  const pairs: [string, string, string][] = [
+    ["ink-3 on paper-2 (labels, table heads)", tok("ink-3"), tok("paper-2")],
+    ["wax-onpage on paper-2 (eyebrows)", tok("wax-onpage"), tok("paper-2")],
+    ["white on wax-onpage (avatar)", "#FFFFFF", tok("wax-onpage")],
+    ["wax-on-tint on coral badge", tok("wax-on-tint"), tint(227, 139, 139, 0.16)],
+    ["sage-ink on sage badge", tok("sage-ink"), tint(181, 202, 178, 0.25)],
+    ["lilac-ink on lilac badge", tok("lilac-ink"), tint(213, 196, 227, 0.28)],
+    ["lilac-ink on 'maybe' badge", tok("lilac-ink"), tint(110, 122, 147, 0.2)],
+  ];
+  for (const [name, fg, bg] of pairs) {
+    test(name, () => expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5));
+  }
+});

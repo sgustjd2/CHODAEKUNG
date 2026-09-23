@@ -19,6 +19,8 @@ const PAGES = [
   { name: "templates", url: "/templates", gateSerious: true },
   { name: "new (wizard)", url: "/new", gateSerious: true },
   { name: "login", url: "/login", gateSerious: true },
+  // RSVP inbox renders its "pick an invitation" state without a login (the other app pages redirect)
+  { name: "rsvp (empty)", url: "/rsvp", gateSerious: true },
   { name: "viewer · romantic", url: "/i/jisoo-minjun", gateSerious: true },
   { name: "viewer · minimal", url: "/i/appa-60", gateSerious: true },
   { name: "viewer · cute", url: "/i/cozy-home", gateSerious: true },

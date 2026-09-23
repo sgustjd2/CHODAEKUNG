@@ -117,9 +117,9 @@ export function RsvpClient() {
 
   const stats: Stat[] = [
     { dark: true, lbl: "Total Responses", val: String(total), sub: <>실시간 집계</>, barW: "100%", barC: "var(--gold)" },
-    { dark: false, lbl: "참석 · Attend", val: String(nYes), sub: <>{pct(nYes)}% · 총 {headcount}명</>, barW: `${pct(nYes)}%`, barC: "var(--sage)", valC: "var(--sage-deep)" },
-    { dark: false, lbl: "불참 · Decline", val: String(nNo), sub: <>{pct(nNo)}% of total</>, barW: `${pct(nNo)}%`, barC: "var(--wax)", valC: "var(--wax-deep)" },
-    { dark: false, lbl: "미정 · Pending", val: String(nMaybe), sub: <>{pct(nMaybe)}% of total</>, barW: `${pct(nMaybe)}%`, barC: "var(--lilac)", valC: "var(--lilac-deep)" },
+    { dark: false, lbl: "참석 · Attend", val: String(nYes), sub: <>{pct(nYes)}% · 총 {headcount}명</>, barW: `${pct(nYes)}%`, barC: "var(--sage)", valC: "var(--sage-ink)" },
+    { dark: false, lbl: "불참 · Decline", val: String(nNo), sub: <>{pct(nNo)}% of total</>, barW: `${pct(nNo)}%`, barC: "var(--wax)", valC: "var(--wax-onpage)" },
+    { dark: false, lbl: "미정 · Pending", val: String(nMaybe), sub: <>{pct(nMaybe)}% of total</>, barW: `${pct(nMaybe)}%`, barC: "var(--lilac)", valC: "var(--lilac-ink)" },
   ];
 
   // Donut segment lengths; circle circumference ≈ 345.
@@ -155,7 +155,7 @@ export function RsvpClient() {
           </Link>
         </div>
         <div className="wrap">
-          <div style={{ textAlign: "center", padding: "80px 24px", color: "var(--muted)" }}>
+          <div style={{ textAlign: "center", padding: "80px 24px", color: "var(--ink-3)" }}>
             {access === "denied" ? (
               <>
                 <h2 style={{ marginBottom: 8, color: "var(--ink)" }}>응답을 볼 수 없어요</h2>
@@ -309,7 +309,7 @@ export function RsvpClient() {
             <div>SHOWING {rangeFrom}–{rangeTo} OF {filtered.length}</div>
             <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
               <Button variant="ghost" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={clampedPage <= 1}>← 이전</Button>
-              <span style={{ fontSize: 12, color: "var(--muted)", minWidth: 48, textAlign: "center" }}>{clampedPage} / {pageCount}</span>
+              <span style={{ fontSize: 12, color: "var(--ink-3)", minWidth: 48, textAlign: "center" }}>{clampedPage} / {pageCount}</span>
               <Button variant="ghost" size="sm" onClick={() => setPage((p) => Math.min(pageCount, p + 1))} disabled={clampedPage >= pageCount}>다음 →</Button>
             </div>
           </div>
