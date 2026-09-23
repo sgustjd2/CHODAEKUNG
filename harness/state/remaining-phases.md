@@ -120,6 +120,8 @@ These are referenced in the UI but unbuilt; each needs the user's product direct
 ## Standing user actions — STATUS
 
 - ✅ Supabase migrations 0003/0004/0005 — applied (2026-09-07).
+- ◻ **Supabase migration 0007_input_limits** (2026-09-23) — run it in the SQL Editor. Adds CHECK constraints to
+  rsvps/guestbook so direct anon REST inserts can’t bypass the app’s input limits (see implementation-log 25).
 - ✅ Kakao Developers site-domain registration — done (share picker reached on the deployed domain).
 - ◻ Optional: set `NEXT_PUBLIC_SITE_URL` on Vercel to pin the OG/sitemap origin. Currently it
   auto-resolves to `VERCEL_PROJECT_PRODUCTION_URL` (the public production domain), which works —

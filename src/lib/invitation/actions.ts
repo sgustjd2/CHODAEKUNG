@@ -4,6 +4,7 @@ import { upsertInvitation, submitRsvp, listRsvps, listRsvpsByOwner, listMyInvita
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getCurrentUser } from "@/lib/db/supabase-server";
 import type { Invitation, ThemeId } from "./types";
+import { isOwnMediaPath, validatePublish } from "./validate";
 
 function randomSlug(): string {
   return "inv-" + Math.random().toString(36).slice(2, 10);
@@ -23,10 +24,13 @@ export async function publishInvitationAction(input: {
   visibility: Visibility;
   editToken?: string;
 }): Promise<{ ok: true; slug: string; editToken: string; url: string } | { ok: false; error: string }> {
+  // No login required to publish, so this is a public write: bound its size, reject unknown enums.
+  const v = validatePublish(input);
+  if (!v.ok) return v;
   const user = await getCurrentUser();
   const slug = input.editToken ? input.slug : randomSlug();
   const data: Invitation = { ...input.data, slug };
-  const res = await upsertInvitation({ slug, title: input.title, theme: input.theme, data, visibility: input.visibility, editToken: input.editToken, ownerId: user?.id });
+  const res = await upsertInvitation({ slug, title: v.value.title, theme: v.value.theme, data, visibility: v.value.visibility, editToken: input.editToken, ownerId: user?.id });
   if (!res.ok) return res;
   return { ok: true, slug, editToken: res.editToken, url: `/i/${slug}` };
 }
@@ -121,7 +125,7 @@ export async function listMyMediaAction() {
 export async function deleteMediaAction(path: string) {
   const user = await getCurrentUser();
   if (!user) return { ok: false as const, error: "로그인이 필요해요" };
-  if (!path.startsWith(`u/${user.id}/`)) return { ok: false as const, error: "권한이 없어요" };
+  if (!isOwnMediaPath(path, user.id)) return { ok: false as const, error: "권한이 없어요" }; // exactly u/<id>/<file> — no ".." escape
   const { error } = await getServiceClient().storage.from("invite-photos").remove([path]);
   return error ? { ok: false as const, error: error.message } : { ok: true as const };
 }

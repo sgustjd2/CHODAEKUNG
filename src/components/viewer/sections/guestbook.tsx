@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { GuestbookContent } from "@/lib/invitation/types";
 import { lineText } from "@/lib/invitation/meta";
 import { submitGuestbookAction, listGuestbookAction } from "@/lib/invitation/actions";
+import { LIMITS } from "@/lib/invitation/validate";
 import { Editable } from "../editable";
 
 type Row = { id: string; name: string; message: string; createdAt: string };
@@ -83,8 +84,8 @@ export function GuestbookSection({ content, slug, preview }: { content: Guestboo
       {title && <h3 className="gb-title"><Editable path="title" multiline>{title}</Editable></h3>}
       {content.note && <p className="gb-note"><Editable path="note">{content.note}</Editable></p>}
       <div className="gb-form">
-        <input className="gb-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름 (선택)" maxLength={20} autoComplete="name" />
-        <textarea className="gb-textarea" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="축하 메시지를 남겨주세요" rows={2} maxLength={200} />
+        <input className="gb-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름 (선택)" maxLength={LIMITS.guestbookName} autoComplete="name" />
+        <textarea className="gb-textarea" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="축하 메시지를 남겨주세요" rows={2} maxLength={LIMITS.guestbookMessage} />
         {state === "error" && <div className="gb-err" role="alert">{err}</div>}
         <button type="button" className="gb-submit" onClick={submit} disabled={state === "sending"}>
           {state === "sending" ? "남기는 중…" : "메시지 남기기"}

@@ -1075,3 +1075,14 @@ tsc 0, 전체 e2e+unit 103 passed(회귀 없음), `next build --webpack` 통과.
 - `login.css`에 `.auth-hint`(settings.css `.set-hint`와 동일 톤) 추가.
 
 **검증:** tsc 0, eslint(신규 이슈 0 — share-bar.tsx의 사전 존재 이슈 3건은 git stash로 원본 대조해 무관함 확인). 실제 계정 생성/가입 폼 제출은 정책상 수행 안 함(계정 생성·비밀번호 인증은 금지 행동) — 렌더링만 브라우저로 확인(가입 모드에 필드+required+autoFocus 정상, 로그인 모드엔 안 보임, RSVP 모달 라벨/placeholder 정상 반영). 기존 e2e 1건(viewer-smoke.spec.ts:54)이 옛 placeholder 문자열에 의존해 깨짐 → `input[autocomplete="name"]` 셀렉터로 교체(문구 변경에 강건하게). 전체 e2e+unit 135 passed. **실제 가입 플로우 최종 확인은 배포본에서 사용자 본인이 해주세요** — 이름 입력→계정 생성→로그인 후 RSVP 열면 이름이 자동 채워지는지.
+## 2026-09-23 (25) — 공개 쓰기 경로 입력 검증 + DB CHECK 제약(0007)
+
+**배경:** RSVP·방명록은 로그인 없이, 발행도 로그인 없이 가능한 공개 쓰기. 서버 액션은 직접 호출 가능해 폼의 maxLength는 경계가 아님. 게다가 anon RLS 정책(0001 rsvps, 0005 guestbook)이 공개 anon 키로 Supabase REST에 직접 insert를 허용 → 서버 검증을 통째로 우회 가능. DB엔 길이/범위 제약이 없었음(`guests int`는 음수도 허용).
+
+**발견한 악용:** 참석 인원 음수로 공개 인원수를 **줄여** 정원 우회 / 거대한 값으로 인원수 훼손, 이름·메시지 무제한(방명록은 초대장에 공개 표시), RSVP 이름을 트림 안 한 채 저장(중복 제거·정원 계산은 트림 값 기준이라 불일치), 익명 발행 data/제목 무제한·테마 미검증, 미디어 삭제 경로 `u/<id>/../<타인>/…`가 startsWith 검사 통과.
+
+**구현:** `src/lib/invitation/validate.ts`(순수)에 LIMITS + 검증기 — store의 `submitRsvp`/`submitGuestbookEntry`, `publishInvitationAction`, `deleteMediaAction`(정확히 `u/<id>/<파일>`)에서 사용. 폼 maxLength도 같은 LIMITS 사용(RSVP 이름엔 제한이 아예 없었음). `supabase/migrations/0007_input_limits.sql`: rsvps·guestbook에 CHECK 제약(NOT VALID — 기존 행 재검사 없이 신규/수정 행부터 적용, 재실행 안전). 한도: RSVP 이름 40·응답 20·메시지 200·인원 0~20, 방명록 이름 20(선택)·메시지 200, 제목 200, 발행 데이터 256KB(최대 샘플 약 4KB, 사진은 Storage URL).
+
+**검증:** unit `validate.spec`(경계값·음수/소수/문자열 인원·경로 탈출 등) + 동기화 테스트(THEME_IDS ↔ 렌더러 레지스트리, 마이그레이션 수치 ↔ LIMITS). 전체 229 passed.
+
+**⚠ 사용자 작업 필요:** `0007_input_limits.sql`을 Supabase SQL Editor에서 실행해야 REST 직접 insert 경로가 막힘(앱 경로 검증은 배포 즉시 적용).

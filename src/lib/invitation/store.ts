@@ -1,6 +1,7 @@
 import { getServiceClient, isDbEnabled } from "@/lib/db/client";
 import { getSampleOrNull } from "./samples";
 import type { Invitation, ThemeId } from "./types";
+import { validateGuestbook, validateRsvp } from "./validate";
 
 /**
  * Invitation data layer. When Supabase is configured, reads/writes the DB; otherwise falls back to
@@ -30,10 +31,11 @@ async function isLiveInvitation(slug: string): Promise<boolean> {
 
 /** Public: post a congratulatory message to a live invitation's guestbook. */
 export async function submitGuestbookEntry(slug: string, entry: { name: string; message: string }): Promise<{ ok: boolean; error?: string }> {
+  const v = validateGuestbook(entry); // public write — bound + trim before it is shown on the invitation
+  if (!v.ok) return v;
   if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
-  if (!entry.message.trim()) return { ok: false, error: "메시지를 입력해주세요" };
   if (!(await isLiveInvitation(slug))) return { ok: false, error: "발행된 초대장에만 남길 수 있어요" };
-  const { error } = await getServiceClient().from("guestbook").insert({ invitation_slug: slug, name: entry.name, message: entry.message });
+  const { error } = await getServiceClient().from("guestbook").insert({ invitation_slug: slug, name: v.value.name, message: v.value.message });
   return error ? writeFailed("guestbook insert", error) : { ok: true };
 }
 
@@ -231,31 +233,28 @@ export async function attendingHeadcount(slug: string): Promise<number> {
 
 /** Guest RSVP submission (anonymous). The invitation must be live. */
 export async function submitRsvp(slug: string, entry: { name: string; response: string; guests?: number; message?: string }): Promise<{ ok: boolean; error?: string }> {
+  const v = validateRsvp(entry); // anonymous write — trimmed, bounded, guests an integer in range
+  if (!v.ok) return v;
   if (!isDbEnabled()) return { ok: false, error: "백엔드가 아직 설정되지 않았어요" };
-  const name = entry.name.trim();
+  const { name, response, guests, message } = v.value;
   // 정원(capacity): a new/raised 참석 can't push the headcount over the cap. An existing attendee
   // editing their own entry is measured net of their old count, so they're never locked out of it.
   // ponytail: naive read-then-insert — a tiny race between simultaneous submits could overfill by a
   // seat or two; fine for a social 정원. Add a DB constraint if exact capacity ever matters.
-  if (entry.response === "참석") {
+  if (response === "참석") {
     const { data: inv } = await getServiceClient().from("invitations").select("data").eq("slug", slug).maybeSingle();
     const capacity = (inv?.data as Invitation | undefined)?.capacity;
     if (typeof capacity === "number" && capacity > 0) {
       const others = (await latestRsvpPerGuest(slug))
         .filter((r) => r.name !== name && r.response === "참석")
         .reduce((n, r) => n + r.guests, 0);
-      if (others + Math.max(1, entry.guests ?? 1) > capacity) {
+      if (others + Math.max(1, guests) > capacity) {
         return { ok: false, error: `정원(${capacity}명)이 가득 찼어요.` };
       }
     }
   }
-  const { error } = await getServiceClient().from("rsvps").insert({
-    invitation_slug: slug,
-    name: entry.name,
-    response: entry.response,
-    guests: entry.guests ?? 1,
-    message: entry.message ?? "",
-  });
+  // Store the trimmed name — the same value the dedupe (latest answer per name) and capacity math use.
+  const { error } = await getServiceClient().from("rsvps").insert({ invitation_slug: slug, name, response, guests, message });
   return error ? writeFailed("rsvp insert", error) : { ok: true };
 }
 

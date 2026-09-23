@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { submitRsvpAction, attendingCountAction } from "@/lib/invitation/actions";
 import { RSVP_OPEN_EVENT } from "@/lib/invitation/rsvp-open";
+import { LIMITS } from "@/lib/invitation/validate";
 import { SHARE_EVENT, type ShareAction } from "@/lib/invitation/share-actions";
 import { ensureKakao } from "@/lib/kakao";
 import { downloadIcs } from "@/lib/calendar";
@@ -284,7 +285,7 @@ export function ShareBar({
                 <label className="rsvp-field">
                   <span>이름 (실명)</span>
                   {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
-                  <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="실명을 입력해 주세요 (참석자 확인용)" autoComplete="name" />
+                  <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="실명을 입력해 주세요 (참석자 확인용)" autoComplete="name" maxLength={LIMITS.rsvpName} />
                 </label>
                 <div className="rsvp-field">
                   <span>참석 여부</span>
@@ -307,13 +308,13 @@ export function ShareBar({
                     <div className="rsvp-step">
                       <button type="button" aria-label="한 명 줄이기" onClick={() => setGuests((g) => Math.max(1, g - 1))}>−</button>
                       <span className="rsvp-step-n">{guests}</span>
-                      <button type="button" aria-label="한 명 늘리기" onClick={() => setGuests((g) => Math.min(20, g + 1))}>+</button>
+                      <button type="button" aria-label="한 명 늘리기" onClick={() => setGuests((g) => Math.min(LIMITS.rsvpGuests, g + 1))}>+</button>
                     </div>
                   </div>
                 )}
                 <label className="rsvp-field">
                   <span>전하고 싶은 말 (선택)</span>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="축하 메시지나 전달 사항을 남겨주세요" rows={2} maxLength={200} />
+                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="축하 메시지나 전달 사항을 남겨주세요" rows={2} maxLength={LIMITS.rsvpMessage} />
                 </label>
                 {hasAttendees && (
                   <div style={{ fontSize: 12, color: "var(--muted, #8a8a95)", lineHeight: 1.5, marginBottom: 4 }}>
