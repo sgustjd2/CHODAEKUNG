@@ -1086,3 +1086,11 @@ tsc 0, 전체 e2e+unit 103 passed(회귀 없음), `next build --webpack` 통과.
 **검증:** unit `validate.spec`(경계값·음수/소수/문자열 인원·경로 탈출 등) + 동기화 테스트(THEME_IDS ↔ 렌더러 레지스트리, 마이그레이션 수치 ↔ LIMITS). 전체 229 passed.
 
 **⚠ 사용자 작업 필요:** `0007_input_limits.sql`을 Supabase SQL Editor에서 실행해야 REST 직접 insert 경로가 막힘(앱 경로 검증은 배포 즉시 적용).
+
+## 2026-09-23 (26) — 로그인 `?next=` 오픈 리다이렉트 수정
+
+`/login`의 복귀 경로 가드 `startsWith("/") && !startsWith("//")`는 우회 가능: WHATWG URL 파서(브라우저·`router.push`)가 `\`를 `/`로 보고 탭/개행을 제거하므로 `/\evil.com`, `/<TAB>/evil.com`가 가드를 통과한 뒤 https://evil.com/ 으로 해석됨. 특히 이미 로그인된 사용자는 `/login?next=/\evil.com` 링크를 여는 즉시 외부로 튕김(신뢰 도메인 링크를 이용한 피싱). `/auth/callback`은 `origin`을 앞에 붙여 실제로는 안전했지만 같은 헬퍼로 통일.
+
+수정: `src/lib/safe-next.ts` `safeNextPath()` — 파서로 해석해 origin이 그대로일 때만 경로를 허용(접두어 블랙리스트가 아니라 결과 검사). 로그인 페이지 2곳 + 콜백에서 사용. unit `safe-next.spec`이 각 우회 입력마다 "옛 가드 통과 + 실제로 evil.com으로 해석 + 이제 차단"을 함께 검증.
+
+부수: 오늘 추가한 a11y-states 가입 모드 테스트가 병렬 부하에서 1/4 확률로 실패 — 하이드레이션 전 클릭이 유실되는 문제. 결과가 없을 때만 클릭하는 멱등 재시도(toPass)로 고쳐 12/12 통과.

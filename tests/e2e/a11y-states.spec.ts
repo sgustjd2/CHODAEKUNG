@@ -19,8 +19,14 @@ async function blocking(page: Page, include?: string) {
 
 test("/login signup mode (incl. its message) has no critical/serious a11y", async ({ page }) => {
   await page.goto("/login", { waitUntil: "domcontentloaded" });
-  await page.locator(".auth-toggle button").click();
-  await expect(page.locator('input[autocomplete="name"]')).toBeVisible();
+  // A click that lands before React hydrates the button is dropped (~1 in 4 under parallel load), so
+  // retry until the OUTCOME appears — clicking only while it's absent, so a late first click can't be
+  // toggled back by a second one.
+  const nameField = page.locator('input[autocomplete="name"]');
+  await expect(async () => {
+    if (!(await nameField.isVisible())) await page.locator(".auth-toggle button").click();
+    await expect(nameField).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 15_000 });
   expect(await blocking(page)).toEqual([]);
 
   // Submitting in demo mode renders the .auth-msg error — scan that state too.

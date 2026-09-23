@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { authEnabled, createBrowserSupabase } from "@/lib/db/supabase-browser";
 import { signUpAction } from "./actions";
+import { safeNextPath } from "@/lib/safe-next";
 import "./login.css";
 
 /** Supabase returns English auth errors — show Korean instead. */
@@ -53,7 +54,7 @@ export default function LoginPage() {
       .then(({ data }) => {
         if (!data.user) return;
         const n = new URLSearchParams(window.location.search).get("next");
-        router.replace(n && n.startsWith("/") && !n.startsWith("//") ? n : "/dashboard");
+        router.replace(safeNextPath(n));
       })
       .catch(() => {});
   }, [router]);
@@ -68,8 +69,7 @@ export default function LoginPage() {
     setMsg(null);
     const sb = createBrowserSupabase();
     // Return to the page that sent us here (?next=), guarding against open redirects.
-    const rawNext = new URLSearchParams(window.location.search).get("next");
-    const dest = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+    const dest = safeNextPath(new URLSearchParams(window.location.search).get("next"));
     try {
       if (mode === "signup") {
         // Create the account already-confirmed (no email verification), then sign in right away.
