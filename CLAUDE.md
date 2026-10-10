@@ -33,6 +33,7 @@ When requirements or visuals appear to conflict, use this precedence:
 - shadcn/ui may be used as implementation infrastructure, but its styling must be adapted to the approved design.
 - If a Genspark design conflicts with a required product behavior, preserve the required behavior and document the discrepancy before changing visual intent.
 - If a screen is missing from Genspark but required by the PRD, derive it from the nearest approved screen and existing component system. Do not introduce an unrelated style.
+- Design direction is consumer and mobile-first. Do not apply the B2B enterprise defaults (desktop-first, data-dense) from the global `~/.claude/CLAUDE.md` or the `/ui-*` commands; follow the Genspark outputs and `prd.md` instead.
 
 ---
 
@@ -433,3 +434,13 @@ A feature is done when it is:
 - validated by repository checks
 - documented in the harness state when it introduces or changes shared design/component behavior
 
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
